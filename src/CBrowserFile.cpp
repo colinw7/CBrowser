@@ -1,8 +1,14 @@
-#include <CBrowserHtmlI.h>
+#include <CBrowserFile.h>
+#include <CBrowserWindow.h>
+#include <CBrowserCeil.h>
+#include <CBrowserJS.h>
 #include <CHtmlUtil.h>
+#include <CHtml.h>
 #include <CUrl.h>
 #include <CTempFile.h>
 #include <CFileUtil.h>
+#include <CDir.h>
+#include <CEnv.h>
 
 class CBrowserHtmlFileMgr : public CHtmlFileMgr {
  public:
@@ -11,8 +17,7 @@ class CBrowserHtmlFileMgr : public CHtmlFileMgr {
 };
 
 bool
-HtmlReadURL(CBrowserWindow *window, const std::string &url_name,
-            CHtmlParserTokens &tokens)
+HtmlReadURL(CBrowserWindow *window, const std::string &url_name, CHtmlParserTokens &tokens)
 {
   CUrl url(url_name);
 
@@ -99,7 +104,7 @@ bool
 HtmlReadScript(CBrowserWindow *window, const std::string &filename,
                CHtmlParserTokens &tokens)
 {
-  std::string str = HtmlRunScriptCommand(window, filename);
+  std::string str = CBrowserCeilInst->runScriptCommand(window, filename);
 
   return HtmlReadHTMLString(str, tokens);
 }
@@ -118,6 +123,7 @@ HtmlReadFile(const std::string &filename, CHtmlParserTokens &tokens)
     case CFILE_TYPE_INODE_DIR:
       return HtmlReadDirectory(filename, tokens);
     case CFILE_TYPE_TEXT_HTML:
+    case CFILE_TYPE_TEXT_XML:
       return HtmlReadHTMLFile(filename, tokens);
     case CFILE_TYPE_APP_SH:
       return HtmlReadScriptFile(filename, tokens);

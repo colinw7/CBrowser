@@ -1,5 +1,7 @@
 #include <CHtmlLayoutCell.h>
 #include <CHtmlLayoutArea.h>
+#include <CHtmlLayoutBox.h>
+#include <CHtmlLayoutSubCell.h>
 #include <CHtmlLayoutMgr.h>
 #include <climits>
 
@@ -19,28 +21,26 @@ void
 CHtmlLayoutCell::
 init()
 {
-  left_         = 0;
-  top_          = 0;
-  x_            = 0;
-  y_            = 0;
-  width_        = 0;
-  ascent_       = 0;
-  descent_      = 0;
+  left_ = nullptr;
+  top_  = nullptr;
+
+  region_.reset();
+
   indent_left_  = 0;
   indent_right_ = 0;
   resizable_    = false;
   halign_       = CHALIGN_TYPE_NONE;
   valign_       = CVALIGN_TYPE_NONE;
   border_       = false;
-  clear_        = CHTML_LAYOUT_CLEAR_NONE;
-  sub_cell_     = 0;
+  clear_        = CHtmlLayoutClearType::NONE;
+  sub_cell_     = nullptr;
 }
 
 void
 CHtmlLayoutCell::
 term()
 {
-  for (auto &d : redraw_datas_)
+  for (auto &d : boxes_)
     delete d;
 
   freeSubCells();
@@ -48,23 +48,23 @@ term()
 
 int
 CHtmlLayoutCell::
-getNumRedrawDatas()
+getNumBoxes()
 {
-  return redraw_datas_.size();
+  return boxes_.size();
 }
 
-CHtmlLayoutRedrawData *
+CHtmlLayoutBox *
 CHtmlLayoutCell::
-getRedrawData(int i)
+getBox(int i)
 {
-  return redraw_datas_[i];
+  return boxes_[i];
 }
 
 void
 CHtmlLayoutCell::
-addRedrawData(CHtmlLayoutRedrawData *redraw_data)
+addBox(CHtmlLayoutBox *box)
 {
-  redraw_datas_.push_back(redraw_data);
+  boxes_.push_back(box);
 }
 
 int
@@ -96,7 +96,7 @@ newCellBelow(CHtmlLayoutMgr *layout)
 
   CHtmlLayoutCell *cell;
 
-  if (cell1 == 0 || cell1->getNumRedrawDatas() >= 0) {
+  if (cell1 == 0 || cell1->getNumBoxes() >= 0) {
     cell = new CHtmlLayoutCell;
 
     cell->left_ = 0;
@@ -140,9 +140,8 @@ void
 CHtmlLayoutCell::
 resetSubCells()
 {
-  width_    = 0;
-  ascent_   = 0;
-  descent_  = 0;
+  region_.resetSize();
+
   sub_cell_ = 0;
 
   freeSubCells();
@@ -171,13 +170,13 @@ CHtmlLayoutCell::
 updateSubCellHeight(int ascent, int descent)
 {
   if (sub_cell_ && sub_cell_->getAscent() < ascent) {
-    ascent_ += ascent - sub_cell_->getAscent();
+    region_.ascent += ascent - sub_cell_->getAscent();
 
     sub_cell_->setAscent(ascent);
   }
 
   if (sub_cell_ && sub_cell_->getDescent() < descent) {
-    descent_ += descent - sub_cell_->getDescent();
+    region_.descent += descent - sub_cell_->getDescent();
 
     sub_cell_->setDescent(descent);
   }
@@ -260,12 +259,12 @@ format(CHtmlLayoutMgr *layout, int width)
 
   //-----
 
-  int num_redraw_datas = getNumRedrawDatas();
+  int numBoxes = getNumBoxes();
 
-  for (int i = 0; i < num_redraw_datas; ++i) {
-    CHtmlLayoutRedrawData *redraw_data = getRedrawData(i);
+  for (int i = 0; i < numBoxes; ++i) {
+    CHtmlLayoutBox *box = getBox(i);
 
-    redraw_data->callFormatProc(layout);
+    box->format(layout);
   }
 
   //-----
@@ -316,15 +315,15 @@ format(CHtmlLayoutMgr *layout, int width)
 
       // Clear all cell's on left, right or both
 
-      if      (sub_cell->getClear() == CHTML_LAYOUT_CLEAR_LEFT) {
+      if      (sub_cell->getClear() == CHtmlLayoutClearType::LEFT) {
         if (align_left_y  != -1)
           y = align_left_y;
       }
-      else if (sub_cell->getClear() == CHTML_LAYOUT_CLEAR_RIGHT) {
+      else if (sub_cell->getClear() == CHtmlLayoutClearType::RIGHT) {
         if (align_right_y != -1)
           y = align_right_y;
       }
-      else if (sub_cell->getClear() == CHTML_LAYOUT_CLEAR_ALL) {
+      else if (sub_cell->getClear() == CHtmlLayoutClearType::ALL) {
         if      (align_left_y != -1 && align_right_y != -1)
           y = std::max(align_left_y, align_right_y);
         else if (align_left_y != -1)
@@ -425,15 +424,12 @@ alignAscentDescent(int i1, int i2)
 
 void
 CHtmlLayoutCell::
-redraw(CHtmlLayoutMgr *layout, int x, int y)
+redraw(CHtmlLayoutMgr *layout, const CHtmlLayoutRegion &region)
 {
   int num_sub_cells = getNumSubCells();
 
   if (num_sub_cells <= 0)
     return;
-
-  int x1 = x + getX();
-  int y1 = y + getY();
 
   if  (getHAlign() == CHALIGN_TYPE_RIGHT ||
        getHAlign() == CHALIGN_TYPE_CENTER) {
@@ -458,7 +454,7 @@ redraw(CHtmlLayoutMgr *layout, int x, int y)
       if (getHAlign() == CHALIGN_TYPE_RIGHT) {
         int x = sub_cells_[i]->getX() + sub_cells_[i]->getWidth();
 
-        offset = width_ - x;
+        offset = region_.width - x;
       }
       else {
         int x1 = sub_cells_[j]->getX() + sub_cells_[i]->getWidth()/2;
@@ -466,7 +462,7 @@ redraw(CHtmlLayoutMgr *layout, int x, int y)
 
         int xc = (x1 + x2)/2;
 
-        offset = width_/2 - xc;
+        offset = region_.width/2 - xc;
       }
 
       for (int k = j; k <= i; k++)
@@ -476,150 +472,39 @@ redraw(CHtmlLayoutMgr *layout, int x, int y)
     }
   }
 
-  x1 = x + getX();
-  y1 = y + getY();
+  //---
+
+  CHtmlLayoutRegion region1;
+
+  region1.x = region.x + getX();
+  region1.y = region.y + getY();
 
   for (int i = 0; i < num_sub_cells; i++) {
     CHtmlLayoutSubCell *sub_cell = getSubCell(i);
 
     setCurrentSubCell(sub_cell);
 
-    sub_cell->redraw(layout, x1, y1);
+    region1.width   = sub_cell->getWidth();
+    region1.ascent  = sub_cell->getAscent();
+    region1.descent = sub_cell->getDescent();
+
+    sub_cell->redraw(layout, region1);
   }
-}
-
-CHtmlLayoutSubCell::
-CHtmlLayoutSubCell(CHtmlLayoutCell *parent) :
- parent_(parent)
-{
-  init();
-}
-
-CHtmlLayoutSubCell::
-~CHtmlLayoutSubCell()
-{
-  term();
 }
 
 void
-CHtmlLayoutSubCell::
-init()
+CHtmlLayoutCell::
+accept(CHtmlLayoutVisitor &visitor)
 {
-  term();
+  visitor.enter(this);
 
-  left_    = 0;
-  top_     = 0;
-  x_       = parent_->getX();
-  y_       = parent_->getY();
-  width_   = 0;
-  ascent_  = 0;
-  descent_ = 0;
-  breakup_ = false;
-  align_   = CHALIGN_TYPE_NONE;
-  clear_   = CHTML_LAYOUT_CLEAR_NONE;
-}
-
-void
-CHtmlLayoutSubCell::
-term()
-{
-  if (! redraw_datas_.empty()) {
-    int num_redraw_datas = redraw_datas_.size();
-
-    for (int i = 0; i < num_redraw_datas; i++)
-      delete redraw_datas_[i];
-
-    redraw_datas_.clear();
-  }
-}
-
-int
-CHtmlLayoutSubCell::
-getNumRedrawDatas()
-{
-  return redraw_datas_.size();
-}
-
-CHtmlLayoutRedrawData *
-CHtmlLayoutSubCell::
-getRedrawData(int i)
-{
-  return redraw_datas_[i];
-}
-
-void
-CHtmlLayoutSubCell::
-addRedrawData(CHtmlLayoutRedrawData *redraw_data)
-{
-  redraw_datas_.push_back(redraw_data);
-}
-
-CHtmlLayoutSubCell *
-CHtmlLayoutSubCell::
-newCellBelow(CHtmlLayoutMgr *layout, bool breakup)
-{
-  CHtmlLayoutCell *cell = layout->getCurrentCell();
-
-  CHtmlLayoutSubCell *sub_cell1 = cell->getCurrentSubCell();
-
-  CHtmlLayoutSubCell *sub_cell;
-
-  if (sub_cell1 == 0 || sub_cell1->getNumRedrawDatas() > 0) {
-    sub_cell = new CHtmlLayoutSubCell(cell);
-
-    sub_cell->left_ = 0;
-    sub_cell->top_  = sub_cell1;
-
-    cell->addSubCell(sub_cell);
-  }
-  else {
-    sub_cell = sub_cell1;
-
-    sub_cell->init();
+  for (const auto &box : boxes()) {
+    box->accept(visitor);
   }
 
-  sub_cell->breakup_ = breakup;
-
-  sub_cell->parent_->setCurrentSubCell(sub_cell);
-
-  return sub_cell;
-}
-
-CHtmlLayoutSubCell *
-CHtmlLayoutSubCell::
-newCellRight(CHtmlLayoutMgr *layout, bool breakup)
-{
-  CHtmlLayoutCell *cell = layout->getCurrentCell();
-
-  CHtmlLayoutSubCell *sub_cell = new CHtmlLayoutSubCell(cell);
-
-  sub_cell->left_ = cell->getCurrentSubCell();
-  sub_cell->top_  = 0;
-
-  cell->addSubCell(sub_cell);
-
-  sub_cell->breakup_ = breakup;
-
-  sub_cell->parent_->setCurrentSubCell(sub_cell);
-
-  return sub_cell;
-}
-
-void
-CHtmlLayoutSubCell::
-redraw(CHtmlLayoutMgr *layout, int x, int y)
-{
-  int x1 = x + getX();
-  int y1 = y + getY();
-
-  int num_redraw_datas = getNumRedrawDatas();
-
-  for (int i = 0; i < num_redraw_datas; i++) {
-    CHtmlLayoutRedrawData *redraw_data = getRedrawData(i);
-
-    int x2 = x1;
-    int y2 = y1;
-
-    redraw_data->callRedrawProc(layout, &x2, &y2);
+  for (const auto &subCell : subCells()) {
+    subCell->accept(visitor);
   }
+
+  visitor.leave(this);
 }

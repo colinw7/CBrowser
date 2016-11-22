@@ -1,7 +1,8 @@
-#include <CBrowserHtmlI.h>
+#include <CBrowserMisc.h>
 
 std::string
-HtmlIntegerToAlphabetic(int integer)
+CBrowserMisc::
+integerToAlphabetic(int integer)
 {
   std::string str;
 

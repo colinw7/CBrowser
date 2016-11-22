@@ -1,4 +1,10 @@
-#include <CBrowserHtmlI.h>
+#include <CBrowserDocument.h>
+#include <CBrowserWindow.h>
+#include <CBrowserLink.h>
+#include <CBrowserFile.h>
+#include <CBrowserOutput.h>
+#include <CBrowserText.h>
+#include <CBrowserForm.h>
 #include <CRGBName.h>
 
 CBrowserDocument::
@@ -13,6 +19,8 @@ CBrowserDocument(CBrowserWindow *window)
   setLinkColor ("blue"   );
   setALinkColor("blue"   );
   setVLinkColor("blue"   );
+
+  formMgr_ = new CBrowserFormMgr(this);
 }
 
 CBrowserDocument::
@@ -73,17 +81,13 @@ void
 CBrowserDocument::
 freeLinks()
 {
-  uint num_links = links_.size();
-
-  for (uint i = 0; i < num_links; ++i)
-    delete links_[i];
+  for (auto &link : links_)
+    delete link;
 
   links_.clear();
 
-  uint num_anchors = anchors_.size();
-
-  for (uint i = 0; i < num_anchors; ++i)
-    delete anchors_[i];
+  for (auto &anchor : anchors_)
+    delete anchor;
 
   anchors_.clear();
 }
@@ -137,7 +141,7 @@ setFgColor(const std::string &color)
   if (color != "") {
     fg_color_ = CRGBName::toRGBA(color);
 
-    HtmlSetTextColor(fg_color_);
+    window_->setFontColor(color);
   }
 }
 

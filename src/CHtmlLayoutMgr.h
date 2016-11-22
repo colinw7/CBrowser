@@ -1,5 +1,5 @@
-#ifndef CHTML_LAYOUT_MGR
-#define CHTML_LAYOUT_MGR
+#ifndef CHtmlLayoutMgr_H
+#define CHtmlLayoutMgr_H
 
 #include <CAlignType.h>
 #include <vector>
@@ -31,10 +31,10 @@ class CHtmlLayoutMgr {
  private:
   typedef std::vector<CHtmlLayoutArea *> AreaList;
 
-  CHtmlLayoutArea *current_area_;
+  CHtmlLayoutArea *current_area_ { nullptr };
   AreaList         current_area_stack_;
-  CHAlignType      halign_;
-  CVAlignType      valign_;
+  CHAlignType      halign_ { CHALIGN_TYPE_NONE };
+  CVAlignType      valign_ { CVALIGN_TYPE_NONE };
 };
 
 #endif

@@ -21,13 +21,11 @@ init()
   if (! cells_.empty())
     term();
 
-  x_            = 0;
-  y_            = 0;
-  width_        = 0;
-  height_       = 0;
+  region_.reset();
+
   indent_left_  = 0;
   indent_right_ = 0;
-  cell_         = 0;
+  cell_         = nullptr;
 }
 
 void
@@ -58,7 +56,7 @@ format(CHtmlLayoutMgr *layout)
   for (auto &c : cells_) {
     cell_ = c;
 
-    if (cell_->getNumRedrawDatas() == 0)
+    if (cell_->getNumBoxes() == 0)
       continue;
 
     if      (cell_->getLeftCell() != 0) {
@@ -75,18 +73,19 @@ format(CHtmlLayoutMgr *layout)
     }
     else {
       cell_->setX(cell_->getIndentLeft());
-      cell_->setY(y_);
+      cell_->setY(region_.y);
     }
 
-    cell_->format(layout, width_);
+    cell_->format(layout, region_.width);
   }
 
   int x1, y1, x2, y2;
 
   getCellsBoundingBox(&x1, &y1, &x2, &y2);
 
-  width_  = std::max(width_ , x2 - x1);
-  height_ = std::max(height_, y2 - y1);
+  region_.width = std::max(region_.width , x2 - x1);
+
+  region_.setHeight(std::max(region_.getHeight(), y2 - y1));
 
   layout->endArea();
 }
@@ -119,36 +118,45 @@ redraw(CHtmlLayoutMgr *layout)
 {
   layout->startArea(this);
 
-  int num = cells_.size();
-
-  for (int i = 0; i < num; ++i) {
-    cell_ = cells_[i];
+  for (const auto &cell : cells_) {
+    cell_ = cell;
 
     if (cell_->getNumSubCells() == 0)
       continue;
 
-    int x1 = x_;
+    CHtmlLayoutRegion region = region_;
 
     if      (cell_->getHAlign() == CHALIGN_TYPE_LEFT)
       ;
     else if (cell_->getHAlign() == CHALIGN_TYPE_CENTER)
-      x1 += (width_ - cell_->getWidth())/2;
+      region.x += (region.width - cell_->getWidth())/2;
     else if (cell_->getHAlign() == CHALIGN_TYPE_RIGHT)
-      x1 +=  width_ - cell_->getWidth();
-
-    int y1 = y_;
+      region.x +=  region.width - cell_->getWidth();
 
     if      (cell_->getVAlign() == CVALIGN_TYPE_TOP)
       ;
     else if (cell_->getVAlign() == CVALIGN_TYPE_CENTER)
-      y1 += (height_ - cell_->getHeight())/2;
+      region.y += (region.getHeight() - cell_->getHeight())/2;
     else if (cell_->getVAlign() == CVALIGN_TYPE_BOTTOM)
-      y1 +=  height_ - cell_->getHeight();
+      region.y +=  region.getHeight() - cell_->getHeight();
     else if (cell_->getVAlign() == CVALIGN_TYPE_BASELINE)
-      y1 += cell_->getAscent();
+      region.y += cell_->getAscent();
 
-    cell_->redraw(layout, x1, y1);
+    cell_->redraw(layout, region);
   }
 
   layout->endArea();
+}
+
+void
+CHtmlLayoutArea::
+accept(CHtmlLayoutVisitor &visitor)
+{
+  visitor.enter(this);
+
+  for (const auto &cell : cells()) {
+    cell->accept(visitor);
+  }
+
+  visitor.leave(this);
 }

@@ -1,33 +1,41 @@
-#ifndef CHTML_LAYOUT_AREA_H
-#define CHTML_LAYOUT_AREA_H
+#ifndef CHtmlLayoutArea_H
+#define CHtmlLayoutArea_H
 
+#include <CHtmlLayoutTypes.h>
+#include <CHtmlLayoutVisitor.h>
 #include <vector>
+#include <iostream>
 
 class CHtmlLayoutCell;
 class CHtmlLayoutMgr;
 
 class CHtmlLayoutArea {
  public:
+  typedef std::vector<CHtmlLayoutCell *> Cells;
+
+ public:
   CHtmlLayoutArea();
  ~CHtmlLayoutArea();
 
-  int getX() const { return x_; }
-  int getY() const { return y_; }
+  int getX() const { return region_.x; }
+  void setX(int x) { region_.x = x; }
 
-  void setX(int x) { x_ = x; }
-  void setY(int y) { y_ = y; }
+  int getY() const { return region_.y; }
+  void setY(int y) { region_.y = y; }
 
-  int getWidth () const { return width_ ; }
-  int getHeight() const { return height_; }
+  int getWidth() const { return region_.width; }
+  void setWidth (int width) { region_.width = width ; }
 
-  void setWidth (int width ) { width_  = width ; }
-  void setHeight(int height) { height_ = height; }
+  int getHeight() const { return region_.getHeight(); }
+  void setHeight(int height) { region_.setHeight(height); }
 
-  int getIndentLeft () const { return indent_left_ ; }
+  int getIndentLeft() const { return indent_left_; }
+  void setIndentLeft (int indent_left ) { indent_left_  = indent_left; }
+
   int getIndentRight() const { return indent_right_; }
-
-  void setIndentLeft (int indent_left ) { indent_left_  = indent_left ; }
   void setIndentRight(int indent_right) { indent_right_ = indent_right; }
+
+  const Cells &cells() const { return cells_; }
 
   CHtmlLayoutCell *getCurrentCell() const { return cell_; }
 
@@ -36,7 +44,15 @@ class CHtmlLayoutArea {
   void addRedrawCell(CHtmlLayoutCell *cell);
 
   void format(CHtmlLayoutMgr *layout);
+
   void redraw(CHtmlLayoutMgr *layout);
+
+  void accept(CHtmlLayoutVisitor &visitor);
+
+  void printSize(std::ostream &os) {
+    os << "(" << getX() << "," << getY() << ") " <<
+          "(" << getX() + getWidth() << "x" << getY() + getHeight() << ")";
+  }
 
  private:
   void term();
@@ -44,16 +60,11 @@ class CHtmlLayoutArea {
   void getCellsBoundingBox(int *x1, int *y1, int *x2, int *y2);
 
  private:
-  typedef std::vector<CHtmlLayoutCell *> CellList;
-
-  int              x_;
-  int              y_;
-  int              width_;
-  int              height_;
-  int              indent_left_;
-  int              indent_right_;
-  CHtmlLayoutCell *cell_;
-  CellList         cells_;
+  CHtmlLayoutRegion region_;
+  int               indent_left_ { 0 };
+  int               indent_right_ { 0 };
+  CHtmlLayoutCell  *cell_ { nullptr };
+  Cells             cells_;
 };
 
 #endif

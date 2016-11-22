@@ -1,4 +1,4 @@
-#include <CBrowserHtmlI.h>
+#include <CBrowserFont.h>
 
 #include <CFontMgr.h>
 

@@ -1,40 +1,37 @@
-#ifndef CHTML_LAYOUT_TYPES_H
-#define CHTML_LAYOUT_TYPES_H
+#ifndef CHtmlLayoutTypes_H
+#define CHtmlLayoutTypes_H
 
-enum CHtmlLayoutClearType {
-  CHTML_LAYOUT_CLEAR_NONE,
-  CHTML_LAYOUT_CLEAR_LEFT,
-  CHTML_LAYOUT_CLEAR_RIGHT,
-  CHTML_LAYOUT_CLEAR_ALL
+enum class CHtmlLayoutClearType {
+  NONE,
+  LEFT,
+  RIGHT,
+  ALL
 };
 
 class CHtmlLayoutMgr;
 
-class CHtmlLayoutCellFormatProc {
- public:
-  CHtmlLayoutCellFormatProc() { }
+struct CHtmlLayoutRegion {
+  int x       { 0 };
+  int y       { 0 };
+  int width   { 0 };
+  int ascent  { 0 };
+  int descent { 0 };
 
-  virtual ~CHtmlLayoutCellFormatProc() { }
+  void reset() { x = 0; y = 0; resetSize(); }
 
-  virtual void execute(CHtmlLayoutMgr *layout) = 0;
-};
+  void resetSize() { width = 0; ascent = 0; descent = 0; }
 
-class CHtmlLayoutCellRedrawProc {
- public:
-  CHtmlLayoutCellRedrawProc() { }
+  int getX() const { return x; }
+  void setX(int x1) { x = x1; }
 
-  virtual ~CHtmlLayoutCellRedrawProc() { }
+  int getY() const { return y; }
+  void setY(int y1) { y = y1; }
 
-  virtual void execute(CHtmlLayoutMgr *layout, int *x, int *y) = 0;
-};
+  int getWidth() const { return width; }
+  void setWidth(int w) { width = w; }
 
-class CHtmlLayoutCellFreeProc {
- public:
-  CHtmlLayoutCellFreeProc() { }
-
-  virtual ~CHtmlLayoutCellFreeProc() { }
-
-  virtual void execute() = 0;
+  int getHeight() const { return ascent + descent; }
+  void setHeight(int h) { ascent = h; descent = 0; }
 };
 
 #endif

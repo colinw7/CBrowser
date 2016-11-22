@@ -11,25 +11,25 @@
 #include <CHtmlLib.h>
 #include <CHtmlLayout.h>
 
-#include <CBrowserTypesI.h>
+#include <CBrowserTypes.h>
 
 #include <CBrowserMain.h>
 
-#include <CBrowserBreakI.h>
-#include <CBrowserDocumentI.h>
-#include <CBrowserFileI.h>
-#include <CBrowserFontI.h>
-#include <CBrowserFormI.h>
-#include <CBrowserGraphicsI.h>
-#include <CBrowserHistoryI.h>
-#include <CBrowserIFaceI.h>
-#include <CBrowserImageI.h>
-#include <CBrowserLinkI.h>
-#include <CBrowserMiscI.h>
-#include <CBrowserOutputI.h>
-#include <CBrowserRuleI.h>
-#include <CBrowserScriptI.h>
-#include <CBrowserSymbolI.h>
-#include <CBrowserTableI.h>
-#include <CBrowserTextI.h>
-#include <CBrowserWindowI.h>
+#include <CBrowserBreak.h>
+#include <CBrowserDocument.h>
+#include <CBrowserFile.h>
+#include <CBrowserFont.h>
+#include <CBrowserForm.h>
+#include <CBrowserGraphics.h>
+#include <CBrowserHistory.h>
+#include <CBrowserIFace.h>
+#include <CBrowserImage.h>
+#include <CBrowserLink.h>
+#include <CBrowserMisc.h>
+#include <CBrowserOutput.h>
+#include <CBrowserRule.h>
+#include <CBrowserScript.h>
+#include <CBrowserSymbol.h>
+#include <CBrowserTable.h>
+#include <CBrowserText.h>
+#include <CBrowserWindow.h>

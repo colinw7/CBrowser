@@ -1,14 +1,20 @@
-#ifndef CHTML_LAYOUT_CELL_H
-#define CHTML_LAYOUT_CELL_H
+#ifndef CHtmlLayoutCell_H
+#define CHtmlLayoutCell_H
 
 #include <CHtmlLayoutTypes.h>
+#include <CHtmlLayoutVisitor.h>
 #include <CAlignType.h>
 #include <vector>
+#include <iostream>
 
-class CHtmlLayoutRedrawData;
+class CHtmlLayoutBox;
 class CHtmlLayoutSubCell;
 
 class CHtmlLayoutCell {
+ public:
+  typedef std::vector<CHtmlLayoutBox *>     Boxes;
+  typedef std::vector<CHtmlLayoutSubCell *> SubCells;
+
  public:
   CHtmlLayoutCell();
  ~CHtmlLayoutCell();
@@ -16,42 +22,47 @@ class CHtmlLayoutCell {
   CHtmlLayoutCell *getLeftCell() const { return left_; }
   CHtmlLayoutCell *getTopCell () const { return top_ ; }
 
-  int getX() const { return x_; }
-  int getY() const { return y_; }
+  int getX() const { return region_.x; }
+  void setX(int x) { region_.x = x; }
 
-  void setX(int x) { x_ = x; }
-  void setY(int y) { y_ = y; }
+  int getY() const { return region_.y; }
+  void setY(int y) { region_.y = y; }
 
-  int getWidth  () const { return width_  ; }
-  int getAscent () const { return ascent_ ; }
-  int getDescent() const { return descent_; }
-  int getHeight () const { return ascent_ + descent_; }
+  int getWidth() const { return region_.width; }
+  void setWidth(int width) { region_.width = width; }
 
-  void setWidth  (int width  ) { width_   = width  ; }
-  void setAscent (int ascent ) { ascent_  = ascent ; }
-  void setDescent(int descent) { descent_ = descent; }
+  int getAscent() const { return region_.ascent ; }
+  void setAscent(int ascent) { region_.ascent = ascent; }
 
-  int getIndentLeft () const { return indent_left_ ; }
+  int getDescent() const { return region_.descent; }
+  void setDescent(int descent) { region_.descent = descent; }
+
+  int getHeight () const { return region_.ascent + region_.descent; }
+
+  int getIndentLeft() const { return indent_left_; }
+  void setIndentLeft (int indent_left ) { indent_left_  = indent_left; }
+
   int getIndentRight() const { return indent_right_; }
-
-  void setIndentLeft (int indent_left ) { indent_left_  = indent_left ; }
   void setIndentRight(int indent_right) { indent_right_ = indent_right; }
 
   CHAlignType getHAlign() const { return halign_; }
-  CVAlignType getVAlign() const { return valign_; }
-
   void setHAlign(CHAlignType halign) { halign_ = halign; }
+
+  CVAlignType getVAlign() const { return valign_; }
   void setVAlign(CVAlignType valign) { valign_ = valign; }
 
   CHtmlLayoutClearType getClear() const { return clear_; }
-
   void setClear(CHtmlLayoutClearType clear) { clear_ = clear; }
 
-  int getNumRedrawDatas();
+  const Boxes &boxes() const { return boxes_; }
 
-  CHtmlLayoutRedrawData *getRedrawData(int i);
+  const SubCells &subCells() const { return sub_cells_; }
 
-  void addRedrawData(CHtmlLayoutRedrawData *redraw_data);
+  int getNumBoxes();
+
+  CHtmlLayoutBox *getBox(int i);
+
+  void addBox(CHtmlLayoutBox *box);
 
   CHtmlLayoutSubCell *getCurrentSubCell() const { return sub_cell_; }
 
@@ -86,138 +97,33 @@ class CHtmlLayoutCell {
 
   void alignAscentDescent(int i1, int i2);
 
-  void redraw(CHtmlLayoutMgr *layout, int x, int y);
+  void redraw(CHtmlLayoutMgr *layout, const CHtmlLayoutRegion &region);
+
+  void accept(CHtmlLayoutVisitor &visitor);
+
+  void printSize(std::ostream &os) {
+    os << "(" << region_.x << "," << region_.y << "," <<
+          region_.x + region_.width << "," << region_.y + region_.ascent + region_.descent << ")";
+  }
 
  private:
   void init();
   void term();
 
  private:
-  typedef std::vector<CHtmlLayoutRedrawData *> RedrawDataList;
-  typedef std::vector<CHtmlLayoutSubCell *>    SubCellList;
-
-  CHtmlLayoutCell      *left_;
-  CHtmlLayoutCell      *top_;
-  int                   x_;
-  int                   y_;
-  int                   width_;
-  int                   ascent_;
-  int                   descent_;
-  int                   indent_left_;
-  int                   indent_right_;
-  bool                  resizable_;
-  CHAlignType           halign_;
-  CVAlignType           valign_;
-  bool                  border_;
-  CHtmlLayoutClearType  clear_;
-  RedrawDataList        redraw_datas_;
-  CHtmlLayoutSubCell   *sub_cell_;
-  SubCellList           sub_cells_;
-};
-
-//-----
-
-class CHtmlLayoutSubCell {
- public:
-  CHtmlLayoutSubCell(CHtmlLayoutCell *parent);
- ~CHtmlLayoutSubCell();
-
-  void init();
-
-  CHtmlLayoutSubCell *getLeftCell() const { return left_; }
-  CHtmlLayoutSubCell *getTopCell () const { return top_ ; }
-
-  int getX() const { return x_; }
-  int getY() const { return y_; }
-
-  void setX(int x) { x_ = x; }
-  void setY(int y) { y_ = y; }
-
-  int getWidth  () const { return width_  ; }
-  int getAscent () const { return ascent_ ; }
-  int getDescent() const { return descent_; }
-  int getHeight () const { return ascent_ + descent_; }
-
-  void setWidth  (int width  ) { width_   = width  ; }
-  void setAscent (int ascent ) { ascent_  = ascent ; }
-  void setDescent(int descent) { descent_ = descent; }
-
-  bool getBreakup() const { return breakup_; }
-
-  CHAlignType getAlign() const { return align_; }
-
-  void setAlign(CHAlignType align) { align_ = align; }
-
-  CHtmlLayoutClearType getClear() const { return clear_; }
-
-  void setClear(CHtmlLayoutClearType clear) { clear_ = clear; }
-
-  int getNumRedrawDatas();
-
-  CHtmlLayoutRedrawData *getRedrawData(int i);
-
-  void addRedrawData(CHtmlLayoutRedrawData *redraw_data);
-
-  static CHtmlLayoutSubCell *newCellBelow(CHtmlLayoutMgr *layout, bool breakup);
-  static CHtmlLayoutSubCell *newCellRight(CHtmlLayoutMgr *layout, bool breakup);
-
-  void redraw(CHtmlLayoutMgr *layout, int x, int y);
-
- private:
-  void term();
-
- private:
-  typedef std::vector<CHtmlLayoutRedrawData *> RedrawDataList;
-
-  CHtmlLayoutCell      *parent_;
-  CHtmlLayoutSubCell   *left_;
-  CHtmlLayoutSubCell   *top_;
-  int                   x_;
-  int                   y_;
-  int                   width_;
-  int                   ascent_;
-  int                   descent_;
-  bool                  breakup_;
-  CHAlignType           align_;
-  CHtmlLayoutClearType  clear_;
-  RedrawDataList        redraw_datas_;
-};
-
-//------
-
-class CHtmlLayoutRedrawData {
- public:
-  CHtmlLayoutRedrawData(CHtmlLayoutCellFormatProc *format_proc,
-                        CHtmlLayoutCellRedrawProc *redraw_proc,
-                        CHtmlLayoutCellFreeProc *free_proc) :
-   format_proc_(format_proc),
-   redraw_proc_(redraw_proc),
-   free_proc_  (free_proc  ) {
-  }
-
- ~CHtmlLayoutRedrawData() {
-    callFreeProc();
-  }
-
-  void callFormatProc(CHtmlLayoutMgr *layout) {
-    if (format_proc_ != 0)
-      format_proc_->execute(layout);
-  }
-
-  void callRedrawProc(CHtmlLayoutMgr *layout, int *x, int *y) {
-    if (redraw_proc_ != 0)
-      redraw_proc_->execute(layout, x, y);
-  }
-
-  void callFreeProc() {
-    if (free_proc_ != 0)
-      free_proc_->execute();
-  }
-
- private:
-  CHtmlLayoutCellFormatProc *format_proc_;
-  CHtmlLayoutCellRedrawProc *redraw_proc_;
-  CHtmlLayoutCellFreeProc   *free_proc_;
+  CHtmlLayoutCell      *left_ { nullptr };
+  CHtmlLayoutCell      *top_ { nullptr };
+  CHtmlLayoutRegion     region_;
+  int                   indent_left_ { 0 };
+  int                   indent_right_ { 0 };
+  bool                  resizable_ { false };
+  CHAlignType           halign_ { CHALIGN_TYPE_NONE };
+  CVAlignType           valign_ { CVALIGN_TYPE_NONE };
+  bool                  border_ { false };
+  CHtmlLayoutClearType  clear_ { CHtmlLayoutClearType::LEFT };
+  Boxes                 boxes_;
+  CHtmlLayoutSubCell   *sub_cell_ { nullptr };
+  SubCells              sub_cells_;
 };
 
 #endif

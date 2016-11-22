@@ -1,4 +1,5 @@
-#include <CBrowserHtmlI.h>
+#include <CBrowserHistory.h>
+#include <CBrowserWindow.h>
 
 CBrowserHistory::
 CBrowserHistory(CBrowserWindow *window) :
@@ -40,7 +41,7 @@ goBack()
 
   url_num_--;
 
-  return(urls_[url_num_ - 1]);
+  return urls_[url_num_ - 1];
 }
 
 std::string
@@ -54,7 +55,7 @@ goForward()
 
   url_num_++;
 
-  return(urls_[url_num_ - 1]);
+  return urls_[url_num_ - 1];
 }
 
 int

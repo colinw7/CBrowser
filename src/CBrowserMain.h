@@ -1,11 +1,16 @@
 #ifndef CBROWSER_MAIN_H
 #define CBROWSER_MAIN_H
 
-class CBrowserIFace;
+#include <CBrowserTypes.h>
+#include <string>
+#include <list>
 
 #define CBrowserMainInst CBrowserMain::getInstance()
 
 class CBrowserMain {
+ public:
+  typedef std::list<CBrowserIFace *> IFaceList;
+
  public:
   static CBrowserMain *getInstance();
 
@@ -19,12 +24,12 @@ class CBrowserMain {
 
   void openDocument(const std::string &fileName);
 
+  IFaceList ifaceList() const { return ifaces_; }
+
  private:
   CBrowserMain();
 
  private:
-  typedef std::list<CBrowserIFace *> IFaceList;
-
   IFaceList ifaces_;
   bool      debug_ { false };
   bool      use_alt_ { false };

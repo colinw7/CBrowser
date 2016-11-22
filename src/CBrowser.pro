@@ -13,6 +13,9 @@ CONFIG += debug
 # Input
 SOURCES += \
 CBrowserBreak.cpp \
+CBrowserCanvas.cpp \
+CBrowserCanvasWidget.cpp \
+CBrowserCeil.cpp \
 CBrowser.cpp \
 CBrowserDocument.cpp \
 CBrowserFile.cpp \
@@ -22,29 +25,50 @@ CBrowserGraphics.cpp \
 CBrowserHistory.cpp \
 CBrowserIFace.cpp \
 CBrowserImage.cpp \
+CBrowserJS.cpp \
+CBrowserLabel.cpp \
 CBrowserLink.cpp \
 CBrowserMain.cpp \
 CBrowserMisc.cpp \
+CBrowserNamedImage.cpp \
+CBrowserObject.cpp \
 CBrowserOutput.cpp \
 CBrowserRule.cpp \
-CBrowserScript.cpp \
 CBrowserSymbol.cpp \
 CBrowserTable.cpp \
 CBrowserText.cpp \
 CBrowserWindow.cpp \
+CBrowserWindowWidget.cpp \
 \
-CHtmlComment.cpp \
-CHtml.cpp \
+CQJCanvasContext2D.cpp \
+CQJCanvas.cpp \
+CQJCanvasFontMetrics.cpp \
+CQJCanvasImageDataArray.cpp \
+CQJCanvasImageData.cpp \
+CQJCanvasLinearGradient.cpp \
+CQJCanvasPattern.cpp \
+CQJCanvasRadialGradient.cpp \
+CQJColorEdit.cpp \
+CQJComboBox.cpp \
+CQJDialog.cpp \
+CQJDocument.cpp \
+CQJEvent.cpp \
+CQJHtmlObj.cpp \
+CQJImage.cpp \
+CQJInput.cpp \
+CQJLineEdit.cpp \
+CQJObject.cpp \
+CQJSlider.cpp \
+CQJWindow.cpp \
+CQJWindowTimer.cpp \
+\
 CHtmlLayoutArea.cpp \
+CHtmlLayoutBox.cpp \
 CHtmlLayoutCell.cpp \
 CHtmlLayoutMgr.cpp \
-CHtmlNamedChar.cpp \
-CHtmlParser.cpp \
-CHtmlTag.cpp \
-CHtmlTagDef.cpp \
-CHtmlText.cpp \
-CHtmlToken.cpp \
-CHtmlUtil.cpp \
+CHtmlLayoutSubCell.cpp \
+\
+CQHistoryLineEdit.cpp \
 \
 CRomanNumber.cpp \
 \
@@ -53,45 +77,70 @@ CPrint.cpp \
 CUrl.cpp \
 
 HEADERS += \
-CBrowserBreakI.h \
-CBrowserDocumentI.h \
-CBrowserFileI.h \
-CBrowserFontI.h \
-CBrowserFormI.h \
-CBrowserGraphicsI.h \
-CBrowserHistoryI.h \
+CBrowserBreak.h \
+CBrowserCanvas.h \
+CBrowserCanvasWidget.h \
+CBrowserCeil.h \
+CBrowserData.h \
+CBrowserDocument.h \
+CBrowserFile.h \
+CBrowserFont.h \
+CBrowserForm.h \
+CBrowserGraphics.h \
+CBrowserHistory.h \
 CBrowserHtmlI.h \
-CBrowserIFaceI.h \
-CBrowserImageI.h \
-CBrowserLinkI.h \
+CBrowserIFace.h \
+CBrowserImage.h \
+CBrowserJS.h \
+CBrowserLabel.h \
+CBrowserLink.h \
 CBrowserMain.h \
-CBrowserMiscI.h \
-CBrowserOutputI.h \
-CBrowserRuleI.h \
-CBrowserScriptI.h \
-CBrowserSymbolI.h \
-CBrowserTableI.h \
-CBrowserTextI.h \
-CBrowserTypesI.h \
-CBrowserWindowI.h \
+CBrowserMisc.h \
+CBrowserNamedImage.h \
+CBrowserObject.h \
+CBrowserOutput.h \
+CBrowserPixmaps.h \
+CBrowserRule.h \
+CBrowserSymbol.h \
+CBrowserTable.h \
+CBrowserText.h \
+CBrowserTypes.h \
+CBrowserWindow.h \
+CBrowserWindowWidget.h \
 \
-CHtmlComment.h \
-CHtml.h \
-CHtmlI.h \
+CQJCanvasContext2D.h \
+CQJCanvasFontMetrics.h \
+CQJCanvas.h \
+CQJCanvasImageDataArray.h \
+CQJCanvasImageData.h \
+CQJCanvasLinearGradient.h \
+CQJCanvasPattern.h \
+CQJCanvasRadialGradient.h \
+CQJColorEdit.h \
+CQJComboBox.h \
+CQJDialog.h \
+CQJDocument.h \
+CQJEvent.h \
+CQJHtmlObj.h \
+CQJImage.h \
+CQJInput.h \
+CQJLineEdit.h \
+CQJObject.h \
+CQJSlider.h \
+CQJUtil.h \
+CQJWindow.h \
+CQJWindowTimer.h \
+\
 CHtmlLayoutArea.h \
+CHtmlLayoutBox.h \
 CHtmlLayoutCell.h \
 CHtmlLayout.h \
 CHtmlLayoutMgr.h \
+CHtmlLayoutSubCell.h \
 CHtmlLayoutTypes.h \
-CHtmlLib.h \
-CHtmlNamedChar.h \
-CHtmlParser.h \
-CHtmlTagDef.h \
-CHtmlTag.h \
-CHtmlText.h \
-CHtmlToken.h \
-CHtmlTypes.h \
-CHtmlUtil.h \
+CHtmlLayoutVisitor.h \
+\
+CQHistoryLineEdit.h \
 \
 CRomanNumber.h \
 \
@@ -106,6 +155,9 @@ LIB_DIR     = ../lib
 INCLUDEPATH += \
 . \
 ../include \
+../../CJavaScript/include \
+../../CJson/include \
+../../CHtml/include \
 ../../CQUtil/include \
 ../../CImageLib/include \
 ../../CFont/include \
@@ -124,6 +176,9 @@ INCLUDEPATH += \
 
 unix:LIBS += \
 -L$$LIB_DIR \
+-L../../CHtml/lib \
+-L../../CJson/lib \
+-L../../CJavaScript/lib \
 -L../../CQUtil/lib \
 -L../../CImageLib/lib \
 -L../../CFont/lib \
@@ -139,6 +194,6 @@ unix:LIBS += \
 -L../../CUtil/lib \
 -L../../COS/lib \
 -L../../CRGBName/lib \
--lCQUtil -lCImageLib -lCFont -lCCeil -lCArgs -lCConfig -lCReadLine -lCFile \
--lCFileUtil -lCStrUtil -lCGlob -lCRegExp -lCRGBName -lCUtil -lCOS \
+-lCJavaScript -lCJson -lCHtml -lCQUtil -lCImageLib -lCFont -lCCeil -lCArgs -lCConfig -lCReadLine \
+-lCFile -lCFileUtil -lCStrUtil -lCGlob -lCRegExp -lCRGBName -lCUtil -lCOS \
 -ljpeg -lpng -lcurses -ltre

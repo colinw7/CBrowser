@@ -1,27 +1,20 @@
-#include <CBrowserHtmlI.h>
+#include <CBrowserBreak.h>
+#include <CBrowserWindow.h>
 
 CBrowserBreak::
 CBrowserBreak(CBrowserWindow *window, CHtmlLayoutClearType clear) :
- window_(window), clear_(clear)
+ CBrowserObject(Type::BREAK), window_(window), clear_(clear)
 {
-  format_proc_ = new CBrowserFormatProc<CBrowserBreak>(this);
-  redraw_proc_ = NULL;
-  free_proc_   = new CBrowserFreeProc<CBrowserBreak>(this);
-
-  window->addCellRedrawData(format_proc_, free_proc_);
 }
 
 CBrowserBreak::
 ~CBrowserBreak()
 {
-  delete format_proc_;
-  delete redraw_proc_;
-  delete free_proc_;
 }
 
 void
 CBrowserBreak::
-formatProc()
+format(CHtmlLayoutMgr *)
 {
   CHtmlLayoutSubCell *sub_cell =
     CHtmlLayoutSubCell::newCellBelow(window_->getLayoutMgr(), false);
@@ -35,22 +28,11 @@ formatProc()
 
   //----
 
-  delete redraw_proc_;
-
-  redraw_proc_ = new CBrowserRedrawProc<CBrowserBreak>(this);
-
-  window_->addSubCellRedrawData(redraw_proc_);
+  window_->addSubCellRedrawData(this);
 }
 
 void
 CBrowserBreak::
-redrawProc(int *, int *)
+draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &)
 {
-}
-
-void
-CBrowserBreak::
-freeProc()
-{
-  delete this;
 }

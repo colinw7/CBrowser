@@ -1,4 +1,6 @@
-#include <CBrowserHtmlI.h>
+#include <CBrowserMain.h>
+#include <CBrowserIFace.h>
+#include <CBrowserWindow.h>
 
 #include <CQApp.h>
 
@@ -41,10 +43,10 @@ openDocument(const std::string &fileName)
 
   iface->init();
 
+  ifaces_.push_back(iface);
+
   if (fileName != "")
     iface->getWindow()->setDocument(fileName);
 
   iface->show();
-
-  ifaces_.push_back(iface);
 }

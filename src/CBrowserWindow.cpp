@@ -1,48 +1,86 @@
-#include <CBrowserHtmlI.h>
+#include <CBrowserWindow.h>
+#include <CBrowserDocument.h>
+#include <CBrowserHistory.h>
+#include <CBrowserIFace.h>
+#include <CBrowserWindowWidget.h>
+#include <CBrowserFont.h>
+#include <CBrowserMain.h>
+#include <CBrowserBreak.h>
+#include <CBrowserCanvas.h>
+#include <CBrowserImage.h>
+#include <CBrowserNamedImage.h>
+#include <CBrowserLabel.h>
+#include <CBrowserLink.h>
+#include <CBrowserRule.h>
+#include <CBrowserSymbol.h>
+#include <CBrowserTable.h>
+#include <CBrowserText.h>
+#include <CBrowserJS.h>
 #include <CRGBName.h>
+#include <CEnv.h>
+
+class CHtmlLayoutPrintVisitor : public CHtmlLayoutVisitor {
+ public:
+  void enter(CHtmlLayoutArea *area) {
+    std::cout << prefix_ << "<area ";
+    area->printSize(std::cout); std::cout << ">" << std::endl;
+    enterBlock();
+  }
+  void leave(CHtmlLayoutArea *) {
+    leaveBlock();
+    std::cout << prefix_ << "</area>" << std::endl;
+  }
+
+  void enter(CHtmlLayoutCell *cell) {
+    std::cout << prefix_ << "<cell ";
+    cell->printSize(std::cout); std::cout << ">" << std::endl;
+    enterBlock();
+  }
+  void leave(CHtmlLayoutCell *) {
+    leaveBlock();
+    std::cout << prefix_ << "</cell>" << std::endl;
+  }
+
+  void enter(CHtmlLayoutSubCell *subCell) {
+    std::cout << prefix_ << "<subCell ";
+    subCell->printSize(std::cout); std::cout << ">" << std::endl;
+    enterBlock();
+  }
+  void leave(CHtmlLayoutSubCell *) {
+    leaveBlock();
+    std::cout << prefix_ << "</subCell>" << std::endl;
+  }
+
+  void enter(CHtmlLayoutBox *box) {
+    CBrowserObject *obj = dynamic_cast<CBrowserObject *>(box);
+    if (! obj) return;
+    std::cout << prefix_; obj->print(std::cout); std::cout << std::endl;
+  }
+
+  void enterBlock() {
+    prefix_ += " ";
+  }
+
+  void leaveBlock() {
+    prefix_ = prefix_.substr(0, prefix_.size() - 1);
+  }
+
+ private:
+  std::string prefix_;
+};
 
 std::list<CBrowserWindow *>  CBrowserWindow::window_list_;
 std::string                  CBrowserWindow::default_font_face_ = "";
 std::string                  CBrowserWindow::window_target_     = "";
-CBrowserLink                *CBrowserWindow::mouse_link_        = NULL;
+CBrowserLink                *CBrowserWindow::mouse_link_        = nullptr;
 
 CBrowserWindow::
-CBrowserWindow(const std::string &filename) :
-  name_              (""),
-  document_          (NULL),
-  iface_             (NULL),
-  canvas_            (NULL),
-  x_                 (0),
-  y_                 (0),
-  width_             (0),
-  height_            (0),
-  left_margin_       (0),
-  top_margin_        (0),
-  bg_image_          (),
-  bg_fixed_          (false),
-  layout_mgr_        (NULL),
-  area_data_         (NULL),
-  font_              (),
-  font_face_stack_   (),
-  font_face_list_    (),
-  current_font_face_ (NULL),
-  base_font_size_    (0),
-  current_font_color_(0,0,0),
-  current_font_style_(0),
-  current_font_size_ (0),
-  history_           (NULL)
+CBrowserWindow(const std::string &filename)
 {
   init();
 
-  setDocument(filename);
-
-  window_list_.push_back(this);
-}
-
-CBrowserWindow::
-CBrowserWindow()
-{
-  init();
+  if (filename != "")
+    setDocument(filename);
 
   window_list_.push_back(this);
 }
@@ -52,7 +90,7 @@ CBrowserWindow::
 {
   window_list_.remove(this);
 
-  HtmlFreeLinks(this);
+  document_->freeLinks();
 
   freeFonts();
 
@@ -72,13 +110,13 @@ init()
 
   window_target_ = "";
 
-  mouse_link_ = NULL;
+  mouse_link_ = nullptr;
 
   name_     = "";
-  document_ = NULL;
+  document_ = nullptr;
 
-  iface_  = NULL;
-  canvas_ = NULL;
+  iface_ = nullptr;
+  w_     = nullptr;
 
   x_      = LEFT_MARGIN;
   y_      = TOP_MARGIN;
@@ -94,7 +132,11 @@ init()
   layout_mgr_ = new CHtmlLayoutMgr();
   area_data_  = new CHtmlLayoutArea();
 
-  current_font_face_  = NULL;
+  tableMgr_ = new CBrowserTableMgr(this);
+
+  linkMgr_ = new CBrowserLinkMgr(this);
+
+  current_font_face_  = nullptr;
   base_font_size_     = 3;
   current_font_style_ = CFONT_STYLE_NORMAL;
   current_font_size_  = 3;
@@ -114,8 +156,8 @@ void
 CBrowserWindow::
 setIFace(CBrowserIFace *iface)
 {
-  iface_  = iface;
-  canvas_ = iface_->getCanvas();
+  iface_ = iface;
+  w_     = iface_->widget();
 }
 
 void
@@ -143,12 +185,12 @@ void
 CBrowserWindow::
 startFontFace(const std::string &face)
 {
-  if (current_font_face_ != NULL)
+  if (current_font_face_)
     font_face_stack_.push_back(current_font_face_);
 
   current_font_face_ = lookupFontFace(face);
 
-  if (current_font_face_ == NULL)
+  if (! current_font_face_)
     return;
 
   base_font_size_     = 3;
@@ -169,7 +211,7 @@ endFontFace()
 
   font_face_stack_.pop_back();
 
-  if (current_font_face_ == NULL)
+  if (! current_font_face_)
     return;
 
   setFontStyle();
@@ -179,7 +221,7 @@ std::string
 CBrowserWindow::
 getCurrentFontFace() const
 {
-  if (current_font_face_ == NULL)
+  if (! current_font_face_)
     return "helvetica";
 
   return current_font_face_->getFace();
@@ -196,7 +238,7 @@ CBrowserFontFace *
 CBrowserWindow::
 lookupFontFace(const std::string &face)
 {
-  CBrowserFontFace *font_face = NULL;
+  CBrowserFontFace *font_face = nullptr;
 
   std::vector<CBrowserFontFace *>::iterator pfont1 = font_face_list_.begin();
   std::vector<CBrowserFontFace *>::iterator pfont2 = font_face_list_.end  ();
@@ -277,7 +319,7 @@ int
 CBrowserWindow::
 getFontSize()
 {
-  return(current_font_size_ + 1);
+  return (current_font_size_ + 1);
 }
 
 void
@@ -312,8 +354,6 @@ CBrowserWindow::
 setFontColor(const std::string &colorName)
 {
   current_font_color_ = CRGBName::toRGBA(colorName);
-
-  HtmlSetTextColor(current_font_color_);
 }
 
 std::string
@@ -363,7 +403,7 @@ void
 CBrowserWindow::
 setFontStyle()
 {
-  if (current_font_face_ == NULL)
+  if (! current_font_face_)
     return;
 
   int size = current_font_size_ + base_font_size_ - 3;
@@ -393,6 +433,205 @@ freeFonts()
   for ( ; pface1 != pface2; ++pface1)
     delete (*pface1);
 }
+
+//------
+
+void
+CBrowserWindow::
+addBreak(CHtmlLayoutClearType clear)
+{
+  CBrowserBreak *breaker = new CBrowserBreak(this, clear);
+
+  addCellRedrawData(breaker);
+}
+
+void
+CBrowserWindow::
+addCanvas(const CBrowserCanvasData &canvasData)
+{
+  CBrowserCanvas *canvas = new CBrowserCanvas(this, canvasData);
+
+  addCellRedrawData(canvas);
+
+  addObject(canvasData.id, canvas);
+}
+
+void
+CBrowserWindow::
+addLabel(const std::string &text, int width, CHAlignType align, const CRGBA &color)
+{
+  CBrowserLabel *label = new CBrowserLabel(this, text, width, align, color);
+
+  addCellRedrawData(label);
+
+  //addObject(id, label);
+}
+
+void
+CBrowserWindow::
+addText(const std::string &str, const CRGBA &color, bool underline, bool strike,
+        CBrowserTextPlaceType place, bool breakup, bool format)
+{
+  CBrowserText *text =
+    new CBrowserText(this, str, color, underline, strike, place, breakup, format);
+
+  addCellRedrawData(text);
+}
+
+void
+CBrowserWindow::
+addText(CBrowserText *draw_text, const std::string &text)
+{
+  int ascent, descent;
+
+  getTextHeight(draw_text->getFont(), &ascent, &descent);
+
+  updateSubCellHeight(ascent, descent);
+
+  int width;
+
+  getTextWidth(draw_text->getFont(), text, &width);
+
+  updateSubCellWidth(width);
+
+  /*----------*/
+
+  CBrowserText *draw_text1 = new CBrowserText(this, *draw_text, text);
+
+  addSubCellRedrawData(draw_text1);
+}
+
+void
+CBrowserWindow::
+addSymbol(CBrowserSymbolType type)
+{
+  int width;
+  int ascent;
+  int descent;
+
+  getTextSize("X", &width, &ascent, &descent);
+
+  CBrowserSymbol *symbol = new CBrowserSymbol(this, type, width, ascent);
+
+  addCellRedrawData(symbol);
+}
+
+void
+CBrowserWindow::
+addRule(const CBrowserRuleData &data)
+{
+  CHtmlLayoutCell::newCellBelow(getLayoutMgr());
+
+  /*-------------*/
+
+  CBrowserRule *rule = new CBrowserRule(this, data);
+
+  addCellRedrawData(rule);
+
+  /*-------------*/
+
+  CHtmlLayoutCell::newCellBelow(getLayoutMgr());
+}
+
+void
+CBrowserWindow::
+addImage(const CBrowserImageData &imageData)
+{
+  if (imageData.src.substr(0, 6) == "_html_") {
+    addNamedImage(imageData.src.substr(6));
+    return;
+  }
+
+  //---
+
+  CImageFileSrc file(imageData.src);
+
+  CImagePtr image = CImageMgrInst->createImage(file);
+
+  if (image.isValid() && imageData.width != -1 && imageData.height != -1 &&
+      ((int) image->getWidth () != imageData.width ||
+       (int) image->getHeight() != imageData.height)) {
+    CImagePtr image1 = image->resize(imageData.width, imageData.height);
+
+    image = image1;
+  }
+
+  if (! image.isValid()) {
+    if (imageData.alt != "" && CBrowserMainInst->getUseAlt()) {
+      addText(imageData.alt, currentFontColor(), /*underline*/false,
+              /*strike*/false, /*place*/ CBrowserTextPlaceType::NORMAL,
+              /*breakup*/false, /*format*/true);
+      return;
+    }
+
+    image = CBrowserNamedImage::genNoImage();
+  }
+
+  if (! image)
+    return;
+
+  CBrowserImage *imageObj =
+    new CBrowserImage(this, image, imageData.align, imageData.border,
+                      imageData.width, imageData.height, imageData.hspace, imageData.vspace);
+
+  addCellRedrawData(imageObj);
+}
+
+void
+CBrowserWindow::
+addNamedImage(const std::string &name)
+{
+  CImagePtr image = CBrowserNamedImage::lookup(name);
+
+  if (! image)
+    return;
+
+  CBrowserImage *imageObj =
+    new CBrowserImage(this, image, CBrowserImageAlign::ABSBOTTOM, 0, -1, -1, 0, 0);
+
+  addCellRedrawData(imageObj);
+}
+
+void
+CBrowserWindow::
+addObject(const std::string &id, CBrowserObject *obj)
+{
+  objects_[id] = obj;
+
+  CBrowserJSInst->addHtmlObject(obj);
+}
+
+CBrowserObject *
+CBrowserWindow::
+getObject(const std::string &id) const
+{
+  auto p = objects_.find(id);
+
+  if (p == objects_.end())
+    return nullptr;
+
+  return (*p).second;
+}
+
+//------
+
+void
+CBrowserWindow::
+addScript(const std::string &text)
+{
+  scripts_.push_back(text);
+}
+
+void
+CBrowserWindow::
+runScripts()
+{
+  for (const auto &s : scripts_) {
+    CBrowserJSInst->runScript(this, s);
+  }
+}
+
+//------
 
 CHtmlLayoutArea *
 CBrowserWindow::
@@ -435,48 +674,21 @@ updateSubCellHeight(int ascent, int descent)
 
 void
 CBrowserWindow::
-addCellRedrawData(CHtmlLayoutCellFormatProc *format_proc,
-                  CHtmlLayoutCellFreeProc *free_proc)
+addCellRedrawData(CHtmlLayoutBox *box)
 {
   CHtmlLayoutCell *cell = getCurrentCell();
 
-  CHtmlLayoutRedrawData *redraw_data =
-    new CHtmlLayoutRedrawData(format_proc,
-                              (CHtmlLayoutCellRedrawProc *) NULL,
-                              free_proc);
-
-  cell->addRedrawData(redraw_data);
+  cell->addBox(box);
 }
 
 void
 CBrowserWindow::
-addSubCellRedrawData(CHtmlLayoutCellRedrawProc *redraw_proc)
+addSubCellRedrawData(CHtmlLayoutBox *box)
 {
   CHtmlLayoutSubCell *sub_cell = getCurrentSubCell();
 
-  CHtmlLayoutRedrawData *redraw_data =
-    new CHtmlLayoutRedrawData((CHtmlLayoutCellFormatProc *) NULL,
-                              redraw_proc,
-                              (CHtmlLayoutCellFreeProc *) NULL);
-
   if (sub_cell)
-    sub_cell->addRedrawData(redraw_data);
-}
-
-void
-CBrowserWindow::
-addSubCellRedrawData(CHtmlLayoutCellRedrawProc *redraw_proc,
-                     CHtmlLayoutCellFreeProc *free_proc)
-{
-  CHtmlLayoutSubCell *sub_cell = getCurrentSubCell();
-
-  CHtmlLayoutRedrawData *redraw_data =
-    new CHtmlLayoutRedrawData((CHtmlLayoutCellFormatProc *) NULL,
-                              redraw_proc,
-                              free_proc);
-
-  if (sub_cell)
-    sub_cell->addRedrawData(redraw_data);
+    sub_cell->addBox(box);
 }
 
 void
@@ -515,43 +727,53 @@ outputDocument()
   if (! document_)
     return;
 
-  HtmlFreeLinks(this);
+  document_->freeLinks();
 
-  /*-------------*/
+  //---
 
   layout_mgr_->init();
 
   area_data_->init();
 
-  /*-------------*/
+  //---
 
-  layout_mgr_->startArea(area_data_);
+  startArea(area_data_);
 
-  /*-------------*/
+  //---
 
   CHtmlLayoutCell::newCellBelow(layout_mgr_);
 
-  /*-------------*/
+  //---
 
-  mouse_link_ = NULL;
+  mouse_link_ = nullptr;
 
-  /*-------------*/
+  //---
 
   startFontFace(default_font_face_);
 
   setFontColor("#000000");
 
-  /*-------------*/
+  //---
 
   document_->output();
 
-  /*----------------*/
+  //---
 
-  layout_mgr_->endArea();
+  endArea();
 
-  /*----------------*/
+  //---
+
+  runScripts();
+
+  //---
 
   resize();
+
+  //---
+
+  //CHtmlLayoutPrintVisitor printVistor;
+
+  //area_data_->accept(printVistor);
 }
 
 void
@@ -564,17 +786,17 @@ recalc()
 
   x_      = left_margin_;
   y_      = top_margin_;
-  width_  = canvas_->width () - 2*left_margin_;
-  height_ = canvas_->height() - 2*top_margin_;
+  width_  = w_->width () - 2*left_margin_;
+  height_ = w_->height() - 2*top_margin_;
 
-  HtmlDeleteLinkRects(this);
+  linkMgr()->deleteLinkRects();
 
   /*----------------*/
 
   area_data_->setX     (left_margin_);
   area_data_->setY     (top_margin_ );
-  area_data_->setWidth (canvas_->width () - 2*left_margin_);
-  area_data_->setHeight(canvas_->height() - 2*top_margin_ );
+  area_data_->setWidth (w_->width () - 2*left_margin_);
+  area_data_->setHeight(w_->height() - 2*top_margin_ );
 
   area_data_->format(layout_mgr_);
 
@@ -601,10 +823,9 @@ resize()
   /*----------------*/
 
   if (window_target_ != "") {
-    int x;
-    int y;
+    int x, y;
 
-    if (HtmlGetDestLinkPos(this, window_target_, &x, &y))
+    if (linkMgr()->getDestLinkPos(window_target_, &x, &y))
       iface_->scrollTo(x, y);
   }
 
@@ -617,7 +838,16 @@ void
 CBrowserWindow::
 redraw()
 {
-  canvas_->update();
+  w_->update();
+
+  const QObjectList &objs = w_->children();
+
+  for (int i = 0; i < objs.length(); ++i) {
+    QWidget *w = qobject_cast<QWidget *>(objs[i]);
+
+    if (w)
+      w->update();
+  }
 }
 
 void
@@ -708,7 +938,7 @@ skipLine()
 {
   CHtmlLayoutCell::newCellBelow(layout_mgr_);
 
-  HtmlDrawLabel(this, " ", 1, CHALIGN_TYPE_LEFT);
+  addLabel(" ", 1, CHALIGN_TYPE_LEFT, current_font_color_);
 
   CHtmlLayoutCell::newCellBelow(layout_mgr_);
 }
@@ -794,18 +1024,18 @@ bool
 CBrowserWindow::
 hoverLink(int x, int y, std::string &link_name)
 {
-  CBrowserLink *link = HtmlGetSourceLink(this, x, y);
+  CBrowserLink *link = linkMgr()->getSourceLink(x, y);
 
   if (mouse_link_ == link)
     return false;
 
-  if (link != NULL) {
+  if (link) {
     mouse_link_ = link;
 
     link_name = link->getTitle();
   }
   else {
-    mouse_link_ = NULL;
+    mouse_link_ = nullptr;
 
     link_name = "";
   }
@@ -819,9 +1049,9 @@ bool
 CBrowserWindow::
 activateLink(int x, int y)
 {
-  CBrowserLink *link = HtmlGetSourceLink(this, x, y);
+  CBrowserLink *link = linkMgr()->getSourceLink(x, y);
 
-  if (link != NULL)
+  if (link)
     gotoDocument(link->getDest());
 
   return true;
@@ -858,49 +1088,56 @@ void
 CBrowserWindow::
 drawImage(int x, int y, const CImagePtr &image)
 {
-  canvas_->drawImage(x, y, image);
+  w_->drawImage(x, y, image);
+}
+
+void
+CBrowserWindow::
+drawImage(int x, int y, const QImage &image)
+{
+  w_->drawImage(x, y, image);
 }
 
 void
 CBrowserWindow::
 drawRectangle(int x1, int y1, int x2, int y2)
 {
-  canvas_->drawRectangle(x1, y1, x2, y2);
+  w_->drawRectangle(x1, y1, x2, y2);
 }
 
 void
 CBrowserWindow::
 fillRectangle(int x1, int y1, int x2, int y2)
 {
-  canvas_->fillRectangle(x1, y1, x2, y2);
+  w_->fillRectangle(x1, y1, x2, y2);
 }
 
 void
 CBrowserWindow::
 drawCircle(int x, int y, int r)
 {
-  canvas_->drawCircle(x, y, r);
+  w_->drawCircle(x, y, r);
 }
 
 void
 CBrowserWindow::
 fillCircle(int x, int y, int r)
 {
-  canvas_->fillCircle(x, y, r);
+  w_->fillCircle(x, y, r);
 }
 
 void
 CBrowserWindow::
 drawLine(int x1, int y1, int x2, int y2)
 {
-  canvas_->drawLine(x1, y1, x2, y2);
+  w_->drawLine(x1, y1, x2, y2);
 }
 
 void
 CBrowserWindow::
 drawString(int x, int y, const std::string &str)
 {
-  canvas_->drawString(x, y, str);
+  w_->drawString(x, y, str);
 }
 
 void
@@ -908,35 +1145,69 @@ CBrowserWindow::
 drawOutline(int x, int y, int width, int height, const std::string &color_name)
 {
   if (CEnvInst.exists("HTML_OUTLINE"))
-    canvas_->drawOutline(x, y, width, height, color_name);
+    w_->drawOutline(x, y, width, height, color_name);
+}
+
+void
+CBrowserWindow::
+drawOutline(int x, int y, int width, int height, const CRGBA &c)
+{
+  if (CEnvInst.exists("HTML_OUTLINE"))
+    w_->drawOutline(x, y, width, height, c);
 }
 
 void
 CBrowserWindow::
 drawBorder(int x, int y, int width, int height, CBrowserBorderType type)
 {
-  canvas_->drawBorder(x, y, width, height, type);
+  w_->drawBorder(x, y, width, height, type);
 }
 
 void
 CBrowserWindow::
 drawHRule(int x1, int x2, int y, int height)
 {
-  canvas_->drawHRule(x1, x2, y, height);
+  w_->drawHRule(x1, x2, y, height);
 }
 
 void
 CBrowserWindow::
 setForeground(const CRGBA &fg)
 {
-  canvas_->setForeground(fg);
+  w_->setForeground(fg);
 }
 
 void
 CBrowserWindow::
 setFont(CFontPtr font)
 {
-  canvas_->setFont(font);
+  w_->setFont(font);
+}
+
+void
+CBrowserWindow::
+getTextSize(const std::string &text, int *width, int *ascent, int *descent) const
+{
+  CFontPtr font = getFont();
+
+  *width   = font->getStringWidth(text);
+  *ascent  = font->getCharAscent();
+  *descent = font->getCharDescent();
+}
+
+void
+CBrowserWindow::
+getTextWidth(CFontPtr font, const std::string &text, int *width) const
+{
+  *width = font->getStringWidth(text);
+}
+
+void
+CBrowserWindow::
+getTextHeight(CFontPtr font, int *ascent, int *descent) const
+{
+  *ascent  = font->getCharAscent();
+  *descent = font->getCharDescent();
 }
 
 void
