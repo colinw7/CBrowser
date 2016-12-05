@@ -10,8 +10,8 @@
 CBrowserImage::
 CBrowserImage(CBrowserWindow *window, const CImagePtr &image, CBrowserImageAlign align,
               int border, int width, int height, int hspace, int vspace) :
- CBrowserObject(Type::IMAGE), window_(window), image_(image), align_(align), border_(border),
- width_(width), height_(height), hspace_(hspace), vspace_(vspace)
+ CBrowserObject(CHtmlTagId::IMG), window_(window), image_(image), align_(align),
+ border_(border), width_(width), height_(height), hspace_(hspace), vspace_(vspace)
 {
   link_ = window->linkMgr()->getCurrentLink();
 }
@@ -25,7 +25,7 @@ void
 CBrowserImage::
 format(CHtmlLayoutMgr *)
 {
-  CHtmlLayoutSubCell::newCellRight(window_->getLayoutMgr(), true);
+  window_->newSubCellRight(true);
 
   CHtmlLayoutSubCell *sub_cell = window_->getCurrentSubCell();
 
@@ -36,18 +36,16 @@ format(CHtmlLayoutMgr *)
   else
     sub_cell->setAlign(CHALIGN_TYPE_NONE);
 
-  /*-------------*/
+  //---
 
   int hspace = std::max(hspace_, border_);
   int vspace = std::max(vspace_, border_);
 
-  /*-------------*/
+  //---
 
-  if      (align_ == CBrowserImageAlign::TOP ||
-           align_ == CBrowserImageAlign::TEXTTOP)
+  if      (align_ == CBrowserImageAlign::TOP || align_ == CBrowserImageAlign::TEXTTOP)
     window_->updateSubCellHeight(vspace, image_->getHeight() + vspace);
-  else if (align_ == CBrowserImageAlign::MIDDLE ||
-           align_ == CBrowserImageAlign::ABSMIDDLE)
+  else if (align_ == CBrowserImageAlign::MIDDLE || align_ == CBrowserImageAlign::ABSMIDDLE)
     window_->updateSubCellHeight((image_->getHeight() + 1)/2 + vspace,
                                   image_->getHeight()     /2 + vspace);
   else
@@ -55,7 +53,7 @@ format(CHtmlLayoutMgr *)
 
   window_->updateSubCellWidth(image_->getWidth() + 2*hspace);
 
-  /*-------------*/
+  //---
 
   window_->addSubCellRedrawData(this);
 }

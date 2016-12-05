@@ -31,7 +31,7 @@ CBrowserFormMgr(CBrowserDocument *document) :
 
 void
 CBrowserFormMgr::
-startForm(const std::string &name, int method, const std::string &action)
+startForm(const std::string &name, CBrowserFormMethodType method, const std::string &action)
 {
   if (currentForm())
     endForm();
@@ -80,19 +80,21 @@ endSelect()
   setCurrentSelect(nullptr);
 }
 
-void
+CBrowserFormOption *
 CBrowserFormMgr::
-startOption(const std::string &value, int selected)
+startOption(const std::string &value, bool selected)
 {
   if (! currentForm() || ! currentSelect())
-    return;
+    return 0;
 
   if (currentOption())
     endOption("????");
 
-  CBrowserFormOption *option = new CBrowserFormOption(value, selected);
+  CBrowserFormOption *option = new CBrowserFormOption(document_, value, selected);
 
   setCurrentOption(option);
+
+  return option;
 }
 
 void
@@ -343,7 +345,7 @@ addTextInput(const std::string &name, const std::string &value, const std::strin
 CBrowserFormFileUpload::
 CBrowserFormFileUpload(CBrowserDocument *document, const std::string &name,
                        const std::string &value, int size, int maxlength) :
- CBrowserFormInput(document, CBrowserFormInputType::FILE, name, value),
+ CBrowserFormInput(document, CHtmlTagId::INPUT, CBrowserFormInputType::FILE, name, value),
  size_(size), maxlength_(maxlength)
 {
   if (name_ == "")
@@ -379,7 +381,7 @@ createWidget(CBrowserWindow *window)
 
     button->setText("Browse ...");
 
-    QObject::connect(button, SIGNAL(clicked), this, SLOT(buttonProc()));
+    QObject::connect(button, SIGNAL(clicked()), this, SLOT(buttonProc()));
 
     hlayout->addWidget(button);
 
@@ -414,7 +416,8 @@ buttonProc()
 CBrowserFormRadio::
 CBrowserFormRadio(CBrowserDocument *document, const std::string &name,
                   const std::string &value, int checked) :
- CBrowserFormInput(document, CBrowserFormInputType::RADIO_BUTTON, name, value),
+ CBrowserFormInput(document, CHtmlTagId::INPUT, CBrowserFormInputType::RADIO_BUTTON,
+                   name, value),
  checked_(checked)
 {
   if (name_ == "")
@@ -439,10 +442,12 @@ createWidget(CBrowserWindow *window)
     if (checked_)
       radio->setChecked(true);
 
-    QObject::connect(radio, SIGNAL(clicked()), this, SLOT(buttonProc));
+    QObject::connect(radio, SIGNAL(clicked()), this, SLOT(buttonProc()));
 
-    width_  = widget_->width () + 4;
-    height_ = widget_->height() + 4;
+    QSize size = widget_->sizeHint();
+
+    width_  = size.width () + 4;
+    height_ = size.height() + 4;
   }
 
   window->updateSubCellHeight(height_/2, height_/2);
@@ -454,6 +459,7 @@ CBrowserFormRadio::
 drawWidget(CBrowserWindow *, const CHtmlLayoutRegion &region)
 {
   widget_->move(region.x + 2, region.y + 2);
+  widget_->resize(width_ - 4, height_ - 4);
 }
 
 void
@@ -470,7 +476,7 @@ buttonProc()
 
   int num = form_->getNumInputs();
 
-  for (int i = 1; i <= num; i++) {
+  for (int i = 0; i < num; i++) {
     CBrowserFormInput *input1 = form_->getInput(i);
 
     if (input1            == this      ||
@@ -492,7 +498,7 @@ CBrowserFormRange::
 CBrowserFormRange(CBrowserDocument *document, const std::string &name,
                   const std::string &value, const std::string &min,
                   const std::string &max, const std::string &step) :
- CBrowserFormInput(document, CBrowserFormInputType::RANGE, name, value)
+ CBrowserFormInput(document, CHtmlTagId::INPUT, CBrowserFormInputType::RANGE, name, value)
 {
   if (name_ == "")
     name_ = "range";
@@ -555,7 +561,7 @@ drawWidget(CBrowserWindow *, const CHtmlLayoutRegion &region)
 
 CBrowserForm::
 CBrowserForm(const std::string &name, CBrowserDocument *document,
-             int method, const std::string &action) :
+             CBrowserFormMethodType method, const std::string &action) :
  name_(name), document_(document), method_(method), action_(action)
 {
   target_   = "";
@@ -568,7 +574,7 @@ resetProc()
 {
   int num = getNumInputs();
 
-  for (int i = 1; i <= num; i++) {
+  for (int i = 0; i < num; i++) {
     CBrowserFormInput *input = getInput(i);
 
     input->reset();
@@ -588,7 +594,7 @@ submitProc()
 
   int num = getNumInputs();
 
-  for (int i = 1; i <= num; i++) {
+  for (int i = 0; i < num; i++) {
     CBrowserFormInput *input = getInput(i);
 
     input->submit(url);
@@ -602,8 +608,8 @@ submitProc()
 /*---------------------*/
 
 CBrowserFormOption::
-CBrowserFormOption(const std::string &value, int selected) :
- value_(value), selected_(selected)
+CBrowserFormOption(CBrowserDocument *document, const std::string &value, bool selected) :
+ CBrowserObject(CHtmlTagId::OPTION), document_(document), value_(value), selected_(selected)
 {
   text_ = "";
 }
@@ -611,9 +617,9 @@ CBrowserFormOption(const std::string &value, int selected) :
 /*---------------------*/
 
 CBrowserFormInput::
-CBrowserFormInput(CBrowserDocument *document, CBrowserFormInputType type,
+CBrowserFormInput(CBrowserDocument *document, CHtmlTagId id, CBrowserFormInputType type,
                   const std::string &name, const std::string &value) :
- CBrowserObject(Type::FORM_INPUT), document_(document), type_(type), name_(name), value_(value)
+ CBrowserObject(id), document_(document), type_(type), name_(name), value_(value)
 {
   form_ = document->formMgr()->currentForm();
 
@@ -652,7 +658,7 @@ format(CHtmlLayoutMgr *)
 
   CBrowserWindow *window = document_->getWindow();
 
-  CHtmlLayoutSubCell::newCellRight(window->getLayoutMgr(), true);
+  window->newSubCellRight(true);
 
   /*----*/
 
@@ -703,7 +709,7 @@ onChangeProc()
 CBrowserFormButton::
 CBrowserFormButton(CBrowserDocument *document, const std::string &name,
                    const std::string &value) :
- CBrowserFormInput(document, CBrowserFormInputType::BUTTON, name, value)
+ CBrowserFormInput(document, CHtmlTagId::INPUT, CBrowserFormInputType::BUTTON, name, value)
 {
   if (name_ == "")
     name_ = "button";
@@ -750,7 +756,8 @@ drawWidget(CBrowserWindow *, const CHtmlLayoutRegion &region)
 CBrowserFormCheckBox::
 CBrowserFormCheckBox(CBrowserDocument *document, const std::string &name,
                      const std::string &value, int checked) :
- CBrowserFormInput(document, CBrowserFormInputType::CHECKBOX, name, value), checked_(checked)
+ CBrowserFormInput(document, CHtmlTagId::INPUT, CBrowserFormInputType::CHECKBOX, name, value),
+ checked_(checked)
 {
   if (name_ == "")
     name_ = "checkbox";
@@ -795,7 +802,7 @@ CBrowserFormImage::
 CBrowserFormImage(CBrowserDocument *document, const std::string &name,
                   const std::string &value, const std::string &src,
                   const CImagePtr &image, CBrowserImageAlign align) :
- CBrowserFormInput(document, CBrowserFormInputType::IMAGE, name, value),
+ CBrowserFormInput(document, CHtmlTagId::INPUT, CBrowserFormInputType::IMAGE, name, value),
  src_(src), image_(image), align_(align)
 {
   if (name_ == "")
@@ -896,7 +903,8 @@ drawWidget(CBrowserWindow *window, const CHtmlLayoutRegion &region)
 CBrowserFormPassword::
 CBrowserFormPassword(CBrowserDocument *document, const std::string &name,
                      const std::string &value, int size, int maxlength) :
- CBrowserFormInput(document, CBrowserFormInputType::PASSWORD_TEXT, name, value),
+ CBrowserFormInput(document, CHtmlTagId::INPUT, CBrowserFormInputType::PASSWORD_TEXT,
+                   name, value),
  size_(size), maxlength_(maxlength)
 {
   if (name_ == "")
@@ -964,7 +972,7 @@ submit(std::string &url)
 CBrowserFormHidden::
 CBrowserFormHidden(CBrowserDocument *document, const std::string &name,
                    const std::string &value) :
- CBrowserFormInput(document, CBrowserFormInputType::HIDDEN, name, value)
+ CBrowserFormInput(document, CHtmlTagId::INPUT, CBrowserFormInputType::HIDDEN, name, value)
 {
   if (name_ == "")
     name_ = "hidden";
@@ -1000,7 +1008,7 @@ CBrowserFormText::
 CBrowserFormText(CBrowserDocument *document, const std::string &name, const std::string &value,
                  const std::string &classStr, const int size, int maxlength,
                  const std::string &placeholder) :
- CBrowserFormInput(document, CBrowserFormInputType::TEXT, name, value),
+ CBrowserFormInput(document, CHtmlTagId::INPUT, CBrowserFormInputType::TEXT, name, value),
  classStr_(classStr), size_(size), maxlength_(maxlength), placeholder_(placeholder)
 {
   if (name_ == "")
@@ -1098,7 +1106,7 @@ CBrowserFormTextarea::
 CBrowserFormTextarea(CBrowserDocument *document, const std::string &name,
                      const std::string &value, int rows, int cols,
                      CBrowserFormTextAreaWrapType wrap) :
- CBrowserFormInput(document, CBrowserFormInputType::TEXTAREA, name, value),
+ CBrowserFormInput(document, CHtmlTagId::TEXTAREA, CBrowserFormInputType::TEXTAREA, name, value),
  rows_(rows), cols_(cols), wrap_(wrap)
 {
   if (name_ == "")
@@ -1162,7 +1170,8 @@ reset()
 CBrowserFormReset::
 CBrowserFormReset(CBrowserDocument *document, const std::string &name,
                   const std::string &value) :
- CBrowserFormInput(document, CBrowserFormInputType::RESET_BUTTON, name, value)
+ CBrowserFormInput(document, CHtmlTagId::INPUT, CBrowserFormInputType::RESET_BUTTON,
+                   name, value)
 {
   if (name_ == "")
     name_ = "input";
@@ -1181,7 +1190,7 @@ createWidget(CBrowserWindow *window)
 
     widget_ = button;
 
-    QObject::connect(button, SIGNAL(clicked()), this, SLOT(resetProc));
+    QObject::connect(button, SIGNAL(clicked()), this, SLOT(resetProc()));
 
     if (value_ != "")
       button->setText(value_.c_str());
@@ -1208,7 +1217,7 @@ drawWidget(CBrowserWindow *, const CHtmlLayoutRegion &region)
 CBrowserFormSelect::
 CBrowserFormSelect(CBrowserDocument *document, const std::string &name,
                    const std::string &value, int size, int multiple) :
- CBrowserFormInput(document, CBrowserFormInputType::SELECT, name, value),
+ CBrowserFormInput(document, CHtmlTagId::INPUT, CBrowserFormInputType::SELECT, name, value),
  size_(size), multiple_(multiple)
 {
   if (name_ == "")
@@ -1309,7 +1318,8 @@ drawWidget(CBrowserWindow *, const CHtmlLayoutRegion &region)
 CBrowserFormSubmit::
 CBrowserFormSubmit(CBrowserDocument *document, const std::string &name,
                    const std::string &value) :
- CBrowserFormInput(document, CBrowserFormInputType::SUBMIT_BUTTON, name, value)
+ CBrowserFormInput(document, CHtmlTagId::INPUT, CBrowserFormInputType::SUBMIT_BUTTON,
+                   name, value)
 {
   if (name_ == "")
     name_ = "submit";

@@ -28,12 +28,22 @@ CQJHtmlObj::
 CQJHtmlObj(CJavaScript *js, CBrowserObject *htmlObj) :
  CQJObject(js, CQJHtmlObjType::instance(js)), htmlObj_(htmlObj)
 {
+  init();
 }
 
 CQJHtmlObj::
 CQJHtmlObj(CJavaScript *js, CBrowserObject *htmlObj, const CJObjTypeP &type) :
  CQJObject(js, type), htmlObj_(htmlObj)
 {
+  init();
+}
+
+void
+CQJHtmlObj::
+init()
+{
+  objType_->addObjFunction(js_, "appendChild", objType_);
+  objType_->addObjFunction(js_, "insertBefore", objType_);
 }
 
 CJValueP

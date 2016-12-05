@@ -1,5 +1,4 @@
 #include <CQJCanvasPattern.h>
-#include <CJavaScript.h>
 
 CJObjTypeP CQJCanvasPatternType::type_;
 

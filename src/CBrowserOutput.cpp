@@ -1,4 +1,6 @@
 #include <CBrowserOutput.h>
+#include <CBrowserOutputList.h>
+#include <CBrowserAddress.h>
 #include <CBrowserBreak.h>
 #include <CBrowserWindow.h>
 #include <CBrowserText.h>
@@ -8,9 +10,11 @@
 #include <CBrowserTable.h>
 #include <CBrowserForm.h>
 #include <CBrowserRule.h>
+#include <CBrowserHeader.h>
 #include <CBrowserImage.h>
 #include <CBrowserCanvas.h>
 #include <CBrowserMisc.h>
+#include <CBrowserStyle.h>
 #include <CBrowserSymbol.h>
 #include <CBrowserMain.h>
 #include <CBrowserCeil.h>
@@ -19,15 +23,6 @@
 #include <CRomanNumber.h>
 #include <CRGBName.h>
 
-enum class CBrowserOutputListType {
-  NONE,
-  UL,
-  OL,
-  DIR,
-  MENU,
-  DL
-};
-
 enum class CBrowserOutputFontFlag {
   NONE  = 0,
   FACE  = (1<<0),
@@ -35,43 +30,18 @@ enum class CBrowserOutputFontFlag {
   SIZE  = (1<<2)
 };
 
-typedef void (*CBrowserOutputProc)
-                (CBrowserWindow *window, CHtmlTag *tag);
+typedef CBrowserObject *(*CBrowserStartOutputProc)
+                           (CBrowserWindow *window, CHtmlTag *tag);
+typedef void            (*CBrowserEndOutputProc)
+                           (CBrowserWindow *window, CHtmlTag *tag);
 
 //------
 
 class CBrowserOutputData {
  public:
-  CHtmlTagId         id;
-  CBrowserOutputProc start_proc;
-  CBrowserOutputProc end_proc;
-};
-
-//------
-
-class CBrowserOutputList {
- public:
-  CBrowserOutputList(CBrowserOutputListType type) :
-   type_(type), symbol_(""), item_num_(1), compact_(false) {
-  }
-
-  CBrowserOutputListType getType() const { return type_; }
-
-  const std::string &getSymbol() const { return symbol_; }
-
-  void setSymbol(const std::string &symbol) { symbol_ = symbol; }
-
-  int  getItemNum() const { return item_num_; }
-  void setItemNum(int item_num) { item_num_ = item_num; }
-
-  bool getCompact() const { return compact_; }
-  void setCompact(bool compact) { compact_ = compact; }
-
- private:
-  CBrowserOutputListType type_ { CBrowserOutputListType::NONE };
-  std::string            symbol_;
-  int                    item_num_ { 0 };
-  bool                   compact_ { false };
+  CHtmlTagId              id;
+  CBrowserStartOutputProc startProc;
+  CBrowserEndOutputProc   endProc;
 };
 
 //------
@@ -117,39 +87,19 @@ class CBrowserOutputFont {
 //------
 
 struct CBrowserScriptData {
-  bool        active   = false;
   std::string language = "";
   std::string type     = "";
   std::string text     = "";
 
   void reset() {
-    active   = false;
     language = "";
     type     = "";
     text     = "";
   }
 };
 
-struct CBrowserTextData {
-  CRGBA                 color;
-  bool                  underline = false;
-  bool                  strike    = false;
-  CBrowserTextPlaceType place     = CBrowserTextPlaceType::NORMAL;
-  bool                  breakup   = true;
-  bool                  format    = true;
-};
-
-static CBrowserOutputList                *current_list    = nullptr;
-static std::vector<CBrowserOutputList *>  list_stack;
-static CBrowserScriptData                 scriptData;
-static CBrowserTextData                   textData;
-static bool                               in_title        = false;
-static bool                               in_option       = false;
-static std::string                        option_text     = "";
-static bool                               in_textarea     = false;
-static std::string                        textarea_text   = "";
-static bool                               in_dd           = false;
-static bool                               in_dt           = false;
+static CBrowserScriptData scriptData;
+static CBrowserTextData   textData;
 
 std::vector<CBrowserOutputFont *> CBrowserOutputFont::font_stack_;
 
@@ -157,132 +107,129 @@ std::vector<CBrowserBreak *> breakers;
 
 //------
 
-static void CBrowserOutputAStartTag         (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputAEndTag           (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputAddressStartTag   (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputAddressEndTag     (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputBStartTag         (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputBEndTag           (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputBasefontStartTag  (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputBasefontEndTag    (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputBigStartTag       (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputBigEndTag         (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputBlinkStartTag     (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputBlinkEndTag       (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputBlockquoteStartTag(CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputBlockquoteEndTag  (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputBodyStartTag      (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputBodyEndTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputBrTag             (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputCanvasStartTag    (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputCanvasEndTag      (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputCaptionStartTag   (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputCaptionEndTag     (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputCenterStartTag    (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputCenterEndTag      (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputCiteStartTag      (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputCiteEndTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputCodeStartTag      (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputCodeEndTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputDdStartTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputDdEndTag          (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputDfnStartTag       (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputDfnEndTag         (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputDirStartTag       (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputDirEndTag         (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputDivStartTag       (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputDivEndTag         (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputDlStartTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputDlEndTag          (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputDtStartTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputDtEndTag          (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputEmStartTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputEmEndTag          (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputFontStartTag      (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputFontEndTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputFormStartTag      (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputFormEndTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputH1StartTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputH1EndTag          (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputH2StartTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputH2EndTag          (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputH3StartTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputH3EndTag          (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputH4StartTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputH4EndTag          (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputH5StartTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputH5EndTag          (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputH6StartTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputH6EndTag          (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputHeadStartTag      (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputHeadEndTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputHrTag             (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputHtmlStartTag      (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputHtmlEndTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputIStartTag         (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputIEndTag           (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputImgTag            (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputInputTag          (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputKbdStartTag       (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputKbdEndTag         (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputLiStartTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputLiEndTag          (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputMenuStartTag      (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputMenuEndTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputNobrStartTag      (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputNobrEndTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputOlStartTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputOlEndTag          (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputOptionStartTag    (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputOptionEndTag      (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputPStartTag         (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputPEndTag           (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputPreStartTag       (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputPreEndTag         (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputSampStartTag      (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputSampEndTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputScriptStartTag    (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputScriptEndTag      (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputSelectStartTag    (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputSelectEndTag      (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputSmallStartTag     (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputSmallEndTag       (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputStrikeStartTag    (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputStrikeEndTag      (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputStrongStartTag    (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputStrongEndTag      (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputSubStartTag       (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputSubEndTag         (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputSupStartTag       (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputSupEndTag         (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputTableStartTag     (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputTableEndTag       (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputTdStartTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputTdEndTag          (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputTextareaStartTag  (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputTextareaEndTag    (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputThStartTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputThEndTag          (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputTitleStartTag     (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputTitleEndTag       (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputTrStartTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputTrEndTag          (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputTtStartTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputTtEndTag          (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputUStartTag         (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputUEndTag           (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputUlStartTag        (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputUlEndTag          (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputVarStartTag       (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputVarEndTag         (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputWbrTag            (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputXmpStartTag       (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputXmpEndTag         (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputSkipStartTag      (CBrowserWindow *, CHtmlTag *);
-static void CBrowserOutputSkipEndTag        (CBrowserWindow *, CHtmlTag *);
-
-static void CBrowserOutputNewLine (CBrowserWindow *);
-static void CBrowserOutputSkipLine(CBrowserWindow *);
+static CBrowserObject *CBrowserOutputAStartTag         (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputAEndTag           (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputAddressStartTag   (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputAddressEndTag     (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputBStartTag         (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputBEndTag           (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputBasefontStartTag  (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputBasefontEndTag    (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputBigStartTag       (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputBigEndTag         (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputBlinkStartTag     (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputBlinkEndTag       (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputBlockquoteStartTag(CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputBlockquoteEndTag  (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputBodyStartTag      (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputBodyEndTag        (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputBrTag             (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputCanvasStartTag    (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputCanvasEndTag      (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputCaptionStartTag   (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputCaptionEndTag     (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputCenterStartTag    (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputCenterEndTag      (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputCiteStartTag      (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputCiteEndTag        (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputCodeStartTag      (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputCodeEndTag        (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputDdStartTag        (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputDdEndTag          (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputDfnStartTag       (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputDfnEndTag         (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputDirStartTag       (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputDirEndTag         (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputDivStartTag       (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputDivEndTag         (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputDlStartTag        (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputDlEndTag          (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputDtStartTag        (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputDtEndTag          (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputEmStartTag        (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputEmEndTag          (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputFontStartTag      (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputFontEndTag        (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputFormStartTag      (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputFormEndTag        (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputH1StartTag        (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputH1EndTag          (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputH2StartTag        (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputH2EndTag          (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputH3StartTag        (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputH3EndTag          (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputH4StartTag        (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputH4EndTag          (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputH5StartTag        (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputH5EndTag          (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputH6StartTag        (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputH6EndTag          (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputHeadStartTag      (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputHeadEndTag        (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputHrTag             (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputHtmlStartTag      (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputHtmlEndTag        (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputIStartTag         (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputIEndTag           (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputImgTag            (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputInputTag          (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputKbdStartTag       (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputKbdEndTag         (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputLiStartTag        (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputLiEndTag          (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputMenuStartTag      (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputMenuEndTag        (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputNobrStartTag      (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputNobrEndTag        (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputOlStartTag        (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputOlEndTag          (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputOptionStartTag    (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputOptionEndTag      (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputPStartTag         (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputPEndTag           (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputPreStartTag       (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputPreEndTag         (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputSampStartTag      (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputSampEndTag        (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputScriptStartTag    (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputScriptEndTag      (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputSelectStartTag    (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputSelectEndTag      (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputSmallStartTag     (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputSmallEndTag       (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputStrikeStartTag    (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputStrikeEndTag      (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputStrongStartTag    (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputStrongEndTag      (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputSubStartTag       (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputSubEndTag         (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputSupStartTag       (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputSupEndTag         (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputTableStartTag     (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputTableEndTag       (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputTdStartTag        (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputTdEndTag          (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputTextareaStartTag  (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputTextareaEndTag    (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputThStartTag        (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputThEndTag          (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputTitleStartTag     (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputTitleEndTag       (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputTrStartTag        (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputTrEndTag          (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputTtStartTag        (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputTtEndTag          (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputUStartTag         (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputUEndTag           (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputUlStartTag        (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputUlEndTag          (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputVarStartTag       (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputVarEndTag         (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputWbrTag            (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputXmpStartTag       (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputXmpEndTag         (CBrowserWindow *, CHtmlTag *);
+static CBrowserObject *CBrowserOutputSkipStartTag      (CBrowserWindow *, CHtmlTag *);
+static void            CBrowserOutputSkipEndTag        (CBrowserWindow *, CHtmlTag *);
 
 //------
 
@@ -375,6 +322,8 @@ output_datas[] = {
 
 static uint num_output_datas = sizeof(output_datas)/sizeof(CBrowserOutputData);
 
+//------
+
 CBrowserOutputData *
 CBrowserGetOutputData(CHtmlTagId id)
 {
@@ -393,6 +342,40 @@ CBrowserGetOutputData(CHtmlTagId id)
     return nullptr;
 
   return (*p).second;
+}
+
+//------
+
+void
+CBrowserParseHAlignOption(CBrowserWindow *window, const std::string &name, CHAlignType &align)
+{
+  std::string lname = CStrUtil::toLower(name);
+
+  if      (lname == "left")
+    align = CHALIGN_TYPE_LEFT;
+  else if (lname == "center")
+    align = CHALIGN_TYPE_CENTER;
+  else if (lname == "right")
+    align = CHALIGN_TYPE_RIGHT;
+  else
+    window->displayError("Illegal Horizontal Alignment '%s'\n", name.c_str());
+}
+
+void
+CBrowserParseVAlignOption(CBrowserWindow *window, const std::string &name, CVAlignType &align)
+{
+  std::string lname = CStrUtil::toLower(name);
+
+  if      (lname == "top")
+    align = CVALIGN_TYPE_TOP;
+  else if (lname == "center")
+    align = CVALIGN_TYPE_CENTER;
+  else if (lname == "bottom")
+    align = CVALIGN_TYPE_BOTTOM;
+  else if (lname == "baseline")
+    align = CVALIGN_TYPE_BASELINE;
+  else
+    window->displayError("Illegal Vertical Alignment %s\n", name.c_str());
 }
 
 //------
@@ -462,101 +445,175 @@ CBrowserOutputTag(CBrowserWindow *window, CHtmlTag *tag)
   }
 
   if (tag->isStartTag()) {
-    if (output_data->start_proc)
-      (*output_data->start_proc)(window, tag);
-    else
+    if (! output_data->startProc) {
       window->displayError("Start Tag %s not implemented\n", tag->getName().c_str());
+      return;
+    }
+
+    CBrowserObject *obj = (*output_data->startProc)(window, tag);
+
+    if (! obj) {
+      std::cerr << "No browser object for " << tag->getName().c_str() << std::endl;
+      return;
+    }
+
+    window->startObject(obj);
+
+    if (! output_data->endProc)
+      window->endObject();
   }
   else  {
-    if (output_data->end_proc)
-      (*output_data->end_proc)(window, tag);
-    else
+    if (! output_data->endProc) {
       window->displayError("End Tag %s not implemented\n", tag->getName().c_str());
+      return;
+    }
+
+    int num_options = tag->getNumOptions();
+
+    if (num_options != 0)
+      window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
+
+    (*output_data->endProc)(window, tag);
+
+    window->endObject();
   }
 }
+
+void
+CBrowserFlushTags(CBrowserWindow *window, CHtmlTagId id)
+{
+  CBrowserObject *currentObj = window->currentObj();
+
+  while (currentObj && currentObj->type() != id) {
+    CBrowserOutputData *output_data = CBrowserGetOutputData(currentObj->type());
+
+    if (! output_data || ! output_data->endProc) {
+      window->displayError("End Tag %s not implemented\n", currentObj->typeName().c_str());
+      continue;
+    }
+
+    (*output_data->endProc)(window, 0);
+
+    window->endObject();
+  }
+}
+
+//------
 
 void
 CBrowserOutputText(CBrowserWindow *window, CHtmlText *text)
 {
   std::string str = text->getText();
 
-  if      (in_title)
-    window->getDocument()->setTitle(str);
-  else if (scriptData.active) {
-    scriptData.text += str;
+  std::string sstr = CStrUtil::stripSpaces(str);
+
+  //if (sstr == "") return;
+
+  CBrowserObject *currentObj = window->currentObj();
+
+  if (currentObj) {
+    if      (currentObj->type() == CHtmlTagId::TITLE)
+      window->getDocument()->setTitle(sstr);
+    else if (currentObj->type() == CHtmlTagId::SCRIPT)
+      scriptData.text += str;
+    else if (currentObj->type() == CHtmlTagId::OPTION) {
+      CBrowserFormOption *option = dynamic_cast<CBrowserFormOption *>(currentObj);
+
+      if (sstr != "")
+        option->setText(option->text() + sstr);
+    }
+    else if (currentObj->type() == CHtmlTagId::TEXTAREA) {
+      CBrowserFormTextarea *textArea = dynamic_cast<CBrowserFormTextarea *>(currentObj);
+
+      textArea->setText(textArea->text() + str);
+    }
+    else if (currentObj->type() == CHtmlTagId::H1 || currentObj->type() == CHtmlTagId::H2 ||
+             currentObj->type() == CHtmlTagId::H3 || currentObj->type() == CHtmlTagId::H4 ||
+             currentObj->type() == CHtmlTagId::H5 || currentObj->type() == CHtmlTagId::H6) {
+      CBrowserHeader *header = dynamic_cast<CBrowserHeader *>(currentObj);
+
+      header->setText(header->text() + str);
+
+      window->addCellRedrawData(header);
+    }
+    else {
+      CBrowserObject *textObj = window->addText(str, textData);
+
+      if (sstr != "")
+        currentObj->addChild(textObj);
+    }
   }
-  else if (in_option)
-    option_text += str;
-  else if (in_textarea)
-    textarea_text += str;
-  else
-    window->addText(str, textData.color, textData.underline, textData.strike,
-                    textData.place, textData.breakup, textData.format);
+  else {
+    window->addText(str, textData);
+  }
+
+  if (currentObj)
+    currentObj->setText(sstr);
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputAStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
-  int         i;
-  std::string href;
-  std::string name;
-  std::string title;
-
-  /*-------------*/
+  CBrowserLinkData linkData;
 
   int num_options = tag->getNumOptions();
 
-  for (i = 0; i < num_options; i++) {
+  for (int i = 0; i < num_options; i++) {
     const CHtmlTagOption *option = tag->getOption(i);
 
-    std::string option_name = option->getName();
+    std::string option_name = CStrUtil::toLower(option->getName());
 
-    if      (CStrUtil::casecmp(option_name, "href") == 0)
-      href = option->getValue();
-    else if (CStrUtil::casecmp(option_name, "methods") == 0)
+    if      (option_name == "download")
       ;
-    else if (CStrUtil::casecmp(option_name, "name") == 0)
-      name = option->getValue();
-    else if (CStrUtil::casecmp(option_name, "rel") == 0)
+    else if (option_name == "href")
+      linkData.href = option->getValue();
+    else if (option_name == "id")
+      linkData.id = option->getValue();
+    else if (option_name == "methods")
       ;
-    else if (CStrUtil::casecmp(option_name, "rev") == 0)
+    else if (option_name == "name")
+      linkData.id = option->getValue();
+    else if (option_name == "rel")
       ;
-    else if (CStrUtil::casecmp(option_name, "target") == 0)
+    else if (option_name == "rev")
       ;
-    else if (CStrUtil::casecmp(option_name, "title") == 0)
-      title = option->getValue();
-    else if (CStrUtil::casecmp(option_name, "urn") == 0)
+    else if (option_name == "target")
+      ;
+    else if (option_name == "type")
+      ;
+    else if (option_name == "title")
+      linkData.title = option->getValue();
+    else if (option_name == "url")
       ;
     else
       window->displayError("Illegal 'a' Option Name '%s'\n", option_name.c_str());
   }
 
-  /*-------------*/
+  //---
 
-  if (href == "" && name == "") {
-    window->displayError("No 'href' or 'name' specified for A Tag'\n");
-    return;
-  }
+  if (linkData.href == "" && linkData.id == "")
+    window->displayError("No 'href' or 'name' specified for 'a' Tag'\n");
 
-  if (href != "") {
-    window->linkMgr()->startSourceLink(href, title);
+  if (linkData.href != "") {
+    window->linkMgr()->startSourceLink(linkData.href, linkData.title);
 
     textData.color = window->getDocument()->getLinkColor();
 
     textData.underline = true;
   }
   else
-    window->linkMgr()->startDestLink(name, title);
+    window->linkMgr()->startDestLink(linkData.id, linkData.title);
+
+  //---
+
+  CBrowserObject *obj = new CBrowserLinkObj(window, linkData);
+
+  return obj;
 }
 
 static void
-CBrowserOutputAEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputAEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   textData.underline = false;
 
   textData.color = window->getDocument()->getFgColor();
@@ -564,7 +621,7 @@ CBrowserOutputAEndTag(CBrowserWindow *window, CHtmlTag *tag)
   window->linkMgr()->endLink();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputAddressStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
@@ -573,20 +630,21 @@ CBrowserOutputAddressStartTag(CBrowserWindow *window, CHtmlTag *tag)
     window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 
   window->startItalic();
+
+  //---
+
+  CBrowserAddress *obj = new CBrowserAddress(window);
+
+  return obj;
 }
 
 static void
-CBrowserOutputAddressEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputAddressEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   window->endItalic();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputBStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
@@ -595,26 +653,27 @@ CBrowserOutputBStartTag(CBrowserWindow *window, CHtmlTag *tag)
     window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 
   window->startBold();
+
+  //---
+
+  CBrowserBStyle *obj = new CBrowserBStyle(window);
+
+  return obj;
 }
 
 static void
-CBrowserOutputBEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputBEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   window->endBold();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputBasefontStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int size;
   int size_flag;
 
-  /*-------------*/
+  //---
 
   int error_code = 1;
 
@@ -639,12 +698,14 @@ CBrowserOutputBasefontStartTag(CBrowserWindow *window, CHtmlTag *tag)
         size = CStrUtil::toInteger(option->getValue());
       else
         window->displayError("Illegal 'basefont' Value for Size %s\n", option->getValue().c_str());
+
+      error_code = 0;
     }
     else
       window->displayError("Illegal 'basefont' Option Name '%s'\n", option_name.c_str());
   }
 
-  /*-------------*/
+  //---
 
   if (error_code == 0) {
     if      (size_flag == 1) {
@@ -660,20 +721,21 @@ CBrowserOutputBasefontStartTag(CBrowserWindow *window, CHtmlTag *tag)
   }
   else
     window->resetBaseFontSize();
+
+  //---
+
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::BASEFONT);
+
+  return obj;
 }
 
 static void
-CBrowserOutputBasefontEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputBasefontEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   window->resetFontSize();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputBigStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
@@ -682,20 +744,21 @@ CBrowserOutputBigStartTag(CBrowserWindow *window, CHtmlTag *tag)
     window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 
   window->increaseFontSize();
+
+  //---
+
+  CBrowserBigStyle *obj = new CBrowserBigStyle(window);
+
+  return obj;
 }
 
 static void
-CBrowserOutputBigEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputBigEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   window->decreaseFontSize();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputBlinkStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
@@ -704,20 +767,21 @@ CBrowserOutputBlinkStartTag(CBrowserWindow *window, CHtmlTag *tag)
     window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 
   window->startBold();
+
+  //---
+
+  CBrowserObject *obj = new CBrowserBlinkStyle(window);
+
+  return obj;
 }
 
 static void
-CBrowserOutputBlinkEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputBlinkEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   window->endBold();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputBlockquoteStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
@@ -728,35 +792,36 @@ CBrowserOutputBlockquoteStartTag(CBrowserWindow *window, CHtmlTag *tag)
   window->indentLeft (2);
   window->indentRight(2);
 
-  CBrowserOutputSkipLine(window);
+  window->skipLine();
 
   window->startItalic();
+
+  //---
+
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::BLOCKQUOTE);
+
+  return obj;
 }
 
 static void
-CBrowserOutputBlockquoteEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputBlockquoteEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   window->endItalic();
 
   window->indentLeft (-2);
   window->indentRight(-2);
 
-  CBrowserOutputSkipLine(window);
+  window->skipLine();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputBodyStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   std::string text;
   std::string bgcolor;
   std::string background;
 
-  /*-------------*/
+  //---
 
   std::string alink      = "red";
   bool        fixed      = false;
@@ -815,7 +880,7 @@ CBrowserOutputBodyStartTag(CBrowserWindow *window, CHtmlTag *tag)
       window->displayError("Illegal 'body' Option Name '%s'\n", option_name.c_str());
   }
 
-  /*-------------*/
+  //---
 
   window->getDocument()->setBgColor(bgcolor);
   window->getDocument()->setFgColor(text   );
@@ -827,18 +892,20 @@ CBrowserOutputBodyStartTag(CBrowserWindow *window, CHtmlTag *tag)
   window->getDocument()->setVLinkColor(vlink);
 
   window->setMargins(leftmargin, topmargin);
+
+  //---
+
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::BODY);
+
+  return obj;
 }
 
 static void
-CBrowserOutputBodyEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputBodyEndTag(CBrowserWindow *, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputBrTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   CHtmlLayoutClearType clear = CHtmlLayoutClearType::NONE;
@@ -864,12 +931,20 @@ CBrowserOutputBrTag(CBrowserWindow *window, CHtmlTag *tag)
       window->displayError("Illegal 'br' Option Name '%s'\n", option_name.c_str());
   }
 
-  /*-------------*/
+  //---
 
-  window->addBreak(clear);
+  CBrowserBreak *breaker = new CBrowserBreak(window, clear);
+
+  window->addCellRedrawData(breaker);
+
+  //---
+
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::BR);
+
+  return obj;
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputCanvasStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserCanvasData data;
@@ -904,9 +979,13 @@ CBrowserOutputCanvasStartTag(CBrowserWindow *window, CHtmlTag *tag)
       window->displayError("Illegal 'canvas' Option Name '%s'\n", option_name.c_str());
   }
 
-  window->addCanvas(data);
+  CBrowserObject *canvas = window->addCanvas(data);
 
-  CBrowserOutputSkipLine(window);
+  window->skipLine();
+
+  //---
+
+  return canvas;
 }
 
 static void
@@ -914,7 +993,7 @@ CBrowserOutputCanvasEndTag(CBrowserWindow *, CHtmlTag *)
 {
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputCaptionStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserTableCaptionData captionData;
@@ -957,22 +1036,21 @@ CBrowserOutputCaptionStartTag(CBrowserWindow *window, CHtmlTag *tag)
   //---
 
   window->tableMgr()->startTableCaption(captionData);
-}
-
-static void
-CBrowserOutputCaptionEndTag(CBrowserWindow *window, CHtmlTag *tag)
-{
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 
   //---
 
-  window->tableMgr()->endTableCaption();
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::CAPTION);
+
+  return obj;
 }
 
 static void
+CBrowserOutputCaptionEndTag(CBrowserWindow *window, CHtmlTag *)
+{
+  window->tableMgr()->endTableCaption();
+}
+
+static CBrowserObject *
 CBrowserOutputCenterStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
@@ -980,25 +1058,26 @@ CBrowserOutputCenterStartTag(CBrowserWindow *window, CHtmlTag *tag)
   if (num_options != 0)
     window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 
-  CBrowserOutputSkipLine(window);
+  window->skipLine();
 
   window->setAlign(CHALIGN_TYPE_CENTER, CVALIGN_TYPE_TOP);
+
+  //---
+
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::CENTER);
+
+  return obj;
 }
 
 static void
-CBrowserOutputCenterEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputCenterEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
-  CBrowserOutputSkipLine(window);
+  window->skipLine();
 
   window->setAlign(CHALIGN_TYPE_LEFT, CVALIGN_TYPE_TOP);
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputCiteStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
@@ -1007,20 +1086,21 @@ CBrowserOutputCiteStartTag(CBrowserWindow *window, CHtmlTag *tag)
     window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 
   window->startItalic();
+
+  //---
+
+  CBrowserCiteStyle *obj = new CBrowserCiteStyle(window);
+
+  return obj;
 }
 
 static void
-CBrowserOutputCiteEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputCiteEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   window->endItalic();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputCodeStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
@@ -1029,27 +1109,32 @@ CBrowserOutputCodeStartTag(CBrowserWindow *window, CHtmlTag *tag)
     window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 
   window->startFontFace("courier");
+
+  //---
+
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::CODE);
+
+  return obj;
 }
 
 static void
-CBrowserOutputCodeEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputCodeEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   window->endFontFace();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputDdStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
-  if (in_dt)
+  CBrowserObject *currentObj = window->currentObj();
+
+  if (currentObj && currentObj->type() == CHtmlTagId::DT)
     CBrowserOutputDtEndTag(window, nullptr);
 
-  if (in_dd)
+  if (currentObj && currentObj->type() == CHtmlTagId::DD)
     CBrowserOutputDdEndTag(window, nullptr);
+
+  //---
 
   int num_options = tag->getNumOptions();
 
@@ -1058,27 +1143,24 @@ CBrowserOutputDdStartTag(CBrowserWindow *window, CHtmlTag *tag)
 
   window->indentLeft(4);
 
-  CBrowserOutputNewLine(window);
+  window->newLine();
 
-  in_dd = true;
+  //---
+
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::DD);
+
+  return obj;
 }
 
 static void
-CBrowserOutputDdEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputDdEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (tag && num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   window->indentLeft(-4);
 
-  CBrowserOutputNewLine(window);
-
-  in_dd = false;
+  window->newLine();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputDfnStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
@@ -1087,28 +1169,28 @@ CBrowserOutputDfnStartTag(CBrowserWindow *window, CHtmlTag *tag)
     window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 
   window->startItalic();
+
+  //---
+
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::DFN);
+
+  return obj;
 }
 
 static void
-CBrowserOutputDfnEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputDfnEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   window->endItalic();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputDirStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
-  if (current_list)
-    list_stack.push_back(current_list);
+  CBrowserOutputList *list = new CBrowserOutputList(CHtmlTagId::DIR);
 
-  current_list = new CBrowserOutputList(CBrowserOutputListType::DIR);
+  CBrowserOutputListMgrInst->startList(list);
 
-  /*-------------*/
+  //---
 
   int num_options = tag->getNumOptions();
 
@@ -1118,7 +1200,7 @@ CBrowserOutputDirStartTag(CBrowserWindow *window, CHtmlTag *tag)
     std::string option_name = option->getName();
 
     if      (CStrUtil::casecmp(option_name, "compact") == 0) {
-      current_list->setCompact(true);
+      list->setCompact(true);
 
       std::string value = option->getValue();
 
@@ -1126,52 +1208,66 @@ CBrowserOutputDirStartTag(CBrowserWindow *window, CHtmlTag *tag)
         window->displayError("No Value needed for Compact\n");
     }
     else if (CStrUtil::casecmp(option_name, "type") == 0)
-      current_list->setSymbol(option->getValue());
+      list->setSymbol(option->getValue());
     else
       window->displayError("Illegal Dir Option Name '%s'\n", option_name.c_str());
   }
 
-  /*-------------*/
+  //---
 
   window->indentLeft(2);
 
-  if (list_stack.empty() || ! current_list->getCompact())
-    CBrowserOutputSkipLine(window);
+  if (CBrowserOutputListMgrInst->listDepth() == 1 || ! list->getCompact())
+    window->skipLine();
   else
-    CBrowserOutputNewLine(window);
+    window->newLine();
+
+  //---
+
+  return list;
 }
 
 static void
-CBrowserOutputDirEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputDirEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   window->indentLeft(-2);
 
-  if (list_stack.empty())
-    CBrowserOutputSkipLine(window);
+  if (CBrowserOutputListMgrInst->listDepth() == 1)
+    window->skipLine();
   else
-    CBrowserOutputNewLine(window);
+    window->newLine();
 
-  /*-------------*/
+  //---
 
-  delete current_list;
-
-  if (! list_stack.empty()) {
-    current_list = list_stack[list_stack.size() - 1];
-
-    list_stack.pop_back();
-  }
-  else
-    current_list = nullptr;
+  CBrowserOutputListMgrInst->endList();
 }
 
-static void
-CBrowserOutputDivStartTag(CBrowserWindow *, CHtmlTag *)
+static CBrowserObject *
+CBrowserOutputDivStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
+  std::string id;
+
+  //---
+
+  int num_options = tag->getNumOptions();
+
+  for (int i = 0; i < num_options; i++) {
+    const CHtmlTagOption *option = tag->getOption(i);
+
+    std::string option_name = option->getName();
+
+    if (CStrUtil::casecmp(option_name, "id") == 0) {
+      id = option->getValue();
+    }
+    else
+      window->displayError("Illegal 'div' Option Name '%s'\n", option_name.c_str());
+  }
+
+  //---
+
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::DIV);
+
+  return obj;
 }
 
 static void
@@ -1179,15 +1275,14 @@ CBrowserOutputDivEndTag(CBrowserWindow *, CHtmlTag *)
 {
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputDlStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
-  if (current_list)
-    list_stack.push_back(current_list);
+  CBrowserOutputList *list = new CBrowserOutputList(CHtmlTagId::DL);
 
-  current_list = new CBrowserOutputList(CBrowserOutputListType::DL);
+  CBrowserOutputListMgrInst->startList(list);
 
-  /*-------------*/
+  //---
 
   int num_options = tag->getNumOptions();
 
@@ -1197,7 +1292,7 @@ CBrowserOutputDlStartTag(CBrowserWindow *window, CHtmlTag *tag)
     std::string option_name = option->getName();
 
     if      (CStrUtil::casecmp(option_name, "compact") == 0) {
-      current_list->setCompact(true);
+      list->setCompact(true);
 
       std::string value = option->getValue();
 
@@ -1205,65 +1300,60 @@ CBrowserOutputDlStartTag(CBrowserWindow *window, CHtmlTag *tag)
         window->displayError("No Value needed for Compact\n");
     }
     else
-      window->displayError("Illegal Dl Option Name '%s'\n", option_name.c_str());
+      window->displayError("Illegal 'dl' Option Name '%s'\n", option_name.c_str());
   }
 
-  /*-------------*/
+  //---
 
   window->indentLeft(2);
 
-  if (list_stack.empty() || ! current_list->getCompact())
-    CBrowserOutputSkipLine(window);
+  if (CBrowserOutputListMgrInst->listDepth() == 1 || ! list->getCompact())
+    window->skipLine();
   else
-    CBrowserOutputNewLine(window);
+    window->newLine();
+
+  //---
+
+  return list;
 }
 
 static void
-CBrowserOutputDlEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputDlEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  if (in_dt)
+  CBrowserObject *currentObj = window->currentObj();
+
+  if (currentObj && currentObj->type() == CHtmlTagId::DT)
     CBrowserOutputDtEndTag(window, nullptr);
 
-  if (in_dd)
+  if (currentObj && currentObj->type() == CHtmlTagId::DD)
     CBrowserOutputDdEndTag(window, nullptr);
 
-  /*-------------*/
-
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
+  //---
 
   window->indentLeft(-2);
 
-  if (list_stack.empty())
-    CBrowserOutputSkipLine(window);
+  if (CBrowserOutputListMgrInst->listDepth() == 1)
+    window->skipLine();
   else
-    CBrowserOutputNewLine(window);
+    window->newLine();
 
-  /*-------------*/
+  //---
 
-  delete current_list;
-
-  if (! list_stack.empty()) {
-    current_list = list_stack[list_stack.size() - 1];
-
-    list_stack.pop_back();
-  }
-  else
-    current_list = nullptr;
+  CBrowserOutputListMgrInst->endList();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputDtStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
-  if (in_dt)
+  CBrowserObject *currentObj = window->currentObj();
+
+  if (currentObj && currentObj->type() == CHtmlTagId::DT)
     CBrowserOutputDtEndTag(window, nullptr);
 
-  if (in_dd)
+  if (currentObj && currentObj->type() == CHtmlTagId::DD)
     CBrowserOutputDdEndTag(window, nullptr);
 
-  /*-------------*/
+  //---
 
   int num_options = tag->getNumOptions();
 
@@ -1272,7 +1362,11 @@ CBrowserOutputDtStartTag(CBrowserWindow *window, CHtmlTag *tag)
 
   window->startBold();
 
-  in_dt = true;
+  //---
+
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::DT);
+
+  return obj;
 }
 
 static void
@@ -1284,11 +1378,9 @@ CBrowserOutputDtEndTag(CBrowserWindow *window, CHtmlTag *tag)
     window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 
   window->endBold();
-
-  in_dt = false;
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputEmStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
@@ -1296,21 +1388,24 @@ CBrowserOutputEmStartTag(CBrowserWindow *window, CHtmlTag *tag)
   if (num_options != 0)
     window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 
+  //---
+
   window->startItalic();
+
+  //---
+
+  CBrowserObject *obj = new CBrowserEmStyle(window);
+
+  return obj;
 }
 
 static void
-CBrowserOutputEmEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputEmEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   window->endItalic();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputFontStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   std::string color = window->getFontColor();
@@ -1321,7 +1416,7 @@ CBrowserOutputFontStartTag(CBrowserWindow *window, CHtmlTag *tag)
 
   CBrowserOutputFont::startFont(font);
 
-  /*-------------*/
+  //---
 
   size = -1;
 
@@ -1361,7 +1456,7 @@ CBrowserOutputFontStartTag(CBrowserWindow *window, CHtmlTag *tag)
       window->displayError("Illegal Font Option Name '%s'\n", option_name.c_str());
   }
 
-  /*-------------*/
+  //---
 
   if (face != "") {
     window->setCurrentFontFace(face);
@@ -1385,18 +1480,17 @@ CBrowserOutputFontStartTag(CBrowserWindow *window, CHtmlTag *tag)
 
     font->setFlag(CBrowserOutputFontFlag::SIZE);
   }
+
+  //---
+
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::FONT);
+
+  return obj;
 }
 
 static void
-CBrowserOutputFontEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputFontEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
-  /*-------------*/
-
   CBrowserOutputFont *font = CBrowserOutputFont::endFont();
 
   if (! font) {
@@ -1413,17 +1507,17 @@ CBrowserOutputFontEndTag(CBrowserWindow *window, CHtmlTag *tag)
   if (font->getFlag(CBrowserOutputFontFlag::SIZE))
     window->setFontSize(font->getSize());
 
-  /*-------------*/
+  //---
 
   delete font;
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputFormStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
-  std::string name   = "";
-  int         method = FORM_METHOD_GET;
-  std::string action = "";
+  std::string            name   = "";
+  CBrowserFormMethodType method = CBrowserFormMethodType::GET;
+  std::string            action = "";
 
   int num_options = tag->getNumOptions();
 
@@ -1438,9 +1532,9 @@ CBrowserOutputFormStartTag(CBrowserWindow *window, CHtmlTag *tag)
       ;
     else if (CStrUtil::casecmp(option_name, "method") == 0) {
       if      (CStrUtil::casecmp(option->getValue(), "get" ) == 0)
-        method = FORM_METHOD_GET;
+        method = CBrowserFormMethodType::GET;
       else if (CStrUtil::casecmp(option->getValue(), "post") == 0)
-        method = FORM_METHOD_POST;
+        method = CBrowserFormMethodType::POST;
       else
         window->displayError("Illegal form method %s\n", option->getValue().c_str());
     }
@@ -1454,22 +1548,21 @@ CBrowserOutputFormStartTag(CBrowserWindow *window, CHtmlTag *tag)
   //----
 
   window->getDocument()->formMgr()->startForm(name, method, action);
+
+  //---
+
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::FORM);
+
+  return obj;
 }
 
 static void
-CBrowserOutputFormEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputFormEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
-  //----
-
   window->getDocument()->formMgr()->endForm();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputH1StartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   CHAlignType align = CHALIGN_TYPE_LEFT;
@@ -1481,51 +1574,38 @@ CBrowserOutputH1StartTag(CBrowserWindow *window, CHtmlTag *tag)
 
     std::string option_name = option->getName();
 
-    if (CStrUtil::casecmp(option_name, "align") == 0) {
-      if      (CStrUtil::casecmp(option->getValue(), "left") == 0)
-        align = CHALIGN_TYPE_LEFT;
-      else if (CStrUtil::casecmp(option->getValue(), "center") == 0)
-        align = CHALIGN_TYPE_CENTER;
-      else if (CStrUtil::casecmp(option->getValue(), "right") == 0)
-        align = CHALIGN_TYPE_RIGHT;
-      else
-        window->displayError("Illegal Header Alignment %s\n", option->getValue().c_str());
-    }
+    if (CStrUtil::casecmp(option_name, "align") == 0)
+      CBrowserParseHAlignOption(window, option->getValue(), align);
     else
       window->displayError("Illegal H1 Option Name '%s'\n", option_name.c_str());
   }
 
-  /*-----------*/
+  //---
 
-  CBrowserOutputSkipLine(window);
+  CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H1, align);
 
-  window->setAlign(align, CVALIGN_TYPE_TOP);
+  header->initFormat();
 
-  window->setFontSize(6);
-
-  window->startBold();
+  return header;
 }
 
 static void
-CBrowserOutputH1EndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputH1EndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
+  CBrowserFlushTags(window, CHtmlTagId::H1);
 
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
+  //---
 
-  /*-----------*/
+  CBrowserObject *currentObj = window->currentObj();
 
-  window->endBold();
+  if (currentObj && currentObj->type() == CHtmlTagId::H1) {
+    CBrowserHeader *header = dynamic_cast<CBrowserHeader *>(currentObj);
 
-  window->resetFontSize();
-
-  CBrowserOutputSkipLine(window);
-
-  window->setAlign(CHALIGN_TYPE_LEFT, CVALIGN_TYPE_TOP);
+    header->termFormat();
+  }
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputH2StartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   CHAlignType align = CHALIGN_TYPE_LEFT;
@@ -1537,51 +1617,38 @@ CBrowserOutputH2StartTag(CBrowserWindow *window, CHtmlTag *tag)
 
     std::string option_name = option->getName();
 
-    if (CStrUtil::casecmp(option_name, "align") == 0) {
-      if      (CStrUtil::casecmp(option->getValue(), "left") == 0)
-        align = CHALIGN_TYPE_LEFT;
-      else if (CStrUtil::casecmp(option->getValue(), "center") == 0)
-        align = CHALIGN_TYPE_CENTER;
-      else if (CStrUtil::casecmp(option->getValue(), "right") == 0)
-        align = CHALIGN_TYPE_RIGHT;
-      else
-        window->displayError("Illegal Header Alignment %s\n", option->getValue().c_str());
-    }
+    if (CStrUtil::casecmp(option_name, "align") == 0)
+      CBrowserParseHAlignOption(window, option->getValue(), align);
     else
       window->displayError("Illegal H2 Option Name '%s'\n", option_name.c_str());
   }
 
-  /*-----------*/
+  //---
 
-  CBrowserOutputSkipLine(window);
+  CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H2, align);
 
-  window->setAlign(align, CVALIGN_TYPE_TOP);
+  header->initFormat();
 
-  window->setFontSize(5);
-
-  window->startBold();
+  return header;
 }
 
 static void
-CBrowserOutputH2EndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputH2EndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
+  CBrowserFlushTags(window, CHtmlTagId::H2);
 
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
+  //---
 
-  /*-----------*/
+  CBrowserObject *currentObj = window->currentObj();
 
-  window->endBold();
+  if (currentObj && currentObj->type() == CHtmlTagId::H2) {
+    CBrowserHeader *header = dynamic_cast<CBrowserHeader *>(currentObj);
 
-  window->resetFontSize();
-
-  CBrowserOutputSkipLine(window);
-
-  window->setAlign(CHALIGN_TYPE_LEFT, CVALIGN_TYPE_TOP);
+    header->termFormat();
+  }
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputH3StartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   CHAlignType align = CHALIGN_TYPE_LEFT;
@@ -1593,51 +1660,38 @@ CBrowserOutputH3StartTag(CBrowserWindow *window, CHtmlTag *tag)
 
     std::string option_name = option->getName();
 
-    if (CStrUtil::casecmp(option_name, "align") == 0) {
-      if      (CStrUtil::casecmp(option->getValue(), "left") == 0)
-        align = CHALIGN_TYPE_LEFT;
-      else if (CStrUtil::casecmp(option->getValue(), "center") == 0)
-        align = CHALIGN_TYPE_CENTER;
-      else if (CStrUtil::casecmp(option->getValue(), "right") == 0)
-        align = CHALIGN_TYPE_RIGHT;
-      else
-        window->displayError("Illegal Header Alignment %s\n", option->getValue().c_str());
-    }
+    if (CStrUtil::casecmp(option_name, "align") == 0)
+      CBrowserParseHAlignOption(window, option->getValue(), align);
     else
       window->displayError("Illegal H3 Option Name '%s'\n", option_name.c_str());
   }
 
-  /*-----------*/
+  //---
 
-  CBrowserOutputSkipLine(window);
+  CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H3, align);
 
-  window->setAlign(align, CVALIGN_TYPE_TOP);
+  header->initFormat();
 
-  window->setFontSize(4);
-
-  window->startBold();
+  return header;
 }
 
 static void
-CBrowserOutputH3EndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputH3EndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
+  CBrowserFlushTags(window, CHtmlTagId::H3);
 
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
+  //---
 
-  /*-----------*/
+  CBrowserObject *currentObj = window->currentObj();
 
-  window->endBold();
+  if (currentObj && currentObj->type() == CHtmlTagId::H3) {
+    CBrowserHeader *header = dynamic_cast<CBrowserHeader *>(currentObj);
 
-  window->resetFontSize();
-
-  CBrowserOutputSkipLine(window);
-
-  window->setAlign(CHALIGN_TYPE_LEFT, CVALIGN_TYPE_TOP);
+    header->termFormat();
+  }
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputH4StartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   CHAlignType align = CHALIGN_TYPE_LEFT;
@@ -1649,51 +1703,38 @@ CBrowserOutputH4StartTag(CBrowserWindow *window, CHtmlTag *tag)
 
     std::string option_name = option->getName();
 
-    if (CStrUtil::casecmp(option_name, "align") == 0) {
-      if      (CStrUtil::casecmp(option->getValue(), "left") == 0)
-        align = CHALIGN_TYPE_LEFT;
-      else if (CStrUtil::casecmp(option->getValue(), "center") == 0)
-        align = CHALIGN_TYPE_CENTER;
-      else if (CStrUtil::casecmp(option->getValue(), "right") == 0)
-        align = CHALIGN_TYPE_RIGHT;
-      else
-        window->displayError("Illegal Header Alignment %s\n", option->getValue().c_str());
-    }
+    if (CStrUtil::casecmp(option_name, "align") == 0)
+      CBrowserParseHAlignOption(window, option->getValue(), align);
     else
       window->displayError("Illegal H4 Option Name '%s'\n", option_name.c_str());
   }
 
-  /*-----------*/
+  //---
 
-  CBrowserOutputSkipLine(window);
+  CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H4, align);
 
-  window->setAlign(align, CVALIGN_TYPE_TOP);
+  header->initFormat();
 
-  window->setFontSize(3);
-
-  window->startBold();
+  return header;
 }
 
 static void
-CBrowserOutputH4EndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputH4EndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
+  CBrowserFlushTags(window, CHtmlTagId::H4);
 
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
+  //---
 
-  /*-----------*/
+  CBrowserObject *currentObj = window->currentObj();
 
-  window->endBold();
+  if (currentObj && currentObj->type() == CHtmlTagId::H4) {
+    CBrowserHeader *header = dynamic_cast<CBrowserHeader *>(currentObj);
 
-  window->resetFontSize();
-
-  CBrowserOutputSkipLine(window);
-
-  window->setAlign(CHALIGN_TYPE_LEFT, CVALIGN_TYPE_TOP);
+    header->termFormat();
+  }
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputH5StartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   CHAlignType align = CHALIGN_TYPE_LEFT;
@@ -1705,51 +1746,38 @@ CBrowserOutputH5StartTag(CBrowserWindow *window, CHtmlTag *tag)
 
     std::string option_name = option->getName();
 
-    if (CStrUtil::casecmp(option_name, "align") == 0) {
-      if      (CStrUtil::casecmp(option->getValue(), "left") == 0)
-        align = CHALIGN_TYPE_LEFT;
-      else if (CStrUtil::casecmp(option->getValue(), "center") == 0)
-        align = CHALIGN_TYPE_CENTER;
-      else if (CStrUtil::casecmp(option->getValue(), "right") == 0)
-        align = CHALIGN_TYPE_RIGHT;
-      else
-        window->displayError("Illegal Header Alignment %s\n", option->getValue().c_str());
-    }
+    if (CStrUtil::casecmp(option_name, "align") == 0)
+      CBrowserParseHAlignOption(window, option->getValue(), align);
     else
       window->displayError("Illegal H5 Option Name '%s'\n", option_name.c_str());
   }
 
-  /*-----------*/
+  //---
 
-  CBrowserOutputSkipLine(window);
+  CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H5, align);
 
-  window->setAlign(align, CVALIGN_TYPE_TOP);
+  header->initFormat();
 
-  window->setFontSize(2);
-
-  window->startBold();
+  return header;
 }
 
 static void
-CBrowserOutputH5EndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputH5EndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
+  CBrowserFlushTags(window, CHtmlTagId::H5);
 
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
+  //---
 
-  /*-----------*/
+  CBrowserObject *currentObj = window->currentObj();
 
-  window->endBold();
+  if (currentObj && currentObj->type() == CHtmlTagId::H5) {
+    CBrowserHeader *header = dynamic_cast<CBrowserHeader *>(currentObj);
 
-  window->resetFontSize();
-
-  CBrowserOutputSkipLine(window);
-
-  window->setAlign(CHALIGN_TYPE_LEFT, CVALIGN_TYPE_TOP);
+    header->termFormat();
+  }
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputH6StartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   CHAlignType align = CHALIGN_TYPE_LEFT;
@@ -1761,69 +1789,58 @@ CBrowserOutputH6StartTag(CBrowserWindow *window, CHtmlTag *tag)
 
     std::string option_name = option->getName();
 
-    if (CStrUtil::casecmp(option_name, "align") == 0) {
-      if      (CStrUtil::casecmp(option->getValue(), "left") == 0)
-        align = CHALIGN_TYPE_LEFT;
-      else if (CStrUtil::casecmp(option->getValue(), "center") == 0)
-        align = CHALIGN_TYPE_CENTER;
-      else if (CStrUtil::casecmp(option->getValue(), "right") == 0)
-        align = CHALIGN_TYPE_RIGHT;
-      else
-        window->displayError("Illegal Header Alignment %s\n", option->getValue().c_str());
-    }
+    if (CStrUtil::casecmp(option_name, "align") == 0)
+      CBrowserParseHAlignOption(window, option->getValue(), align);
     else
       window->displayError("Illegal H6 Option Name '%s'\n", option_name.c_str());
   }
 
-  /*-----------*/
+  //---
 
-  CBrowserOutputSkipLine(window);
+  CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H6, align);
 
-  window->setAlign(align, CVALIGN_TYPE_TOP);
+  header->initFormat();
 
-  window->setFontSize(1);
-
-  window->startBold();
+  return header;
 }
 
 static void
-CBrowserOutputH6EndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputH6EndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
+  CBrowserFlushTags(window, CHtmlTagId::H6);
 
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
+  //---
 
-  /*-----------*/
+  CBrowserObject *currentObj = window->currentObj();
 
-  window->endBold();
+  if (currentObj && currentObj->type() == CHtmlTagId::H6) {
+    CBrowserHeader *header = dynamic_cast<CBrowserHeader *>(currentObj);
 
-  window->resetFontSize();
-
-  CBrowserOutputSkipLine(window);
-
-  window->setAlign(CHALIGN_TYPE_LEFT, CVALIGN_TYPE_TOP);
+    header->termFormat();
+  }
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputHeadStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
 
   if (num_options != 0)
     window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
+
+  //---
+
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::HEAD);
+
+  return obj;
 }
 
 static void
-CBrowserOutputHeadEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputHeadEndTag(CBrowserWindow *, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputHrTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserRuleData ruleData;
@@ -1836,14 +1853,7 @@ CBrowserOutputHrTag(CBrowserWindow *window, CHtmlTag *tag)
     std::string option_name = option->getName();
 
     if      (CStrUtil::casecmp(option_name, "align") == 0) {
-      if      (CStrUtil::casecmp(option->getValue(), "left"  ) == 0)
-        ruleData.align = CHALIGN_TYPE_LEFT;
-      else if (CStrUtil::casecmp(option->getValue(), "center" ) == 0)
-        ruleData.align = CHALIGN_TYPE_CENTER;
-      else if (CStrUtil::casecmp(option->getValue(), "right" ) == 0)
-        ruleData.align = CHALIGN_TYPE_RIGHT;
-      else
-        window->displayError("Illegal Align %s\n", option->getValue().c_str());
+      CBrowserParseHAlignOption(window, option->getValue(), ruleData.align);
     }
     else if (CStrUtil::casecmp(option_name, "noshade") == 0) {
       ruleData.shade = false;
@@ -1867,7 +1877,7 @@ CBrowserOutputHrTag(CBrowserWindow *window, CHtmlTag *tag)
       std::string value = option->getValue();
 
       if (value[len - 1] == '%') {
-        ruleData.unit = UNIT_PERCENT;
+        ruleData.unit = CBrowserUnitsType::PERCENT;
 
         std::string value = value.substr(0, len - 1);
 
@@ -1879,7 +1889,7 @@ CBrowserOutputHrTag(CBrowserWindow *window, CHtmlTag *tag)
         }
       }
       else {
-        ruleData.unit = UNIT_PIXEL;
+        ruleData.unit = CBrowserUnitsType::PIXEL;
 
         if (CStrUtil::isInteger(option->getValue()))
           ruleData.width = CStrUtil::toInteger(option->getValue());
@@ -1893,10 +1903,18 @@ CBrowserOutputHrTag(CBrowserWindow *window, CHtmlTag *tag)
       window->displayError("Illegal 'hr' Option Name '%s'\n", option_name.c_str());
   }
 
-  window->addRule(ruleData);
+  //---
+
+  CBrowserRule *rule = new CBrowserRule(window, ruleData);
+
+  rule->initFormat();
+
+  //---
+
+  return rule;
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputHtmlStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
@@ -1911,18 +1929,22 @@ CBrowserOutputHtmlStartTag(CBrowserWindow *window, CHtmlTag *tag)
     else
       window->displayError("Illegal 'html' Option Name '%s'\n", option_name.c_str());
   }
+
+  //---
+
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::HTML);
+
+  window->setRootObject(obj);
+
+  return obj;
 }
 
 static void
-CBrowserOutputHtmlEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputHtmlEndTag(CBrowserWindow *, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputIStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
@@ -1931,25 +1953,26 @@ CBrowserOutputIStartTag(CBrowserWindow *window, CHtmlTag *tag)
     window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 
   window->startItalic();
+
+  //---
+
+  CBrowserObject *obj = new CBrowserIStyle(window);
+
+  return obj;
 }
 
 static void
-CBrowserOutputIEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputIEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   window->endItalic();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputImgTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserImageData imageData;
 
-  /*-----------*/
+  //---
 
   int num_options = tag->getNumOptions();
 
@@ -2051,15 +2074,17 @@ CBrowserOutputImgTag(CBrowserWindow *window, CHtmlTag *tag)
 
   if (imageData.src == "") {
     window->displayError("No Image Source Specified\n");
-    return;
+    return 0;
   }
 
-  /*-----------*/
+  //---
 
-  window->addImage(imageData);
+  CBrowserObject *obj = window->addImage(imageData);
+
+  return obj;
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputInputTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   std::string align;
@@ -2079,7 +2104,7 @@ CBrowserOutputInputTag(CBrowserWindow *window, CHtmlTag *tag)
   std::string step;
   std::string value;
 
-  /*-----------*/
+  //---
 
   int num_options = tag->getNumOptions();
 
@@ -2142,7 +2167,7 @@ CBrowserOutputInputTag(CBrowserWindow *window, CHtmlTag *tag)
   if (type == "")
     type = "text";
 
-  /*-----------*/
+  //---
 
   if (onclick != "")
     window->getDocument()->formMgr()->setInputOnClick(onclick);
@@ -2177,13 +2202,17 @@ CBrowserOutputInputTag(CBrowserWindow *window, CHtmlTag *tag)
                                                            maxlength, placeholder);
   else {
     window->displayError("Invalid Input Type '%s'\n", type.c_str());
-    return;
+    return 0;
   }
 
-  window->addObject(id, input);
+  input->setId(id);
+
+  //---
+
+  return input;
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputKbdStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
@@ -2192,22 +2221,25 @@ CBrowserOutputKbdStartTag(CBrowserWindow *window, CHtmlTag *tag)
     window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 
   window->startFontFace("courier");
+
+  //---
+
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::KBD);
+
+  return obj;
 }
 
 static void
-CBrowserOutputKbdEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputKbdEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   window->endFontFace();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputLiStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
+  CBrowserOutputList *currentList = CBrowserOutputListMgrInst->currentList();
+
   int num_options = tag->getNumOptions();
 
   for (int i = 0; i < num_options; i++) {
@@ -2215,13 +2247,16 @@ CBrowserOutputLiStartTag(CBrowserWindow *window, CHtmlTag *tag)
 
     std::string option_name = option->getName();
 
-    if      (CStrUtil::casecmp(option_name, "type") == 0)
-      current_list->setSymbol(option->getValue());
+    if      (CStrUtil::casecmp(option_name, "type") == 0) {
+      if (currentList)
+        currentList->setSymbol(option->getValue());
+    }
     else if (CStrUtil::casecmp(option_name, "value") == 0) {
       if (CStrUtil::isInteger(option->getValue())) {
         int item_num = CStrUtil::toInteger(option->getValue());
 
-        current_list->setItemNum(item_num);
+        if (currentList)
+          currentList->setItemNum(item_num);
       }
       else
         window->displayError("Illegal Value for Value %s\n", option->getValue().c_str());
@@ -2231,57 +2266,58 @@ CBrowserOutputLiStartTag(CBrowserWindow *window, CHtmlTag *tag)
       window->displayError("Illegal Li Option Name '%s'\n", option_name.c_str());
   }
 
-  /*-------------*/
+  CHtmlTagId listId = (currentList ? currentList->type() : CHtmlTagId::NONE);
 
-  if (! current_list->getCompact())
-    CBrowserOutputSkipLine(window);
+  //---
+
+  if (! currentList || ! currentList->getCompact())
+    window->skipLine();
   else
-    CBrowserOutputNewLine(window);
+    window->newLine();
 
-  if      (current_list && current_list->getType() == CBrowserOutputListType::OL) {
+  if      (listId == CHtmlTagId::OL) {
     std::string text;
 
-    if      (current_list->getSymbol() == "")
-      text = CStrUtil::toString(current_list->getItemNum());
-    else if (current_list->getSymbol() == "A") {
-      text = CBrowserMisc::integerToAlphabetic(current_list->getItemNum());
+    if      (! currentList)
+      text = "";
+    else if (currentList->getSymbol() == "")
+      text = CStrUtil::toString(currentList->getItemNum());
+    else if (currentList->getSymbol() == "A") {
+      text = CBrowserMisc::integerToAlphabetic(currentList->getItemNum());
 
       CStrUtil::toUpper(text);
     }
-    else if (current_list->getSymbol() == "a") {
-      text = CBrowserMisc::integerToAlphabetic(current_list->getItemNum());
+    else if (currentList->getSymbol() == "a") {
+      text = CBrowserMisc::integerToAlphabetic(currentList->getItemNum());
 
       CStrUtil::toLower(text);
     }
-    else if (current_list->getSymbol() == "I") {
-      CRomanNumber roman(current_list->getItemNum());
+    else if (currentList->getSymbol() == "I") {
+      CRomanNumber roman(currentList->getItemNum());
 
       text = roman.getString();
 
       CStrUtil::toUpper(roman.getString());
     }
-    else if (current_list->getSymbol() == "i") {
-      CRomanNumber roman(current_list->getItemNum());
+    else if (currentList->getSymbol() == "i") {
+      CRomanNumber roman(currentList->getItemNum());
 
       text = roman.getString();
 
       CStrUtil::toLower(text);
     }
-    else if (current_list->getSymbol() == "1")
-      text = CStrUtil::toString(current_list->getItemNum());
+    else if (currentList->getSymbol() == "1")
+      text = CStrUtil::toString(currentList->getItemNum());
     else
-      text = CStrUtil::toString(current_list->getItemNum());
+      text = CStrUtil::toString(currentList->getItemNum());
 
     window->addLabel(text, 4, CHALIGN_TYPE_RIGHT, textData.color);
 
     window->addLabel(". ", 2, CHALIGN_TYPE_LEFT, textData.color);
   }
-  else if (current_list &&
-           (current_list->getType() == CBrowserOutputListType::UL  ||
-            current_list->getType() == CBrowserOutputListType::DIR ||
-            current_list->getType() == CBrowserOutputListType::MENU)) {
-    if      (current_list->getSymbol() == "") {
-      int num = list_stack.size();
+  else if (listId == CHtmlTagId::UL || listId == CHtmlTagId::DIR || listId == CHtmlTagId::MENU) {
+    if      (currentList->getSymbol() == "") {
+      int num = CBrowserOutputListMgrInst->listDepth();
 
       num %= 4;
 
@@ -2294,11 +2330,11 @@ CBrowserOutputLiStartTag(CBrowserWindow *window, CHtmlTag *tag)
 
       window->addSymbol(type);
     }
-    else if (CStrUtil::casecmp(current_list->getSymbol(), "disc"  ) == 0)
+    else if (CStrUtil::casecmp(currentList->getSymbol(), "disc"  ) == 0)
       window->addSymbol(CBrowserSymbolType::DISC);
-    else if (CStrUtil::casecmp(current_list->getSymbol(), "circle") == 0)
+    else if (CStrUtil::casecmp(currentList->getSymbol(), "circle") == 0)
       window->addSymbol(CBrowserSymbolType::CIRCLE);
-    else if (CStrUtil::casecmp(current_list->getSymbol(), "square") == 0)
+    else if (CStrUtil::casecmp(currentList->getSymbol(), "square") == 0)
       window->addSymbol(CBrowserSymbolType::SQUARE);
     else
       window->addSymbol(CBrowserSymbolType::DISC);
@@ -2306,27 +2342,29 @@ CBrowserOutputLiStartTag(CBrowserWindow *window, CHtmlTag *tag)
     window->addLabel(" ", 1, CHALIGN_TYPE_LEFT, textData.color);
   }
 
-  current_list->setItemNum(current_list->getItemNum() + 1);
+  if (currentList)
+    currentList->setItemNum(currentList->getItemNum() + 1);
+
+  //---
+
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::LI);
+
+  return obj;
 }
 
 static void
-CBrowserOutputLiEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputLiEndTag(CBrowserWindow *, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputMenuStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
-  if (current_list)
-    list_stack.push_back(current_list);
+  CBrowserOutputList *list = new CBrowserOutputList(CHtmlTagId::MENU);
 
-  current_list = new CBrowserOutputList(CBrowserOutputListType::MENU);
+  CBrowserOutputListMgrInst->startList(list);
 
-  /*-------------*/
+  //---
 
   int num_options = tag->getNumOptions();
 
@@ -2336,7 +2374,7 @@ CBrowserOutputMenuStartTag(CBrowserWindow *window, CHtmlTag *tag)
     std::string option_name = option->getName();
 
     if      (CStrUtil::casecmp(option_name, "compact") == 0) {
-      current_list->setCompact(true);
+      list->setCompact(true);
 
       std::string value = option->getValue();
 
@@ -2344,50 +2382,41 @@ CBrowserOutputMenuStartTag(CBrowserWindow *window, CHtmlTag *tag)
         window->displayError("No Value needed for Compact\n");
     }
     else if (CStrUtil::casecmp(option_name, "type") == 0)
-      current_list->setSymbol(option->getValue());
+      list->setSymbol(option->getValue());
     else
       window->displayError("Illegal Menu Option Name '%s'\n", option_name.c_str());
   }
 
-  /*-------------*/
+  //---
 
   window->indentLeft(2);
 
-  if (list_stack.empty() || ! current_list->getCompact())
-    CBrowserOutputSkipLine(window);
+  if (CBrowserOutputListMgrInst->listDepth() == 1 || ! list->getCompact())
+    window->skipLine();
   else
-    CBrowserOutputNewLine(window);
+    window->newLine();
+
+  //---
+
+  return list;
 }
 
 static void
-CBrowserOutputMenuEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputMenuEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   window->indentLeft(-2);
 
-  if (list_stack.empty())
-    CBrowserOutputSkipLine(window);
+  if (CBrowserOutputListMgrInst->listDepth() == 1)
+    window->skipLine();
   else
-    CBrowserOutputNewLine(window);
+    window->newLine();
 
-  /*-------------*/
+  //---
 
-  delete current_list;
-
-  if (! list_stack.empty()) {
-    current_list = list_stack[list_stack.size() - 1];
-
-    list_stack.pop_back();
-  }
-  else
-    current_list = nullptr;
+  CBrowserOutputListMgrInst->endList();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputNobrStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
@@ -2396,28 +2425,28 @@ CBrowserOutputNobrStartTag(CBrowserWindow *window, CHtmlTag *tag)
     window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 
   textData.breakup = false;
+
+  //---
+
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::NOBR);
+
+  return obj;
 }
 
 static void
-CBrowserOutputNobrEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputNobrEndTag(CBrowserWindow *, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   textData.breakup = true;
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputOlStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
-  if (current_list)
-    list_stack.push_back(current_list);
+  CBrowserOutputList *list = new CBrowserOutputList(CHtmlTagId::OL);
 
-  current_list = new CBrowserOutputList(CBrowserOutputListType::OL);
+  CBrowserOutputListMgrInst->startList(list);
 
-  /*-------------*/
+  //---
 
   int num_options = tag->getNumOptions();
 
@@ -2427,7 +2456,7 @@ CBrowserOutputOlStartTag(CBrowserWindow *window, CHtmlTag *tag)
     std::string option_name = option->getName();
 
     if      (CStrUtil::casecmp(option_name, "compact") == 0) {
-      current_list->setCompact(true);
+      list->setCompact(true);
 
       std::string value = option->getValue();
 
@@ -2438,67 +2467,60 @@ CBrowserOutputOlStartTag(CBrowserWindow *window, CHtmlTag *tag)
       if (CStrUtil::isInteger(option->getValue())) {
         int item_num = CStrUtil::toInteger(option->getValue());
 
-        current_list->setItemNum(item_num);
+        list->setItemNum(item_num);
       }
       else {
         window->displayError("Illegal Value for Value %s\n", option->getValue().c_str());
 
-        current_list->setItemNum(1);
+        list->setItemNum(1);
       }
     }
     else if (CStrUtil::casecmp(option_name, "type") == 0)
-      current_list->setSymbol(option->getValue());
+      list->setSymbol(option->getValue());
     else
       window->displayError("Illegal Ol Option Name '%s'\n", option_name.c_str());
   }
 
-  /*-------------*/
+  //---
 
   window->indentLeft(2);
 
-  if (list_stack.empty() || ! current_list->getCompact())
-    CBrowserOutputSkipLine(window);
+  if (CBrowserOutputListMgrInst->listDepth() == 1 || ! list->getCompact())
+    window->skipLine();
   else
-    CBrowserOutputNewLine(window);
+    window->newLine();
+
+  //---
+
+  return list;
 }
 
 static void
-CBrowserOutputOlEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputOlEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   window->indentLeft(-2);
 
-  if (list_stack.empty())
-    CBrowserOutputSkipLine(window);
+  if (CBrowserOutputListMgrInst->listDepth() == 1)
+    window->skipLine();
   else
-    CBrowserOutputNewLine(window);
+    window->newLine();
 
-  /*-------------*/
+  //---
 
-  delete current_list;
-
-  if (! list_stack.empty()) {
-    current_list = list_stack[list_stack.size() - 1];
-
-    list_stack.pop_back();
-  }
-  else
-    current_list = nullptr;
+  CBrowserOutputListMgrInst->endList();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputOptionStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   std::string value;
 
-  if (in_option)
+  CBrowserObject *currentObj = window->currentObj();
+
+  if (currentObj && currentObj->type() == CHtmlTagId::OPTION)
     CBrowserOutputOptionEndTag(window, nullptr);
 
-  /*-------------*/
+  //---
 
   bool selected = false;
 
@@ -2518,31 +2540,31 @@ CBrowserOutputOptionStartTag(CBrowserWindow *window, CHtmlTag *tag)
                            option_name.c_str());
   }
 
-  /*-------------*/
+  //---
 
-  in_option   = true;
-  option_text = "";
+  CBrowserFormOption *option =
+    window->getDocument()->formMgr()->startOption(value, selected);
 
-  window->getDocument()->formMgr()->startOption(value, selected);
+  return option;
 }
 
 static void
-CBrowserOutputOptionEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputOptionEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
+  CBrowserFlushTags(window, CHtmlTagId::OPTION);
 
-  if (tag && num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
+  //---
 
-  /*-------------*/
+  CBrowserObject *currentObj = window->currentObj();
 
-  window->getDocument()->formMgr()->endOption(option_text);
+  if (currentObj && currentObj->type() == CHtmlTagId::OPTION) {
+    CBrowserFormOption *option = dynamic_cast<CBrowserFormOption *>(currentObj);
 
-  in_option   = false;
-  option_text = "";
+    window->getDocument()->formMgr()->endOption(option->getText());
+  }
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputPStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   CHAlignType align = CHALIGN_TYPE_LEFT;
@@ -2554,43 +2576,34 @@ CBrowserOutputPStartTag(CBrowserWindow *window, CHtmlTag *tag)
 
     std::string option_name = option->getName();
 
-    if (CStrUtil::casecmp(option_name, "align") == 0) {
-      if      (CStrUtil::casecmp(option->getValue(), "left") == 0)
-        align = CHALIGN_TYPE_LEFT;
-      else if (CStrUtil::casecmp(option->getValue(), "center") == 0)
-        align = CHALIGN_TYPE_CENTER;
-      else if (CStrUtil::casecmp(option->getValue(), "right") == 0)
-        align = CHALIGN_TYPE_RIGHT;
-      else
-        window->displayError("Illegal Paragraph Alignment %s\n", option->getValue().c_str());
-    }
+    if (CStrUtil::casecmp(option_name, "align") == 0)
+      CBrowserParseHAlignOption(window, option->getValue(), align);
     else
       window->displayError("Illegal P Option Name '%s'\n", option_name.c_str());
   }
 
-  /*-----------*/
+  //---
 
-  CBrowserOutputSkipLine(window);
+  window->skipLine();
 
   window->setAlign(align, CVALIGN_TYPE_TOP);
+
+  //---
+
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::P);
+
+  return obj;
 }
 
 static void
-CBrowserOutputPEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputPEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
-  /*-----------*/
-
-  CBrowserOutputNewLine(window);
+  window->newLine();
 
   window->setAlign(CHALIGN_TYPE_LEFT, CVALIGN_TYPE_TOP);
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputPreStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int width = -1;
@@ -2617,35 +2630,34 @@ CBrowserOutputPreStartTag(CBrowserWindow *window, CHtmlTag *tag)
   if (CBrowserMainInst->getDebug())
     std::cerr << width << std::endl;
 
-  /*-----------*/
+  //---
 
-  CBrowserOutputSkipLine(window);
+  window->skipLine();
 
   window->startFontFace("courier");
 
   textData.breakup = false;
   textData.format  = false;
+
+  //---
+
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::PRE);
+
+  return obj;
 }
 
 static void
-CBrowserOutputPreEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputPreEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
-  /*-----------*/
-
   textData.breakup = true;
   textData.format  = true;
 
   window->endFontFace();
 
-  CBrowserOutputSkipLine(window);
+  window->skipLine();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputSampStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
@@ -2654,25 +2666,26 @@ CBrowserOutputSampStartTag(CBrowserWindow *window, CHtmlTag *tag)
     window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 
   window->startFontFace("courier");
+
+  //---
+
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::SAMP);
+
+  return obj;
 }
 
 static void
-CBrowserOutputSampEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputSampEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   window->endFontFace();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputScriptStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   std::string language;
   std::string src;
-  std::string type;
+  std::string type = "text/javascript";
 
   int num_options = tag->getNumOptions();
 
@@ -2693,30 +2706,27 @@ CBrowserOutputScriptStartTag(CBrowserWindow *window, CHtmlTag *tag)
   }
 
   if (src != "") {
-    if (CStrUtil::casecmp(language, "ceil") == 0)
+    if      (CStrUtil::casecmp(language, "ceil") == 0)
       CBrowserCeilInst->runScriptFile(window, src);
+    else if (CStrUtil::casecmp(type, "text/javascript") == 0)
+      window->addScriptFile(src);
   }
   else {
-    scriptData.active   = true;
     scriptData.language = language;
     scriptData.type     = type;
     scriptData.text     = "";
   }
+
+  //---
+
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::SCRIPT);
+
+  return obj;
 }
 
 static void
-CBrowserOutputScriptEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputScriptEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
-  if (! scriptData.active)
-    return;
-
-  scriptData.active = false;
-
   if (scriptData.text != "") {
     if      (CStrUtil::casecmp(scriptData.language, "ceil") == 0) {
       CBrowserCeilInst->runScript(window, scriptData.text);
@@ -2731,7 +2741,7 @@ CBrowserOutputScriptEndTag(CBrowserWindow *window, CHtmlTag *tag)
   scriptData.reset();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputSelectStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   bool        multiple = false;
@@ -2772,27 +2782,30 @@ CBrowserOutputSelectStartTag(CBrowserWindow *window, CHtmlTag *tag)
   if (onchange != "")
     window->getDocument()->formMgr()->setInputOnChange(onchange);
 
+  //---
+
   CBrowserFormSelect *select =
     window->getDocument()->formMgr()->startSelect(name, size, multiple);
 
-  window->addObject(id, select);
+  select->setId(id);
+
+  return select;
 }
 
 static void
-CBrowserOutputSelectEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputSelectEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  if (in_option)
+  CBrowserObject *currentObj = window->currentObj();
+
+  if (currentObj && currentObj->type() == CHtmlTagId::OPTION)
     CBrowserOutputOptionEndTag(window, nullptr);
 
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
+  //---
 
   window->getDocument()->formMgr()->endSelect();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputSmallStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
@@ -2801,20 +2814,21 @@ CBrowserOutputSmallStartTag(CBrowserWindow *window, CHtmlTag *tag)
     window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 
   window->decreaseFontSize();
+
+  //---
+
+  CBrowserSmallStyle *obj = new CBrowserSmallStyle(window);
+
+  return obj;
 }
 
 static void
-CBrowserOutputSmallEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputSmallEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   window->increaseFontSize();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputStrikeStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
@@ -2823,20 +2837,21 @@ CBrowserOutputStrikeStartTag(CBrowserWindow *window, CHtmlTag *tag)
     window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 
   textData.strike = true;
+
+  //---
+
+  CBrowserStrikeStyle *obj = new CBrowserStrikeStyle(window);
+
+  return obj;
 }
 
 static void
-CBrowserOutputStrikeEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputStrikeEndTag(CBrowserWindow *, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   textData.strike = false;
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputStrongStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
@@ -2845,20 +2860,21 @@ CBrowserOutputStrongStartTag(CBrowserWindow *window, CHtmlTag *tag)
     window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 
   window->startBold();
+
+  //---
+
+  CBrowserStrongStyle *obj = new CBrowserStrongStyle(window);
+
+  return obj;
 }
 
 static void
-CBrowserOutputStrongEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputStrongEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   window->endBold();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputSubStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
@@ -2867,20 +2883,21 @@ CBrowserOutputSubStartTag(CBrowserWindow *window, CHtmlTag *tag)
     window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 
   textData.place = CBrowserTextPlaceType::SUBSCRIPT;
+
+  //---
+
+  CBrowserSubStyle *obj = new CBrowserSubStyle(window);
+
+  return obj;
 }
 
 static void
-CBrowserOutputSubEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputSubEndTag(CBrowserWindow *, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   textData.place = CBrowserTextPlaceType::NORMAL;
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputSupStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
@@ -2889,20 +2906,21 @@ CBrowserOutputSupStartTag(CBrowserWindow *window, CHtmlTag *tag)
     window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 
   textData.place = CBrowserTextPlaceType::SUPERSCRIPT;
+
+  //---
+
+  CBrowserSupStyle *obj = new CBrowserSupStyle(window);
+
+  return obj;
 }
 
 static void
-CBrowserOutputSupEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputSupEndTag(CBrowserWindow *, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   textData.place = CBrowserTextPlaceType::NORMAL;
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputTableStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserTableData tableData;
@@ -3011,7 +3029,7 @@ CBrowserOutputTableStartTag(CBrowserWindow *window, CHtmlTag *tag)
       if (value[len - 1] == '%') {
         std::string value;
 
-        tableData.width_unit = UNIT_PERCENT;
+        tableData.width_unit = CBrowserUnitsType::PERCENT;
 
         value = option->getValue().substr(0, len - 1);
 
@@ -3023,7 +3041,7 @@ CBrowserOutputTableStartTag(CBrowserWindow *window, CHtmlTag *tag)
         }
       }
       else {
-        tableData.width_unit = UNIT_PIXEL;
+        tableData.width_unit = CBrowserUnitsType::PIXEL;
 
         if (CStrUtil::isInteger(option->getValue()))
           tableData.width = CStrUtil::toInteger(option->getValue());
@@ -3039,30 +3057,25 @@ CBrowserOutputTableStartTag(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  window->tableMgr()->startTable(tableData);
+  CBrowserTable *table = window->tableMgr()->startTable(tableData);
+
+  return table;
 }
 
 static void
-CBrowserOutputTableEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputTableEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
-  //---
-
   window->tableMgr()->endTable();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputTdStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserTableCellData cellData;
 
-  cellData.type       = HEADER_CELL;
+  cellData.type       = CBrowserTableCellData::Type::HEADER;
   cellData.width      = 0;
-  cellData.width_unit = UNIT_NONE;
+  cellData.width_unit = CBrowserUnitsType::NONE;
   cellData.colspan    = 1;
   cellData.rowspan    = 1;
 
@@ -3074,14 +3087,7 @@ CBrowserOutputTdStartTag(CBrowserWindow *window, CHtmlTag *tag)
     std::string option_name = option->getName();
 
     if      (CStrUtil::casecmp(option_name, "align") == 0) {
-      if      (CStrUtil::casecmp(option->getValue(), "left") == 0)
-        cellData.halign = CHALIGN_TYPE_LEFT;
-      else if (CStrUtil::casecmp(option->getValue(), "center") == 0)
-        cellData.halign = CHALIGN_TYPE_CENTER;
-      else if (CStrUtil::casecmp(option->getValue(), "right") == 0)
-        cellData.halign = CHALIGN_TYPE_RIGHT;
-      else
-        window->displayError("Illegal Table Data Alignment %s\n", option->getValue().c_str());
+      CBrowserParseHAlignOption(window, option->getValue(), cellData.halign);
     }
     else if (CStrUtil::casecmp(option_name, "bgcolor") == 0) {
       if (option->getValue() != "")
@@ -3127,17 +3133,7 @@ CBrowserOutputTdStartTag(CBrowserWindow *window, CHtmlTag *tag)
       }
     }
     else if (CStrUtil::casecmp(option_name, "valign") == 0) {
-      if      (CStrUtil::casecmp(option->getValue(), "top") == 0)
-        cellData.valign = CVALIGN_TYPE_TOP;
-      else if (CStrUtil::casecmp(option->getValue(), "center") == 0)
-        cellData.valign = CVALIGN_TYPE_CENTER;
-      else if (CStrUtil::casecmp(option->getValue(), "bottom") == 0)
-        cellData.valign = CVALIGN_TYPE_BOTTOM;
-      else if (CStrUtil::casecmp(option->getValue(), "baseline") == 0)
-        cellData.valign = CVALIGN_TYPE_BASELINE;
-      else
-        window->displayError("Illegal %s Vertical Alignment %s\n", "Table Data",
-                             option->getValue().c_str());
+      CBrowserParseVAlignOption(window, option->getValue(), cellData.valign);
     }
     else if (CStrUtil::casecmp(option_name, "width") == 0) {
       int len = option->getValue().size();
@@ -3145,7 +3141,7 @@ CBrowserOutputTdStartTag(CBrowserWindow *window, CHtmlTag *tag)
       std::string value = option->getValue();
 
       if (value[len - 1] == '%') {
-        cellData.width_unit = UNIT_PERCENT;
+        cellData.width_unit = CBrowserUnitsType::PERCENT;
 
         std::string value = option->getValue().substr(len - 1);
 
@@ -3157,7 +3153,7 @@ CBrowserOutputTdStartTag(CBrowserWindow *window, CHtmlTag *tag)
         }
       }
       else {
-        cellData.width_unit = UNIT_PIXEL;
+        cellData.width_unit = CBrowserUnitsType::PIXEL;
 
         if (CStrUtil::isInteger(option->getValue()))
           cellData.width = CStrUtil::toInteger(option->getValue());
@@ -3174,29 +3170,28 @@ CBrowserOutputTdStartTag(CBrowserWindow *window, CHtmlTag *tag)
   //---
 
   window->tableMgr()->startTableCell(cellData);
-}
-
-static void
-CBrowserOutputTdEndTag(CBrowserWindow *window, CHtmlTag *tag)
-{
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 
   //---
 
-  window->tableMgr()->endTableCell();
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::TD);
+
+  return obj;
 }
 
 static void
+CBrowserOutputTdEndTag(CBrowserWindow *window, CHtmlTag *)
+{
+  window->tableMgr()->endTableCell();
+}
+
+static CBrowserObject *
 CBrowserOutputTextareaStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   std::string id;
   std::string name;
   std::string wrap;
 
-  /*-------------*/
+  //---
 
   int cols = 40;
   int rows = 5;
@@ -3236,45 +3231,43 @@ CBrowserOutputTextareaStartTag(CBrowserWindow *window, CHtmlTag *tag)
       window->displayError("Illegal 'textarea' Option Name '%s'\n", option_name.c_str());
   }
 
-  /*-------------*/
+  //---
 
-  window->getDocument()->formMgr()->startTextarea(name, rows, cols, wrap);
+  CBrowserFormTextarea *textArea =
+    window->getDocument()->formMgr()->startTextarea(name, rows, cols, wrap);
 
-  /*-------------*/
-
-  in_textarea   = true;
-  textarea_text = "";
+  return textArea;
 }
 
 static void
-CBrowserOutputTextareaEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputTextareaEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
+  CBrowserFlushTags(window, CHtmlTagId::TEXTAREA);
 
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
+  //---
 
-  /*-------------*/
+  CBrowserObject *currentObj = window->currentObj();
 
-  if (textarea_text != "" && textarea_text[0] == '\n')
-    window->getDocument()->formMgr()->endTextarea(textarea_text.substr(1));
-  else
-    window->getDocument()->formMgr()->endTextarea(textarea_text);
+  if (currentObj && currentObj->type() == CHtmlTagId::TEXTAREA) {
+    CBrowserFormTextarea *textArea = dynamic_cast<CBrowserFormTextarea *>(currentObj);
 
-  /*-------------*/
+    std::string text = textArea->text();
 
-  in_textarea   = false;
-  textarea_text = "";
+    if (text != "" && text[0] == '\n')
+      window->getDocument()->formMgr()->endTextarea(text.substr(1));
+    else
+      window->getDocument()->formMgr()->endTextarea(text);
+  }
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputThStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserTableCellData cellData;
 
-  cellData.type       = HEADER_CELL;
+  cellData.type       = CBrowserTableCellData::Type::HEADER;
   cellData.width      = 0;
-  cellData.width_unit = UNIT_NONE;
+  cellData.width_unit = CBrowserUnitsType::NONE;
   cellData.colspan    = 1;
   cellData.rowspan    = 1;
 
@@ -3286,15 +3279,7 @@ CBrowserOutputThStartTag(CBrowserWindow *window, CHtmlTag *tag)
     std::string option_name = option->getName();
 
     if      (CStrUtil::casecmp(option_name, "align") == 0) {
-      if      (CStrUtil::casecmp(option->getValue(), "left") == 0)
-        cellData.halign = CHALIGN_TYPE_LEFT;
-      else if (CStrUtil::casecmp(option->getValue(), "center") == 0)
-        cellData.halign = CHALIGN_TYPE_CENTER;
-      else if (CStrUtil::casecmp(option->getValue(), "right") == 0)
-        cellData.halign = CHALIGN_TYPE_RIGHT;
-      else
-        window->displayError("Illegal Table Header Alignment %s\n",
-                             option->getValue().c_str());
+      CBrowserParseHAlignOption(window, option->getValue(), cellData.halign);
     }
     else if (CStrUtil::casecmp(option_name, "bgcolor") == 0) {
       if (option->getValue() != "")
@@ -3337,17 +3322,7 @@ CBrowserOutputThStartTag(CBrowserWindow *window, CHtmlTag *tag)
       }
     }
     else if (CStrUtil::casecmp(option_name, "valign") == 0) {
-      if      (CStrUtil::casecmp(option->getValue(), "top") == 0)
-        cellData.valign = CVALIGN_TYPE_TOP;
-      else if (CStrUtil::casecmp(option->getValue(), "center") == 0)
-        cellData.valign = CVALIGN_TYPE_CENTER;
-      else if (CStrUtil::casecmp(option->getValue(), "bottom") == 0)
-        cellData.valign = CVALIGN_TYPE_BOTTOM;
-      else if (CStrUtil::casecmp(option->getValue(), "baseline") == 0)
-        cellData.valign = CVALIGN_TYPE_BASELINE;
-      else
-        window->displayError("Illegal %s Vertical Alignment %s\n",
-                             "Table Header", option->getValue().c_str());
+      CBrowserParseVAlignOption(window, option->getValue(), cellData.valign);
     }
     else if (CStrUtil::casecmp(option_name, "width") == 0) {
       int len = option->getValue().size();
@@ -3357,7 +3332,7 @@ CBrowserOutputThStartTag(CBrowserWindow *window, CHtmlTag *tag)
       if (value[len - 1] == '%') {
         std::string value;
 
-        cellData.width_unit = UNIT_PERCENT;
+        cellData.width_unit = CBrowserUnitsType::PERCENT;
 
         value = option->getValue().substr(0, len - 1);
 
@@ -3369,7 +3344,7 @@ CBrowserOutputThStartTag(CBrowserWindow *window, CHtmlTag *tag)
         }
       }
       else {
-        cellData.width_unit = UNIT_PIXEL;
+        cellData.width_unit = CBrowserUnitsType::PIXEL;
 
         if (CStrUtil::isInteger(option->getValue()))
           cellData.width = CStrUtil::toInteger(option->getValue());
@@ -3386,10 +3361,22 @@ CBrowserOutputThStartTag(CBrowserWindow *window, CHtmlTag *tag)
   //---
 
   window->tableMgr()->startTableCell(cellData);
+
+  //---
+
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::TH);
+
+  return obj;
 }
 
 static void
-CBrowserOutputThEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputThEndTag(CBrowserWindow *window, CHtmlTag *)
+{
+  window->tableMgr()->endTableCell();
+}
+
+static CBrowserObject *
+CBrowserOutputTitleStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
 
@@ -3398,32 +3385,17 @@ CBrowserOutputThEndTag(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  window->tableMgr()->endTableCell();
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::TITLE);
+
+  return obj;
 }
 
 static void
-CBrowserOutputTitleStartTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputTitleEndTag(CBrowserWindow *, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
-  in_title = true;
 }
 
-static void
-CBrowserOutputTitleEndTag(CBrowserWindow *window, CHtmlTag *tag)
-{
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
-  in_title = false;
-}
-
-static void
+static CBrowserObject *
 CBrowserOutputTrStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserTableRowData rowData;
@@ -3436,14 +3408,7 @@ CBrowserOutputTrStartTag(CBrowserWindow *window, CHtmlTag *tag)
     std::string option_name = option->getName();
 
     if      (CStrUtil::casecmp(option_name, "align") == 0) {
-      if      (CStrUtil::casecmp(option->getValue(), "left") == 0)
-        rowData.halign = CHALIGN_TYPE_LEFT;
-      else if (CStrUtil::casecmp(option->getValue(), "center") == 0)
-        rowData.halign = CHALIGN_TYPE_CENTER;
-      else if (CStrUtil::casecmp(option->getValue(), "right") == 0)
-        rowData.halign = CHALIGN_TYPE_RIGHT;
-      else
-        window->displayError("Illegal Table Row Alignment %s\n", option->getValue().c_str());
+      CBrowserParseHAlignOption(window, option->getValue(), rowData.halign);
     }
     else if (CStrUtil::casecmp(option_name, "bgcolor") == 0) {
       if (option->getValue() != "")
@@ -3462,17 +3427,7 @@ CBrowserOutputTrStartTag(CBrowserWindow *window, CHtmlTag *tag)
         rowData.border_color_dark = CRGBName::toRGBA(option->getValue());
     }
     else if (CStrUtil::casecmp(option_name, "valign") == 0) {
-      if      (CStrUtil::casecmp(option->getValue(), "top") == 0)
-        rowData.valign = CVALIGN_TYPE_TOP;
-      else if (CStrUtil::casecmp(option->getValue(), "center") == 0)
-        rowData.valign = CVALIGN_TYPE_CENTER;
-      else if (CStrUtil::casecmp(option->getValue(), "bottom") == 0)
-        rowData.valign = CVALIGN_TYPE_BOTTOM;
-      else if (CStrUtil::casecmp(option->getValue(), "baseline") == 0)
-        rowData.valign = CVALIGN_TYPE_BASELINE;
-      else
-        window->displayError("Illegal %s Vertical Alignment %s\n",
-                             "Table Row", option->getValue().c_str());
+      CBrowserParseVAlignOption(window, option->getValue(), rowData.valign);
     }
     else
       window->displayError("Illegal Tr Option Name '%s'\n", option_name.c_str());
@@ -3481,22 +3436,21 @@ CBrowserOutputTrStartTag(CBrowserWindow *window, CHtmlTag *tag)
   //---
 
   window->tableMgr()->startTableRow(rowData);
-}
-
-static void
-CBrowserOutputTrEndTag(CBrowserWindow *window, CHtmlTag *tag)
-{
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 
   //---
 
-  window->tableMgr()->endTableRow();
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::TR);
+
+  return obj;
 }
 
 static void
+CBrowserOutputTrEndTag(CBrowserWindow *window, CHtmlTag *)
+{
+  window->tableMgr()->endTableRow();
+}
+
+static CBrowserObject *
 CBrowserOutputTtStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
@@ -3505,20 +3459,21 @@ CBrowserOutputTtStartTag(CBrowserWindow *window, CHtmlTag *tag)
     window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 
   window->startFontFace("courier");
+
+  //---
+
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::TT);
+
+  return obj;
 }
 
 static void
-CBrowserOutputTtEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputTtEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   window->endFontFace();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputUStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
@@ -3527,28 +3482,28 @@ CBrowserOutputUStartTag(CBrowserWindow *window, CHtmlTag *tag)
     window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 
   textData.underline = true;
+
+  //---
+
+  CBrowserUStyle *obj = new CBrowserUStyle(window);
+
+  return obj;
 }
 
 static void
-CBrowserOutputUEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputUEndTag(CBrowserWindow *, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   textData.underline = false;
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputUlStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
-  if (current_list)
-    list_stack.push_back(current_list);
+  CBrowserOutputList *list = new CBrowserOutputList(CHtmlTagId::UL);
 
-  current_list = new CBrowserOutputList(CBrowserOutputListType::UL);
+  CBrowserOutputListMgrInst->startList(list);
 
-  /*-------------*/
+  //---
 
   int num_options = tag->getNumOptions();
 
@@ -3558,7 +3513,7 @@ CBrowserOutputUlStartTag(CBrowserWindow *window, CHtmlTag *tag)
     std::string option_name = option->getName();
 
     if      (CStrUtil::casecmp(option_name, "compact") == 0) {
-      current_list->setCompact(true);
+      list->setCompact(true);
 
       std::string value = option->getValue();
 
@@ -3566,50 +3521,41 @@ CBrowserOutputUlStartTag(CBrowserWindow *window, CHtmlTag *tag)
         window->displayError("No Value needed for Compact\n");
     }
     else if (CStrUtil::casecmp(option_name, "type") == 0)
-      current_list->setSymbol(option->getValue());
+      list->setSymbol(option->getValue());
     else
       window->displayError("Illegal Ul Option Name '%s'\n", option_name.c_str());
   }
 
-  /*-------------*/
+  //---
 
   window->indentLeft(2);
 
-  if (list_stack.empty() || ! current_list->getCompact())
-    CBrowserOutputSkipLine(window);
+  if (CBrowserOutputListMgrInst->listDepth() == 1 || ! list->getCompact())
+    window->skipLine();
   else
-    CBrowserOutputNewLine(window);
+    window->newLine();
+
+  //---
+
+  return list;
 }
 
 static void
-CBrowserOutputUlEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputUlEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   window->indentLeft(-2);
 
-  if (list_stack.empty())
-    CBrowserOutputSkipLine(window);
+  if (CBrowserOutputListMgrInst->listDepth() == 1)
+    window->skipLine();
   else
-    CBrowserOutputNewLine(window);
+    window->newLine();
 
-  /*-------------*/
+  //---
 
-  delete current_list;
-
-  if (! list_stack.empty()) {
-    current_list = list_stack[list_stack.size() - 1];
-
-    list_stack.pop_back();
-  }
-  else
-    current_list = nullptr;
+  CBrowserOutputListMgrInst->endList();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputVarStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
@@ -3618,29 +3564,36 @@ CBrowserOutputVarStartTag(CBrowserWindow *window, CHtmlTag *tag)
     window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 
   window->startItalic();
+
+  //---
+
+  CBrowserVarStyle *obj = new CBrowserVarStyle(window);
+
+  return obj;
 }
 
 static void
-CBrowserOutputVarEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputVarEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   window->endItalic();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputWbrTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
 
   if (num_options != 0)
     window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
+
+  //---
+
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::WBR);
+
+  return obj;
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputXmpStartTag(CBrowserWindow *window, CHtmlTag *tag)
 {
   int num_options = tag->getNumOptions();
@@ -3648,48 +3601,38 @@ CBrowserOutputXmpStartTag(CBrowserWindow *window, CHtmlTag *tag)
   if (num_options != 0)
     window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
 
-  CBrowserOutputSkipLine(window);
+  window->skipLine();
 
   window->startFontFace("courier");
 
   textData.breakup = false;
   textData.format  = false;
+
+  //---
+
+  CBrowserObject *obj = new CBrowserObject(CHtmlTagId::XMP);
+
+  return obj;
 }
 
 static void
-CBrowserOutputXmpEndTag(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputXmpEndTag(CBrowserWindow *window, CHtmlTag *)
 {
-  int num_options = tag->getNumOptions();
-
-  if (num_options != 0)
-    window->displayError("Invalid Number of Options for %s\n", tag->getName().c_str());
-
   textData.breakup = true;
   textData.format  = true;
 
   window->endFontFace();
 
-  CBrowserOutputSkipLine(window);
+  window->skipLine();
 }
 
-static void
+static CBrowserObject *
 CBrowserOutputSkipStartTag(CBrowserWindow *, CHtmlTag *)
 {
+  return 0;
 }
 
 static void
 CBrowserOutputSkipEndTag(CBrowserWindow *, CHtmlTag *)
 {
-}
-
-static void
-CBrowserOutputNewLine(CBrowserWindow *window)
-{
-  window->newLine();
-}
-
-static void
-CBrowserOutputSkipLine(CBrowserWindow *window)
-{
-  window->skipLine();
 }

@@ -1,6 +1,5 @@
 #include <CQJImage.h>
 #include <CJavaScript.h>
-#include <CStrUtil.h>
 #include <iostream>
 
 CJObjTypeP CQJImageType::type_;

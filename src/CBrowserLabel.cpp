@@ -7,7 +7,7 @@
 CBrowserLabel::
 CBrowserLabel(CBrowserWindow *window, const std::string &text, int width,
               CHAlignType align, const CRGBA &color) :
- CBrowserObject(Type::LABEL), window_(window), text_(text), width_(width),
+ CBrowserObject(CHtmlTagId::LABEL), window_(window), text_(text), width_(width),
  align_(align), color_(color)
 {
   font_ = window->getFont();
@@ -22,7 +22,7 @@ void
 CBrowserLabel::
 format(CHtmlLayoutMgr *)
 {
-  CHtmlLayoutSubCell::newCellRight(window_->getLayoutMgr(), false);
+  window_->newSubCellRight(false);
 
   int ascent  = 0;
   int descent = 0;

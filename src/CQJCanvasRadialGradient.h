@@ -4,8 +4,6 @@
 #include <CJObj.h>
 #include <QRadialGradient>
 
-class CJavaScript;
-
 class CQJCanvasRadialGradientType : public CJObjType {
  public:
   static CJObjTypeP instance(CJavaScript *js);

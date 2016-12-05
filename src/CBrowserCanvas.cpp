@@ -1,5 +1,5 @@
 #include <CBrowserCanvas.h>
-#include <CBrowserCanvasWidget.h>
+#include <CQJCanvasWidget.h>
 #include <CBrowserWindowWidget.h>
 #include <CBrowserMain.h>
 #include <CBrowserText.h>
@@ -10,7 +10,7 @@
 
 CBrowserCanvas::
 CBrowserCanvas(CBrowserWindow *window, const CBrowserCanvasData &data) :
- CBrowserObject(Type::CANVAS), window_(window), data_(data)
+ CBrowserObject(CHtmlTagId::CANVAS), window_(window), data_(data)
 {
 }
 
@@ -21,9 +21,27 @@ CBrowserCanvas::
 
 void
 CBrowserCanvas::
+setWidth(int w)
+{
+  data_.width = w;
+
+  window_->recalc();
+}
+
+void
+CBrowserCanvas::
+setHeight(int h)
+{
+  data_.height = h;
+
+  window_->recalc();
+}
+
+void
+CBrowserCanvas::
 format(CHtmlLayoutMgr *)
 {
-  CHtmlLayoutSubCell::newCellRight(window_->getLayoutMgr(), true);
+  window_->newSubCellRight(true);
 
   CHtmlLayoutSubCell *sub_cell = window_->getCurrentSubCell();
 
@@ -70,9 +88,11 @@ CBrowserCanvas::
 createWidget()
 {
   if (! canvas_) {
-    canvas_ = new CBrowserCanvasWidget(this, window_->widget());
+    canvas_ = new CQJCanvasWidget(this, window_->widget());
 
     canvas_->setObjectName("canvas");
+
+    canvas_->resize(data_.width, data_.height);
 
     canvas_->updateSize(data_.width, data_.height);
   }

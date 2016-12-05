@@ -51,6 +51,8 @@ class CBrowserWindow {
   void startFontFace(const std::string &face);
   void endFontFace();
 
+  CBrowserFontFace *currentFontFace() const { return currentFontFace_; }
+
   std::string getCurrentFontFace() const;
 
   void setCurrentFontFace(const std::string &face);
@@ -83,7 +85,7 @@ class CBrowserWindow {
 
   void setFontStyle();
 
-  const CRGBA &currentFontColor() const { return current_font_color_; }
+  const CRGBA &currentFontColor() const { return currentFontColor_; }
 
   //---
 
@@ -93,26 +95,34 @@ class CBrowserWindow {
 
   //---
 
-  void addBreak(CHtmlLayoutClearType clear);
+  CBrowserObject *addCanvas(const CBrowserCanvasData &canvasData);
 
-  void addCanvas(const CBrowserCanvasData &canvasData);
+  CBrowserObject *addLabel(const std::string &text, int width, CHAlignType align,
+                           const CRGBA &color);
 
-  void addLabel(const std::string &text, int width, CHAlignType align, const CRGBA &color);
+  CBrowserObject *addText(const std::string &text, const CBrowserTextData &data);
 
-  void addText(const std::string &text, const CRGBA &color, bool underline, bool strike,
-               CBrowserTextPlaceType place, bool breakup, bool format);
+  CBrowserObject *addSymbol(CBrowserSymbolType type);
 
-  void addText(CBrowserText *draw_text, const std::string &text);
+  CBrowserObject *addImage(const CBrowserImageData &imageData);
 
-  void addRule(const CBrowserRuleData &data);
+  CBrowserObject *addNamedImage(const std::string &name);
 
-  void addSymbol(CBrowserSymbolType type);
+  //---
 
-  void addImage(const CBrowserImageData &imageData);
+  CBrowserText *formatText(CBrowserText *draw_text, const std::string &text);
 
-  void addNamedImage(const std::string &name);
+  //---
 
-  void addObject(const std::string &id, CBrowserObject *obj);
+  const CBrowserObject *rootObject() const { return rootObject_; }
+  void setRootObject(CBrowserObject *p) { rootObject_ = p; }
+
+  void startObject(CBrowserObject *obj);
+  void endObject();
+
+  CBrowserObject *currentObj() const;
+
+  void addObject(CBrowserObject *obj);
 
   //---
 
@@ -121,6 +131,8 @@ class CBrowserWindow {
   //---
 
   void addScript(const std::string &text);
+  void addScriptFile(const std::string &filename);
+
   void runScripts();
 
   //---
@@ -152,10 +164,18 @@ class CBrowserWindow {
   void setMargins(int, int);
   void setBackgroundImage(const std::string &name, bool fixed);
   void setTarget(const std::string &target);
-  void indentLeft(int indent);
+
+  void indentLeft (int indent);
   void indentRight(int indent);
+
+  CHtmlLayoutSubCell *newSubCellBelow(bool breakup=false);
+  CHtmlLayoutSubCell *newSubCellRight(bool breakup=false);
+
   void newLine();
+  void newColumn();
+
   void skipLine();
+
   void setStatus(const std::string &status);
 
   void displayError(const char *format, ...);
@@ -186,10 +206,16 @@ class CBrowserWindow {
   void fillCircle(int x, int y, int r);
 
   void drawLine(int x1, int y1, int x2, int y2);
+
   void drawString(int x, int y, const std::string &str);
+
   void drawOutline(int x, int y, int width, int height, const std::string &color_name);
   void drawOutline(int x, int y, int width, int height, const CRGBA &c);
+
+  void drawSelected(int x, int y, int width, int height);
+
   void drawBorder(int x, int y, int width, int height, CBrowserBorderType type);
+
   void drawHRule(int x1, int x2, int y, int height);
 
   void setForeground(const CRGBA &fg);
@@ -201,14 +227,14 @@ class CBrowserWindow {
 
   void errorDialog(const std::string &msg);
 
+  void recalc();
+
  private:
   void init();
 
   void loadResources();
 
   void setPixmapSize(int width, int height);
-
-  void recalc();
 
   void redrawArea();
 
@@ -218,7 +244,9 @@ class CBrowserWindow {
   typedef std::list<CBrowserWindow *>             WindowList;
   typedef std::vector<CBrowserFontFace *>         FontFaces;
   typedef std::map<std::string, CBrowserObject *> Objects;
+  typedef std::vector<CBrowserObject*>            ObjStack;
   typedef std::vector<std::string>                Scripts;
+  typedef std::vector<std::string>                ScriptFiles;
 
   static WindowList     window_list_;
   static std::string    default_font_face_;
@@ -249,16 +277,19 @@ class CBrowserWindow {
   CBrowserLinkMgr*      linkMgr_ { nullptr };
 
   Objects               objects_;
+  CBrowserObject*       rootObject_ { nullptr };
+  ObjStack              objStack_;
   Scripts               scripts_;
+  ScriptFiles           scriptFiles_;
 
   CFontPtr              font_;
   FontFaces             font_face_stack_;
   FontFaces             font_face_list_;
-  CBrowserFontFace*     current_font_face_ { nullptr };
+  CBrowserFontFace*     currentFontFace_ { nullptr };
   int                   base_font_size_ { 0 };
-  CRGBA                 current_font_color_ { 0, 0, 0 };
-  int                   current_font_style_ { 0 };
-  int                   current_font_size_ { 0 };
+  CRGBA                 currentFontColor_ { 0, 0, 0 };
+  int                   currentFontStyle_ { 0 };
+  int                   currentFontSize_ { 0 };
 
   CBrowserHistory*      history_ { nullptr };
 };

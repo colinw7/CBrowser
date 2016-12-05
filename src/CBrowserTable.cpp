@@ -8,7 +8,7 @@ CBrowserTableMgr(CBrowserWindow *window) :
 {
 }
 
-void
+CBrowserTable *
 CBrowserTableMgr::
 startTable(const CBrowserTableData &tableData)
 {
@@ -16,6 +16,8 @@ startTable(const CBrowserTableData &tableData)
     current_table_->endTable();
 
   current_table_ = new CBrowserTable(window_, tableData);
+
+  return current_table_;
 }
 
 void
@@ -105,7 +107,7 @@ startTableCell(const CBrowserTableCellData &data)
 
   window_->setAlign(table_cell->getHAlign(), table_cell->getVAlign());
 
-  CHtmlLayoutCell::newCellRight(window_->getLayoutMgr());
+  window_->newColumn();
 
   current_table_->setColNum(current_table_->getColNum() + data.colspan);
 
@@ -148,7 +150,7 @@ startTableCaption(const CBrowserTableCaptionData &data)
 
   window_->setAlign(caption->getHAlign(), caption->getVAlign());
 
-  CHtmlLayoutCell::newCellBelow(window_->getLayoutMgr());
+  window_->newLine();
 
   current_table_->setCaption(caption);
 
@@ -177,7 +179,7 @@ endTableCaption()
 
 CBrowserTable::
 CBrowserTable(CBrowserWindow *window, const CBrowserTableData &data) :
- CBrowserObject(Type::TABLE), window_(window)
+ CBrowserObject(CHtmlTagId::TABLE), window_(window)
 {
   border_             = data.border;
   hspace_             = data.hspace;
@@ -215,7 +217,7 @@ endTable()
 
   /*----------*/
 
-  CHtmlLayoutCell::newCellBelow(window_->getLayoutMgr());
+  window_->newLine();
 }
 
 void
@@ -264,14 +266,14 @@ format(CHtmlLayoutMgr *)
 
       area_data->setHeight(0);
 
-      if (row_cells_[i][j]->getWidthUnit() == UNIT_PIXEL)
+      if (row_cells_[i][j]->getWidthUnit() == CBrowserUnitsType::PIXEL)
         area_data->setWidth(row_cells_[i][j]->getWidth());
       else
         area_data->setWidth(0);
 
       area_data->format(window_->getLayoutMgr());
 
-      if (getWidthUnit() == UNIT_PIXEL &&
+      if (getWidthUnit() == CBrowserUnitsType::PIXEL &&
           area_data->getWidth() > getWidth()) {
         area_data->setWidth(getWidth());
 
@@ -376,7 +378,7 @@ format(CHtmlLayoutMgr *)
 
   /*-------------*/
 
-  CHtmlLayoutSubCell::newCellBelow(window_->getLayoutMgr(), false);
+  window_->newSubCellBelow(false);
 
   /*-------------*/
 
@@ -667,7 +669,7 @@ CBrowserTableCell(CBrowserTableRow *row, const CBrowserTableCellData &data)
     halign_ = row->getHAlign();
 
   if (halign_ == CHALIGN_TYPE_NONE) {
-    if (data.type == HEADER_CELL)
+    if (data.type == CBrowserTableCellData::Type::HEADER)
       halign_ = CHALIGN_TYPE_CENTER;
     else
       halign_ = CHALIGN_TYPE_LEFT;
@@ -677,7 +679,7 @@ CBrowserTableCell(CBrowserTableRow *row, const CBrowserTableCellData &data)
     valign_ = row->getVAlign();
 
   if (valign_ == CVALIGN_TYPE_NONE) {
-    if (data.type == HEADER_CELL)
+    if (data.type == CBrowserTableCellData::Type::HEADER)
       valign_ = CVALIGN_TYPE_CENTER;
     else
       valign_ = CVALIGN_TYPE_CENTER;

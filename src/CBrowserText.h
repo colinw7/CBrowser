@@ -2,24 +2,33 @@
 #define CBrowserText_H
 
 #include <CBrowserObject.h>
+#include <CBrowserData.h>
 #include <CFont.h>
-#include <CRGBA.h>
 
 //------
 
+enum CBrowserTextPos {
+  RIGHT,
+  BELOW
+};
+
 class CBrowserText : public CBrowserObject {
  public:
-  CBrowserText(CBrowserWindow *window, const std::string &text, const CRGBA &color,
-               bool underline, bool strike, CBrowserTextPlaceType place, bool breakup,
-               bool format);
+  CBrowserText(CBrowserWindow *window, const std::string &text, const CBrowserTextData &data);
 
   CBrowserText(CBrowserWindow *window, const CBrowserText &draw_text, const std::string &text);
 
  ~CBrowserText();
 
-  CFontPtr getFont() const { return font_; }
+  const std::string &text() const { return text_; }
+
+  const CFontPtr &font() const { return font_; }
+
+  const CBrowserTextPos &pos() const { return pos_; }
+  void setPos(const CBrowserTextPos &pos) { pos_ = pos; }
 
   void format(CHtmlLayoutMgr *) override;
+
   void draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &) override;
 
   void print(std::ostream &os) const override {
@@ -29,16 +38,18 @@ class CBrowserText : public CBrowserObject {
   static void getTextBounds(CFontPtr, const std::string &, int *, int *, int *);
 
  private:
-  CBrowserWindow*       window_ { nullptr };
-  std::string           text_;
-  CFontPtr              font_;
-  CRGBA                 color_ { 0, 0, 0 };
-  bool                  underline_ { false };
-  bool                  strike_ { false };
-  CBrowserTextPlaceType place_ { CBrowserTextPlaceType::NORMAL };
-  bool                  breakup_ { false };
-  bool                  format_ { false };
-  CBrowserLink*         link_ { nullptr };
+  void addText(const std::string &str, CBrowserTextPos pos, bool breakup);
+
+ private:
+  typedef std::vector<CBrowserText *> Texts;
+
+  CBrowserWindow*  window_ { nullptr };
+  std::string      text_;
+  CFontPtr         font_;
+  CBrowserTextData data_;
+  CBrowserLink*    link_ { nullptr };
+  CBrowserTextPos  pos_ { CBrowserTextPos::RIGHT };
+  Texts            texts_;
 };
 
 #endif

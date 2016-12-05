@@ -4,11 +4,8 @@
 #include <CFont.h>
 
 CBrowserText::
-CBrowserText(CBrowserWindow *window, const std::string &text, const CRGBA &color,
-             bool underline, bool strike, CBrowserTextPlaceType place, bool breakup,
-             bool format) :
- CBrowserObject(Type::TEXT), window_(window), text_(text), color_(color),
- underline_(underline), strike_(strike), place_(place), breakup_(breakup), format_(format)
+CBrowserText(CBrowserWindow *window, const std::string &text, const CBrowserTextData &data) :
+ CBrowserObject(CHtmlTagId::TEXT), window_(window), text_(text), data_(data)
 {
   font_ = window->getFont();
   link_ = window->linkMgr()->getCurrentLink();
@@ -16,10 +13,8 @@ CBrowserText(CBrowserWindow *window, const std::string &text, const CRGBA &color
 
 CBrowserText::
 CBrowserText(CBrowserWindow *window, const CBrowserText &draw_text, const std::string &text) :
- CBrowserObject(Type::TEXT), window_(window), text_(text), font_(draw_text.font_),
- color_(draw_text.color_), underline_(draw_text.underline_), strike_(draw_text.strike_),
- place_(draw_text.place_), breakup_(draw_text.breakup_), format_(draw_text.format_),
- link_(draw_text.link_)
+ CBrowserObject(CHtmlTagId::TEXT), window_(window), text_(text), font_(draw_text.font_),
+ data_(draw_text.data_), link_(draw_text.link_)
 {
 }
 
@@ -32,82 +27,107 @@ void
 CBrowserText::
 format(CHtmlLayoutMgr *)
 {
-  if      (format_ && breakup_) {
-    int i = 0;
+  if (texts_.empty()) {
+    // split text into words
+    if      (data_.format && data_.breakup) {
+      int i = 0;
 
-    CHtmlLayoutSubCell *sub_cell = window_->getCurrentSubCell();
-
-    if (text_[i] != '\0' && isspace(text_[i])) {
-      if (sub_cell != NULL && sub_cell->getLeftCell() != NULL) {
-        CHtmlLayoutSubCell::newCellRight(window_->getLayoutMgr(), false);
-
-        window_->addText(this, " ");
-      }
-
-      while (text_[i] != '\0' && isspace(text_[i]))
-        i++;
-    }
-
-    while (text_[i] != '\0') {
-      int j = i;
-
-      while (text_[i] != '\0' && ! isspace(text_[i]))
-        i++;
-
-      if (i - j == 0)
-        break;
-
-      CHtmlLayoutSubCell::newCellRight(window_->getLayoutMgr(), true);
-
-      window_->addText(this, text_.substr(j, i - j));
+      CHtmlLayoutSubCell *sub_cell = window_->getCurrentSubCell();
 
       if (text_[i] != '\0' && isspace(text_[i])) {
-        CHtmlLayoutSubCell::newCellRight(window_->getLayoutMgr(), false);
-
-        window_->addText(this, " ");
+        if (sub_cell && sub_cell->getLeftCell())
+          addText(" ", CBrowserTextPos::RIGHT, false);
 
         while (text_[i] != '\0' && isspace(text_[i]))
           i++;
       }
-    }
-  }
-  else if (format_) {
-    CHtmlLayoutSubCell::newCellRight(window_->getLayoutMgr(), true);
 
-    window_->addText(this, text_);
-  }
-  else {
-    int i = 0;
+      while (text_[i] != '\0') {
+        int j = i;
 
-    while (text_[i] != '\0') {
-      while (text_[i] == '\n') {
-        CHtmlLayoutSubCell::newCellBelow(window_->getLayoutMgr(), false);
+        while (text_[i] != '\0' && ! isspace(text_[i]))
+          i++;
 
-        window_->addText(this, "");
+        if (i - j == 0)
+          break;
 
-        i++;
-      }
+        addText(text_.substr(j, i - j), CBrowserTextPos::RIGHT, true);
 
-      int j = i;
+        if (text_[i] != '\0' && isspace(text_[i])) {
+          addText(" ", CBrowserTextPos::RIGHT, false);
 
-      while (text_[i] != '\0' && text_[i] != '\n')
-        i++;
-
-      if (i > j) {
-        CHtmlLayoutSubCell::newCellRight(window_->getLayoutMgr(), false);
-
-        window_->addText(this, text_.substr(j, i - j));
-      }
-
-      if (text_[i] == '\n') {
-        CHtmlLayoutSubCell::newCellBelow(window_->getLayoutMgr(), false);
-
-        window_->addText(this, "");
-
-        i++;
+          while (text_[i] != '\0' && isspace(text_[i]))
+            i++;
+        }
       }
     }
+    // no split
+    else if (data_.format) {
+      addText(text_, CBrowserTextPos::RIGHT, true);
+    }
+    // split text into lines
+    else {
+      int i = 0;
+
+      while (text_[i] != '\0') {
+        while (text_[i] == '\n') {
+          addText("", CBrowserTextPos::BELOW, false);
+
+          i++;
+        }
+
+        int j = i;
+
+        while (text_[i] != '\0' && text_[i] != '\n')
+          i++;
+
+        if (i > j)
+          addText(text_.substr(j, i - j), CBrowserTextPos::RIGHT, false);
+
+        if (text_[i] == '\n') {
+          addText("", CBrowserTextPos::BELOW, false);
+
+          i++;
+        }
+      }
+    }
   }
+
+  // format
+  for (const auto &t : texts_) {
+    if (pos_ == CBrowserTextPos::RIGHT)
+      window_->newSubCellRight(t->data_.breakup);
+    else
+      window_->newSubCellBelow(t->data_.breakup);
+
+    int ascent, descent;
+
+    window_->getTextHeight(t->font(), &ascent, &descent);
+
+    window_->updateSubCellHeight(ascent, descent);
+
+    int width;
+
+    window_->getTextWidth(t->font(), t->text(), &width);
+
+    window_->updateSubCellWidth(width);
+
+    window_->addSubCellRedrawData(t);
+  }
+}
+
+void
+CBrowserText::
+addText(const std::string &str, CBrowserTextPos pos, bool breakup)
+{
+  CBrowserText *text = new CBrowserText(window_, *this, str);
+
+  text->data_.breakup = breakup;
+  text->pos_          = pos;
+
+  texts_.push_back(text);
+
+  addChild(text);
 }
 
 void
@@ -118,7 +138,7 @@ draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &region)
 
   window_->setFont(font_);
 
-  window_->setForeground(color_);
+  window_->setForeground(data_.color);
 
   int width, ascent, descent;
 
@@ -126,9 +146,9 @@ draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &region)
 
   int y_offset = 0;
 
-  if      (place_ == CBrowserTextPlaceType::SUBSCRIPT)
+  if      (data_.place == CBrowserTextPlaceType::SUBSCRIPT)
     y_offset =  ascent/2;
-  else if (place_ == CBrowserTextPlaceType::SUPERSCRIPT)
+  else if (data_.place == CBrowserTextPlaceType::SUPERSCRIPT)
     y_offset = -ascent/2;
 
   int x1 = region.x;
@@ -136,15 +156,15 @@ draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &region)
 
   window_->drawString(x1, y1, text_);
 
-  if (strike_) {
-    window_->drawLine(x1        , y1 - ascent/2    , x1 + width, y1 - ascent/2    );
-    window_->drawLine(x1        , y1 - ascent/2 + 1, x1 + width, y1 - ascent/2 + 1);
+  if (data_.strike) {
+    window_->drawLine(x1, y1 - ascent/2    , x1 + width, y1 - ascent/2    );
+    window_->drawLine(x1, y1 - ascent/2 + 1, x1 + width, y1 - ascent/2 + 1);
   }
 
-  if (underline_)
+  if (data_.underline)
     window_->drawLine(x1, y1 + 1, x1 + width, y1 + 1);
 
-  if (link_ != NULL)
+  if (link_)
     link_->addRect(x1, y1 - sub_cell->getAscent(), x1 + width, y1 + sub_cell->getDescent());
 
   //---

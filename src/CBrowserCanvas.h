@@ -18,10 +18,13 @@ class CBrowserCanvas : public CBrowserObject {
 
   CBrowserWindow *window() const { return window_; }
 
-  CBrowserCanvasWidget *canvas() const { return canvas_; }
+  CQJCanvasWidget *canvas() const { return canvas_; }
 
   int width () const { return data_.width ; }
+  void setWidth(int w);
+
   int height() const { return data_.height; }
+  void setHeight(int h);
 
   void format(CHtmlLayoutMgr *) override;
 
@@ -32,10 +35,10 @@ class CBrowserCanvas : public CBrowserObject {
   void createWidget();
 
  private:
-  CBrowserWindow*       window_ { nullptr };
-  CBrowserCanvasData    data_;
-  CBrowserCanvasWidget* canvas_ { nullptr };
-  CHtmlLayoutRegion     region_;
+  CBrowserWindow*    window_ { nullptr };
+  CBrowserCanvasData data_;
+  CQJCanvasWidget*   canvas_ { nullptr };
+  CHtmlLayoutRegion  region_;
 };
 
 #endif

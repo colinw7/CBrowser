@@ -14,12 +14,17 @@ class CBrowserMain {
  public:
   static CBrowserMain *getInstance();
 
+ ~CBrowserMain();
+
   void init(int argc, char **argv);
 
-  bool getDebug () const { return debug_  ; }
-  bool getUseAlt() const { return use_alt_; }
+  bool getDebug() const { return debug_; }
+  void setDebug(bool b);
 
-  void setDebug (bool debug  );
+  bool getQuiet() const { return quiet_; }
+  void setQuiet(bool b) { quiet_ = b; }
+
+  bool getUseAlt() const { return use_alt_; }
   void setUseAlt(bool use_alt);
 
   void openDocument(const std::string &fileName);
@@ -32,6 +37,7 @@ class CBrowserMain {
  private:
   IFaceList ifaces_;
   bool      debug_ { false };
+  bool      quiet_ { false };
   bool      use_alt_ { false };
 };
 

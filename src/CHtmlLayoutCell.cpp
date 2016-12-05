@@ -431,8 +431,7 @@ redraw(CHtmlLayoutMgr *layout, const CHtmlLayoutRegion &region)
   if (num_sub_cells <= 0)
     return;
 
-  if  (getHAlign() == CHALIGN_TYPE_RIGHT ||
-       getHAlign() == CHALIGN_TYPE_CENTER) {
+  if (getHAlign() == CHALIGN_TYPE_RIGHT || getHAlign() == CHALIGN_TYPE_CENTER) {
     int offset = 0;
 
     int j = 0;

@@ -5,8 +5,11 @@
 #include <CImageLib.h>
 #include <QWidget>
 
-#define FORM_METHOD_GET  1
-#define FORM_METHOD_POST 2
+enum class CBrowserFormMethodType {
+  NONE,
+  GET,
+  POST
+};
 
 enum class CBrowserFormInputType {
   NONE,
@@ -61,13 +64,14 @@ class CBrowserFormMgr {
   const std::string &inputOnFocus() const { return input_onfocus_; }
   void setInputOnFocus(const std::string &onfocus) { input_onfocus_ = onfocus; }
 
-  void startForm(const std::string &name, int method, const std::string &action);
+  void startForm(const std::string &name, CBrowserFormMethodType method,
+                 const std::string &action);
   void endForm();
 
   CBrowserFormSelect *startSelect(const std::string &, int, int);
   void endSelect();
 
-  void startOption(const std::string &, int);
+  CBrowserFormOption *startOption(const std::string &value, bool selected);
   void endOption(const std::string &);
 
   CBrowserFormTextarea *startTextarea(const std::string &, int, int, const std::string &);
@@ -104,17 +108,19 @@ class CBrowserFormMgr {
 //------
 
 class CBrowserForm : public QObject {
+  Q_OBJECT
+
  public:
   CBrowserForm(const std::string &name, CBrowserDocument *document,
-               int method, const std::string &action);
+               CBrowserFormMethodType method, const std::string &action);
 
   std::string getName() const { return name_; }
 
   CBrowserDocument *getDocument() const { return document_; }
 
-  int         getMethod() const { return method_; }
-  std::string getAction() const { return action_; }
-  std::string getTarget() const { return target_; }
+  CBrowserFormMethodType getMethod() const { return method_; }
+  std::string            getAction() const { return action_; }
+  std::string            getTarget() const { return target_; }
 
   std::string getEncoding() const { return encoding_; }
 
@@ -131,40 +137,41 @@ class CBrowserForm : public QObject {
  private:
   typedef std::vector<CBrowserFormInput *> FormInputs;
 
-  std::string       name_;
-  CBrowserDocument *document_ { nullptr };
-  int               method_ { 0 };
-  std::string       action_;
-  std::string       target_;
-  std::string       encoding_;
-  FormInputs        input_list_;
+  std::string            name_;
+  CBrowserDocument*      document_ { nullptr };
+  CBrowserFormMethodType method_ { CBrowserFormMethodType::NONE };
+  std::string            action_;
+  std::string            target_;
+  std::string            encoding_;
+  FormInputs             input_list_;
 };
 
 //------
 
-class CBrowserFormOption {
+class CBrowserFormOption : public CBrowserObject {
  public:
-  CBrowserFormOption(const std::string &value, int selected);
+  CBrowserFormOption(CBrowserDocument *document, const std::string &value, bool selected);
 
   std::string getValue() const { return value_; }
 
-  int getSelected() const { return selected_; }
+  bool getSelected() const { return selected_; }
+  void setSelected(bool b) { selected_ = b; }
 
   std::string getText() const { return text_; }
-
   void setText(const std::string &text) { text_ = text; }
 
  private:
-  std::string value_;
-  int         selected_ { 0 };
-  std::string text_;
+  CBrowserDocument* document_ { nullptr };
+  std::string       value_;
+  bool              selected_ { false };
+  std::string       text_;
 };
 
 //------
 
 class CBrowserFormInput : public CBrowserObject {
  public:
-  CBrowserFormInput(CBrowserDocument *document, CBrowserFormInputType type,
+  CBrowserFormInput(CBrowserDocument *document, CHtmlTagId id, CBrowserFormInputType type,
                     const std::string &name, const std::string &value);
 
   virtual ~CBrowserFormInput();
@@ -222,6 +229,8 @@ class CBrowserFormInput : public CBrowserObject {
 //------
 
 class CBrowserFormButton : public QObject, public CBrowserFormInput {
+  Q_OBJECT
+
  public:
   CBrowserFormButton(CBrowserDocument *document, const std::string &name,
                      const std::string &value);
@@ -237,6 +246,8 @@ class CBrowserFormButton : public QObject, public CBrowserFormInput {
 //------
 
 class CBrowserFormCheckBox : public QObject, public CBrowserFormInput {
+  Q_OBJECT
+
  public:
   CBrowserFormCheckBox(CBrowserDocument *document, const std::string &name,
                        const std::string &value, int checked);
@@ -252,6 +263,8 @@ class CBrowserFormCheckBox : public QObject, public CBrowserFormInput {
 //------
 
 class CBrowserFormFileUpload : public QObject, public CBrowserFormInput {
+  Q_OBJECT
+
  public:
   CBrowserFormFileUpload(CBrowserDocument *document, const std::string &name,
                          const std::string &value, int size, int maxlength);
@@ -271,6 +284,8 @@ class CBrowserFormFileUpload : public QObject, public CBrowserFormInput {
 //------
 
 class CBrowserFormHidden : public QObject, public CBrowserFormInput {
+  Q_OBJECT
+
  public:
   CBrowserFormHidden(CBrowserDocument *document, const std::string &name,
                      const std::string &value);
@@ -288,6 +303,8 @@ class CBrowserFormHidden : public QObject, public CBrowserFormInput {
 //------
 
 class CBrowserFormImage : public QObject, public CBrowserFormInput {
+  Q_OBJECT
+
  public:
   CBrowserFormImage(CBrowserDocument *document, const std::string &name,
                     const std::string &value, const std::string &src,
@@ -308,6 +325,8 @@ class CBrowserFormImage : public QObject, public CBrowserFormInput {
 //------
 
 class CBrowserFormPassword : public QObject, public CBrowserFormInput {
+  Q_OBJECT
+
  public:
   CBrowserFormPassword(CBrowserDocument *document, const std::string &name,
                        const std::string &value, int size, int maxlength);
@@ -328,6 +347,8 @@ class CBrowserFormPassword : public QObject, public CBrowserFormInput {
 //------
 
 class CBrowserFormRadio : public QObject, public CBrowserFormInput {
+  Q_OBJECT
+
  public:
   CBrowserFormRadio(CBrowserDocument *document, const std::string &name,
                     const std::string &value, int checked);
@@ -346,6 +367,8 @@ class CBrowserFormRadio : public QObject, public CBrowserFormInput {
 //------
 
 class CBrowserFormRange : public QObject, public CBrowserFormInput {
+  Q_OBJECT
+
  public:
   CBrowserFormRange(CBrowserDocument *document, const std::string &name,
                     const std::string &value, const std::string &min,
@@ -357,9 +380,6 @@ class CBrowserFormRange : public QObject, public CBrowserFormInput {
 
   void drawWidget(CBrowserWindow *window, const CHtmlLayoutRegion &region) override;
 
- public slots:
-  void buttonProc();
-
  protected:
   double min_ { 0.0 };
   double max_ { 100.0 };
@@ -370,6 +390,8 @@ class CBrowserFormRange : public QObject, public CBrowserFormInput {
 //------
 
 class CBrowserFormReset : public QObject, public CBrowserFormInput {
+  Q_OBJECT
+
  public:
   CBrowserFormReset(CBrowserDocument *document, const std::string &name,
                     const std::string &value);
@@ -385,6 +407,8 @@ class CBrowserFormReset : public QObject, public CBrowserFormInput {
 //------
 
 class CBrowserFormSelect : public QObject, public CBrowserFormInput {
+  Q_OBJECT
+
  public:
   CBrowserFormSelect(CBrowserDocument *document, const std::string &name,
                      const std::string &value, int size, int multiple);
@@ -416,6 +440,8 @@ class CBrowserFormSelect : public QObject, public CBrowserFormInput {
 //------
 
 class CBrowserFormSubmit : public QObject, public CBrowserFormInput {
+  Q_OBJECT
+
  public:
   CBrowserFormSubmit(CBrowserDocument *document, const std::string &name,
                      const std::string &value);
@@ -431,6 +457,8 @@ class CBrowserFormSubmit : public QObject, public CBrowserFormInput {
 //------
 
 class CBrowserFormText : public QObject, public CBrowserFormInput {
+  Q_OBJECT
+
  public:
   CBrowserFormText(CBrowserDocument *document, const std::string &name, const std::string &value,
                    const std::string &classStr, int size, int maxlength,
@@ -458,10 +486,15 @@ class CBrowserFormText : public QObject, public CBrowserFormInput {
 //------
 
 class CBrowserFormTextarea : public QObject, public CBrowserFormInput {
+  Q_OBJECT
+
  public:
   CBrowserFormTextarea(CBrowserDocument *document, const std::string &name,
                        const std::string &value, int rows, int cols,
                        CBrowserFormTextAreaWrapType wrap);
+
+  const std::string &text() const { return text_; }
+  void setText(const std::string &v) { text_ = v; }
 
   void createWidget(CBrowserWindow *window);
 
@@ -475,6 +508,7 @@ class CBrowserFormTextarea : public QObject, public CBrowserFormInput {
   int                          rows_ { 0 };
   int                          cols_ { 0 };
   CBrowserFormTextAreaWrapType wrap_ { CBrowserFormTextAreaWrapType::OFF };
+  std::string                  text_;
 };
 
 #endif

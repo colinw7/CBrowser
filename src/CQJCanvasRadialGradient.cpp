@@ -1,5 +1,4 @@
 #include <CQJCanvasRadialGradient.h>
-#include <CJavaScript.h>
 #include <CQJUtil.h>
 
 CJObjTypeP CQJCanvasRadialGradientType::type_;

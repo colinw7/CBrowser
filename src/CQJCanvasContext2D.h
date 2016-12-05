@@ -28,7 +28,7 @@ class CQJCanvasContext2D : public CJObj {
 
   CBrowserCanvas *canvas() const;
 
-  CBrowserCanvasWidget *canvasWidget() const;
+  CQJCanvasWidget *canvasWidget() const;
 
   std::string toString() const override {
     std::ostringstream ss; ss << *this;

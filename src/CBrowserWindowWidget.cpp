@@ -212,20 +212,16 @@ void
 CBrowserWindowWidget::
 drawOutline(int x, int y, int width, int height, const std::string &color_name)
 {
-  if (CEnvInst.exists("HTML_OUTLINE")) {
-    CRGBA color = CRGBName::toRGBA(color_name);
+  CRGBA color = CRGBName::toRGBA(color_name);
 
-    graphics_->drawOutline(x, y, width, height, color);
-  }
+  drawOutline(x, y, width, height, color);
 }
 
 void
 CBrowserWindowWidget::
 drawOutline(int x, int y, int width, int height, const CRGBA &c)
 {
-  if (CEnvInst.exists("HTML_OUTLINE")) {
-    graphics_->drawOutline(x, y, width, height, c);
-  }
+  graphics_->drawOutline(x, y, width, height, c);
 }
 
 void

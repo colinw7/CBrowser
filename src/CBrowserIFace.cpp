@@ -3,6 +3,7 @@
 #include <CBrowserWindow.h>
 #include <CBrowserGraphics.h>
 #include <CBrowserJS.h>
+#include <CBrowserDomTree.h>
 #include <CQJDocument.h>
 #include <CQJWindow.h>
 #include <CQJEvent.h>
@@ -111,6 +112,9 @@ createMenus()
 
   CQMenuItem *jsMenuItem = new CQMenuItem(fileMenu, "&JavaScript");
   jsMenuItem->connect(this, SLOT(jsProc()));
+
+  CQMenuItem *domMenuItem = new CQMenuItem(fileMenu, "&DOM");
+  domMenuItem->connect(this, SLOT(domProc()));
 
   CQMenuItem *quitMenuItem = new CQMenuItem(fileMenu, "&Quit");
   quitMenuItem->setShortcut("Ctrl+Q");
@@ -338,10 +342,20 @@ void
 CBrowserIFace::
 jsProc()
 {
-  if (! dlg_)
-    dlg_ = new CQJDialog(CBrowserJSInst->js());
+  if (! jsDlg_)
+    jsDlg_ = new CQJDialog(CBrowserJSInst->js());
 
-  dlg_->show();
+  jsDlg_->show();
+}
+
+void
+CBrowserIFace::
+domProc()
+{
+  if (! domDlg_)
+    domDlg_ = new CBrowserDomTreeDlg(window_);
+
+  domDlg_->show();
 }
 
 void

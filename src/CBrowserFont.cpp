@@ -18,15 +18,24 @@ void
 CBrowserFontFace::
 loadFonts(CBrowserWindow *)
 {
-  normal_fonts_[0] = CFontMgrInst->lookupFont("helvetica", CFONT_STYLE_NORMAL     , 12);
-  bold_fonts_  [0] = CFontMgrInst->lookupFont("helvetica", CFONT_STYLE_BOLD       , 12);
-  italic_fonts_[0] = CFontMgrInst->lookupFont("helvetica", CFONT_STYLE_ITALIC     , 12);
-  boldi_fonts_ [0] = CFontMgrInst->lookupFont("helvetica", CFONT_STYLE_BOLD_ITALIC, 12);
+  int size = 12;
+
+  normal_fonts_[0] = CFontMgrInst->lookupFont("helvetica", CFONT_STYLE_NORMAL     , size);
+  bold_fonts_  [0] = CFontMgrInst->lookupFont("helvetica", CFONT_STYLE_BOLD       , size);
+  italic_fonts_[0] = CFontMgrInst->lookupFont("helvetica", CFONT_STYLE_ITALIC     , size);
+  boldi_fonts_ [0] = CFontMgrInst->lookupFont("helvetica", CFONT_STYLE_BOLD_ITALIC, size);
 
   for (int i = 1; i < 7; ++i) {
-    normal_fonts_[i] = normal_fonts_[0];
-    bold_fonts_  [i] = bold_fonts_  [0];
-    italic_fonts_[i] = italic_fonts_[0];
-    boldi_fonts_ [i] = boldi_fonts_ [0];
+    int size1 = size + i;
+
+    normal_fonts_[i] = CFontMgrInst->lookupFont("helvetica", CFONT_STYLE_NORMAL     , size1);
+    bold_fonts_  [i] = CFontMgrInst->lookupFont("helvetica", CFONT_STYLE_BOLD       , size1);
+    italic_fonts_[i] = CFontMgrInst->lookupFont("helvetica", CFONT_STYLE_ITALIC     , size1);
+    boldi_fonts_ [i] = CFontMgrInst->lookupFont("helvetica", CFONT_STYLE_BOLD_ITALIC, size1);
+
+    //normal_fonts_[i] = normal_fonts_[0];
+    //bold_fonts_  [i] = bold_fonts_  [0];
+    //italic_fonts_[i] = italic_fonts_[0];
+    //boldi_fonts_ [i] = boldi_fonts_ [0];
   }
 }

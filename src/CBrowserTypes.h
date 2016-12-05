@@ -5,9 +5,11 @@
 #include <string>
 #include <list>
 
-#define UNIT_NONE    0
-#define UNIT_PIXEL   1
-#define UNIT_PERCENT 2
+enum class CBrowserUnitsType {
+  NONE,
+  PIXEL,
+  PERCENT,
+};
 
 enum class CBrowserBorderType {
   NONE,
@@ -50,7 +52,7 @@ enum class CBrowserDeviceType {
 //------
 
 class CBrowserCanvas;
-class CBrowserCanvasWidget;
+class CQJCanvasWidget;
 class CBrowserDocument;
 class CBrowserFontFace;
 class CBrowserFormMgr;

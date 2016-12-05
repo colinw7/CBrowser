@@ -1,6 +1,7 @@
 #include <CHtmlLayoutMgr.h>
-#include <CHtmlLayoutCell.h>
 #include <CHtmlLayoutArea.h>
+#include <CHtmlLayoutCell.h>
+#include <CHtmlLayoutSubCell.h>
 
 CHtmlLayoutMgr::
 CHtmlLayoutMgr()
@@ -45,6 +46,35 @@ endArea()
   else
     current_area_ = 0;
 }
+
+CHtmlLayoutCell *
+CHtmlLayoutMgr::
+newCellBelow()
+{
+  return CHtmlLayoutCell::newCellBelow(this);
+}
+
+CHtmlLayoutCell *
+CHtmlLayoutMgr::
+newCellRight()
+{
+  return CHtmlLayoutCell::newCellRight(this);
+}
+
+CHtmlLayoutSubCell *
+CHtmlLayoutMgr::
+newSubCellBelow(bool breakup)
+{
+  return CHtmlLayoutSubCell::newCellBelow(this, breakup);
+}
+
+CHtmlLayoutSubCell *
+CHtmlLayoutMgr::
+newSubCellRight(bool breakup)
+{
+  return CHtmlLayoutSubCell::newCellRight(this, breakup);
+}
+
 
 void
 CHtmlLayoutMgr::

@@ -1,10 +1,9 @@
 #ifndef CBrowserLink_H
 #define CBrowserLink_H
 
+#include <CBrowserObject.h>
+#include <CBrowserData.h>
 #include <CBrowserTypes.h>
-
-#define SOURCE_LINK 1
-#define DEST_LINK   2
 
 struct CBrowserLinkRect {
   int x1;
@@ -44,16 +43,22 @@ class CBrowserLinkMgr {
 
 class CBrowserLink {
  public:
-  CBrowserLink(int type, const std::string &name,
+  enum class Type {
+    SOURCE,
+    DEST
+  };
+
+ public:
+  CBrowserLink(Type type, const std::string &name,
                const std::string &dest, const std::string &title);
  ~CBrowserLink();
 
-  int         getType () const { return type_ ; }
+  Type        getType () const { return type_ ; }
   std::string getName () const { return name_ ; }
   std::string getDest () const { return dest_ ; }
   std::string getTitle() const { return title_; }
 
-  int isSource() { return type_ == SOURCE_LINK; }
+  int isSource() { return type_ == Type::SOURCE; }
 
   int getNumRects();
 
@@ -66,11 +71,23 @@ class CBrowserLink {
  private:
   typedef std::vector<CBrowserLinkRect *> LinkRects;
 
-  int         type_;
+  Type        type_;
   std::string name_;
   std::string dest_;
   std::string title_;
   LinkRects   rects_;
+};
+
+//-----
+
+class CBrowserLinkObj : public CBrowserObject {
+ public:
+  CBrowserLinkObj(CBrowserWindow *window, const CBrowserLinkData &data);
+ ~CBrowserLinkObj();
+
+ private:
+  CBrowserWindow*  window_ { nullptr };
+  CBrowserLinkData data_;
 };
 
 #endif

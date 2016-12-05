@@ -1,5 +1,4 @@
 #include <CQJCanvasLinearGradient.h>
-#include <CJavaScript.h>
 #include <CQJUtil.h>
 
 CJObjTypeP CQJCanvasLinearGradientType::type_;

@@ -8,6 +8,7 @@
 #include <CImageLib.h>
 #include <CFont.h>
 
+class CBrowserDomTreeDlg;
 class QScrollArea;
 class QScrollBar;
 class QLabel;
@@ -69,6 +70,7 @@ class CBrowserIFace : public CQMainWindow {
   void readProc();
   void printProc();
   void jsProc();
+  void domProc();
   void quitProc();
 
   void goBackProc();
@@ -89,7 +91,8 @@ class CBrowserIFace : public CQMainWindow {
   int                   canvas_y_offset_ { 0 };
   int                   canvas_width_ { 0 };
   int                   canvas_height_ { 0 };
-  CQJDialog*            dlg_ { nullptr };
+  CQJDialog*            jsDlg_ { nullptr };
+  CBrowserDomTreeDlg*   domDlg_ { nullptr };
 };
 
 #endif

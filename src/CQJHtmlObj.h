@@ -31,6 +31,8 @@ class CQJHtmlObj : public CQJObject {
 
   CBrowserObject *htmlObj() const { return htmlObj_; }
 
+  void init();
+
   CJValueP getProperty(CJavaScript *js, const std::string &name) const;
 
   void setProperty(CJavaScript *js, const std::string &name, CJValueP value);

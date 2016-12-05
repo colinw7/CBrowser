@@ -1,5 +1,5 @@
-#ifndef CBrowserBreakI_H
-#define CBrowserBreakI_H
+#ifndef CBrowserBreak_H
+#define CBrowserBreak_H
 
 #include <CBrowserObject.h>
 #include <CHtmlLayout.h>

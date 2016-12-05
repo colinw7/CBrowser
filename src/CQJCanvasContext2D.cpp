@@ -6,7 +6,7 @@
 #include <CQJCanvasImageData.h>
 #include <CQJCanvas.h>
 #include <CBrowserCanvas.h>
-#include <CBrowserCanvasWidget.h>
+#include <CQJCanvasWidget.h>
 #include <CQJImage.h>
 #include <CQJUtil.h>
 #include <CJavaScript.h>
@@ -95,7 +95,7 @@ canvas() const
   return canvas_->canvas();
 }
 
-CBrowserCanvasWidget *
+CQJCanvasWidget *
 CQJCanvasContext2D::
 canvasWidget() const
 {
@@ -110,7 +110,7 @@ CJValueP
 CQJCanvasContext2D::
 execNameFn(CJavaScript *js, const std::string &name, const Values &values)
 {
-  CBrowserCanvasWidget *canvas = canvasWidget();
+  CQJCanvasWidget *canvas = canvasWidget();
 
   if      (name == "fillRect") {
     initFill();
@@ -171,7 +171,7 @@ execNameFn(CJavaScript *js, const std::string &name, const Values &values)
     if (values.size() == 2) {
       std::string msg = (values[1] ? values[1]->toString() : "");
 
-      return CJValueP(new CQJCanvasFontMetrics(js_, canvas->font(), msg));
+      return CJValueP(new CQJCanvasFontMetrics(js, canvas->font(), msg));
     }
   }
   else if (name == "fillText") {
@@ -184,13 +184,13 @@ execNameFn(CJavaScript *js, const std::string &name, const Values &values)
       double      x    = (values[2] ? values[2]->toReal().getValue(0) : 0.0);
       double      y    = (values[3] ? values[3]->toReal().getValue(0) : 0.0);
 
-      double shadowBlur = getRealProperty(js_, "shadowBlur", 0);
+      double shadowBlur = getRealProperty(js, "shadowBlur", 0);
 
       if (shadowBlur > 0) {
-        double shadowX = getRealProperty(js_, "shadowOffsetX", 0);
-        double shadowY = getRealProperty(js_, "shadowOffsetY", 0);
+        double shadowX = getRealProperty(js, "shadowOffsetX", 0);
+        double shadowY = getRealProperty(js, "shadowOffsetY", 0);
 
-        QColor shadowColor = CQJUtil::nameToColor(getStringProperty(js_, "shadowColor", ""));
+        QColor shadowColor = CQJUtil::nameToColor(getStringProperty(js, "shadowColor", ""));
 
         canvas->fillShadowText(x + shadowX, y + shadowY, text, shadowBlur, shadowColor);
       }
@@ -257,7 +257,7 @@ execNameFn(CJavaScript *js, const std::string &name, const Values &values)
       }
 
       if (image) {
-        double alpha = getRealProperty(js_, "globalAlpha", 1.0);
+        double alpha = getRealProperty(js, "globalAlpha", 1.0);
 
         canvas->setOpacity(alpha);
 
@@ -514,7 +514,7 @@ void
 CQJCanvasContext2D::
 initFill()
 {
-  CBrowserCanvasWidget *canvas = canvasWidget();
+  CQJCanvasWidget *canvas = canvasWidget();
 
   CJValueP fillStyle = getProperty(js_, "fillStyle");
 
@@ -554,7 +554,7 @@ void
 CQJCanvasContext2D::
 initStroke()
 {
-  CBrowserCanvasWidget *canvas = canvasWidget();
+  CQJCanvasWidget *canvas = canvasWidget();
 
   CJValueP strokeStyle = getProperty(js_, "strokeStyle");
 
@@ -608,7 +608,7 @@ void
 CQJCanvasContext2D::
 initFont()
 {
-  CBrowserCanvasWidget *canvas = canvasWidget();
+  CQJCanvasWidget *canvas = canvasWidget();
 
   std::string textBaseline = getStringProperty(js_, "textBaseline", "alphabetic");
   std::string textAlign    = getStringProperty(js_, "textAlign"   , "left");

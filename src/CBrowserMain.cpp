@@ -21,6 +21,13 @@ CBrowserMain()
 {
 }
 
+CBrowserMain::
+~CBrowserMain()
+{
+  for (auto &i : ifaces_)
+    delete i;
+}
+
 void
 CBrowserMain::
 setDebug(bool debug)

@@ -4,7 +4,7 @@
 
 CBrowserSymbol::
 CBrowserSymbol(CBrowserWindow *window, CBrowserSymbolType type, int width, int height) :
- CBrowserObject(Type::SYMBOL), window_(window), type_(type), width_(width), height_(height)
+ CBrowserObject(CHtmlTagId::SYMBOL), window_(window), type_(type), width_(width), height_(height)
 {
 }
 
@@ -17,7 +17,7 @@ void
 CBrowserSymbol::
 format(CHtmlLayoutMgr *)
 {
-  CHtmlLayoutSubCell::newCellBelow(window_->getLayoutMgr(), false);
+  window_->newSubCellBelow(false);
 
   window_->updateSubCellHeight(height_, 0);
   window_->updateSubCellWidth (width_);

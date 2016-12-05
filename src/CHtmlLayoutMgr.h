@@ -18,6 +18,12 @@ class CHtmlLayoutMgr {
   void startArea(CHtmlLayoutArea *area);
   void endArea();
 
+  CHtmlLayoutCell *newCellBelow();
+  CHtmlLayoutCell *newCellRight();
+
+  CHtmlLayoutSubCell *newSubCellBelow(bool breakup=false);
+  CHtmlLayoutSubCell *newSubCellRight(bool breakup=false);
+
   CHtmlLayoutArea *getCurrentArea() const { return current_area_; }
 
   CHAlignType getHAlign() const { return halign_; }

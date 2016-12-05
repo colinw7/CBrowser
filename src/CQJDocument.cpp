@@ -32,6 +32,8 @@ CQJDocument::
 CQJDocument(CJavaScript *js) :
  CQJObject(js, CQJDocumentType::instance(js))
 {
+  objType_->addObjFunction(js, "createElement", objType_);
+  objType_->addObjFunction(js, "createTextNode", objType_);
   objType_->addObjFunction(js, "getElementById", objType_);
   objType_->addObjFunction(js, "querySelector" , objType_);
 }
@@ -40,7 +42,11 @@ CJValueP
 CQJDocument::
 execNameFn(CJavaScript *js, const std::string &name, const Values &values)
 {
-  if      (name == "getElementById") {
+  if      (name == "createElement") {
+  }
+  else if (name == "createTextNode") {
+  }
+  else if (name == "getElementById") {
     if (values.size() == 2) {
       std::string id = values[1]->toString();
 

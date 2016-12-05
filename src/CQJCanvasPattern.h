@@ -4,8 +4,6 @@
 #include <CJObj.h>
 #include <QImage>
 
-class CJavaScript;
-
 class CQJCanvasPatternType : public CJObjType {
  public:
   static CJObjTypeP instance(CJavaScript *js);

@@ -51,16 +51,40 @@ CQJCanvas(CJavaScript *js, CBrowserCanvas *canvas) :
   objType_->addObjFunction(js, "getContext", objType_);
 
   context2D_ = CJValueP(new CQJCanvasContext2D(js, this));
+}
 
-  updateSize();
+CJValueP
+CQJCanvas::
+getProperty(CJavaScript *js, const std::string &name) const
+{
+  if      (name == "offsetLeft") {
+    return js->createNumberValue(0L);
+  }
+  else if (name == "offsetTop") {
+    return js->createNumberValue(0L);
+  }
+  else if (name == "width") {
+    return js->createNumberValue(long(canvas_->width()));
+  }
+  else if (name == "height") {
+    return js->createNumberValue(long(canvas_->height()));
+  }
+  else
+    return CQJHtmlObj::getProperty(js, name);
 }
 
 void
 CQJCanvas::
-updateSize()
+setProperty(CJavaScript *js, const std::string &name, CJValueP value)
 {
-  setRealProperty(js_, "width" , canvas_->width ());
-  setRealProperty(js_, "height", canvas_->height());
+  if      (name == "width") {
+    canvas_->setWidth(value->toInteger().getValue(1));
+  }
+  else if (name == "height") {
+    canvas_->setHeight(value->toInteger().getValue(1));
+  }
+  else
+    CQJHtmlObj::setProperty(js, name, value);
 }
 
 CJValueP

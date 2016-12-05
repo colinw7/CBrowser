@@ -3,7 +3,7 @@
 
 CBrowserBreak::
 CBrowserBreak(CBrowserWindow *window, CHtmlLayoutClearType clear) :
- CBrowserObject(Type::BREAK), window_(window), clear_(clear)
+ CBrowserObject(CHtmlTagId::BR), window_(window), clear_(clear)
 {
 }
 
@@ -16,8 +16,7 @@ void
 CBrowserBreak::
 format(CHtmlLayoutMgr *)
 {
-  CHtmlLayoutSubCell *sub_cell =
-    CHtmlLayoutSubCell::newCellBelow(window_->getLayoutMgr(), false);
+  CHtmlLayoutSubCell *sub_cell = window_->newSubCellBelow(false);
 
   sub_cell->setClear(clear_);
 

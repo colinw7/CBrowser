@@ -4,8 +4,6 @@
 #include <CJObj.h>
 #include <QLinearGradient>
 
-class CJavaScript;
-
 class CQJCanvasLinearGradientType : public CJObjType {
  public:
   static CJObjTypeP instance(CJavaScript *js);

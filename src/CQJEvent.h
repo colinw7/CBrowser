@@ -4,8 +4,6 @@
 #include <CQJObject.h>
 #include <QKeyEvent>
 
-class CJavaScript;
-
 class CQJEventType : public CJObjType {
  public:
   static CJObjTypeP instance(CJavaScript *js);

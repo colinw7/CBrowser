@@ -136,18 +136,18 @@ init()
 
   linkMgr_ = new CBrowserLinkMgr(this);
 
-  current_font_face_  = nullptr;
+  currentFontFace_  = nullptr;
   base_font_size_     = 3;
-  current_font_style_ = CFONT_STYLE_NORMAL;
-  current_font_size_  = 3;
+  currentFontStyle_ = CFONT_STYLE_NORMAL;
+  currentFontSize_  = 3;
 
   history_ = new CBrowserHistory(this);
 
-  /*-------------*/
+  //---
 
   loadResources();
 
-  /*-------------*/
+  //---
 
   startFontFace(default_font_face_);
 }
@@ -185,17 +185,17 @@ void
 CBrowserWindow::
 startFontFace(const std::string &face)
 {
-  if (current_font_face_)
-    font_face_stack_.push_back(current_font_face_);
+  if (currentFontFace_)
+    font_face_stack_.push_back(currentFontFace_);
 
-  current_font_face_ = lookupFontFace(face);
+  currentFontFace_ = lookupFontFace(face);
 
-  if (! current_font_face_)
+  if (! currentFontFace_)
     return;
 
   base_font_size_     = 3;
-  current_font_size_  = 3;
-  current_font_style_ = CFONT_STYLE_NORMAL;
+  currentFontSize_  = 3;
+  currentFontStyle_ = CFONT_STYLE_NORMAL;
 
   setFontStyle();
 }
@@ -207,11 +207,11 @@ endFontFace()
   if (font_face_stack_.empty())
     return;
 
-  current_font_face_ = font_face_stack_[font_face_stack_.size() - 1];
+  currentFontFace_ = font_face_stack_[font_face_stack_.size() - 1];
 
   font_face_stack_.pop_back();
 
-  if (! current_font_face_)
+  if (! currentFontFace_)
     return;
 
   setFontStyle();
@@ -221,17 +221,17 @@ std::string
 CBrowserWindow::
 getCurrentFontFace() const
 {
-  if (! current_font_face_)
+  if (! currentFontFace_)
     return "helvetica";
 
-  return current_font_face_->getFace();
+  return currentFontFace_->getFace();
 }
 
 void
 CBrowserWindow::
 setCurrentFontFace(const std::string &face)
 {
-  current_font_face_ = lookupFontFace(face);
+  currentFontFace_ = lookupFontFace(face);
 }
 
 CBrowserFontFace *
@@ -310,7 +310,7 @@ void
 CBrowserWindow::
 setFontSize(int size)
 {
-  current_font_size_ = size - 1;
+  currentFontSize_ = size - 1;
 
   setFontStyle();
 }
@@ -319,14 +319,14 @@ int
 CBrowserWindow::
 getFontSize()
 {
-  return (current_font_size_ + 1);
+  return (currentFontSize_ + 1);
 }
 
 void
 CBrowserWindow::
 resetFontSize()
 {
-  current_font_size_ = 3;
+  currentFontSize_ = 3;
 
   setFontStyle();
 }
@@ -335,7 +335,7 @@ void
 CBrowserWindow::
 increaseFontSize()
 {
-  current_font_size_++;
+  currentFontSize_++;
 
   setFontStyle();
 }
@@ -344,7 +344,7 @@ void
 CBrowserWindow::
 decreaseFontSize()
 {
-  current_font_size_--;
+  currentFontSize_--;
 
   setFontStyle();
 }
@@ -353,21 +353,21 @@ void
 CBrowserWindow::
 setFontColor(const std::string &colorName)
 {
-  current_font_color_ = CRGBName::toRGBA(colorName);
+  currentFontColor_ = CRGBName::toRGBA(colorName);
 }
 
 std::string
 CBrowserWindow::
 getFontColor()
 {
-  return current_font_color_.stringEncode();
+  return currentFontColor_.stringEncode();
 }
 
 void
 CBrowserWindow::
 startBold()
 {
-  current_font_style_ |= CFONT_STYLE_BOLD;
+  currentFontStyle_ |= CFONT_STYLE_BOLD;
 
   setFontStyle();
 }
@@ -376,7 +376,7 @@ void
 CBrowserWindow::
 endBold()
 {
-  current_font_style_ &= ~CFONT_STYLE_BOLD;
+  currentFontStyle_ &= ~CFONT_STYLE_BOLD;
 
   setFontStyle();
 }
@@ -385,7 +385,7 @@ void
 CBrowserWindow::
 startItalic()
 {
-  current_font_style_ |= CFONT_STYLE_ITALIC;
+  currentFontStyle_ |= CFONT_STYLE_ITALIC;
 
   setFontStyle();
 }
@@ -394,7 +394,7 @@ void
 CBrowserWindow::
 endItalic()
 {
-  current_font_style_ &= ~CFONT_STYLE_ITALIC;
+  currentFontStyle_ &= ~CFONT_STYLE_ITALIC;
 
   setFontStyle();
 }
@@ -403,60 +403,52 @@ void
 CBrowserWindow::
 setFontStyle()
 {
-  if (! current_font_face_)
+  if (! currentFontFace_)
     return;
 
-  int size = current_font_size_ + base_font_size_ - 3;
+  int size = currentFontSize_ + base_font_size_ - 3;
 
   if      (size > 6)
     size = 6;
   else if (size < 0)
     size = 0;
 
-  if      (current_font_style_ == CFONT_STYLE_NORMAL)
-    font_ = current_font_face_->getNormalFont(size);
-  else if (current_font_style_ == CFONT_STYLE_BOLD)
-    font_ = current_font_face_->getBoldFont(size);
-  else if (current_font_style_ == CFONT_STYLE_ITALIC)
-    font_ = current_font_face_->getItalicFont(size);
-  else if (current_font_style_ == CFONT_STYLE_BOLD_ITALIC)
-    font_ = current_font_face_->getBoldItalicFont(size);
+  if      (currentFontStyle_ == CFONT_STYLE_NORMAL)
+    font_ = currentFontFace_->getNormalFont(size);
+  else if (currentFontStyle_ == CFONT_STYLE_BOLD)
+    font_ = currentFontFace_->getBoldFont(size);
+  else if (currentFontStyle_ == CFONT_STYLE_ITALIC)
+    font_ = currentFontFace_->getItalicFont(size);
+  else if (currentFontStyle_ == CFONT_STYLE_BOLD_ITALIC)
+    font_ = currentFontFace_->getBoldItalicFont(size);
 }
 
 void
 CBrowserWindow::
 freeFonts()
 {
-  std::vector<CBrowserFontFace *>::iterator pface1 = font_face_list_.begin();
-  std::vector<CBrowserFontFace *>::iterator pface2 = font_face_list_.end  ();
-
-  for ( ; pface1 != pface2; ++pface1)
-    delete (*pface1);
+  for (auto &f : font_face_list_)
+    delete f;
 }
 
 //------
 
-void
-CBrowserWindow::
-addBreak(CHtmlLayoutClearType clear)
-{
-  CBrowserBreak *breaker = new CBrowserBreak(this, clear);
-
-  addCellRedrawData(breaker);
-}
-
-void
+CBrowserObject *
 CBrowserWindow::
 addCanvas(const CBrowserCanvasData &canvasData)
 {
   CBrowserCanvas *canvas = new CBrowserCanvas(this, canvasData);
 
+  canvas->setId(canvasData.id);
+
   addCellRedrawData(canvas);
 
-  addObject(canvasData.id, canvas);
+  addObject(canvas);
+
+  return canvas;
 }
 
-void
+CBrowserObject *
 CBrowserWindow::
 addLabel(const std::string &text, int width, CHAlignType align, const CRGBA &color)
 {
@@ -464,83 +456,43 @@ addLabel(const std::string &text, int width, CHAlignType align, const CRGBA &col
 
   addCellRedrawData(label);
 
-  //addObject(id, label);
+  //addObject(label);
+
+  return label;
 }
 
-void
+CBrowserObject *
 CBrowserWindow::
-addText(const std::string &str, const CRGBA &color, bool underline, bool strike,
-        CBrowserTextPlaceType place, bool breakup, bool format)
+addText(const std::string &str, const CBrowserTextData &data)
 {
-  CBrowserText *text =
-    new CBrowserText(this, str, color, underline, strike, place, breakup, format);
+  CBrowserText *text = new CBrowserText(this, str, data);
 
   addCellRedrawData(text);
+
+  return text;
 }
 
-void
-CBrowserWindow::
-addText(CBrowserText *draw_text, const std::string &text)
-{
-  int ascent, descent;
-
-  getTextHeight(draw_text->getFont(), &ascent, &descent);
-
-  updateSubCellHeight(ascent, descent);
-
-  int width;
-
-  getTextWidth(draw_text->getFont(), text, &width);
-
-  updateSubCellWidth(width);
-
-  /*----------*/
-
-  CBrowserText *draw_text1 = new CBrowserText(this, *draw_text, text);
-
-  addSubCellRedrawData(draw_text1);
-}
-
-void
+CBrowserObject *
 CBrowserWindow::
 addSymbol(CBrowserSymbolType type)
 {
-  int width;
-  int ascent;
-  int descent;
+  int width, ascent, descent;
 
   getTextSize("X", &width, &ascent, &descent);
 
   CBrowserSymbol *symbol = new CBrowserSymbol(this, type, width, ascent);
 
   addCellRedrawData(symbol);
+
+  return symbol;
 }
 
-void
-CBrowserWindow::
-addRule(const CBrowserRuleData &data)
-{
-  CHtmlLayoutCell::newCellBelow(getLayoutMgr());
-
-  /*-------------*/
-
-  CBrowserRule *rule = new CBrowserRule(this, data);
-
-  addCellRedrawData(rule);
-
-  /*-------------*/
-
-  CHtmlLayoutCell::newCellBelow(getLayoutMgr());
-}
-
-void
+CBrowserObject *
 CBrowserWindow::
 addImage(const CBrowserImageData &imageData)
 {
-  if (imageData.src.substr(0, 6) == "_html_") {
-    addNamedImage(imageData.src.substr(6));
-    return;
-  }
+  if (imageData.src.substr(0, 6) == "_html_")
+    return addNamedImage(imageData.src.substr(6));
 
   //---
 
@@ -558,45 +510,114 @@ addImage(const CBrowserImageData &imageData)
 
   if (! image.isValid()) {
     if (imageData.alt != "" && CBrowserMainInst->getUseAlt()) {
-      addText(imageData.alt, currentFontColor(), /*underline*/false,
-              /*strike*/false, /*place*/ CBrowserTextPlaceType::NORMAL,
-              /*breakup*/false, /*format*/true);
-      return;
+      CBrowserTextData textData;
+
+      textData.color   = currentFontColor();
+      textData.breakup = false;
+
+      return addText(imageData.alt, textData);
     }
 
     image = CBrowserNamedImage::genNoImage();
   }
 
   if (! image)
-    return;
+    return 0;
 
   CBrowserImage *imageObj =
     new CBrowserImage(this, image, imageData.align, imageData.border,
                       imageData.width, imageData.height, imageData.hspace, imageData.vspace);
 
   addCellRedrawData(imageObj);
+
+  return imageObj;
 }
 
-void
+CBrowserObject *
 CBrowserWindow::
 addNamedImage(const std::string &name)
 {
   CImagePtr image = CBrowserNamedImage::lookup(name);
 
   if (! image)
-    return;
+    return 0;
 
   CBrowserImage *imageObj =
     new CBrowserImage(this, image, CBrowserImageAlign::ABSBOTTOM, 0, -1, -1, 0, 0);
 
   addCellRedrawData(imageObj);
+
+  return imageObj;
+}
+
+//------
+
+CBrowserText *
+CBrowserWindow::
+formatText(CBrowserText *draw_text, const std::string &text)
+{
+  int ascent, descent;
+
+  getTextHeight(draw_text->font(), &ascent, &descent);
+
+  updateSubCellHeight(ascent, descent);
+
+  int width;
+
+  getTextWidth(draw_text->font(), text, &width);
+
+  updateSubCellWidth(width);
+
+  //---
+
+  CBrowserText *draw_text1 = new CBrowserText(this, *draw_text, text);
+
+  addSubCellRedrawData(draw_text1);
+
+  return draw_text1;
+}
+
+//------
+
+void
+CBrowserWindow::
+startObject(CBrowserObject *obj)
+{
+  assert(obj);
+
+  CBrowserObject *currentObj = this->currentObj();
+
+  if (currentObj)
+    currentObj->addChild(obj);
+
+  addObject(obj);
+
+  objStack_.push_back(obj);
 }
 
 void
 CBrowserWindow::
-addObject(const std::string &id, CBrowserObject *obj)
+endObject()
 {
-  objects_[id] = obj;
+  if (! objStack_.empty())
+    objStack_.pop_back();
+}
+
+CBrowserObject *
+CBrowserWindow::
+currentObj() const
+{
+  if (! objStack_.empty())
+    return objStack_.back();
+  else
+    return 0;
+}
+
+void
+CBrowserWindow::
+addObject(CBrowserObject *obj)
+{
+  objects_[obj->id()] = obj;
 
   CBrowserJSInst->addHtmlObject(obj);
 }
@@ -624,11 +645,22 @@ addScript(const std::string &text)
 
 void
 CBrowserWindow::
+addScriptFile(const std::string &filename)
+{
+  scriptFiles_.push_back(filename);
+}
+
+void
+CBrowserWindow::
 runScripts()
 {
-  for (const auto &s : scripts_) {
+  for (const auto &s : scriptFiles_)
+    CBrowserJSInst->runScriptFile(this, s);
+
+  for (const auto &s : scripts_)
     CBrowserJSInst->runScript(this, s);
-  }
+
+  CBrowserJSInst->onLoad();
 }
 
 //------
@@ -741,7 +773,7 @@ outputDocument()
 
   //---
 
-  CHtmlLayoutCell::newCellBelow(layout_mgr_);
+  newLine();
 
   //---
 
@@ -772,7 +804,6 @@ outputDocument()
   //---
 
   //CHtmlLayoutPrintVisitor printVistor;
-
   //area_data_->accept(printVistor);
 }
 
@@ -782,7 +813,7 @@ recalc()
 {
   iface_->setBusy();
 
-  /*---------------*/
+  //---
 
   x_      = left_margin_;
   y_      = top_margin_;
@@ -791,7 +822,7 @@ recalc()
 
   linkMgr()->deleteLinkRects();
 
-  /*----------------*/
+  //---
 
   area_data_->setX     (left_margin_);
   area_data_->setY     (top_margin_ );
@@ -800,16 +831,16 @@ recalc()
 
   area_data_->format(layout_mgr_);
 
-  /*----------------*/
+  //---
 
   iface_->setSize(area_data_->getWidth () + 2*left_margin_,
                   area_data_->getHeight() + 2*top_margin_);
 
-  /*----------------*/
+  //---
 
   redraw();
 
-  /*----------------*/
+  //---
 
   iface_->setReady();
 }
@@ -820,7 +851,7 @@ resize()
 {
   recalc();
 
-  /*----------------*/
+  //---
 
   if (window_target_ != "") {
     int x, y;
@@ -829,7 +860,7 @@ resize()
       iface_->scrollTo(x, y);
   }
 
-  /*----------------*/
+  //---
 
   redraw();
 }
@@ -929,18 +960,39 @@ void
 CBrowserWindow::
 newLine()
 {
-  CHtmlLayoutCell::newCellBelow(layout_mgr_);
+  layout_mgr_->newCellBelow();
+}
+
+void
+CBrowserWindow::
+newColumn()
+{
+  layout_mgr_->newCellRight();
+}
+
+CHtmlLayoutSubCell *
+CBrowserWindow::
+newSubCellBelow(bool breakup)
+{
+  return layout_mgr_->newSubCellBelow(breakup);
+}
+
+CHtmlLayoutSubCell *
+CBrowserWindow::
+newSubCellRight(bool breakup)
+{
+  return layout_mgr_->newSubCellRight(breakup);
 }
 
 void
 CBrowserWindow::
 skipLine()
 {
-  CHtmlLayoutCell::newCellBelow(layout_mgr_);
+  newLine();
 
-  addLabel(" ", 1, CHALIGN_TYPE_LEFT, current_font_color_);
+  addLabel(" ", 1, CHALIGN_TYPE_LEFT, currentFontColor_);
 
-  CHtmlLayoutCell::newCellBelow(layout_mgr_);
+  newLine();
 }
 
 void
@@ -963,7 +1015,7 @@ displayError(const char *format, ...)
 {
   va_list args;
 
-  if (! CBrowserMainInst->getDebug())
+  if (CBrowserMainInst->getQuiet())
     return;
 
   va_start(args, format);
@@ -1154,6 +1206,13 @@ drawOutline(int x, int y, int width, int height, const CRGBA &c)
 {
   if (CEnvInst.exists("HTML_OUTLINE"))
     w_->drawOutline(x, y, width, height, c);
+}
+
+void
+CBrowserWindow::
+drawSelected(int x, int y, int width, int height)
+{
+  w_->drawOutline(x, y, width, height, CRGBA(1,0,0));
 }
 
 void

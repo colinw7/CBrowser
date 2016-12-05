@@ -38,17 +38,12 @@ class CBrowserDocument {
   CBrowserFormMgr* formMgr() const { return formMgr_; }
 
   void addLink(CBrowserLink *link);
-
   uint getNumLinks() const;
-
   CBrowserLink *getLink(uint i);
 
   void addAnchor(CBrowserLink *anchor);
-
   uint getNumAnchors() const;
-
   CBrowserLink *getAnchor(uint i);
-
   void freeLinks();
 
   void addForm(CBrowserForm *form);

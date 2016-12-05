@@ -4,23 +4,20 @@
 #include <CBrowserObject.h>
 #include <CRGBA.h>
 
-#define HEADER_CELL 1
-#define DATA_CELL   2
-
 struct CBrowserTableData {
-  bool        border       = false;
-  int         hspace       = 2;
-  int         vspace       = 2;
-  CHAlignType halign       = CHALIGN_TYPE_NONE;
-  CVAlignType valign       = CVALIGN_TYPE_NONE;
-  int         width        = -1;
-  int         width_unit   = UNIT_NONE;
-  int         cell_padding = 0;
-  int         cell_spacing = 0;
-  CRGBA       border_color;
-  CRGBA       background_color;
-  CRGBA       border_color_dark;
-  CRGBA       border_color_light;
+  bool              border       = false;
+  int               hspace       = 2;
+  int               vspace       = 2;
+  CHAlignType       halign       = CHALIGN_TYPE_NONE;
+  CVAlignType       valign       = CVALIGN_TYPE_NONE;
+  int               width        = -1;
+  CBrowserUnitsType width_unit   = CBrowserUnitsType::NONE;
+  int               cell_padding = 0;
+  int               cell_spacing = 0;
+  CRGBA             border_color;
+  CRGBA             background_color;
+  CRGBA             border_color_dark;
+  CRGBA             border_color_light;
 };
 
 struct CBrowserTableRowData {
@@ -33,19 +30,24 @@ struct CBrowserTableRowData {
 };
 
 struct CBrowserTableCellData {
-  int         type       = DATA_CELL;
-  std::string id;
-  CHAlignType halign     = CHALIGN_TYPE_NONE;
-  CVAlignType valign     = CVALIGN_TYPE_NONE;
-  int         width      = -1;
-  int         width_unit = UNIT_PIXEL;
-  bool        wrap       = true;
-  int         colspan    = 0;
-  int         rowspan    = 0;
-  CRGBA       border_color;
-  CRGBA       background_color;
-  CRGBA       border_color_dark;
-  CRGBA       border_color_light;
+  enum class Type {
+    HEADER,
+    DATA,
+  };
+
+  Type              type       = Type::DATA;
+  std::string       id;
+  CHAlignType       halign     = CHALIGN_TYPE_NONE;
+  CVAlignType       valign     = CVALIGN_TYPE_NONE;
+  int               width      = -1;
+  CBrowserUnitsType width_unit = CBrowserUnitsType::PIXEL;
+  bool              wrap       = true;
+  int               colspan    = 0;
+  int               rowspan    = 0;
+  CRGBA             border_color;
+  CRGBA             background_color;
+  CRGBA             border_color_dark;
+  CRGBA             border_color_light;
 };
 
 struct CBrowserTableCaptionData {
@@ -65,8 +67,8 @@ class CBrowserTableMgr {
   CBrowserTableCell *currentCell() const { return current_cell_; }
   CBrowserTableCaption *currentCaption() const { return current_caption_; }
 
-  void startTable(const CBrowserTableData &data);
-  void endTable();
+  CBrowserTable *startTable(const CBrowserTableData &data);
+  void           endTable();
 
   void startTableRow(const CBrowserTableRowData &data);
   void endTableRow();
@@ -124,7 +126,7 @@ class CBrowserTableCell {
 
   int getWidth() const { return width_; }
 
-  int getWidthUnit() const { return width_unit_; }
+  CBrowserUnitsType getWidthUnit() const { return width_unit_; }
 
   int getHeight() const { return height_; }
 
@@ -139,22 +141,22 @@ class CBrowserTableCell {
   CHtmlLayoutArea *getAreaData() const { return area_data_; }
 
  protected:
-  bool             pad_ { false };
-  int              x_ { 0 };
-  int              y_ { 0 };
-  int              width_ { 0 };
-  int              width_unit_ { UNIT_PIXEL };
-  int              height_ { 0 };
-  CHAlignType      halign_ { CHALIGN_TYPE_NONE };
-  CVAlignType      valign_ { CVALIGN_TYPE_NONE };
-  bool             wrap_ { false };
-  int              colspan_ { 0 };
-  int              rowspan_ { 0 };
-  CRGBA            border_color_;
-  CRGBA            background_color_;
-  CRGBA            border_color_dark_;
-  CRGBA            border_color_light_;
-  CHtmlLayoutArea *area_data_ { nullptr };
+  bool              pad_ { false };
+  int               x_ { 0 };
+  int               y_ { 0 };
+  int               width_ { 0 };
+  CBrowserUnitsType width_unit_ { CBrowserUnitsType::PIXEL };
+  int               height_ { 0 };
+  CHAlignType       halign_ { CHALIGN_TYPE_NONE };
+  CVAlignType       valign_ { CVALIGN_TYPE_NONE };
+  bool              wrap_ { false };
+  int               colspan_ { 0 };
+  int               rowspan_ { 0 };
+  CRGBA             border_color_;
+  CRGBA             background_color_;
+  CRGBA             border_color_dark_;
+  CRGBA             border_color_light_;
+  CHtmlLayoutArea*  area_data_ { nullptr };
 };
 
 //------
@@ -199,7 +201,7 @@ class CBrowserTable : public CBrowserObject {
 
   int getWidth() const { return width_; }
 
-  int getWidthUnit() const { return width_unit_; }
+  CBrowserUnitsType getWidthUnit() const { return width_unit_; }
 
   CRGBA getBackgroundColor() const { return background_color_; }
 
@@ -238,7 +240,7 @@ class CBrowserTable : public CBrowserObject {
   CHAlignType           halign_ { CHALIGN_TYPE_NONE };
   CVAlignType           valign_ { CVALIGN_TYPE_NONE };
   int                   width_ { 0 };
-  int                   width_unit_ { UNIT_PIXEL };
+  CBrowserUnitsType     width_unit_ { CBrowserUnitsType::PIXEL };
   int                   cell_padding_ { 0 };
   int                   cell_spacing_ { 0 };
   CRGBA                 border_color_;

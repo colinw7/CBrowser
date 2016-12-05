@@ -25,6 +25,9 @@ class CBrowserJS {
   void removeJSObject(CQJObject *obj);
 
   void runScript(CBrowserWindow *window, const std::string &text);
+  void runScriptFile(CBrowserWindow *window, const std::string &filename);
+
+  void onLoad();
 
   void callEventListeners(const std::string &name, const std::string &prop,
                           const EventArgs &args=EventArgs());

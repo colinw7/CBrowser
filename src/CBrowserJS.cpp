@@ -10,6 +10,7 @@
 #include <CQJCanvas.h>
 #include <CQJInput.h>
 #include <CQJImage.h>
+#include <CQJIntervalFunction.h>
 #include <CJavaScript.h>
 #include <CStrParse.h>
 #include <QMouseEvent>
@@ -52,10 +53,10 @@ init()
   js_->setProperty("window"  , jsWindow_);
   js_->setProperty("document", jsDocument_);
 
-//js_->setProperty("setInterval"  , CJValueP(new CQJSetInterval  (js_)));
-//js_->setProperty("clearInterval", CJValueP(new CQJClearInterval(js_)));
+  js_->setProperty("setInterval"  , CJValueP(new CQJSetInterval  (js_)));
+  js_->setProperty("clearInterval", CJValueP(new CQJClearInterval(js_)));
 
-//js_->setProperty("requestAnimationFrame", CJValueP(new CQJRequestAnimationFrame(js_)));
+  //js_->setProperty("requestAnimationFrame", CJValueP(new CQJRequestAnimationFrame(js_)));
 }
 
 void
@@ -64,9 +65,9 @@ addHtmlObject(CBrowserObject *obj)
 {
   CQJHtmlObj *htmlObj = 0;
 
-  if      (obj->type() == CBrowserObject::Type::CANVAS)
+  if      (obj->type() == CHtmlTagId::CANVAS)
     htmlObj = new CQJCanvas(js_, dynamic_cast<CBrowserCanvas *>(obj));
-  else if (obj->type() == CBrowserObject::Type::FORM_INPUT)
+  else if (obj->type() == CHtmlTagId::INPUT)
     htmlObj = new CQJInput(js_, dynamic_cast<CBrowserFormInput *>(obj));
   else
     htmlObj = new CQJHtmlObj(js_, obj);
@@ -116,7 +117,26 @@ runScript(CBrowserWindow *, const std::string &text)
     value->print(std::cout);
     std::cout << std::endl;
   }
+}
 
+void
+CBrowserJS::
+runScriptFile(CBrowserWindow *, const std::string &filename)
+{
+  js_->loadFile(filename);
+
+  CJValueP value = js_->exec();
+
+  if (value) {
+    value->print(std::cout);
+    std::cout << std::endl;
+  }
+}
+
+void
+CBrowserJS::
+onLoad()
+{
   callEventListeners("load", "onload");
 }
 

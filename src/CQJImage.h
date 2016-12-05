@@ -5,8 +5,6 @@
 #include <CJObjTypeFunction.h>
 #include <QImage>
 
-class CJavaScript;
-
 class CQJImageType : public CJObjType {
  public:
   static CJObjTypeP instance(CJavaScript *js);

@@ -12,16 +12,19 @@ CONFIG += debug
 
 # Input
 SOURCES += \
+CBrowserAddress.cpp \
 CBrowserBreak.cpp \
 CBrowserCanvas.cpp \
 CBrowserCanvasWidget.cpp \
 CBrowserCeil.cpp \
 CBrowser.cpp \
 CBrowserDocument.cpp \
+CBrowserDomTree.cpp \
 CBrowserFile.cpp \
 CBrowserFont.cpp \
 CBrowserForm.cpp \
 CBrowserGraphics.cpp \
+CBrowserHeader.cpp \
 CBrowserHistory.cpp \
 CBrowserIFace.cpp \
 CBrowserImage.cpp \
@@ -33,7 +36,9 @@ CBrowserMisc.cpp \
 CBrowserNamedImage.cpp \
 CBrowserObject.cpp \
 CBrowserOutput.cpp \
+CBrowserOutputList.cpp \
 CBrowserRule.cpp \
+CBrowserStyle.cpp \
 CBrowserSymbol.cpp \
 CBrowserTable.cpp \
 CBrowserText.cpp \
@@ -48,6 +53,7 @@ CQJCanvasImageData.cpp \
 CQJCanvasLinearGradient.cpp \
 CQJCanvasPattern.cpp \
 CQJCanvasRadialGradient.cpp \
+CQJCanvasWidget.cpp \
 CQJColorEdit.cpp \
 CQJComboBox.cpp \
 CQJDialog.cpp \
@@ -56,6 +62,7 @@ CQJEvent.cpp \
 CQJHtmlObj.cpp \
 CQJImage.cpp \
 CQJInput.cpp \
+CQJIntervalFunction.cpp \
 CQJLineEdit.cpp \
 CQJObject.cpp \
 CQJSlider.cpp \
@@ -77,16 +84,19 @@ CPrint.cpp \
 CUrl.cpp \
 
 HEADERS += \
+CBrowserAddress.h \
 CBrowserBreak.h \
 CBrowserCanvas.h \
 CBrowserCanvasWidget.h \
 CBrowserCeil.h \
 CBrowserData.h \
 CBrowserDocument.h \
+CBrowserDomTree.h \
 CBrowserFile.h \
 CBrowserFont.h \
 CBrowserForm.h \
 CBrowserGraphics.h \
+CBrowserHeader.h \
 CBrowserHistory.h \
 CBrowserHtmlI.h \
 CBrowserIFace.h \
@@ -99,8 +109,10 @@ CBrowserMisc.h \
 CBrowserNamedImage.h \
 CBrowserObject.h \
 CBrowserOutput.h \
+CBrowserOutputList.h \
 CBrowserPixmaps.h \
 CBrowserRule.h \
+CBrowserStyle.h \
 CBrowserSymbol.h \
 CBrowserTable.h \
 CBrowserText.h \
@@ -116,6 +128,7 @@ CQJCanvasImageData.h \
 CQJCanvasLinearGradient.h \
 CQJCanvasPattern.h \
 CQJCanvasRadialGradient.h \
+CQJCanvasWidget.h \
 CQJColorEdit.h \
 CQJComboBox.h \
 CQJDialog.h \
@@ -124,6 +137,7 @@ CQJEvent.h \
 CQJHtmlObj.h \
 CQJImage.h \
 CQJInput.h \
+CQJIntervalFunction.h \
 CQJLineEdit.h \
 CQJObject.h \
 CQJSlider.h \

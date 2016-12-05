@@ -28,7 +28,7 @@ startSourceLink(const std::string &dest, const std::string &title)
   if (title1 == "")
     title1 = dest1;
 
-  CBrowserLink *link = new CBrowserLink(SOURCE_LINK, "", dest1, title1);
+  CBrowserLink *link = new CBrowserLink(CBrowserLink::Type::SOURCE, "", dest1, title1);
 
   window_->getDocument()->addLink(link);
 
@@ -49,7 +49,7 @@ startDestLink(const std::string &name, const std::string &title)
   if (title1 == "")
     title1 = name;
 
-  CBrowserLink *link = new CBrowserLink(DEST_LINK, name, "", title1);
+  CBrowserLink *link = new CBrowserLink(CBrowserLink::Type::DEST, name, "", title1);
 
   window_->getDocument()->addAnchor(link);
 
@@ -109,7 +109,7 @@ getSourceLink(int x, int y)
   for (int i = 0; i < num_links; i++) {
     CBrowserLink *link = window_->getDocument()->getLink(i);
 
-    if (link->getType() != SOURCE_LINK)
+    if (link->getType() != CBrowserLink::Type::SOURCE)
       continue;
 
     int num_rects = link->getNumRects();
@@ -137,7 +137,7 @@ getDestLinkPos(const std::string &name, int *x, int *y)
   for (int i = 0; i < num_links; i++) {
     CBrowserLink *anchor = window_->getDocument()->getAnchor(i);
 
-    if (anchor->getType() != DEST_LINK)
+    if (anchor->getType() != CBrowserLink::Type::DEST)
       continue;
 
     if (anchor->getName() == name)
@@ -214,7 +214,7 @@ expandDestLink(const std::string &dest) const
 //------
 
 CBrowserLink::
-CBrowserLink(int type, const std::string &name, const std::string &dest,
+CBrowserLink(Type type, const std::string &name, const std::string &dest,
              const std::string &title) :
  type_(type), name_(name), dest_(dest), title_(title)
 {
@@ -264,4 +264,17 @@ deleteRects()
     delete rects_[i];
 
   rects_.clear();
+}
+
+//------
+
+CBrowserLinkObj::
+CBrowserLinkObj(CBrowserWindow *window, const CBrowserLinkData &data) :
+ CBrowserObject(CHtmlTagId::A), window_(window), data_(data)
+{
+}
+
+CBrowserLinkObj::
+~CBrowserLinkObj()
+{
 }

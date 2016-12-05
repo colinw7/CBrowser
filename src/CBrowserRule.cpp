@@ -3,7 +3,7 @@
 
 CBrowserRule::
 CBrowserRule(CBrowserWindow *window, const CBrowserRuleData &data) :
- CBrowserObject(Type::RULE), window_(window), align_(data.align), shade_(data.shade),
+ CBrowserObject(CHtmlTagId::HR), window_(window), align_(data.align), shade_(data.shade),
  size_(data.size), width_(data.width), unit_(data.unit)
 {
   size_ = std::max(size_, 2);
@@ -16,9 +16,20 @@ CBrowserRule::
 
 void
 CBrowserRule::
+initFormat()
+{
+  window_->newLine();
+
+  window_->addCellRedrawData(this);
+
+  window_->newLine();
+}
+
+void
+CBrowserRule::
 format(CHtmlLayoutMgr *)
 {
-  CHtmlLayoutSubCell::newCellBelow(window_->getLayoutMgr(), false);
+  window_->newSubCellBelow(false);
 
   int ascent;
 
@@ -29,12 +40,12 @@ format(CHtmlLayoutMgr *)
 
   window_->updateSubCellHeight(ascent, 0);
 
-  if (width_ > 0 && unit_ == UNIT_PIXEL)
+  if (width_ > 0 && unit_ == CBrowserUnitsType::PIXEL)
     window_->updateSubCellWidth(width_);
   else
     window_->updateSubCellWidth(window_->getCurrentArea()->getWidth());
 
-  /*-------------*/
+  //---
 
   window_->addSubCellRedrawData(this);
 }
@@ -49,7 +60,7 @@ draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &region)
 
   if      (width_ == -1)
     width = sub_cell->getWidth();
-  else if (unit_ == UNIT_PERCENT)
+  else if (unit_ == CBrowserUnitsType::PERCENT)
     width = (int) (width_* sub_cell->getWidth()/100.0);
   else
     width = width_;
@@ -65,7 +76,7 @@ draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &region)
 
   int y1 = region.y + sub_cell->getAscent()/2;
 
-  /*---------*/
+  //---
 
   if (shade_)
     window_->drawHRule(x1, x2, y1, size_);
