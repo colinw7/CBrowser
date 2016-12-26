@@ -3,11 +3,25 @@
 
 CBrowserAddress::
 CBrowserAddress(CBrowserWindow *window) :
- CBrowserObject(CHtmlTagId::ADDRESS), window_(window)
+ CBrowserObject(window, CHtmlTagId::ADDRESS)
 {
 }
 
 CBrowserAddress::
 ~CBrowserAddress()
 {
+}
+
+void
+CBrowserAddress::
+initProcess()
+{
+  window_->startItalic();
+}
+
+void
+CBrowserAddress::
+termProcess()
+{
+  window_->endItalic();
 }

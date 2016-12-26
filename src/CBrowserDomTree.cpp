@@ -1,7 +1,10 @@
 #include <CBrowserDomTree.h>
+#include <CBrowserObjProp.h>
 #include <CBrowserWindow.h>
 #include <CBrowserText.h>
 #include <CBrowserObject.h>
+
+#include <QSplitter>
 #include <QHeaderView>
 #include <QAbstractItemModel>
 #include <QStyledItemDelegate>
@@ -50,16 +53,23 @@ CBrowserDomTreeDlg(CBrowserWindow *window) :
 {
   QVBoxLayout *layout = new QVBoxLayout(this);
 
-  tree_ = new CBrowserDomTree(this, window);
+  QSplitter *splitter = new QSplitter(this);
+  splitter->setObjectName("splitter");
 
-  layout->addWidget(tree_);
+  tree_ = new CBrowserDomTree(this, window);
+  prop_ = new CBrowserObjProp(this, window);
+
+  splitter->addWidget(tree_);
+  splitter->addWidget(prop_);
+
+  layout->addWidget(splitter);
 }
 
 //---
 
 CBrowserDomTree::
-CBrowserDomTree(QWidget *parent, CBrowserWindow *window) :
- QTreeView(parent), window_(window)
+CBrowserDomTree(CBrowserDomTreeDlg *dlg, CBrowserWindow *window) :
+ QTreeView(nullptr), dlg_(dlg), window_(window)
 {
   setObjectName("domTree");
 
@@ -93,6 +103,8 @@ selectionChanged(const QItemSelection &selected, const QItemSelection &deselecte
     if (! obj) continue;
 
     obj->setSelected(true);
+
+    dlg_->prop()->setObject(obj);
   }
 
   for (int i = 0; i < deselected.indexes().length(); ++i) {
@@ -218,30 +230,46 @@ data(const QModelIndex &index, int role) const
   if (! index.isValid())
     return QVariant();
 
-  if (role != Qt::DisplayRole)
-    return QVariant();
-
   //CBrowserWindow *window = tree_->window();
 
-  CBrowserObject *obj = static_cast<CBrowserObject *>(index.internalPointer());
-  if (! obj) return QVariant();
+  if      (role == Qt::DisplayRole) {
+    CBrowserObject *obj = static_cast<CBrowserObject *>(index.internalPointer());
+    if (! obj) return QVariant();
 
-  std::string name;
+    std::string name;
 
-  if      (index.column() == 0) {
-    if (obj->type() == CHtmlTagId::TEXT)
-      name = "text";
-    else
-      name = obj->typeName() + ":" + obj->id();
+    if      (index.column() == 0) {
+      if      (obj->type() == CHtmlTagId::TEXT)
+        name = "text";
+      else if (obj->type() == CHtmlTagId::LABEL)
+        name = "label";
+      else if (obj->type() == CHtmlTagId::SYMBOL)
+        name = "symbol";
+      else if (obj->id() != "")
+        name = obj->typeName() + ":" + obj->id();
+      else
+        name = obj->typeName();
+    }
+    else if (index.column() == 1) {
+      if (obj->type() == CHtmlTagId::TEXT)
+        name = dynamic_cast<CBrowserText *>(obj)->text();
+      else
+        name = obj->text();
+    }
+
+    return QVariant(QString(name.c_str()));
   }
-  else if (index.column() == 1) {
-    if (obj->type() == CHtmlTagId::TEXT)
-      name = dynamic_cast<CBrowserText *>(obj)->text();
-    else
-      name = obj->text();
+  else if (role == Qt::FontRole) {
+    if (index.column() == 0) {
+      QFont font = tree_->font();
+
+      font.setBold(true);
+
+      return QVariant(font);
+    }
   }
 
-  return QVariant(QString(name.c_str()));
+  return QVariant();
 }
 
 //---

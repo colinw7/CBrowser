@@ -2,50 +2,30 @@
 #define CBrowserOutputList_H
 
 #include <CBrowserObject.h>
+#include <CBrowserData.h>
 #include <string>
 #include <vector>
 
-class CBrowserOutputList;
-
-#define CBrowserOutputListMgrInst CBrowserOutputListMgr::instance()
-
-class CBrowserOutputListMgr {
- public:
-  static CBrowserOutputListMgr *instance();
-
-  CBrowserOutputList *currentList() const;
-
-  void startList(CBrowserOutputList *list);
-
-  void endList();
-
-  int listDepth() const { return lists_.size(); }
-
- private:
-  typedef std::vector<CBrowserOutputList *> Lists;
-
-  Lists lists_;
-};
-
-//---
-
 class CBrowserOutputList : public CBrowserObject {
  public:
-  CBrowserOutputList(CHtmlTagId id);
+  CBrowserOutputList(CBrowserWindow *window, CHtmlTagId id, const CBrowserOutputListData &data);
 
-  const std::string &getSymbol() const { return symbol_; }
-  void setSymbol(const std::string &symbol) { symbol_ = symbol; }
+  const std::string &getSymbol() const { return data_.symbol; }
+  void setSymbol(const std::string &symbol) { data_.symbol = symbol; }
 
-  int  getItemNum() const { return item_num_; }
-  void setItemNum(int item_num) { item_num_ = item_num; }
+  int  getItemNum() const { return data_.item_num; }
+  void setItemNum(int item_num) { data_.item_num = item_num; }
 
-  bool getCompact() const { return compact_; }
-  void setCompact(bool compact) { compact_ = compact; }
+  bool getCompact() const { return data_.compact; }
+  void setCompact(bool compact) { data_.compact = compact; }
+
+  void initLayout() override;
+  void termLayout() override;
+
+  int listDepth() const;
 
  private:
-  std::string symbol_;
-  int         item_num_ { 0 };
-  bool        compact_ { false };
+  CBrowserOutputListData data_;
 };
 
 #endif

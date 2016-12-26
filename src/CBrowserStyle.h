@@ -2,6 +2,7 @@
 #define CBrowserStyle_H
 
 #include <CBrowserObject.h>
+#include <CBrowserData.h>
 #include <CHtmlLayout.h>
 
 class CBrowserBStyle : public CBrowserObject {
@@ -9,12 +10,8 @@ class CBrowserBStyle : public CBrowserObject {
   CBrowserBStyle(CBrowserWindow *window);
  ~CBrowserBStyle();
 
-  CBrowserWindow *getWindow() const { return window_; }
-
-  void draw(CHtmlLayoutMgr *mgr, const CHtmlLayoutRegion &region);
-
- private:
-  CBrowserWindow* window_ { nullptr };
+  void initProcess() override;
+  void termProcess() override;
 };
 
 //---
@@ -24,10 +21,8 @@ class CBrowserBigStyle : public CBrowserObject {
   CBrowserBigStyle(CBrowserWindow *window);
  ~CBrowserBigStyle();
 
-  CBrowserWindow *getWindow() const { return window_; }
-
- private:
-  CBrowserWindow* window_ { nullptr };
+  void initProcess() override;
+  void termProcess() override;
 };
 
 //---
@@ -37,10 +32,19 @@ class CBrowserBlinkStyle : public CBrowserObject {
   CBrowserBlinkStyle(CBrowserWindow *window);
  ~CBrowserBlinkStyle();
 
-  CBrowserWindow *getWindow() const { return window_; }
+  void initProcess() override;
+  void termProcess() override;
+};
 
- private:
-  CBrowserWindow* window_ { nullptr };
+//---
+
+class CBrowserDfnStyle : public CBrowserObject {
+ public:
+  CBrowserDfnStyle(CBrowserWindow *window);
+ ~CBrowserDfnStyle();
+
+  void initProcess() override;
+  void termProcess() override;
 };
 
 //---
@@ -50,10 +54,8 @@ class CBrowserCiteStyle : public CBrowserObject {
   CBrowserCiteStyle(CBrowserWindow *window);
  ~CBrowserCiteStyle();
 
-  CBrowserWindow *getWindow() const { return window_; }
-
- private:
-  CBrowserWindow* window_ { nullptr };
+  void initProcess() override;
+  void termProcess() override;
 };
 
 //---
@@ -63,10 +65,23 @@ class CBrowserEmStyle : public CBrowserObject {
   CBrowserEmStyle(CBrowserWindow *window);
  ~CBrowserEmStyle();
 
-  CBrowserWindow *getWindow() const { return window_; }
+  void initProcess() override;
+  void termProcess() override;
+};
+
+//---
+
+class CBrowserFontStyle : public CBrowserObject {
+ public:
+  CBrowserFontStyle(CBrowserWindow *window, const CBrowserFontData &data);
+ ~CBrowserFontStyle();
+
+  void initProcess() override;
+  void termProcess() override;
 
  private:
-  CBrowserWindow* window_ { nullptr };
+  CBrowserFontData     data_;
+  CBrowserSaveFontData saveData_;
 };
 
 //---
@@ -76,10 +91,8 @@ class CBrowserIStyle : public CBrowserObject {
   CBrowserIStyle(CBrowserWindow *window);
  ~CBrowserIStyle();
 
-  CBrowserWindow *getWindow() const { return window_; }
-
- private:
-  CBrowserWindow* window_ { nullptr };
+  void initProcess() override;
+  void termProcess() override;
 };
 
 //---
@@ -89,10 +102,8 @@ class CBrowserSmallStyle : public CBrowserObject {
   CBrowserSmallStyle(CBrowserWindow *window);
  ~CBrowserSmallStyle();
 
-  CBrowserWindow *getWindow() const { return window_; }
-
- private:
-  CBrowserWindow* window_ { nullptr };
+  void initProcess() override;
+  void termProcess() override;
 };
 
 //---
@@ -102,10 +113,8 @@ class CBrowserStrikeStyle : public CBrowserObject {
   CBrowserStrikeStyle(CBrowserWindow *window);
  ~CBrowserStrikeStyle();
 
-  CBrowserWindow *getWindow() const { return window_; }
-
- private:
-  CBrowserWindow* window_ { nullptr };
+  void initProcess() override;
+  void termProcess() override;
 };
 
 //---
@@ -115,10 +124,8 @@ class CBrowserStrongStyle : public CBrowserObject {
   CBrowserStrongStyle(CBrowserWindow *window);
  ~CBrowserStrongStyle();
 
-  CBrowserWindow *getWindow() const { return window_; }
-
- private:
-  CBrowserWindow* window_ { nullptr };
+  void initProcess() override;
+  void termProcess() override;
 };
 
 //---
@@ -128,10 +135,8 @@ class CBrowserSubStyle : public CBrowserObject {
   CBrowserSubStyle(CBrowserWindow *window);
  ~CBrowserSubStyle();
 
-  CBrowserWindow *getWindow() const { return window_; }
-
- private:
-  CBrowserWindow* window_ { nullptr };
+  void initProcess() override;
+  void termProcess() override;
 };
 
 //---
@@ -141,10 +146,8 @@ class CBrowserSupStyle : public CBrowserObject {
   CBrowserSupStyle(CBrowserWindow *window);
  ~CBrowserSupStyle();
 
-  CBrowserWindow *getWindow() const { return window_; }
-
- private:
-  CBrowserWindow* window_ { nullptr };
+  void initProcess() override;
+  void termProcess() override;
 };
 
 //---
@@ -154,10 +157,8 @@ class CBrowserUStyle : public CBrowserObject {
   CBrowserUStyle(CBrowserWindow *window);
  ~CBrowserUStyle();
 
-  CBrowserWindow *getWindow() const { return window_; }
-
- private:
-  CBrowserWindow* window_ { nullptr };
+  void initProcess() override;
+  void termProcess() override;
 };
 
 //---
@@ -167,10 +168,8 @@ class CBrowserVarStyle : public CBrowserObject {
   CBrowserVarStyle(CBrowserWindow *window);
  ~CBrowserVarStyle();
 
-  CBrowserWindow *getWindow() const { return window_; }
-
- private:
-  CBrowserWindow* window_ { nullptr };
+  void initProcess() override;
+  void termProcess() override;
 };
 
 #endif

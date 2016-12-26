@@ -1,6 +1,7 @@
 #include <CHtmlLayoutArea.h>
 #include <CHtmlLayoutCell.h>
 #include <CHtmlLayoutMgr.h>
+#include <cassert>
 
 CHtmlLayoutArea::
 CHtmlLayoutArea()
@@ -25,23 +26,28 @@ init()
 
   indent_left_  = 0;
   indent_right_ = 0;
-  cell_         = nullptr;
+
+  cell_ = nullptr;
 }
 
 void
 CHtmlLayoutArea::
 term()
 {
-  for (auto &c : cells_)
-    delete c;
+  for (auto &cell : cells_)
+    delete cell;
 
   cells_.clear();
+
+  cell_ = nullptr;
 }
 
 void
 CHtmlLayoutArea::
 addRedrawCell(CHtmlLayoutCell *cell)
 {
+  assert(cell);
+
   cells_.push_back(cell);
 
   cell_ = cell;
@@ -53,19 +59,27 @@ format(CHtmlLayoutMgr *layout)
 {
   layout->startArea(this);
 
-  for (auto &c : cells_) {
-    cell_ = c;
+  cell_ = nullptr;
 
-    if (cell_->getNumBoxes() == 0)
+  for (auto &cell : cells_) {
+    if (cell->getNumBoxes() == 0) {
+      if (cell_) {
+        cell->setX(cell_->getX());
+        cell->setY(cell_->getY());
+      }
+
       continue;
+    }
 
-    if      (cell_->getLeftCell() != 0) {
+    cell_ = cell;
+
+    if      (cell_->getLeftCell()) {
       CHtmlLayoutCell *cell1 = cell_->getLeftCell();
 
       cell_->setX(cell1->getX() + cell1->getWidth());
       cell_->setY(cell1->getY());
     }
-    else if (cell_->getTopCell() != 0) {
+    else if (cell_->getTopCell()) {
       CHtmlLayoutCell *cell1 = cell_->getTopCell();
 
       cell_->setX(cell_->getIndentLeft());
@@ -94,15 +108,12 @@ void
 CHtmlLayoutArea::
 getCellsBoundingBox(int *x1, int *y1, int *x2, int *y2)
 {
-  int num_cells = cells_.size();
+  *x1 = 0; *y1 = 0;
+  *x2 = 0; *y2 = 0;
 
-  *x1 = 0;
-  *y1 = 0;
-  *x2 = 0;
-  *y2 = 0;
-
-  for (int i = 0; i < num_cells; ++i) {
-    CHtmlLayoutCell *cell = cells_[i];
+  for (const auto &cell : cells_) {
+    if (cell->getNumBoxes() == 0)
+      continue;
 
     *x1 = std::min(*x1, cell->getX());
     *y1 = std::min(*y1, cell->getY());
@@ -119,6 +130,9 @@ redraw(CHtmlLayoutMgr *layout)
   layout->startArea(this);
 
   for (const auto &cell : cells_) {
+    if (cell->getNumBoxes() == 0)
+      continue;
+
     cell_ = cell;
 
     if (cell_->getNumSubCells() == 0)
@@ -159,4 +173,19 @@ accept(CHtmlLayoutVisitor &visitor)
   }
 
   visitor.leave(this);
+}
+
+void
+CHtmlLayoutArea::
+print(std::ostream &os) const
+{
+  printSize(os);
+
+  for (const auto &cell : cells()) {
+    os << "  ";
+
+    cell->print(os);
+
+    os << std::endl;
+  }
 }

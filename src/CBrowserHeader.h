@@ -2,19 +2,23 @@
 #define CBrowserHeader_H
 
 #include <CBrowserObject.h>
+#include <CBrowserData.h>
 #include <CFont.h>
 #include <CStrUtil.h>
 
 class CBrowserHeader : public CBrowserObject {
  public:
-  CBrowserHeader(CBrowserWindow *window, CHtmlTagId id, CHAlignType align);
+  CBrowserHeader(CBrowserWindow *window, CHtmlTagId id, const CBrowserHeaderData &data);
  ~CBrowserHeader();
 
   const std::string &text() const { return text_; }
   void setText(const std::string &v) { text_ = v; }
 
-  void initFormat();
-  void termFormat();
+  void initProcess() override;
+  void termProcess() override;
+
+  void initLayout() override;
+  void termLayout() override;
 
   void format(CHtmlLayoutMgr *) override;
 
@@ -25,11 +29,10 @@ class CBrowserHeader : public CBrowserObject {
   }
 
  private:
-  CBrowserWindow* window_ { nullptr };
-  CHAlignType     align_ { CHALIGN_TYPE_LEFT };
-  std::string     text_;
-  int             ind_ { -1 };
-  CFontPtr        font_;
+  CBrowserHeaderData data_;
+  std::string        text_;
+  int                ind_ { -1 };
+  CFontPtr           font_;
 };
 
 #endif

@@ -2,8 +2,8 @@
 #include <CHtmlTagDef.h>
 
 CBrowserObject::
-CBrowserObject(CHtmlTagId type) :
- type_(type)
+CBrowserObject(CBrowserWindow *window, CHtmlTagId type) :
+ window_(window), type_(type)
 {
 }
 
@@ -41,4 +41,23 @@ childIndex(const CBrowserObject *child) const
       return i;
 
   return -1;
+}
+
+bool
+CBrowserObject::
+isHierSelected() const
+{
+  if (isSelected())
+    return true;
+
+  const CBrowserObject *parent = this->parent();
+
+  while (parent) {
+    if (parent->isSelected())
+      return true;
+
+    parent = parent->parent();
+  }
+
+  return false;
 }

@@ -22,10 +22,10 @@ class CBrowserHistory {
  private:
   typedef std::vector<std::string> Urls;
 
-  CBrowserWindow* window_;
+  CBrowserWindow* window_ { nullptr };
   Urls            urls_;
-  int             url_num_;
-  QMenu*          menu_;
+  int             url_num_ { 0 };
+  QMenu*          menu_ { nullptr };
 };
 
 #endif

@@ -107,8 +107,11 @@ createMenus()
   readMenuItem->setShortcut("Ctrl+R");
   readMenuItem->connect(this, SLOT(readProc()));
 
-  CQMenuItem *fileMenuItem = new CQMenuItem(fileMenu, "&Print");
-  fileMenuItem->connect(this, SLOT(printProc()));
+  CQMenuItem *printMenuItem = new CQMenuItem(fileMenu, "&Print");
+  printMenuItem->connect(this, SLOT(printProc()));
+
+  CQMenuItem *saveImageMenuItem = new CQMenuItem(fileMenu, "Save &Image");
+  saveImageMenuItem->connect(this, SLOT(saveImageProc()));
 
   CQMenuItem *jsMenuItem = new CQMenuItem(fileMenu, "&JavaScript");
   jsMenuItem->connect(this, SLOT(jsProc()));
@@ -193,6 +196,13 @@ print(double xmin, double ymin, double xmax, double ymax)
 
 void
 CBrowserIFace::
+saveImage(const std::string &filename)
+{
+  w_->saveImage(filename);
+}
+
+void
+CBrowserIFace::
 setSize(int width, int height)
 {
   bool hbar_displayed = false;
@@ -210,12 +220,13 @@ setSize(int width, int height)
     if (vbar_displayed)
       vbar_width = list_vbar_->width();
 
-    width = canvas_width_ - vbar_width;
+    //int width1 = canvas_width_ - vbar_width;
+    int width1 = width - vbar_width;
 
     int maximum = list_hbar_->maximum();
 
-    if (maximum != width - 1)
-      list_hbar_->setRange(0, width - 1);
+    if (maximum != width1 - 1)
+      list_hbar_->setRange(0, width1 - 1);
 
     list_hbar_->setValue(canvas_x_offset_);
 
@@ -231,17 +242,18 @@ setSize(int width, int height)
     if (hbar_displayed)
       hbar_height = list_hbar_->height();
 
-    height = canvas_height_ - hbar_height;
+    //int height1 = canvas_height_ - hbar_height;
+    int height1 = height - hbar_height;
 
     int maximum = list_vbar_->maximum();
 
-    if (maximum != height - 1)
-      list_vbar_->setRange(0, height - 1);
+    if (maximum != height1 - 1)
+      list_vbar_->setRange(0, height1 - 1);
 
     list_vbar_->setValue(canvas_y_offset_);
 
-    list_hbar_->setSingleStep(height/10);
-    list_hbar_->setPageStep(height);
+    list_hbar_->setSingleStep(canvas_height_/10);
+    list_hbar_->setPageStep(canvas_height_);
   }
 
   //w_->resize(width, height);
@@ -336,6 +348,18 @@ CBrowserIFace::
 printProc()
 {
   window_->print();
+}
+
+void
+CBrowserIFace::
+saveImageProc()
+{
+  QString fileName =
+    QFileDialog::getSaveFileName(this, "Save Image", "image.png",
+                                 "Image Files (*.png *.xpm *.jpg)");
+
+  if (fileName.length())
+    window_->saveImage(fileName.toStdString());
 }
 
 void

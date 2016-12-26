@@ -42,6 +42,8 @@ class CBrowserIFace : public CQMainWindow {
 
   void print(double xmin, double ymin, double xmax, double ymax);
 
+  void saveImage(const std::string &filename);
+
   void setSize(int width, int height);
 
   void scrollTo(int x, int y);
@@ -69,6 +71,7 @@ class CBrowserIFace : public CQMainWindow {
   void newProc();
   void readProc();
   void printProc();
+  void saveImageProc();
   void jsProc();
   void domProc();
   void quitProc();

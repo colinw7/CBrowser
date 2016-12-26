@@ -57,66 +57,35 @@ struct CBrowserTableCaptionData {
 
 //------
 
-class CBrowserTableMgr {
- public:
-  CBrowserTableMgr(CBrowserWindow *window);
-
-  CBrowserWindow *window() const { return window_; }
-  CBrowserTable *currentTable() const { return current_table_; }
-  CBrowserTableRow *currentRow() const { return current_row_; }
-  CBrowserTableCell *currentCell() const { return current_cell_; }
-  CBrowserTableCaption *currentCaption() const { return current_caption_; }
-
-  CBrowserTable *startTable(const CBrowserTableData &data);
-  void           endTable();
-
-  void startTableRow(const CBrowserTableRowData &data);
-  void endTableRow();
-
-  void startTableCell(const CBrowserTableCellData &cellData);
-  void endTableCell();
-
-  void startTableCaption(const CBrowserTableCaptionData &data);
-  void endTableCaption();
-
- private:
-  CBrowserWindow*       window_          { nullptr };
-  CBrowserTable*        current_table_   { nullptr };
-  CBrowserTableRow*     current_row_     { nullptr };
-  CBrowserTableCell*    current_cell_    { nullptr };
-  CBrowserTableCaption* current_caption_ { nullptr };
-};
-
-//------
-
 class CBrowserTable;
 
 //------
 
-class CBrowserTableRow {
+class CBrowserTableRow : public CBrowserObject {
  public:
-  CBrowserTableRow(CBrowserTable *table, const CBrowserTableRowData &data);
+  CBrowserTableRow(CBrowserWindow *window, const CBrowserTableRowData &data);
  ~CBrowserTableRow() { }
 
-  CHAlignType getHAlign() const { return halign_; }
-  CVAlignType getVAlign() const { return valign_; }
+  CHAlignType getHAlign() const { return data_.halign; }
+  CVAlignType getVAlign() const { return data_.valign; }
 
-  CRGBA getBackgroundColor() const { return background_color_; }
+  CRGBA getBackgroundColor() const { return data_.background_color; }
+
+  void initProcess() override;
+  void termProcess() override;
+
+  void initLayout() override;
+  void termLayout() override;
 
  private:
-  CHAlignType halign_ { CHALIGN_TYPE_NONE };
-  CVAlignType valign_ { CVALIGN_TYPE_NONE };
-  CRGBA       border_color_;
-  CRGBA       background_color_;
-  CRGBA       border_color_dark_;
-  CRGBA       border_color_light_;
+  CBrowserTableRowData data_;
 };
 
 //------
 
-class CBrowserTableCell {
+class CBrowserTableCell : public CBrowserObject {
  public:
-  CBrowserTableCell(CBrowserTableRow *row, const CBrowserTableCellData &data);
+  CBrowserTableCell(CBrowserWindow *window, CHtmlTagId id, const CBrowserTableCellData &data);
 
   virtual ~CBrowserTableCell() {
     delete area_data_;
@@ -124,67 +93,68 @@ class CBrowserTableCell {
 
   bool getPad() const { return pad_; }
 
-  int getWidth() const { return width_; }
+  int getWidth() const { return data_.width; }
 
-  CBrowserUnitsType getWidthUnit() const { return width_unit_; }
+  CBrowserUnitsType getWidthUnit() const { return data_.width_unit; }
 
   int getHeight() const { return height_; }
 
-  CHAlignType getHAlign() const { return halign_; }
-  CVAlignType getVAlign() const { return valign_; }
+  CHAlignType getHAlign() const { return data_.halign; }
+  CVAlignType getVAlign() const { return data_.valign; }
 
-  int getColSpan() const { return colspan_; }
-  int getRowSpan() const { return rowspan_; }
+  int getColSpan() const { return data_.colspan; }
+  int getRowSpan() const { return data_.rowspan; }
 
-  CRGBA getBackgroundColor() const { return background_color_; }
+  CRGBA getBackgroundColor() const { return data_.background_color; }
 
   CHtmlLayoutArea *getAreaData() const { return area_data_; }
 
+  void initProcess() override;
+  void termProcess() override;
+
+  void initLayout() override;
+  void termLayout() override;
+
  protected:
-  bool              pad_ { false };
-  int               x_ { 0 };
-  int               y_ { 0 };
-  int               width_ { 0 };
-  CBrowserUnitsType width_unit_ { CBrowserUnitsType::PIXEL };
-  int               height_ { 0 };
-  CHAlignType       halign_ { CHALIGN_TYPE_NONE };
-  CVAlignType       valign_ { CVALIGN_TYPE_NONE };
-  bool              wrap_ { false };
-  int               colspan_ { 0 };
-  int               rowspan_ { 0 };
-  CRGBA             border_color_;
-  CRGBA             background_color_;
-  CRGBA             border_color_dark_;
-  CRGBA             border_color_light_;
-  CHtmlLayoutArea*  area_data_ { nullptr };
+  CBrowserTableCellData data_;
+  bool                  pad_ { false };
+  int                   x_ { 0 };
+  int                   y_ { 0 };
+  int                   height_ { 0 };
+  CHtmlLayoutArea*      area_data_ { nullptr };
 };
 
 //------
 
 class CBrowserTablePadCell : public CBrowserTableCell {
  public:
-  CBrowserTablePadCell(CBrowserTableRow *row, const CBrowserTableCellData &data);
+  CBrowserTablePadCell(CBrowserWindow *window, const CBrowserTableCellData &data);
 };
 
 //------
 
-class CBrowserTableCaption {
+class CBrowserTableCaption : public CBrowserObject {
  public:
-  CBrowserTableCaption(CBrowserTable *table, const CBrowserTableCaptionData &data);
+  CBrowserTableCaption(CBrowserWindow *window, const CBrowserTableCaptionData &data);
 
  ~CBrowserTableCaption() {
     delete area_data_;
   }
 
-  CHAlignType getHAlign() const { return halign_; }
-  CVAlignType getVAlign() const { return valign_; }
+  CHAlignType getHAlign() const { return data_.halign; }
+  CVAlignType getVAlign() const { return data_.valign; }
 
   CHtmlLayoutArea *getAreaData() const { return area_data_; }
 
+  void initProcess() override;
+  void termProcess() override;
+
+  void initLayout() override;
+  void termLayout() override;
+
  private:
-  CHAlignType      halign_ { CHALIGN_TYPE_NONE };
-  CVAlignType      valign_ { CVALIGN_TYPE_NONE };
-  CHtmlLayoutArea *area_data_ { nullptr };
+  CBrowserTableCaptionData data_;
+  CHtmlLayoutArea*         area_data_ { nullptr };
 };
 
 //------
@@ -196,14 +166,14 @@ class CBrowserTable : public CBrowserObject {
 
   void endTable();
 
-  CHAlignType getHAlign() const { return halign_; }
-  CVAlignType getVAlign() const { return valign_; }
+  CHAlignType getHAlign() const { return data_.halign; }
+  CVAlignType getVAlign() const { return data_.valign; }
 
-  int getWidth() const { return width_; }
+  int getWidth() const { return data_.width; }
 
-  CBrowserUnitsType getWidthUnit() const { return width_unit_; }
+  CBrowserUnitsType getWidthUnit() const { return data_.width_unit; }
 
-  CRGBA getBackgroundColor() const { return background_color_; }
+  CRGBA getBackgroundColor() const { return data_.background_color; }
 
   int getRowNum() const { return row_num_; }
   int getColNum() const { return col_num_; }
@@ -225,7 +195,14 @@ class CBrowserTable : public CBrowserObject {
 
   void addRowCell(int row, CBrowserTableCell *cell);
 
+  void initProcess() override;
+  void termProcess() override;
+
+  void initLayout() override;
+  void termLayout() override;
+
   void format(CHtmlLayoutMgr *) override;
+
   void draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &) override;
 
  private:
@@ -233,20 +210,7 @@ class CBrowserTable : public CBrowserObject {
   typedef std::vector<CBrowserTableRow  *> Rows;
   typedef std::vector<Cells>               RowCells;
 
-  CBrowserWindow*       window_ { nullptr };
-  bool                  border_ { false };
-  int                   hspace_ { 0 };
-  int                   vspace_ { 0 };
-  CHAlignType           halign_ { CHALIGN_TYPE_NONE };
-  CVAlignType           valign_ { CVALIGN_TYPE_NONE };
-  int                   width_ { 0 };
-  CBrowserUnitsType     width_unit_ { CBrowserUnitsType::PIXEL };
-  int                   cell_padding_ { 0 };
-  int                   cell_spacing_ { 0 };
-  CRGBA                 border_color_;
-  CRGBA                 background_color_;
-  CRGBA                 border_color_dark_;
-  CRGBA                 border_color_light_;
+  CBrowserTableData     data_;
   int                   row_num_ { 0 };
   int                   col_num_ { 0 };
   Rows                  rows_;

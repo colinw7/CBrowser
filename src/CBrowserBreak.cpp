@@ -2,8 +2,8 @@
 #include <CBrowserWindow.h>
 
 CBrowserBreak::
-CBrowserBreak(CBrowserWindow *window, CHtmlLayoutClearType clear) :
- CBrowserObject(CHtmlTagId::BR), window_(window), clear_(clear)
+CBrowserBreak(CBrowserWindow *window, const CBrowserBreakData &data) :
+ CBrowserObject(window, CHtmlTagId::BR), data_(data)
 {
 }
 
@@ -14,11 +14,24 @@ CBrowserBreak::
 
 void
 CBrowserBreak::
+initLayout()
+{
+  window_->addCellRedrawData(this);
+}
+
+void
+CBrowserBreak::
+termLayout()
+{
+}
+
+void
+CBrowserBreak::
 format(CHtmlLayoutMgr *)
 {
   CHtmlLayoutSubCell *sub_cell = window_->newSubCellBelow(false);
 
-  sub_cell->setClear(clear_);
+  sub_cell->setClear(data_.clear);
 
   //----
 
@@ -33,5 +46,30 @@ format(CHtmlLayoutMgr *)
 void
 CBrowserBreak::
 draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &)
+{
+}
+
+//------
+
+CBrowserWbr::
+CBrowserWbr(CBrowserWindow *window) :
+ CBrowserObject(window, CHtmlTagId::WBR)
+{
+}
+
+CBrowserWbr::
+~CBrowserWbr()
+{
+}
+
+void
+CBrowserWbr::
+initLayout()
+{
+}
+
+void
+CBrowserWbr::
+termLayout()
 {
 }

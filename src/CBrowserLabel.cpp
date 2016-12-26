@@ -7,7 +7,7 @@
 CBrowserLabel::
 CBrowserLabel(CBrowserWindow *window, const std::string &text, int width,
               CHAlignType align, const CRGBA &color) :
- CBrowserObject(CHtmlTagId::LABEL), window_(window), text_(text), width_(width),
+ CBrowserObject(window, CHtmlTagId::LABEL), text_(text), width_(width),
  align_(align), color_(color)
 {
   font_ = window->getFont();
@@ -15,6 +15,19 @@ CBrowserLabel(CBrowserWindow *window, const std::string &text, int width,
 
 CBrowserLabel::
 ~CBrowserLabel()
+{
+}
+
+void
+CBrowserLabel::
+initLayout()
+{
+  window_->addCellRedrawData(this);
+}
+
+void
+CBrowserLabel::
+termLayout()
 {
 }
 
@@ -37,7 +50,7 @@ format(CHtmlLayoutMgr *)
 
   window_->updateSubCellWidth(width_*char_width);
 
-  /*---------*/
+  //---
 
   window_->addSubCellRedrawData(this);
 }
@@ -54,7 +67,7 @@ draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &region)
 
   window_->getTextWidth(font_, text_, &text_width);
 
-  /*-----------*/
+  //---
 
   int x1 = region.x;
 
@@ -69,7 +82,7 @@ draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &region)
 
   int y1 = region.y + sub_cell->getAscent();
 
-  /*-----------*/
+  //---
 
   window_->setFont(font_);
 
@@ -77,7 +90,10 @@ draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &region)
 
   window_->drawString(x1, y1, text_);
 
-  /*-----------*/
+  //---
+
+  if (isSelected())
+    window_->drawSelected(region.getX(), region.getY(), region.getWidth(), region.getHeight());
 
   //region.x += width_*char_width;
 }

@@ -44,7 +44,7 @@ endArea()
     current_area_stack_.pop_back();
   }
   else
-    current_area_ = 0;
+    current_area_ = nullptr;
 }
 
 CHtmlLayoutCell *

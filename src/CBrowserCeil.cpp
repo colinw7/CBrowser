@@ -240,7 +240,9 @@ HtmlRunCeilScriptLines(CBrowserWindow *window, std::vector<std::string> &lines, 
 
     HtmlReadFile(output_document_file->getFile()->getPath(), tokens);
 
-    CBrowserOutputTokens(window, tokens);
+    CBrowserOutput output(window);
+
+    output.processTokens(tokens);
 
     CBrowserCeilInst->deleteOutputDocumentFile();
   }
@@ -344,7 +346,9 @@ HtmlScriptDocumentOpen()
 
       HtmlReadFile(output_document_file->getFile()->getPath(), tokens);
 
-      CBrowserOutputTokens(window, tokens);
+      CBrowserOutput output(window);
+
+      output.processTokens(tokens);
 
       CBrowserCeilInst->deleteOutputDocumentFile();
     }
@@ -413,7 +417,9 @@ HtmlScriptDocumentClose()
 
       HtmlReadFile(output_document_file->getFile()->getPath(), tokens);
 
-      CBrowserOutputTokens(window, tokens);
+      CBrowserOutput output(window);
+
+      output.processTokens(tokens);
 
       CBrowserCeilInst->deleteOutputDocumentFile();
     }

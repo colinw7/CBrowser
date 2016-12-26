@@ -10,12 +10,28 @@
 
 CBrowserCanvas::
 CBrowserCanvas(CBrowserWindow *window, const CBrowserCanvasData &data) :
- CBrowserObject(CHtmlTagId::CANVAS), window_(window), data_(data)
+ CBrowserObject(window, CHtmlTagId::CANVAS), data_(data)
 {
+  setId(data.id);
 }
 
 CBrowserCanvas::
 ~CBrowserCanvas()
+{
+}
+
+void
+CBrowserCanvas::
+initLayout()
+{
+  window_->addCellRedrawData(this);
+
+  window_->skipLine();
+}
+
+void
+CBrowserCanvas::
+termLayout()
 {
 }
 

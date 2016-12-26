@@ -49,10 +49,12 @@ class CHtmlLayoutArea {
 
   void accept(CHtmlLayoutVisitor &visitor);
 
-  void printSize(std::ostream &os) {
+  void printSize(std::ostream &os) const {
     os << "(" << getX() << "," << getY() << ") " <<
           "(" << getX() + getWidth() << "x" << getY() + getHeight() << ")";
   }
+
+  void print(std::ostream &os=std::cerr) const;
 
  private:
   void term();

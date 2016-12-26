@@ -22,8 +22,8 @@ init()
 {
   term();
 
-  left_ = 0;
-  top_  = 0;
+  left_ = nullptr;
+  top_  = nullptr;
 
   region_.reset();
 
@@ -47,7 +47,7 @@ term()
 
 int
 CHtmlLayoutSubCell::
-getNumBoxes()
+getNumBoxes() const
 {
   return boxes_.size();
 }
@@ -76,10 +76,10 @@ newCellBelow(CHtmlLayoutMgr *layout, bool breakup)
 
   CHtmlLayoutSubCell *sub_cell;
 
-  if (sub_cell1 == 0 || sub_cell1->getNumBoxes() > 0) {
+  if (! sub_cell1 || sub_cell1->getNumBoxes() > 0) {
     sub_cell = new CHtmlLayoutSubCell(cell);
 
-    sub_cell->left_ = 0;
+    sub_cell->left_ = nullptr;
     sub_cell->top_  = sub_cell1;
 
     cell->addSubCell(sub_cell);
@@ -106,7 +106,7 @@ newCellRight(CHtmlLayoutMgr *layout, bool breakup)
   CHtmlLayoutSubCell *sub_cell = new CHtmlLayoutSubCell(cell);
 
   sub_cell->left_ = cell->getCurrentSubCell();
-  sub_cell->top_  = 0;
+  sub_cell->top_  = nullptr;
 
   cell->addSubCell(sub_cell);
 
@@ -126,11 +126,7 @@ redraw(CHtmlLayoutMgr *layout, const CHtmlLayoutRegion &region)
   region1.x = region.x + getX();
   region1.y = region.y + getY();
 
-  int numBoxes = getNumBoxes();
-
-  for (int i = 0; i < numBoxes; i++) {
-    CHtmlLayoutBox *box = getBox(i);
-
+  for (const auto &box : boxes()) {
     box->draw(layout, region1);
   }
 }
@@ -146,4 +142,17 @@ accept(CHtmlLayoutVisitor &visitor)
   }
 
   visitor.leave(this);
+}
+
+void
+CHtmlLayoutSubCell::
+print(std::ostream &os) const
+{
+  printSize(os);
+
+  for (const auto &box : boxes()) {
+    os << "  ";
+    box->print(os);
+    os << std::endl;
+  }
 }

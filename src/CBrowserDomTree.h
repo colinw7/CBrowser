@@ -4,6 +4,7 @@
 #include <QTreeView>
 
 class CBrowserDomTree;
+class CBrowserObjProp;
 class CBrowserWindow;
 
 class CBrowserDomTreeDlg : public QWidget {
@@ -12,8 +13,12 @@ class CBrowserDomTreeDlg : public QWidget {
  public:
   CBrowserDomTreeDlg(CBrowserWindow *window);
 
+  CBrowserDomTree *tree() const { return tree_; }
+  CBrowserObjProp *prop() const { return prop_; }
+
  private:
   CBrowserDomTree *tree_ { nullptr };
+  CBrowserObjProp *prop_ { nullptr };
 };
 
 //---
@@ -22,7 +27,7 @@ class CBrowserDomTree : public QTreeView {
   Q_OBJECT
 
  public:
-  CBrowserDomTree(QWidget *parent, CBrowserWindow *window);
+  CBrowserDomTree(CBrowserDomTreeDlg *dlg, CBrowserWindow *window);
 
   CBrowserWindow *window() const { return window_; }
 
@@ -30,7 +35,8 @@ class CBrowserDomTree : public QTreeView {
   void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
  private:
-  CBrowserWindow *window_ { nullptr };
+  CBrowserDomTreeDlg *dlg_ { nullptr };
+  CBrowserWindow     *window_ { nullptr };
 };
 
 #endif

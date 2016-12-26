@@ -5,7 +5,7 @@
 
 CBrowserText::
 CBrowserText(CBrowserWindow *window, const std::string &text, const CBrowserTextData &data) :
- CBrowserObject(CHtmlTagId::TEXT), window_(window), text_(text), data_(data)
+ CBrowserObject(window, CHtmlTagId::TEXT), text_(text), data_(data)
 {
   font_ = window->getFont();
   link_ = window->linkMgr()->getCurrentLink();
@@ -13,13 +13,26 @@ CBrowserText(CBrowserWindow *window, const std::string &text, const CBrowserText
 
 CBrowserText::
 CBrowserText(CBrowserWindow *window, const CBrowserText &draw_text, const std::string &text) :
- CBrowserObject(CHtmlTagId::TEXT), window_(window), text_(text), font_(draw_text.font_),
+ CBrowserObject(window, CHtmlTagId::TEXT), text_(text), font_(draw_text.font_),
  data_(draw_text.data_), link_(draw_text.link_)
 {
 }
 
 CBrowserText::
 ~CBrowserText()
+{
+}
+
+void
+CBrowserText::
+initLayout()
+{
+  window_->addCellRedrawData(this);
+}
+
+void
+CBrowserText::
+termLayout()
 {
 }
 
@@ -95,7 +108,7 @@ format(CHtmlLayoutMgr *)
 
   // format
   for (const auto &t : texts_) {
-    if (pos_ == CBrowserTextPos::RIGHT)
+    if (t->pos_ == CBrowserTextPos::RIGHT)
       window_->newSubCellRight(t->data_.breakup);
     else
       window_->newSubCellBelow(t->data_.breakup);
@@ -126,6 +139,8 @@ addText(const std::string &str, CBrowserTextPos pos, bool breakup)
   text->pos_          = pos;
 
   texts_.push_back(text);
+
+  text->parentText_ = this;
 
   addChild(text);
 }
@@ -169,10 +184,28 @@ draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &region)
 
   //---
 
-  window_->drawOutline(region.getX(), region.getY(),
-                       region.getWidth(), region.getHeight(), CRGBA(1,0,0));
+  if (isHierSelected())
+    window_->drawSelected(region.getX(), region.getY(), region.getWidth(), region.getHeight());
 
   //region.x += width;
+}
+
+bool
+CBrowserText::
+isHierSelected() const
+{
+  if (isSelected())
+    return true;
+
+  if (parentText_ && parentText_->isSelected())
+    return true;
+
+  const CBrowserObject *parent = this->parent();
+
+  if (parent)
+    return parent->isHierSelected();
+
+  return false;
 }
 
 void

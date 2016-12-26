@@ -1,5 +1,5 @@
-#ifndef CBrowserScript_H
-#define CBrowserScript_H
+#ifndef CBrowserCeil_H
+#define CBrowserCeil_H
 
 #include <CBrowserTypes.h>
 

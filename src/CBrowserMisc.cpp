@@ -7,11 +7,9 @@ integerToAlphabetic(int integer)
   std::string str;
 
   if (integer < 1 || integer > 26)
-    str[0] = '?';
+    str += '?';
   else
-    str[0] = integer - 1 + 'a';
-
-  str[1] = '\0';
+    str += char(integer - 1 + 'a');
 
   return str;
 }

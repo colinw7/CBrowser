@@ -27,6 +27,11 @@ class CBrowserText : public CBrowserObject {
   const CBrowserTextPos &pos() const { return pos_; }
   void setPos(const CBrowserTextPos &pos) { pos_ = pos; }
 
+  bool isHierSelected() const override;
+
+  void initLayout() override;
+  void termLayout() override;
+
   void format(CHtmlLayoutMgr *) override;
 
   void draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &) override;
@@ -43,13 +48,13 @@ class CBrowserText : public CBrowserObject {
  private:
   typedef std::vector<CBrowserText *> Texts;
 
-  CBrowserWindow*  window_ { nullptr };
   std::string      text_;
   CFontPtr         font_;
   CBrowserTextData data_;
   CBrowserLink*    link_ { nullptr };
   CBrowserTextPos  pos_ { CBrowserTextPos::RIGHT };
   Texts            texts_;
+  CBrowserText*    parentText_ { nullptr };
 };
 
 #endif

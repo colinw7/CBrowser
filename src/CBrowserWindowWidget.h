@@ -27,6 +27,8 @@ class CBrowserWindowWidget : public QWidget {
   void startDoubleBuffer();
   void endDoubleBuffer();
 
+  void saveImage(const std::string &filename);
+
   void setXDevice();
   void setPSDevice(double xmin, double ymin, double xmax, double ymax);
 

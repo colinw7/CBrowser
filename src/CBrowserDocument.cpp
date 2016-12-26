@@ -4,7 +4,6 @@
 #include <CBrowserFile.h>
 #include <CBrowserOutput.h>
 #include <CBrowserText.h>
-#include <CBrowserForm.h>
 #include <CRGBName.h>
 
 CBrowserDocument::
@@ -19,8 +18,6 @@ CBrowserDocument(CBrowserWindow *window)
   setLinkColor ("blue"   );
   setALinkColor("blue"   );
   setVLinkColor("blue"   );
-
-  formMgr_ = new CBrowserFormMgr(this);
 }
 
 CBrowserDocument::
@@ -94,13 +91,6 @@ freeLinks()
 
 void
 CBrowserDocument::
-addForm(CBrowserForm *form)
-{
-  forms_.push_back(form);
-}
-
-void
-CBrowserDocument::
 read(const std::string &url)
 {
   tokens_.clear();
@@ -108,13 +98,6 @@ read(const std::string &url)
   url_ = url;
 
   HtmlReadURL(window_, url_, tokens_);
-}
-
-void
-CBrowserDocument::
-output()
-{
-  CBrowserOutputTokens(window_, tokens_);
 }
 
 void

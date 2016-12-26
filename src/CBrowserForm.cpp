@@ -10,6 +10,7 @@
 #include <CQJColorEdit.h>
 #include <CQJComboBox.h>
 #include <CQJSlider.h>
+#include <CQUtil.h>
 #include <CImageLib.h>
 
 #include <QPushButton>
@@ -23,335 +24,14 @@
 #include <QMessageBox>
 #include <QMenu>
 
-CBrowserFormMgr::
-CBrowserFormMgr(CBrowserDocument *document) :
- document_(document)
-{
-}
-
-void
-CBrowserFormMgr::
-startForm(const std::string &name, CBrowserFormMethodType method, const std::string &action)
-{
-  if (currentForm())
-    endForm();
-
-  CBrowserForm *form = new CBrowserForm(name, document_, method, action);
-
-  document_->addForm(form);
-
-  setCurrentForm(form);
-}
-
-void
-CBrowserFormMgr::
-endForm()
-{
-  if (! currentForm())
-    return;
-
-  setCurrentForm(nullptr);
-}
-
-CBrowserFormSelect *
-CBrowserFormMgr::
-startSelect(const std::string &name, int size, int multiple)
-{
-  if (! currentForm())
-    return nullptr;
-
-  if (currentSelect())
-    endSelect();
-
-  CBrowserFormSelect *select = new CBrowserFormSelect(document_, name, "", size, multiple);
-
-  setCurrentSelect(select);
-
-  return select;
-}
-
-void
-CBrowserFormMgr::
-endSelect()
-{
-  if (! currentForm())
-    return;
-
-  setCurrentSelect(nullptr);
-}
-
-CBrowserFormOption *
-CBrowserFormMgr::
-startOption(const std::string &value, bool selected)
-{
-  if (! currentForm() || ! currentSelect())
-    return 0;
-
-  if (currentOption())
-    endOption("????");
-
-  CBrowserFormOption *option = new CBrowserFormOption(document_, value, selected);
-
-  setCurrentOption(option);
-
-  return option;
-}
-
-void
-CBrowserFormMgr::
-endOption(const std::string &text)
-{
-  if (! currentForm() || ! currentSelect() || ! currentOption())
-    return;
-
-  if (text != "")
-    currentOption()->setText(text);
-  else
-    currentOption()->setText("????");
-
-  currentSelect()->addOption(currentOption());
-
-  setCurrentOption(nullptr);
-}
-
-CBrowserFormTextarea *
-CBrowserFormMgr::
-startTextarea(const std::string &name, int rows, int cols, const std::string &wrap)
-{
-  if (! currentForm())
-    return nullptr;
-
-  if (currentTextarea())
-    endTextarea("");
-
-  CBrowserFormTextAreaWrapType wrap1 = CBrowserFormTextAreaWrapType::OFF;
-
-  if      (CStrUtil::casecmp(wrap, "off"     ) == 0)
-    wrap1 = CBrowserFormTextAreaWrapType::OFF;
-  else if (CStrUtil::casecmp(wrap, "virtual" ) == 0)
-    wrap1 = CBrowserFormTextAreaWrapType::VIRTUAL;
-  else if (CStrUtil::casecmp(wrap, "physical") == 0)
-    wrap1 = CBrowserFormTextAreaWrapType::PHYSICAL;
-
-  CBrowserFormTextarea *input = new CBrowserFormTextarea(document_, name, "", rows, cols, wrap1);
-
-  currentForm()->addInput(input);
-
-  setCurrentTextarea(input);
-
-  return input;
-}
-
-void
-CBrowserFormMgr::
-endTextarea(const std::string &text)
-{
-  if (! currentForm() || ! currentTextarea())
-    return;
-
-  currentTextarea()->setValue(text);
-
-  setCurrentTextarea(nullptr);
-}
-
-CBrowserFormButton *
-CBrowserFormMgr::
-addButtonInput(const std::string &name, const std::string &value)
-{
-  if (! currentForm())
-    return nullptr;
-
-  CBrowserFormButton *input = new CBrowserFormButton(document_, name, value);
-
-  currentForm()->addInput(input);
-
-  return input;
-}
-
-CBrowserFormCheckBox *
-CBrowserFormMgr::
-addCheckboxInput(const std::string &name, const std::string &value, int checked)
-{
-  if (! currentForm())
-    return nullptr;
-
-  CBrowserFormCheckBox *input = new CBrowserFormCheckBox(document_, name, value, checked);
-
-  currentForm()->addInput(input);
-
-  return input;
-}
-
-CBrowserFormFileUpload *
-CBrowserFormMgr::
-addFileInput(const std::string &name, const std::string &value, int size, int maxlength)
-{
-  if (! currentForm())
-    return nullptr;
-
-  CBrowserFormFileUpload *input =
-    new CBrowserFormFileUpload(document_, name, value, size, maxlength);
-
-  currentForm()->addInput(input);
-
-  return input;
-}
-
-CBrowserFormHidden *
-CBrowserFormMgr::
-addHiddenInput(const std::string &name, const std::string &value)
-{
-  if (! currentForm())
-    return nullptr;
-
-  CBrowserFormHidden *input = new CBrowserFormHidden(document_, name, value);
-
-  currentForm()->addInput(input);
-
-  return input;
-}
-
-CBrowserFormImage *
-CBrowserFormMgr::
-addImageInput(const std::string &name, const std::string &src, const std::string &align)
-{
-  if (! currentForm())
-    return nullptr;
-
-  CImageFileSrc file(src);
-
-  CImagePtr image = CImageMgrInst->createImage(file);
-
-  if (! image)
-    return nullptr;
-
-  CBrowserImageAlign align1 = CBrowserImageAlign::BOTTOM;
-
-  if      (align == "")
-    align1 = CBrowserImageAlign::BOTTOM;
-  else if (CStrUtil::casecmp(align, "top"       ) == 0)
-    align1 = CBrowserImageAlign::TOP;
-  else if (CStrUtil::casecmp(align, "middle"    ) == 0)
-    align1 = CBrowserImageAlign::MIDDLE;
-  else if (CStrUtil::casecmp(align, "bottom"    ) == 0)
-    align1 = CBrowserImageAlign::BOTTOM;
-  else if (CStrUtil::casecmp(align, "left"      ) == 0)
-    align1 = CBrowserImageAlign::LEFT;
-  else if (CStrUtil::casecmp(align, "right"     ) == 0)
-    align1 = CBrowserImageAlign::RIGHT;
-  else if (CStrUtil::casecmp(align, "texttop"   ) == 0)
-    align1 = CBrowserImageAlign::TEXTTOP;
-  else if (CStrUtil::casecmp(align, "absmiddle" ) == 0)
-    align1 = CBrowserImageAlign::ABSMIDDLE;
-  else if (CStrUtil::casecmp(align, "absbottom" ) == 0)
-    align1 = CBrowserImageAlign::ABSBOTTOM;
-
-  CBrowserFormImage *input = new CBrowserFormImage(document_, name, "", src, image, align1);
-
-  currentForm()->addInput(input);
-
-  return input;
-}
-
-CBrowserFormPassword *
-CBrowserFormMgr::
-addPasswordInput(const std::string &name, int size, int maxlength)
-{
-  if (! currentForm())
-    return nullptr;
-
-  CBrowserFormPassword *input = new CBrowserFormPassword(document_, name, "", size, maxlength);
-
-  currentForm()->addInput(input);
-
-  return input;
-}
-
-CBrowserFormRadio *
-CBrowserFormMgr::
-addRadioInput(const std::string &name, const std::string &value, int checked)
-{
-  if (! currentForm())
-    return nullptr;
-
-  CBrowserFormRadio *input = new CBrowserFormRadio(document_, name, value, checked);
-
-  currentForm()->addInput(input);
-
-  return input;
-}
-
-CBrowserFormRange *
-CBrowserFormMgr::
-addRangeInput(const std::string &name, const std::string &value, const std::string &min,
-              const std::string &max, const std::string &step)
-{
-  if (! currentForm())
-    return nullptr;
-
-  CBrowserFormRange *input = new CBrowserFormRange(document_, name, value, min, max, step);
-
-  currentForm()->addInput(input);
-
-  return input;
-}
-
-CBrowserFormReset *
-CBrowserFormMgr::
-addResetInput(const std::string &name, const std::string &value)
-{
-  if (! currentForm())
-    return nullptr;
-
-  CBrowserFormReset *input = new CBrowserFormReset(document_, name, value);
-
-  currentForm()->addInput(input);
-
-  return input;
-}
-
-CBrowserFormSubmit *
-CBrowserFormMgr::
-addSubmitInput(const std::string &name, const std::string &value)
-{
-  if (! currentForm())
-    return nullptr;
-
-  CBrowserFormSubmit *input = new CBrowserFormSubmit(document_, name, value);
-
-  currentForm()->addInput(input);
-
-  return input;
-}
-
-CBrowserFormText *
-CBrowserFormMgr::
-addTextInput(const std::string &name, const std::string &value, const std::string &classStr,
-             int size, int maxlength, const std::string &placeholder)
-{
-  if (! currentForm())
-    return nullptr;
-
-  CBrowserFormText *input =
-    new CBrowserFormText(document_, name, value, classStr, size, maxlength, placeholder);
-
-  currentForm()->addInput(input);
-
-  return input;
-}
-
-/*---------------------*/
-
 CBrowserFormFileUpload::
-CBrowserFormFileUpload(CBrowserDocument *document, const std::string &name,
-                       const std::string &value, int size, int maxlength) :
- CBrowserFormInput(document, CHtmlTagId::INPUT, CBrowserFormInputType::FILE, name, value),
- size_(size), maxlength_(maxlength)
+CBrowserFormFileUpload(CBrowserWindow *window, const CBrowserFormInputData &data) :
+ CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::FILE, data)
 {
-  if (name_ == "")
-    name_ = "file";
+  if (data_.name == "")
+    data_.name = "file";
 
-  setObjectName(name_.c_str());
+  setObjectName(data_.name.c_str());
 }
 
 void
@@ -361,7 +41,7 @@ createWidget(CBrowserWindow *window)
   if (! widget_) {
     QWidget *rowcol = new QWidget(window->widget());
 
-    rowcol->setObjectName(name_.c_str());
+    rowcol->setObjectName(data_.name.c_str());
 
     QHBoxLayout *hlayout = new QHBoxLayout(rowcol);
 
@@ -369,7 +49,7 @@ createWidget(CBrowserWindow *window)
 
     edit->setObjectName("edit");
 
-    edit->setText(value_.c_str());
+    edit->setText(data_.value.c_str());
 
     widget_ = edit;
 
@@ -385,8 +65,10 @@ createWidget(CBrowserWindow *window)
 
     hlayout->addWidget(button);
 
-    width_  = rowcol->width () + 4;
-    height_ = rowcol->height() + 4;
+    QSize size = rowcol->sizeHint();
+
+    width_  = size.width () + 4;
+    height_ = size.height() + 4;
   }
 
   window->updateSubCellHeight(height_/2, height_/2);
@@ -397,7 +79,10 @@ void
 CBrowserFormFileUpload::
 drawWidget(CBrowserWindow *, const CHtmlLayoutRegion &region)
 {
-  widget_->move(region.x + 2, region.y + 2);
+  QWidget *container = widget_->parentWidget();
+
+  container->move(region.x + 2, region.y + 2);
+  container->resize(width_ - 4, height_ - 4);
 }
 
 void
@@ -411,19 +96,16 @@ buttonProc()
   edit->setText(filename);
 }
 
-/*---------------------*/
+//---
 
 CBrowserFormRadio::
-CBrowserFormRadio(CBrowserDocument *document, const std::string &name,
-                  const std::string &value, int checked) :
- CBrowserFormInput(document, CHtmlTagId::INPUT, CBrowserFormInputType::RADIO_BUTTON,
-                   name, value),
- checked_(checked)
+CBrowserFormRadio(CBrowserWindow *window, const CBrowserFormInputData &data) :
+ CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::RADIO_BUTTON, data)
 {
-  if (name_ == "")
-    name_ = "radio";
+  if (data_.name == "")
+    data_.name = "radio";
 
-  setObjectName(name_.c_str());
+  setObjectName(data_.name.c_str());
 }
 
 void
@@ -433,7 +115,7 @@ createWidget(CBrowserWindow *window)
   if (! widget_) {
     QRadioButton *radio = new QRadioButton(window->widget());
 
-    radio->setObjectName(name_.c_str());
+    radio->setObjectName(data_.name.c_str());
 
     radio->setText("");
 
@@ -492,23 +174,21 @@ buttonProc()
   }
 }
 
-/*---------------------*/
+//---
 
 CBrowserFormRange::
-CBrowserFormRange(CBrowserDocument *document, const std::string &name,
-                  const std::string &value, const std::string &min,
-                  const std::string &max, const std::string &step) :
- CBrowserFormInput(document, CHtmlTagId::INPUT, CBrowserFormInputType::RANGE, name, value)
+CBrowserFormRange(CBrowserWindow *window, const CBrowserFormInputData &data) :
+ CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::RANGE, data)
 {
-  if (name_ == "")
-    name_ = "range";
+  if (data_.name == "")
+    data_.name = "range";
 
-  setObjectName(name_.c_str());
+  setObjectName(data_.name.c_str());
 
-  CStrUtil::toReal(min  , &min_);
-  CStrUtil::toReal(max  , &max_);
-  CStrUtil::toReal(step , &step_);
-  CStrUtil::toReal(value, &value_);
+  CStrUtil::toReal(data_.min  , &min_);
+  CStrUtil::toReal(data_.max  , &max_);
+  CStrUtil::toReal(data_.step , &step_);
+  CStrUtil::toReal(data_.value, &value_);
 }
 
 double
@@ -538,12 +218,14 @@ createWidget(CBrowserWindow *window)
 
     slider->setFixedWidth(100);
 
-    slider->setObjectName(name_.c_str());
+    slider->setObjectName(data_.name.c_str());
 
     widget_ = slider;
 
-    width_  = widget_->width () + 4;
-    height_ = widget_->height() + 4;
+    QSize size = widget_->sizeHint();
+
+    width_  = size.width () + 4;
+    height_ = size.height() + 4;
   }
 
   window->updateSubCellHeight(height_/2, height_/2);
@@ -557,15 +239,38 @@ drawWidget(CBrowserWindow *, const CHtmlLayoutRegion &region)
   widget_->move(region.x + 2, region.y + 2);
 }
 
-/*---------------------*/
+//---
 
 CBrowserForm::
-CBrowserForm(const std::string &name, CBrowserDocument *document,
-             CBrowserFormMethodType method, const std::string &action) :
- name_(name), document_(document), method_(method), action_(action)
+CBrowserForm(CBrowserWindow *window, const CBrowserFormData &data) :
+ CBrowserObject(window, CHtmlTagId::FORM), data_(data)
 {
   target_   = "";
   encoding_ = "";
+}
+
+void
+CBrowserForm::
+initProcess()
+{
+}
+
+void
+CBrowserForm::
+termProcess()
+{
+}
+
+void
+CBrowserForm::
+initLayout()
+{
+}
+
+void
+CBrowserForm::
+termLayout()
+{
 }
 
 void
@@ -600,50 +305,92 @@ submitProc()
     input->submit(url);
   }
 
-  CBrowserWindow *window = getDocument()->getWindow();
-
-  window->setDocument(url);
+  window_->setDocument(url);
 }
 
-/*---------------------*/
+//---
 
 CBrowserFormOption::
-CBrowserFormOption(CBrowserDocument *document, const std::string &value, bool selected) :
- CBrowserObject(CHtmlTagId::OPTION), document_(document), value_(value), selected_(selected)
+CBrowserFormOption(CBrowserWindow *window, const CBrowserFormOptionData &data) :
+ CBrowserObject(window, CHtmlTagId::OPTION), data_(data)
 {
   text_ = "";
 }
 
-/*---------------------*/
+void
+CBrowserFormOption::
+initProcess()
+{
+  CBrowserFormSelect *select = parentType<CBrowserFormSelect>();
+
+  if (select)
+    select->addOption(this);
+}
+
+void
+CBrowserFormOption::
+termProcess()
+{
+}
+
+void
+CBrowserFormOption::
+initLayout()
+{
+}
+
+void
+CBrowserFormOption::
+termLayout()
+{
+}
+
+//---
 
 CBrowserFormInput::
-CBrowserFormInput(CBrowserDocument *document, CHtmlTagId id, CBrowserFormInputType type,
-                  const std::string &name, const std::string &value) :
- CBrowserObject(id), document_(document), type_(type), name_(name), value_(value)
+CBrowserFormInput(CBrowserWindow *window, CHtmlTagId id, CBrowserFormInputType type,
+                  const CBrowserFormInputData &data) :
+ CBrowserObject(window, id), type_(type), data_(data)
 {
-  form_ = document->formMgr()->currentForm();
-
-  onblur_   = document->formMgr()->inputOnBlur();
-  onclick_  = document->formMgr()->inputOnClick();
-  onchange_ = document->formMgr()->inputOnChange();
-  onfocus_  = document->formMgr()->inputOnFocus();
-
-  document->formMgr()->setInputOnBlur("");
-  document->formMgr()->setInputOnClick("");
-  document->formMgr()->setInputOnChange("");
-  document->formMgr()->setInputOnFocus("");
-
   widget_ = nullptr;
   width_  = 0;
   height_ = 0;
 
-  CBrowserWindow *window = document->getWindow();
-
-  window->addCellRedrawData(this);
+  if (data_.id != "")
+    setId(data_.id);
 }
 
 CBrowserFormInput::
 ~CBrowserFormInput()
+{
+}
+
+void
+CBrowserFormInput::
+initProcess()
+{
+  form_ = parentType<CBrowserForm>();
+
+  if (form_)
+    form_->addInput(this);
+}
+
+void
+CBrowserFormInput::
+termProcess()
+{
+}
+
+void
+CBrowserFormInput::
+initLayout()
+{
+  window_->addCellRedrawData(this);
+}
+
+void
+CBrowserFormInput::
+termLayout()
 {
 }
 
@@ -654,19 +401,17 @@ format(CHtmlLayoutMgr *)
   if (getType() == CBrowserFormInputType::HIDDEN)
     return;
 
-  /*----*/
+  //---
 
-  CBrowserWindow *window = document_->getWindow();
+  window_->newSubCellRight(true);
 
-  window->newSubCellRight(true);
+  //---
 
-  /*----*/
+  createWidget(window_);
 
-  createWidget(window);
+  //---
 
-  /*----*/
-
-  window->addSubCellRedrawData(this);
+  window_->addSubCellRedrawData(this);
 }
 
 void
@@ -678,14 +423,12 @@ draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &region)
 
   //---
 
-  CBrowserWindow *window = document_->getWindow();
-
-  drawWidget(window, region);
+  drawWidget(window_, region);
 
   //---
 
-  window->drawOutline(region.getX(), region.getY(),
-                      region.getWidth(), region.getHeight(), CRGBA(1,0,0));
+  window_->drawOutline(region.getX(), region.getY(),
+                       region.getWidth(), region.getHeight(), CRGBA(1,0,0));
 
   //region.x += getWidth();
 }
@@ -694,27 +437,26 @@ void
 CBrowserFormInput::
 onClickProc()
 {
-  CBrowserCeilInst->runScript(getForm()->getDocument()->getWindow(), getOnClick());
+  CBrowserCeilInst->runScript(getForm()->getWindow(), getOnClick());
 }
 
 void
 CBrowserFormInput::
 onChangeProc()
 {
-  CBrowserCeilInst->runScript(getForm()->getDocument()->getWindow(), getOnChange());
+  CBrowserCeilInst->runScript(getForm()->getWindow(), getOnChange());
 }
 
-/*---------------------*/
+//---
 
 CBrowserFormButton::
-CBrowserFormButton(CBrowserDocument *document, const std::string &name,
-                   const std::string &value) :
- CBrowserFormInput(document, CHtmlTagId::INPUT, CBrowserFormInputType::BUTTON, name, value)
+CBrowserFormButton(CBrowserWindow *window, const CBrowserFormInputData &data) :
+ CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::BUTTON, data)
 {
-  if (name_ == "")
-    name_ = "button";
+  if (data_.name == "")
+    data_.name = "button";
 
-  setObjectName(name_.c_str());
+  setObjectName(data_.name.c_str());
 }
 
 void
@@ -724,20 +466,24 @@ createWidget(CBrowserWindow *window)
   if (! widget_) {
     QPushButton *button = new QPushButton(window->widget());
 
-    button->setObjectName(name_.c_str());
+    button->setObjectName(data_.name.c_str());
 
-    if (onclick_ != "")
+    if (data_.onclick != "")
       QObject::connect(button, SIGNAL(clicked()), this, SLOT(onClickProc()));
 
-    if (value_ != "")
-      button->setText(value_.c_str());
+    if (data_.value != "")
+      button->setText(data_.value.c_str());
     else
       button->setText("Button");
 
     widget_ = button;
 
-    width_  = widget_->width () + 4;
-    height_ = widget_->height() + 4;
+    widget_->setFont(CQUtil::toQFont(window_->getFont()));
+
+    QSize size = widget_->sizeHint();
+
+    width_  = size.width () + 4;
+    height_ = size.height() + 4;
   }
 
   window->updateSubCellHeight(height_/2, height_/2);
@@ -751,18 +497,16 @@ drawWidget(CBrowserWindow *, const CHtmlLayoutRegion &region)
   widget_->move(region.x + 2, region.y + 2);
 }
 
-/*---------------------*/
+//---
 
 CBrowserFormCheckBox::
-CBrowserFormCheckBox(CBrowserDocument *document, const std::string &name,
-                     const std::string &value, int checked) :
- CBrowserFormInput(document, CHtmlTagId::INPUT, CBrowserFormInputType::CHECKBOX, name, value),
- checked_(checked)
+CBrowserFormCheckBox(CBrowserWindow *window, const CBrowserFormInputData &data) :
+ CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::CHECKBOX, data)
 {
-  if (name_ == "")
-    name_ = "checkbox";
+  if (data_.name == "")
+    data_.name = "checkbox";
 
-  setObjectName(name_.c_str());
+  setObjectName(data_.name.c_str());
 }
 
 void
@@ -772,7 +516,7 @@ createWidget(CBrowserWindow *window)
   if (! widget_) {
     QCheckBox *button = new QCheckBox(window->widget());
 
-    button->setObjectName(name_.c_str());
+    button->setObjectName(data_.name.c_str());
 
     widget_ = button;
 
@@ -781,8 +525,12 @@ createWidget(CBrowserWindow *window)
     if (checked_)
       button->setChecked(true);
 
-    width_  = widget_->width () + 4;
-    height_ = widget_->height() + 4;
+    widget_->setFont(CQUtil::toQFont(window_->getFont()));
+
+    QSize size = widget_->sizeHint();
+
+    width_  = size.width () + 4;
+    height_ = size.height() + 4;
   }
 
   window->updateSubCellHeight(height_/2, height_/2);
@@ -796,19 +544,40 @@ drawWidget(CBrowserWindow *, const CHtmlLayoutRegion &region)
   widget_->move(region.x + 2, region.y + 2);
 }
 
-/*---------------------*/
+//---
 
 CBrowserFormImage::
-CBrowserFormImage(CBrowserDocument *document, const std::string &name,
-                  const std::string &value, const std::string &src,
-                  const CImagePtr &image, CBrowserImageAlign align) :
- CBrowserFormInput(document, CHtmlTagId::INPUT, CBrowserFormInputType::IMAGE, name, value),
- src_(src), image_(image), align_(align)
+CBrowserFormImage(CBrowserWindow *window, const CBrowserFormInputData &data) :
+ CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::IMAGE, data),
+ align_(CBrowserImageAlign::BOTTOM)
 {
-  if (name_ == "")
-    name_ = "image";
+  if (data_.name == "")
+    data_.name = "image";
 
-  setObjectName(name_.c_str());
+  align_ = CBrowserImageAlign::BOTTOM;
+
+  if      (CStrUtil::casecmp(data_.align, "top"       ) == 0)
+    align_ = CBrowserImageAlign::TOP;
+  else if (CStrUtil::casecmp(data_.align, "middle"    ) == 0)
+    align_ = CBrowserImageAlign::MIDDLE;
+  else if (CStrUtil::casecmp(data_.align, "bottom"    ) == 0)
+    align_ = CBrowserImageAlign::BOTTOM;
+  else if (CStrUtil::casecmp(data_.align, "left"      ) == 0)
+    align_ = CBrowserImageAlign::LEFT;
+  else if (CStrUtil::casecmp(data_.align, "right"     ) == 0)
+    align_ = CBrowserImageAlign::RIGHT;
+  else if (CStrUtil::casecmp(data_.align, "texttop"   ) == 0)
+    align_ = CBrowserImageAlign::TEXTTOP;
+  else if (CStrUtil::casecmp(data_.align, "absmiddle" ) == 0)
+    align_ = CBrowserImageAlign::ABSMIDDLE;
+  else if (CStrUtil::casecmp(data_.align, "absbottom" ) == 0)
+    align_ = CBrowserImageAlign::ABSBOTTOM;
+
+  CImageFileSrc file(data_.src);
+
+  image_ = CImageMgrInst->createImage(file);
+
+  setObjectName(data_.name.c_str());
 }
 
 void
@@ -820,7 +589,7 @@ createWidget(CBrowserWindow *window)
   int width  = image_->getWidth ();
   int height = image_->getHeight();
 
-  /*-------------*/
+  //---
 
   CHtmlLayoutCell *redraw_cell = window->getCurrentCell();
 
@@ -833,7 +602,7 @@ createWidget(CBrowserWindow *window)
   else
     sub_cell->setAlign(CHALIGN_TYPE_NONE);
 
-  /*-------------*/
+  //---
 
   if      (align_ == CBrowserImageAlign::TOP    ||
            align_ == CBrowserImageAlign::TEXTTOP)
@@ -847,7 +616,7 @@ createWidget(CBrowserWindow *window)
 
   window->updateSubCellWidth(width + 2*hspace);
 
-  /*-------------*/
+  //---
 
   width_  = width  + 2*hspace;
   height_ = height + 2*vspace;
@@ -861,7 +630,7 @@ drawWidget(CBrowserWindow *window, const CHtmlLayoutRegion &region)
   int vspace = 2;
   int border = 2;
 
-  /*-------------*/
+  //---
 
   int x1 = region.x + hspace;
   int y1 = region.y + vspace;
@@ -898,19 +667,16 @@ drawWidget(CBrowserWindow *window, const CHtmlLayoutRegion &region)
 */
 }
 
-/*---------------------*/
+//---
 
 CBrowserFormPassword::
-CBrowserFormPassword(CBrowserDocument *document, const std::string &name,
-                     const std::string &value, int size, int maxlength) :
- CBrowserFormInput(document, CHtmlTagId::INPUT, CBrowserFormInputType::PASSWORD_TEXT,
-                   name, value),
- size_(size), maxlength_(maxlength)
+CBrowserFormPassword(CBrowserWindow *window, const CBrowserFormInputData &data) :
+ CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::PASSWORD_TEXT, data)
 {
-  if (name_ == "")
-    name_ = "password";
+  if (data_.name == "")
+    data_.name = "password";
 
-  setObjectName(name_.c_str());
+  setObjectName(data_.name.c_str());
 }
 
 void
@@ -920,7 +686,7 @@ createWidget(CBrowserWindow *window)
   if (! widget_) {
     QLineEdit *edit = new QLineEdit(window->widget());
 
-    edit->setObjectName(name_.c_str());
+    edit->setObjectName(data_.name.c_str());
 
     edit->setText("");
 
@@ -930,8 +696,12 @@ createWidget(CBrowserWindow *window)
 
     // TODO: make text unreadable
 
-    width_  = widget_->width () + 4;
-    height_ = widget_->height() + 4;
+    widget_->setFont(CQUtil::toQFont(window_->getFont()));
+
+    QSize size = widget_->sizeHint();
+
+    width_  = size.width () + 4;
+    height_ = size.height() + 4;
   }
 
   window->updateSubCellHeight(height_/2, height_/2);
@@ -962,22 +732,21 @@ submit(std::string &url)
 
   QString value = edit->text();
 
-  url += name_;
+  url += data_.name;
   url += "=";
   url += value.toStdString();
 }
 
-/*---------------------*/
+//---
 
 CBrowserFormHidden::
-CBrowserFormHidden(CBrowserDocument *document, const std::string &name,
-                   const std::string &value) :
- CBrowserFormInput(document, CHtmlTagId::INPUT, CBrowserFormInputType::HIDDEN, name, value)
+CBrowserFormHidden(CBrowserWindow *window, const CBrowserFormInputData &data) :
+ CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::HIDDEN, data)
 {
-  if (name_ == "")
-    name_ = "hidden";
+  if (data_.name == "")
+    data_.name = "hidden";
 
-  setObjectName(name_.c_str());
+  setObjectName(data_.name.c_str());
 }
 
 void
@@ -997,24 +766,21 @@ void
 CBrowserFormHidden::
 submit(std::string &url)
 {
-  url += name_;
+  url += data_.name;
   url += "=";
-  url += value_;
+  url += data_.value;
 }
 
-/*---------------------*/
+//---
 
 CBrowserFormText::
-CBrowserFormText(CBrowserDocument *document, const std::string &name, const std::string &value,
-                 const std::string &classStr, const int size, int maxlength,
-                 const std::string &placeholder) :
- CBrowserFormInput(document, CHtmlTagId::INPUT, CBrowserFormInputType::TEXT, name, value),
- classStr_(classStr), size_(size), maxlength_(maxlength), placeholder_(placeholder)
+CBrowserFormText(CBrowserWindow *window, const CBrowserFormInputData &data) :
+ CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::TEXT, data)
 {
-  if (name_ == "")
-    name_ = "text";
+  if (data_.name == "")
+    data_.name = "text";
 
-  setObjectName(name_.c_str());
+  setObjectName(data_.name.c_str());
 }
 
 std::string
@@ -1034,12 +800,12 @@ createWidget(CBrowserWindow *window)
     if (classStr_ == "color") {
       CQJColorEdit *colorEdit = new CQJColorEdit(window->widget(), this);
 
-      colorEdit->setText(value_.c_str());
+      colorEdit->setText(data_.value.c_str());
 
       if (maxlength_ > 0)
         colorEdit->setMaxLength(maxlength_);
 
-      if (onchange_ != "")
+      if (data_.onchange != "")
         QObject::connect(colorEdit, SLOT(returnPressed()), this, SLOT(onChangeProc()));
 
       widget_ = colorEdit;
@@ -1047,18 +813,20 @@ createWidget(CBrowserWindow *window)
     else {
       CQJLineEdit *lineEdit = new CQJLineEdit(window->widget(), this);
 
-      lineEdit->setText(value_.c_str());
+      lineEdit->setText(data_.value.c_str());
 
       lineEdit->setPlaceholderText(placeholder_.c_str());
 
       if (maxlength_ > 0)
         lineEdit->setMaxLength(maxlength_);
 
-      if (onchange_ != "")
+      if (data_.onchange != "")
         QObject::connect(lineEdit, SLOT(returnPressed()), this, SLOT(onChangeProc()));
 
       widget_ = lineEdit;
     }
+
+    widget_->setFont(CQUtil::toQFont(window_->getFont()));
 
     QSize size = widget_->sizeHint();
 
@@ -1086,7 +854,7 @@ submit(std::string &url)
 
   QString value = edit->text();
 
-  url += name_;
+  url += data_.name;
   url += "=";
   url += value.toStdString();
 }
@@ -1097,22 +865,46 @@ reset()
 {
   QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
 
-  edit->setText(value_.c_str());
+  edit->setText(data_.value.c_str());
 }
 
-/*---------------------*/
+//---
 
 CBrowserFormTextarea::
-CBrowserFormTextarea(CBrowserDocument *document, const std::string &name,
-                     const std::string &value, int rows, int cols,
-                     CBrowserFormTextAreaWrapType wrap) :
- CBrowserFormInput(document, CHtmlTagId::TEXTAREA, CBrowserFormInputType::TEXTAREA, name, value),
- rows_(rows), cols_(cols), wrap_(wrap)
+CBrowserFormTextarea(CBrowserWindow *window, const CBrowserFormTextareaData &data) :
+ CBrowserFormInput(window, CHtmlTagId::TEXTAREA, CBrowserFormInputType::TEXTAREA, data),
+ data_(data), wrap_(CBrowserFormTextAreaWrapType::OFF)
 {
-  if (name_ == "")
-    name_ = "textarea";
+  if      (CStrUtil::casecmp(data_.wrap, "off"     ) == 0)
+    wrap_ = CBrowserFormTextAreaWrapType::OFF;
+  else if (CStrUtil::casecmp(data_.wrap, "virtual" ) == 0)
+    wrap_ = CBrowserFormTextAreaWrapType::VIRTUAL;
+  else if (CStrUtil::casecmp(data_.wrap, "physical") == 0)
+    wrap_ = CBrowserFormTextAreaWrapType::PHYSICAL;
 
-  setObjectName(name_.c_str());
+  if (data_.name == "")
+    data_.name = "textarea";
+
+  setObjectName(data_.name.c_str());
+
+  if (data_.id != "")
+    setId(data_.id);
+}
+
+void
+CBrowserFormTextarea::
+initLayout()
+{
+  CBrowserForm *form = parentType<CBrowserForm>();
+
+  if (form)
+    form->addInput(this);
+}
+
+void
+CBrowserFormTextarea::
+termLayout()
+{
 }
 
 void
@@ -1122,14 +914,18 @@ createWidget(CBrowserWindow *window)
   if (! widget_) {
     QTextEdit *edit = new QTextEdit(window->widget());
 
-    edit->setObjectName(name_.c_str());
+    edit->setObjectName(data_.name.c_str());
 
-    edit->setText(value_.c_str());
+    edit->setText(data_.value.c_str());
 
     widget_ = edit;
 
-    width_  = widget_->width () + 4;
-    height_ = widget_->height() + 4;
+    widget_->setFont(CQUtil::toQFont(window_->getFont()));
+
+    QSize size = widget_->sizeHint();
+
+    width_  = size.width () + 4;
+    height_ = size.height() + 4;
   }
 
   window->updateSubCellHeight(height_/2, height_/2);
@@ -1151,7 +947,7 @@ submit(std::string &url)
 
   QString value = edit->toPlainText();
 
-  url += name_;
+  url += data_.name;
   url += "=";
   url += value.toStdString();
 }
@@ -1162,21 +958,19 @@ reset()
 {
   QTextEdit *edit = qobject_cast<QTextEdit *>(widget_);
 
-  edit->setText(value_.c_str());
+  edit->setText(data_.value.c_str());
 }
 
-/*---------------------*/
+//---
 
 CBrowserFormReset::
-CBrowserFormReset(CBrowserDocument *document, const std::string &name,
-                  const std::string &value) :
- CBrowserFormInput(document, CHtmlTagId::INPUT, CBrowserFormInputType::RESET_BUTTON,
-                   name, value)
+CBrowserFormReset(CBrowserWindow *window, const CBrowserFormInputData &data) :
+ CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::RESET_BUTTON, data)
 {
-  if (name_ == "")
-    name_ = "input";
+  if (data_.name == "")
+    data_.name = "input";
 
-  setObjectName(name_.c_str());
+  setObjectName(data_.name.c_str());
 }
 
 void
@@ -1186,19 +980,23 @@ createWidget(CBrowserWindow *window)
   if (! widget_) {
     QPushButton *button = new QPushButton(window->widget());
 
-    button->setObjectName(name_.c_str());
+    button->setObjectName(data_.name.c_str());
 
     widget_ = button;
 
     QObject::connect(button, SIGNAL(clicked()), this, SLOT(resetProc()));
 
-    if (value_ != "")
-      button->setText(value_.c_str());
+    if (data_.value != "")
+      button->setText(data_.value.c_str());
     else
       button->setText("Reset");
 
-    width_  = widget_->width () + 4;
-    height_ = widget_->height() + 4;
+    widget_->setFont(CQUtil::toQFont(window_->getFont()));
+
+    QSize size = widget_->sizeHint();
+
+    width_  = size.width () + 4;
+    height_ = size.height() + 4;
   }
 
   window->updateSubCellHeight(height_/2, height_/2);
@@ -1212,25 +1010,34 @@ drawWidget(CBrowserWindow *, const CHtmlLayoutRegion &region)
   widget_->move(region.x + 2, region.y + 2);
 }
 
-/*---------------------*/
+void
+CBrowserFormReset::
+resetProc()
+{
+  std::cerr << "Reset" << std::endl;
+}
+
+//---
 
 CBrowserFormSelect::
-CBrowserFormSelect(CBrowserDocument *document, const std::string &name,
-                   const std::string &value, int size, int multiple) :
- CBrowserFormInput(document, CHtmlTagId::INPUT, CBrowserFormInputType::SELECT, name, value),
- size_(size), multiple_(multiple)
+CBrowserFormSelect(CBrowserWindow *window, const CBrowserFormSelectData &data) :
+ CBrowserFormInput(window, CHtmlTagId::SELECT, CBrowserFormInputType::SELECT, data),
+ data_(data)
 {
-  if (name_ == "")
-    name_ = "select";
+  if (data_.name == "")
+    data_.name = "select";
 
-  setObjectName(name_.c_str());
+  setObjectName(data_.name.c_str());
+
+  if (data_.id != "")
+    setId(data_.id);
 }
 
 std::string
 CBrowserFormSelect::
 value() const
 {
-  if (multiple_ || size_ != 1) {
+  if (data_.multiple || data_.size != 1) {
     return "";
   }
   else {
@@ -1253,17 +1060,36 @@ value() const
 
 void
 CBrowserFormSelect::
+addOption(CBrowserFormOption *option)
+{
+  options_.push_back(option);
+}
+
+void
+CBrowserFormSelect::
+initLayout()
+{
+}
+
+void
+CBrowserFormSelect::
+termLayout()
+{
+}
+
+void
+CBrowserFormSelect::
 createWidget(CBrowserWindow *window)
 {
   if (! widget_) {
-    if (multiple_ || size_ != 1) {
+    if (data_.multiple || data_.size != 1) {
       QListWidget *list = new QListWidget(window->widget());
 
-      list->setObjectName(name_.c_str());
+      list->setObjectName(data_.name.c_str());
 
       widget_ = list;
 
-      list->setSelectionMode(multiple_ ?
+      list->setSelectionMode(data_.multiple ?
         QAbstractItemView::ExtendedSelection : QAbstractItemView::SingleSelection);
 
       uint num = getNumOptions();
@@ -1282,7 +1108,7 @@ createWidget(CBrowserWindow *window)
     else {
       CQJComboBox *combo = new CQJComboBox(window->widget(), this);
 
-      combo->setObjectName(name_.c_str());
+      combo->setObjectName(data_.name.c_str());
 
       widget_ = combo;
 
@@ -1294,6 +1120,8 @@ createWidget(CBrowserWindow *window)
         combo->addItem(option->getText().c_str());
       }
     }
+
+    widget_->setFont(CQUtil::toQFont(window_->getFont()));
 
     QSize size = widget_->sizeHint();
 
@@ -1313,18 +1141,16 @@ drawWidget(CBrowserWindow *, const CHtmlLayoutRegion &region)
   widget_->resize(width_ - 4, height_ - 4);
 }
 
-/*---------------------*/
+//---
 
 CBrowserFormSubmit::
-CBrowserFormSubmit(CBrowserDocument *document, const std::string &name,
-                   const std::string &value) :
- CBrowserFormInput(document, CHtmlTagId::INPUT, CBrowserFormInputType::SUBMIT_BUTTON,
-                   name, value)
+CBrowserFormSubmit(CBrowserWindow *window, const CBrowserFormInputData &data) :
+ CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::SUBMIT_BUTTON, data)
 {
-  if (name_ == "")
-    name_ = "submit";
+  if (data_.name == "")
+    data_.name = "submit";
 
-  setObjectName(name_.c_str());
+  setObjectName(data_.name.c_str());
 }
 
 void
@@ -1334,22 +1160,26 @@ createWidget(CBrowserWindow *window)
   if (! widget_) {
     QPushButton *button = new QPushButton(window->widget());
 
-    button->setObjectName(name_.c_str());
+    button->setObjectName(data_.name.c_str());
 
     widget_ = button;
 
-    QObject::connect(button, SLOT(clicked()), form_, SLOT(submitProc()));
+    QObject::connect(button, SIGNAL(clicked()), form_, SLOT(submitProc()));
 
-    if (onclick_ != "")
-      QObject::connect(button, SLOT(clicked()), this, SLOT(onClickProc()));
+    if (data_.onclick != "")
+      QObject::connect(button, SIGNAL(clicked()), this, SLOT(onClickProc()));
 
-    if (value_ != "")
-      button->setText(value_.c_str());
+    if (data_.value != "")
+      button->setText(data_.value.c_str());
     else
       button->setText("Submit Query");
 
-    width_  = widget_->width () + 4;
-    height_ = widget_->height() + 4;
+    widget_->setFont(CQUtil::toQFont(window_->getFont()));
+
+    QSize size = widget_->sizeHint();
+
+    width_  = size.width () + 4;
+    height_ = size.height() + 4;
   }
 
   window->updateSubCellHeight(height_/2, height_/2);

@@ -11,6 +11,9 @@ class CBrowserLabel : public CBrowserObject {
                 CHAlignType align, const CRGBA &color);
  ~CBrowserLabel();
 
+  void initLayout() override;
+  void termLayout() override;
+
   void format(CHtmlLayoutMgr *) override;
 
   void draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &) override;
@@ -18,12 +21,11 @@ class CBrowserLabel : public CBrowserObject {
   void print(std::ostream &os) const override { os << "label '" << text_ << "'"; }
 
  private:
-  CBrowserWindow* window_ { nullptr };
-  std::string     text_;
-  int             width_ { 0 };
-  CHAlignType     align_ { CHALIGN_TYPE_NONE };
-  CFontPtr        font_;
-  CRGBA           color_ { 0, 0, 0 };
+  std::string text_;
+  int         width_ { 0 };
+  CHAlignType align_ { CHALIGN_TYPE_NONE };
+  CFontPtr    font_;
+  CRGBA       color_ { 0, 0, 0 };
 };
 
 #endif

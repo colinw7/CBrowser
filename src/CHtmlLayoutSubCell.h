@@ -7,6 +7,18 @@
 #include <vector>
 #include <iostream>
 
+/*
+ * Box model is:
+ *  margin (l, r, t, b) - transparent
+ *   border (l, r, t, b)
+ *    padding (l, r, t, b)
+ *     content (w, h (ascent, descent))
+ *
+ * content has:
+ *   background
+ *   color
+ *   image
+ */
 class CHtmlLayoutCell;
 class CHtmlLayoutBox;
 
@@ -51,7 +63,7 @@ class CHtmlLayoutSubCell {
 
   const Boxes &boxes() const { return boxes_; }
 
-  int getNumBoxes();
+  int getNumBoxes() const;
 
   CHtmlLayoutBox *getBox(int i);
 
@@ -64,10 +76,12 @@ class CHtmlLayoutSubCell {
 
   void accept(CHtmlLayoutVisitor &visitor);
 
-  void printSize(std::ostream &os) {
+  void printSize(std::ostream &os) const {
     os << "(" << getX() << "," << getY() << ") " <<
           "(" << getX() + getWidth() << "x" << getY() + getHeight() << ")";
   }
+
+  void print(std::ostream &os) const;
 
  private:
   void term();

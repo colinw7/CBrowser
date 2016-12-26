@@ -16,19 +16,15 @@ class CBrowserRule : public CBrowserObject {
   CBrowserRule(CBrowserWindow *window, const CBrowserRuleData &data);
  ~CBrowserRule();
 
-  void initFormat();
+  void initLayout() override;
+  void termLayout() override;
 
   void format(CHtmlLayoutMgr *) override;
 
   void draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &) override;
 
  private:
-  CBrowserWindow*   window_ { nullptr };
-  CHAlignType       align_ { CHALIGN_TYPE_CENTER };
-  int               shade_ { true };
-  int               size_ { -1 };
-  int               width_ { -1 };
-  CBrowserUnitsType unit_ { CBrowserUnitsType::PIXEL };
+  CBrowserRuleData data_;
 };
 
 #endif

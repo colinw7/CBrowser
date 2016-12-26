@@ -3,9 +3,10 @@
 #include <CBrowserWindow.h>
 
 CBrowserSymbol::
-CBrowserSymbol(CBrowserWindow *window, CBrowserSymbolType type, int width, int height) :
- CBrowserObject(CHtmlTagId::SYMBOL), window_(window), type_(type), width_(width), height_(height)
+CBrowserSymbol(CBrowserWindow *window, Type type) :
+ CBrowserObject(window, CHtmlTagId::SYMBOL), type_(type), width_(0), ascent_(descent_)
 {
+  window_->getTextSize("X", &width_, &ascent_, &descent_);
 }
 
 CBrowserSymbol::
@@ -15,14 +16,27 @@ CBrowserSymbol::
 
 void
 CBrowserSymbol::
+initLayout()
+{
+  window_->addCellRedrawData(this);
+}
+
+void
+CBrowserSymbol::
+termLayout()
+{
+}
+
+void
+CBrowserSymbol::
 format(CHtmlLayoutMgr *)
 {
   window_->newSubCellBelow(false);
 
-  window_->updateSubCellHeight(height_, 0);
+  window_->updateSubCellHeight(ascent_, descent_);
   window_->updateSubCellWidth (width_);
 
-  /*------------*/
+  //---
 
   window_->addSubCellRedrawData(this);
 }
@@ -31,39 +45,44 @@ void
 CBrowserSymbol::
 draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &region)
 {
-  CHtmlLayoutSubCell *sub_cell = window_->getCurrentSubCell();
+  //CHtmlLayoutSubCell *sub_cell = window_->getCurrentSubCell();
 
-  int x1 = region.x + width_/2;
-  int y1 = region.y + sub_cell->getAscent() - height_/2;
+  int cx = region.x + region.getWidth()/2;
+  int cy = region.y + ascent_/2;
 
-  /*------------*/
+  //---
 
-  int size = std::min(width_ - 1, height_ - 1);
+  int size = std::min(region.getWidth() - 1, ascent_ - 1);
 
-  /*------------*/
+  //---
 
   switch (type_) {
-    case CBrowserSymbolType::DISC:
-      window_->fillCircle(x1 - size/2, y1 - size/2, size);
+    case Type::DISC:
+      window_->fillCircle(cx, cy, size/2); // x, y, r
 
       break;
-    case CBrowserSymbolType::CIRCLE:
-      window_->drawCircle(x1 - size/2, y1 - size/2, size);
+    case Type::CIRCLE:
+      window_->drawCircle(cx, cy, size/2); // x, y, r
 
       break;
-    case CBrowserSymbolType::BLOCK:
-      window_->fillRectangle(x1 - size/2, y1 - size/2, size, size);
+    case Type::BLOCK:
+      window_->fillRectangle(cx - size/2, cy - size/2, size, size); // x1, y1, x2, y2
 
       break;
-    case CBrowserSymbolType::SQUARE:
-      window_->drawRectangle(x1 - size/2, y1 - size/2, size, size);
+    case Type::SQUARE:
+      window_->drawRectangle(cx - size/2, cy - size/2, size, size); // x1, y1, x2, y2
 
       break;
     default:
       break;
   }
 
-  /*------------*/
+  //---
 
   //region.x += width_;
+
+  //---
+
+  if (isSelected())
+    window_->drawSelected(region.getX(), region.getY(), region.getWidth(), region.getHeight());
 }

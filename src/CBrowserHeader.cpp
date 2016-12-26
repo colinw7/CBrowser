@@ -3,8 +3,8 @@
 #include <CBrowserFont.h>
 
 CBrowserHeader::
-CBrowserHeader(CBrowserWindow *window, CHtmlTagId id, CHAlignType align) :
- CBrowserObject(id), window_(window), align_(align), ind_(-1)
+CBrowserHeader(CBrowserWindow *window, CHtmlTagId id, const CBrowserHeaderData &data) :
+ CBrowserObject(window, id), data_(data), ind_(-1)
 {
   static std::vector<CHtmlTagId> ids =
     {{ CHtmlTagId::H1, CHtmlTagId::H2, CHtmlTagId::H3,
@@ -28,12 +28,8 @@ CBrowserHeader::
 
 void
 CBrowserHeader::
-initFormat()
+initProcess()
 {
-  window_->skipLine();
-
-  window_->setAlign(align_, CVALIGN_TYPE_TOP);
-
   window_->setFontSize(6 - ind_);
 
   window_->startBold();
@@ -41,12 +37,28 @@ initFormat()
 
 void
 CBrowserHeader::
-termFormat()
+termProcess()
 {
   window_->endBold();
 
   window_->resetFontSize();
+}
 
+void
+CBrowserHeader::
+initLayout()
+{
+  window_->skipLine();
+
+  window_->setAlign(data_.align, CVALIGN_TYPE_TOP);
+
+  window_->addCellRedrawData(this);
+}
+
+void
+CBrowserHeader::
+termLayout()
+{
   window_->skipLine();
 
   window_->setAlign(CHALIGN_TYPE_LEFT, CVALIGN_TYPE_TOP);

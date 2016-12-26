@@ -58,7 +58,7 @@ class CHtmlLayoutCell {
 
   const SubCells &subCells() const { return sub_cells_; }
 
-  int getNumBoxes();
+  int getNumBoxes() const;
 
   CHtmlLayoutBox *getBox(int i);
 
@@ -101,10 +101,12 @@ class CHtmlLayoutCell {
 
   void accept(CHtmlLayoutVisitor &visitor);
 
-  void printSize(std::ostream &os) {
+  void printSize(std::ostream &os) const {
     os << "(" << region_.x << "," << region_.y << "," <<
           region_.x + region_.width << "," << region_.y + region_.ascent + region_.descent << ")";
   }
+
+  void print(std::ostream &os) const;
 
  private:
   void init();

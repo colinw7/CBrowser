@@ -35,8 +35,6 @@ class CBrowserDocument {
   void setALinkColor(const std::string &color);
   void setVLinkColor(const std::string &color);
 
-  CBrowserFormMgr* formMgr() const { return formMgr_; }
-
   void addLink(CBrowserLink *link);
   uint getNumLinks() const;
   CBrowserLink *getLink(uint i);
@@ -46,28 +44,24 @@ class CBrowserDocument {
   CBrowserLink *getAnchor(uint i);
   void freeLinks();
 
-  void addForm(CBrowserForm *form);
+  const CHtmlParserTokens &tokens() const { return tokens_; }
 
   void read(const std::string &url);
-  void output();
 
  private:
   typedef std::vector<CBrowserLink *> Links;
-  typedef std::vector<CBrowserForm *> Forms;
 
-  std::string        url_;
-  CBrowserWindow    *window_ { nullptr };
-  std::string        title_;
-  CRGBA              bg_color_;
-  CRGBA              fg_color_;
-  CRGBA              link_color_;
-  CRGBA              alink_color_;
-  CRGBA              vlink_color_;
-  Links              anchors_;
-  Links              links_;
-  Forms              forms_;
-  CHtmlParserTokens  tokens_;
-  CBrowserFormMgr*   formMgr_ { nullptr };
+  std::string       url_;
+  CBrowserWindow*   window_ { nullptr };
+  std::string       title_;
+  CRGBA             bg_color_;
+  CRGBA             fg_color_;
+  CRGBA             link_color_;
+  CRGBA             alink_color_;
+  CRGBA             vlink_color_;
+  Links             anchors_;
+  Links             links_;
+  CHtmlParserTokens tokens_;
 };
 
 #endif

@@ -29,14 +29,6 @@ enum class CBrowserImageAlign {
   ABSBOTTOM
 };
 
-enum class CBrowserSymbolType {
-  NONE,
-  DISC,
-  CIRCLE,
-  BLOCK,
-  SQUARE
-};
-
 enum class CBrowserTextPlaceType {
   NORMAL,
   SUBSCRIPT,
@@ -49,13 +41,41 @@ enum class CBrowserDeviceType {
   PS
 };
 
+enum class CBrowserFormMethodType {
+  NONE,
+  GET,
+  POST
+};
+
+enum class CBrowserFormInputType {
+  NONE,
+  BUTTON,
+  CHECKBOX,
+  FILE,
+  HIDDEN,
+  IMAGE,
+  PASSWORD_TEXT,
+  RADIO_BUTTON,
+  RANGE,
+  RESET_BUTTON,
+  SELECT,
+  SUBMIT_BUTTON,
+  TEXT,
+  TEXTAREA
+};
+
+enum class CBrowserFormTextAreaWrapType {
+  OFF,
+  VIRTUAL,
+  PHYSICAL
+};
+
 //------
 
 class CBrowserCanvas;
 class CQJCanvasWidget;
 class CBrowserDocument;
 class CBrowserFontFace;
-class CBrowserFormMgr;
 class CBrowserForm;
 class CBrowserFormInput;
 class CBrowserFormSelect;
@@ -76,12 +96,12 @@ class CBrowserFormText;
 class CBrowserGraphics;
 class CBrowserHistory;
 class CBrowserIFace;
+class CBrowserImage;
 class CBrowserLink;
 class CBrowserLinkMgr;
 class CBrowserLinkRect;
 class CBrowserObject;
 class CBrowserRuleData;
-class CBrowserTableMgr;
 class CBrowserTable;
 class CBrowserTableRow;
 class CBrowserTableCell;

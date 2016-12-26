@@ -133,6 +133,15 @@ endDoubleBuffer()
 
 void
 CBrowserWindowWidget::
+saveImage(const std::string &filename)
+{
+  QPixmap *pixmap = graphics_->pixmap();
+
+  pixmap->save(filename.c_str());
+}
+
+void
+CBrowserWindowWidget::
 setXDevice()
 {
   graphics_->setXDevice();

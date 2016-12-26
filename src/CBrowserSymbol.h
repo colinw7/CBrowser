@@ -5,17 +5,29 @@
 
 class CBrowserSymbol : public CBrowserObject {
  public:
-  CBrowserSymbol(CBrowserWindow *window, CBrowserSymbolType type, int width, int height);
+  enum class Type {
+    NONE,
+    DISC,
+    CIRCLE,
+    BLOCK,
+    SQUARE
+  };
+
+ public:
+  CBrowserSymbol(CBrowserWindow *window, Type type);
  ~CBrowserSymbol();
+
+  void initLayout() override;
+  void termLayout() override;
 
   void format(CHtmlLayoutMgr *) override;
   void draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &) override;
 
  private:
-  CBrowserWindow*    window_ { nullptr };
-  CBrowserSymbolType type_ { CBrowserSymbolType::NONE };
-  int                width_ { 0 };
-  int                height_ { 0 };
+  Type type_    { Type::NONE };
+  int  width_   { 0 };
+  int  ascent_  { 0 };
+  int  descent_ { 0 };
 };
 
 #endif

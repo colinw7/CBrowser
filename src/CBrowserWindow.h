@@ -2,16 +2,21 @@
 #define CBrowserWindow_H
 
 #include <CBrowserTypes.h>
+#include <CBrowserSymbol.h>
+#include <CBrowserOutput.h>
 #include <CBrowserData.h>
+#include <CHtmlParser.h>
 #include <CFont.h>
 #include <QImage>
 
-#define LEFT_MARGIN   8
-#define RIGHT_MARGIN  8
-#define BOTTOM_MARGIN 8
-#define TOP_MARGIN    8
-
 class CBrowserWindow {
+ public:
+  enum class OutputState {
+    NONE,
+    PROCESS_TOKENS,
+    LAYOUT_OBJECTS
+  };
+
  public:
   CBrowserWindow(const std::string &filename="");
  ~CBrowserWindow();
@@ -31,19 +36,19 @@ class CBrowserWindow {
   int getLeftMargin() const { return left_margin_; }
   int getTopMargin () const { return top_margin_ ; }
 
-  CHtmlLayoutMgr *getLayoutMgr() const { return layout_mgr_; }
+  CHtmlLayoutMgr *getLayoutMgr() const { return layoutMgr_; }
 
-  CHtmlLayoutArea *getAreaData() const { return area_data_; }
-
-  CBrowserTableMgr *tableMgr() const { return tableMgr_; }
+  CHtmlLayoutArea *getAreaData() const { return areaData_; }
 
   CBrowserLinkMgr *linkMgr() const { return linkMgr_; }
+
+  void addForm(CBrowserForm *form);
 
   void setHAlign(CHAlignType halign);
   void setVAlign(CVAlignType valign);
   void setAlign(CHAlignType halign, CVAlignType valign);
 
-  void startArea(CHtmlLayoutArea *area_data);
+  void startArea(CHtmlLayoutArea *areaData_);
   void endArea();
 
   //---
@@ -65,8 +70,8 @@ class CBrowserWindow {
   void setBaseFontSize(int size);
   int  getBaseFontSize();
   void resetBaseFontSize();
-  void increaseBaseFontSize();
-  void decreaseBaseFontSize();
+  void increaseBaseFontSize(int d=1);
+  void decreaseBaseFontSize(int d=1);
 
   void setFontSize(int size);
   int  getFontSize();
@@ -95,18 +100,28 @@ class CBrowserWindow {
 
   //---
 
-  CBrowserObject *addCanvas(const CBrowserCanvasData &canvasData);
+  void setTextColor(const CRGBA &c);
+  CRGBA getTextColor() const;
 
-  CBrowserObject *addLabel(const std::string &text, int width, CHAlignType align,
-                           const CRGBA &color);
+  void setTextUnderline(bool b);
 
-  CBrowserObject *addText(const std::string &text, const CBrowserTextData &data);
+  void setTextStrike(bool b);
 
-  CBrowserObject *addSymbol(CBrowserSymbolType type);
+  void setTextPlace(CBrowserTextPlaceType p);
+
+  void setTextBreakup(bool b);
+
+  void setTextFormat(bool b);
+
+  const CBrowserTextData &textData() const { return textData_; }
+
+  //---
 
   CBrowserObject *addImage(const CBrowserImageData &imageData);
 
-  CBrowserObject *addNamedImage(const std::string &name);
+  CBrowserImage *addNamedImage(const std::string &name);
+
+  CImagePtr lookupImage(const CBrowserImageData &imageData);
 
   //---
 
@@ -114,10 +129,10 @@ class CBrowserWindow {
 
   //---
 
-  const CBrowserObject *rootObject() const { return rootObject_; }
+  CBrowserObject *rootObject() const { return rootObject_; }
   void setRootObject(CBrowserObject *p) { rootObject_ = p; }
 
-  void startObject(CBrowserObject *obj);
+  void startObject(CBrowserObject *obj, bool add);
   void endObject();
 
   CBrowserObject *currentObj() const;
@@ -155,6 +170,9 @@ class CBrowserWindow {
 
   void outputDocument();
 
+  void processTokens(const CHtmlParserTokens &tokens);
+  void layoutObjects();
+
   void resize();
   void redraw();
 
@@ -183,6 +201,7 @@ class CBrowserWindow {
   bool isVisible(int x1, int y1, int x2, int y2);
 
   void print();
+  void saveImage(const std::string &filename);
 
   void goBack();
   void goForward();
@@ -229,6 +248,11 @@ class CBrowserWindow {
 
   void recalc();
 
+  //---
+
+  void parseHAlignOption(const std::string &name, CHAlignType &align);
+  void parseVAlignOption(const std::string &name, CVAlignType &align);
+
  private:
   void init();
 
@@ -267,13 +291,12 @@ class CBrowserWindow {
   int                   left_margin_ { 0 };
   int                   top_margin_ { 0 };
 
-  CImagePtr             bg_image_;
-  bool                  bg_fixed_ { false };
+  CImagePtr             bgImage_;
+  bool                  bgFixed_ { false };
 
-  CHtmlLayoutMgr*       layout_mgr_ { nullptr };
-  CHtmlLayoutArea*      area_data_ { nullptr };
+  CHtmlLayoutMgr*       layoutMgr_ { nullptr };
+  CHtmlLayoutArea*      areaData_ { nullptr };
 
-  CBrowserTableMgr*     tableMgr_ { nullptr };
   CBrowserLinkMgr*      linkMgr_ { nullptr };
 
   Objects               objects_;
@@ -282,16 +305,22 @@ class CBrowserWindow {
   Scripts               scripts_;
   ScriptFiles           scriptFiles_;
 
+  CBrowserOutput        output_;
+  OutputState           outputState_ { OutputState::NONE };
+
+  CBrowserTextData      textData_;
   CFontPtr              font_;
   FontFaces             font_face_stack_;
   FontFaces             font_face_list_;
   CBrowserFontFace*     currentFontFace_ { nullptr };
-  int                   base_font_size_ { 0 };
+  int                   baseFontSize_ { 0 };
   CRGBA                 currentFontColor_ { 0, 0, 0 };
   int                   currentFontStyle_ { 0 };
   int                   currentFontSize_ { 0 };
 
   CBrowserHistory*      history_ { nullptr };
+
+  bool                  emptyLine_ { false };
 };
 
 #endif

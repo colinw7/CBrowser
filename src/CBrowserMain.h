@@ -2,12 +2,15 @@
 #define CBROWSER_MAIN_H
 
 #include <CBrowserTypes.h>
+#include <QObject>
 #include <string>
 #include <list>
 
 #define CBrowserMainInst CBrowserMain::getInstance()
 
-class CBrowserMain {
+class CBrowserMain : public QObject {
+  Q_OBJECT
+
  public:
   typedef std::list<CBrowserIFace *> IFaceList;
 
@@ -33,6 +36,9 @@ class CBrowserMain {
 
  private:
   CBrowserMain();
+
+ private slots:
+  void exitSlot();
 
  private:
   IFaceList ifaces_;

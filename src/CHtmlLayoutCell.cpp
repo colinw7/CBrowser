@@ -4,6 +4,7 @@
 #include <CHtmlLayoutSubCell.h>
 #include <CHtmlLayoutMgr.h>
 #include <climits>
+#include <cassert>
 
 CHtmlLayoutCell::
 CHtmlLayoutCell()
@@ -40,15 +41,17 @@ void
 CHtmlLayoutCell::
 term()
 {
-  for (auto &d : boxes_)
-    delete d;
+  //for (auto &box : boxes_)
+  //  delete box;
+
+  boxes_.clear();
 
   freeSubCells();
 }
 
 int
 CHtmlLayoutCell::
-getNumBoxes()
+getNumBoxes() const
 {
   return boxes_.size();
 }
@@ -57,6 +60,8 @@ CHtmlLayoutBox *
 CHtmlLayoutCell::
 getBox(int i)
 {
+  assert(i >= 0 && i < int(boxes_.size()));
+
   return boxes_[i];
 }
 
@@ -64,6 +69,8 @@ void
 CHtmlLayoutCell::
 addBox(CHtmlLayoutBox *box)
 {
+  assert(box);
+
   boxes_.push_back(box);
 }
 
@@ -96,10 +103,10 @@ newCellBelow(CHtmlLayoutMgr *layout)
 
   CHtmlLayoutCell *cell;
 
-  if (cell1 == 0 || cell1->getNumBoxes() >= 0) {
+  if (! cell1 || cell1->getNumBoxes() >= 0) {
     cell = new CHtmlLayoutCell;
 
-    cell->left_ = 0;
+    cell->left_ = nullptr;
     cell->top_  = cell1;
 
     layout->getCurrentArea()->addRedrawCell(cell);
@@ -124,7 +131,7 @@ newCellRight(CHtmlLayoutMgr *layout)
   CHtmlLayoutCell *cell = new CHtmlLayoutCell;
 
   cell->left_ = cell1;
-  cell->top_  = 0;
+  cell->top_  = nullptr;
 
   layout->getCurrentArea()->addRedrawCell(cell);
 
@@ -142,7 +149,7 @@ resetSubCells()
 {
   region_.resetSize();
 
-  sub_cell_ = 0;
+  sub_cell_ = nullptr;
 
   freeSubCells();
 }
@@ -299,7 +306,7 @@ format(CHtmlLayoutMgr *layout, int width)
 
     // Move Sub Cell to New Line
 
-    if (top_cell != 0 ||
+    if (top_cell ||
         (sub_cell->getBreakup() && x1 >= right_margin &&
          left_margin + sub_cell->getWidth() < right_margin)) {
       // Align previous cells baseline
@@ -506,4 +513,23 @@ accept(CHtmlLayoutVisitor &visitor)
   }
 
   visitor.leave(this);
+}
+
+void
+CHtmlLayoutCell::
+print(std::ostream &os) const
+{
+  printSize(os);
+
+  for (const auto &box : boxes()) {
+    os << "  ";
+    box->print(os);
+    os << std::endl;
+  }
+
+  for (const auto &subCell : subCells()) {
+    os << "  ";
+    subCell->print(os);
+    os << std::endl;
+  }
 }

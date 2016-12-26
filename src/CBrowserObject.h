@@ -7,8 +7,14 @@
 
 class CBrowserObject : public CHtmlLayoutBox {
  public:
-  CBrowserObject(CHtmlTagId type);
+  typedef std::vector<CBrowserObject *> Children;
+  typedef std::vector<std::string>      Properties;
+
+ public:
+  CBrowserObject(CBrowserWindow *window, CHtmlTagId type);
  ~CBrowserObject();
+
+  CBrowserWindow *getWindow() const { return window_; }
 
   CHtmlTagId type() const { return type_; }
 
@@ -24,16 +30,41 @@ class CBrowserObject : public CHtmlLayoutBox {
   CQJHtmlObj *getJObj() { return obj_; }
   void setJObj(CQJHtmlObj *obj) { obj_ = obj; }
 
-  const CBrowserObject *parent() const { return parent_; }
+  CBrowserObject *parent() const { return parent_; }
   void setParent(CBrowserObject *p) { parent_ = p; }
 
   std::string typeName() const;
 
   void addChild(CBrowserObject *child);
 
+  const Children &children() const { return children_; }
   int numChildren() const { return children_.size(); }
   CBrowserObject *child(int i) const { return children_[i]; }
   int childIndex(const CBrowserObject *child) const;
+
+  void setProperties(const Properties &properties) { properties_ = properties; }
+  virtual int numProperties() const { return properties_.size(); }
+
+  virtual std::string propertyName(int i) const { return properties_[i]; }
+  virtual std::string propertyValue(int) const { return ""; }
+
+  virtual bool isHierSelected() const;
+
+  virtual void initProcess() { }
+  virtual void termProcess() { }
+
+  virtual void initLayout() { }
+  virtual void termLayout() { }
+
+  template<typename T>
+  T *parentType() const {
+    CBrowserObject *obj = this->parent();
+
+    while (obj && ! dynamic_cast<T *>(obj))
+      obj = obj->parent();
+
+    return dynamic_cast<T *>(obj);
+  }
 
   void format(CHtmlLayoutMgr *) override { }
 
@@ -41,9 +72,8 @@ class CBrowserObject : public CHtmlLayoutBox {
 
   virtual void print(std::ostream &os) const { os << typeName(); }
 
- private:
-  typedef std::vector<CBrowserObject *> Children;
-
+ protected:
+  CBrowserWindow* window_ { nullptr };
   CHtmlTagId      type_;
   std::string     id_;
   std::string     text_;
@@ -51,6 +81,7 @@ class CBrowserObject : public CHtmlLayoutBox {
   CQJHtmlObj*     obj_ { nullptr };
   CBrowserObject* parent_ { nullptr };
   Children        children_;
+  Properties      properties_;
 };
 
 #endif

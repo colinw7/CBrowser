@@ -21,6 +21,8 @@ class CBrowserRenderer {
   virtual void startDoubleBuffer(int width, int height);
   virtual void endDoubleBuffer  ();
 
+  QPixmap *pixmap() const { return pixmap_; }
+
   virtual void clear(const CRGBA &bg);
 
   virtual void drawRectangle(const CIBBox2D &bbox);
@@ -64,6 +66,8 @@ class CBrowserGraphics {
 
   void startDoubleBuffer(int width, int height);
   void endDoubleBuffer();
+
+  QPixmap *pixmap() const { return renderer_->pixmap(); }
 
   void setXDevice();
   void setPSDevice(double xmin, double ymin, double xmax, double ymax);

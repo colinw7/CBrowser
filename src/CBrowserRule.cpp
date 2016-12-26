@@ -3,10 +3,9 @@
 
 CBrowserRule::
 CBrowserRule(CBrowserWindow *window, const CBrowserRuleData &data) :
- CBrowserObject(CHtmlTagId::HR), window_(window), align_(data.align), shade_(data.shade),
- size_(data.size), width_(data.width), unit_(data.unit)
+ CBrowserObject(window, CHtmlTagId::HR), data_(data)
 {
-  size_ = std::max(size_, 2);
+  data_.size = std::max(data_.size, 2);
 }
 
 CBrowserRule::
@@ -16,7 +15,7 @@ CBrowserRule::
 
 void
 CBrowserRule::
-initFormat()
+initLayout()
 {
   window_->newLine();
 
@@ -27,21 +26,27 @@ initFormat()
 
 void
 CBrowserRule::
+termLayout()
+{
+}
+
+void
+CBrowserRule::
 format(CHtmlLayoutMgr *)
 {
   window_->newSubCellBelow(false);
 
   int ascent;
 
-  if (size_ > 14)
-    ascent = size_ + 2;
+  if (data_.size > 14)
+    ascent = data_.size + 2;
   else
     ascent = 16;
 
   window_->updateSubCellHeight(ascent, 0);
 
-  if (width_ > 0 && unit_ == CBrowserUnitsType::PIXEL)
-    window_->updateSubCellWidth(width_);
+  if (data_.width > 0 && data_.unit == CBrowserUnitsType::PIXEL)
+    window_->updateSubCellWidth(data_.width);
   else
     window_->updateSubCellWidth(window_->getCurrentArea()->getWidth());
 
@@ -58,18 +63,18 @@ draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &region)
 
   int width;
 
-  if      (width_ == -1)
+  if      (data_.width == -1)
     width = sub_cell->getWidth();
-  else if (unit_ == CBrowserUnitsType::PERCENT)
-    width = (int) (width_* sub_cell->getWidth()/100.0);
+  else if (data_.unit == CBrowserUnitsType::PERCENT)
+    width = (int) (data_.width*sub_cell->getWidth()/100.0);
   else
-    width = width_;
+    width = data_.width;
 
   int x1 = region.x;
 
-  if      (align_ == CHALIGN_TYPE_CENTER)
+  if      (data_.align == CHALIGN_TYPE_CENTER)
     x1 += (window_->getCurrentArea()->getWidth() - width)/2;
-  else if (align_ == CHALIGN_TYPE_RIGHT)
+  else if (data_.align == CHALIGN_TYPE_RIGHT)
     x1 += window_->getCurrentArea()->getWidth() - width;
 
   int x2 = x1 + width;
@@ -78,11 +83,11 @@ draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &region)
 
   //---
 
-  if (shade_)
-    window_->drawHRule(x1, x2, y1, size_);
+  if (data_.shade)
+    window_->drawHRule(x1, x2, y1, data_.size);
   else {
     window_->setForeground(window_->getFg());
 
-    window_->fillRectangle(x1, y1, x2 - x1 + 1, size_);
+    window_->fillRectangle(x1, y1, x2 - x1 + 1, data_.size);
   }
 }

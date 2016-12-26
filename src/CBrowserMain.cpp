@@ -57,3 +57,10 @@ openDocument(const std::string &fileName)
 
   iface->show();
 }
+
+void
+CBrowserMain::
+exitSlot()
+{
+  exit(0);
+}

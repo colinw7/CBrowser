@@ -18,8 +18,8 @@ class CBrowserLinkMgr {
  public:
   CBrowserLinkMgr(CBrowserWindow *window);
 
-  void startSourceLink(const std::string &dest, const std::string &title);
-  void startDestLink  (const std::string &name, const std::string &title);
+  void startSourceLink(const CBrowserLinkData &data);
+  void startDestLink  (const CBrowserLinkData &data);
   void endLink();
 
   CBrowserLink *getCurrentLink();
@@ -85,8 +85,12 @@ class CBrowserLinkObj : public CBrowserObject {
   CBrowserLinkObj(CBrowserWindow *window, const CBrowserLinkData &data);
  ~CBrowserLinkObj();
 
+  std::string propertyValue(int i) const override;
+
+  void initProcess() override;
+  void termProcess() override;
+
  private:
-  CBrowserWindow*  window_ { nullptr };
   CBrowserLinkData data_;
 };
 
