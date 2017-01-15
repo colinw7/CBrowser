@@ -1,206 +1,136 @@
 #include <CBrowserList.h>
 #include <CBrowserWindow.h>
-#include <CBrowserOutputList.h>
-#include <CBrowserLabel.h>
-#include <CBrowserMisc.h>
-#include <CRomanNumber.h>
 
-CBrowserListItem::
-CBrowserListItem(CBrowserWindow *window, const CBrowserOutputListItemData &data) :
- CBrowserObject(window, CHtmlTagId::LI), data_(data)
+namespace {
+
+std::string listIdName(CHtmlTagId id) {
+  if      (id == CHtmlTagId::DIR ) return "dir";
+  else if (id == CHtmlTagId::DL  ) return "dl";
+  else if (id == CHtmlTagId::MENU) return "menu";
+  else if (id == CHtmlTagId::OL  ) return "ol";
+  else if (id == CHtmlTagId::UL  ) return "ul";
+  else                             return "??";
+}
+
+}
+
+//---
+
+CBrowserList::SymbolType
+CBrowserList::
+stringToSymbol(const std::string &value)
 {
-  init();
+  std::string lvalue = CStrUtil::toLower(value);
+
+  if      (lvalue == "none"                ) return SymbolType::NONE;
+  else if (lvalue == "circle"              ) return SymbolType::CIRCLE;
+  else if (lvalue == "decimal"             ) return SymbolType::DECIMAL;
+  else if (lvalue == "decimal-leading-zero") return SymbolType::DECIMAL_ZERO;
+  else if (lvalue == "disc"                ) return SymbolType::DISC;
+  else if (lvalue == "lower-alpha"         ) return SymbolType::LOWER_ALPHA;
+  else if (lvalue == "lower-latin"         ) return SymbolType::LOWER_LATIN;
+  else if (lvalue == "lower-roman"         ) return SymbolType::LOWER_ROMAN;
+  else if (lvalue == "square"              ) return SymbolType::SQUARE;
+  else if (lvalue == "upper-alpha"         ) return SymbolType::UPPER_ALPHA;
+  else if (lvalue == "upper-latin"         ) return SymbolType::UPPER_LATIN;
+  else if (lvalue == "upper-roman"         ) return SymbolType::UPPER_ROMAN;
+  else if (lvalue == "initial"             ) return SymbolType::INITIAL;
+  else if (lvalue == "inherit"             ) return SymbolType::INHERIT;
+
+  return SymbolType::NONE;
+}
+
+CBrowserList::
+CBrowserList(CBrowserWindow *window, CHtmlTagId id, const CBrowserOutputListData &data) :
+ CBrowserObject(window, id, data), data_(data)
+{
+  marginRef().setTop   (CBrowserUnitValue("1.00em"));
+  marginRef().setBottom(CBrowserUnitValue("1.00em"));
+
+  marginRef().setLeft(CBrowserUnitValue("40px"));
 }
 
 void
-CBrowserListItem::
+CBrowserList::
+setNameValue(const std::string &name, const std::string &value)
+{
+  std::string lname  = CStrUtil::toLower(name);
+  std::string lvalue = CStrUtil::toLower(value);
+
+  if      (lname == "compact") {
+    data_.compact = true;
+
+    if (lvalue != "")
+      window_->displayError("No value needed for 'compact'\n");
+  }
+  else if (lname == "id") {
+    data_.id = value;
+  }
+  else if (lname == "start") {
+    if (CStrUtil::isInteger(lvalue)) {
+      int item_num = CStrUtil::toInteger(lvalue);
+
+      data_.item_num = item_num;
+    }
+    else {
+      window_->displayError("Illegal '%s' for Value '%s'\n",
+                            listIdName(type()).c_str(), value.c_str());
+
+      data_.item_num = 1;
+    }
+  }
+  else if (lname == "type") {
+    data_.symbol = value;
+  }
+  else if (lname == "list-style") {
+    std::vector<std::string> words;
+
+    CStrUtil::toWords(lvalue, words);
+
+    if (words.size() > 0)
+      symbolType_ = stringToSymbol(words[0]);
+
+#if 0
+    if (words.size() > 1)
+      position = words[1];
+
+    if (words.size() > 2)
+      image = words[2];
+#endif
+  }
+  else if (lname == "list-style-type") {
+    symbolType_ = stringToSymbol(lvalue);
+  }
+  else if (lname == "list-style-image") {
+  }
+  else if (lname == "list-style-position") {
+  }
+  else {
+    CBrowserObject::setNameValue(name, lvalue);
+  }
+}
+
+void
+CBrowserList::
 init()
 {
-  CBrowserOutputList *currentList = const_cast<CBrowserOutputList *>(this->currentList());
+  CBrowserObject::init();
+}
 
-  if (currentList) {
-    if (data_.symbol != "")
-      currentList->setSymbol(data_.symbol);
+int
+CBrowserList::
+listDepth() const
+{
+  int depth = 1;
 
-    if (data_.item_num > 0)
-      currentList->setItemNum(data_.item_num);
+  const CBrowserObject *parent = window_->currentObj();
+
+  while (parent) {
+    if (dynamic_cast<const CBrowserList *>(parent))
+      ++depth;
+
+    parent = parent->parent();
   }
 
-  //---
-
-  std::string symbol   = (currentList ? currentList->getSymbol () : data_.symbol  );
-  int         item_num = (currentList ? currentList->getItemNum() : data_.item_num);
-
-  //---
-
-  CRGBA tc = window_->getTextColor();
-
-  CHtmlTagId listId = (currentList ? currentList->type() : CHtmlTagId::NONE);
-
-  if      (listId == CHtmlTagId::OL) {
-    std::string text;
-
-    if      (symbol == "")
-      text = CStrUtil::toString(item_num);
-    else if (symbol == "A") {
-      text = CBrowserMisc::integerToAlphabetic(item_num);
-
-      CStrUtil::toUpper(text);
-    }
-    else if (symbol == "a") {
-      text = CBrowserMisc::integerToAlphabetic(item_num);
-
-      CStrUtil::toLower(text);
-    }
-    else if (symbol == "I") {
-      CRomanNumber roman(item_num);
-
-      text = roman.getString();
-
-      CStrUtil::toUpper(roman.getString());
-    }
-    else if (symbol == "i") {
-      CRomanNumber roman(item_num);
-
-      text = roman.getString();
-
-      CStrUtil::toLower(text);
-    }
-    else if (symbol == "1")
-      text = CStrUtil::toString(item_num);
-    else
-      text = CStrUtil::toString(item_num);
-
-    labelSymbolDatas_.push_back(LabelSymbolData(text, 4, CHALIGN_TYPE_RIGHT, tc));
-    labelSymbolDatas_.push_back(LabelSymbolData(". ", 2, CHALIGN_TYPE_LEFT , tc));
-  }
-
-  else if (listId == CHtmlTagId::UL || listId == CHtmlTagId::DIR || listId == CHtmlTagId::MENU) {
-    CBrowserSymbol::Type type = CBrowserSymbol::Type::NONE;
-
-    if      (symbol == "") {
-      int num = currentList->listDepth();
-
-      num %= 4;
-
-      type = CBrowserSymbol::Type::CIRCLE;
-
-      if      (num == 0) type = CBrowserSymbol::Type::DISC;
-      else if (num == 1) type = CBrowserSymbol::Type::CIRCLE;
-      else if (num == 2) type = CBrowserSymbol::Type::BLOCK;
-      else               type = CBrowserSymbol::Type::SQUARE;
-    }
-    else if (CStrUtil::casecmp(symbol, "disc"  ) == 0)
-      type = CBrowserSymbol::Type::DISC;
-    else if (CStrUtil::casecmp(symbol, "circle") == 0)
-      type = CBrowserSymbol::Type::CIRCLE;
-    else if (CStrUtil::casecmp(symbol, "square") == 0)
-      type = CBrowserSymbol::Type::SQUARE;
-    else
-      type = CBrowserSymbol::Type::DISC;
-
-    labelSymbolDatas_.push_back(LabelSymbolData(type));
-    labelSymbolDatas_.push_back(LabelSymbolData(" ", 1, CHALIGN_TYPE_LEFT, tc));
-  }
-
-  if (currentList)
-    currentList->setItemNum(item_num + 1);
-}
-
-void
-CBrowserListItem::
-addLabelSymbols()
-{
-  for (const auto &data : labelSymbolDatas_) {
-    CBrowserObject *obj { nullptr };
-
-    if      (data.type == LabelSymbolData::Type::LABEL)
-      obj = new CBrowserLabel(window_, data.text, data.width, data.align, data.color);
-    else if (data.type == LabelSymbolData::Type::SYMBOL)
-      obj = new CBrowserSymbol(window_, data.symbol);
-
-    window_->startObject(obj, /*add*/true);
-    window_->endObject  ();
-  }
-}
-
-void
-CBrowserListItem::
-initLayout()
-{
-  CBrowserOutputList *currentList = const_cast<CBrowserOutputList *>(this->currentList());
-
-  if (! currentList || ! currentList->getCompact())
-    window_->skipLine();
-  else
-    window_->newLine();
-
-}
-
-void
-CBrowserListItem::
-termLayout()
-{
-}
-
-const CBrowserOutputList *
-CBrowserListItem::
-currentList() const
-{
-  const CBrowserObject *obj = window_->currentObj();
-
-  while (obj && ! dynamic_cast<const CBrowserOutputList *>(obj))
-    obj = obj->parent();
-
-  const CBrowserOutputList *currentList = dynamic_cast<const CBrowserOutputList *>(obj);
-
-  return currentList;
-}
-
-//---
-
-CBrowserDataListData::
-CBrowserDataListData(CBrowserWindow *window) :
- CBrowserObject(window, CHtmlTagId::DD)
-{
-}
-
-void
-CBrowserDataListData::
-initLayout()
-{
-  window_->indentLeft(4);
-
-  window_->newLine();
-}
-
-void
-CBrowserDataListData::
-termLayout()
-{
-  window_->indentLeft(-4);
-
-  window_->newLine();
-}
-
-//---
-
-CBrowserDataListTerm::
-CBrowserDataListTerm(CBrowserWindow *window) :
- CBrowserObject(window, CHtmlTagId::DT)
-{
-}
-
-void
-CBrowserDataListTerm::
-initProcess()
-{
-  window_->startBold();
-}
-
-void
-CBrowserDataListTerm::
-termProcess()
-{
-  window_->endBold();
+  return depth;
 }

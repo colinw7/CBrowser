@@ -8,6 +8,7 @@
 #include <CQJDocument.h>
 #include <CQJWindow.h>
 #include <CQJCanvas.h>
+#include <CQJForm.h>
 #include <CQJInput.h>
 #include <CQJImage.h>
 #include <CQJIntervalFunction.h>
@@ -67,6 +68,8 @@ addHtmlObject(CBrowserObject *obj)
 
   if      (obj->type() == CHtmlTagId::CANVAS)
     htmlObj = new CQJCanvas(js_, dynamic_cast<CBrowserCanvas *>(obj));
+  else if (obj->type() == CHtmlTagId::FORM)
+    htmlObj = new CQJForm(js_, dynamic_cast<CBrowserForm *>(obj));
   else if (obj->type() == CHtmlTagId::INPUT)
     htmlObj = new CQJInput(js_, dynamic_cast<CBrowserFormInput *>(obj));
   else

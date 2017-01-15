@@ -18,18 +18,16 @@ class CBrowserCanvas : public CBrowserObject {
 
   CQJCanvasWidget *canvas() const { return canvas_; }
 
-  int width () const { return data_.width ; }
   void setWidth(int w);
-
-  int height() const { return data_.height; }
   void setHeight(int h);
 
-  void initLayout() override;
-  void termLayout() override;
+  void init() override;
 
-  void format(CHtmlLayoutMgr *) override;
+  void setNameValue(const std::string &name, const std::string &value) override;
 
-  void draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &) override;
+  CBrowserRegion calcRegion() const override;
+
+  void draw(const CTextBox &) override;
 
   void update();
 
@@ -38,7 +36,7 @@ class CBrowserCanvas : public CBrowserObject {
  private:
   CBrowserCanvasData data_;
   CQJCanvasWidget*   canvas_ { nullptr };
-  CHtmlLayoutRegion  region_;
+  CTextBox           region_;
 };
 
 #endif

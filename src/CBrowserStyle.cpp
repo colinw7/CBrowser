@@ -6,25 +6,14 @@ CBrowserBStyle::
 CBrowserBStyle(CBrowserWindow *window) :
  CBrowserObject(window, CHtmlTagId::B)
 {
+  setDisplay(CBrowserObject::Display::INLINE);
+
+  font_.setBold();
 }
 
 CBrowserBStyle::
 ~CBrowserBStyle()
 {
-}
-
-void
-CBrowserBStyle::
-initProcess()
-{
-  window_->startBold();
-}
-
-void
-CBrowserBStyle::
-termProcess()
-{
-  window_->endBold();
 }
 
 //---
@@ -33,25 +22,14 @@ CBrowserBigStyle::
 CBrowserBigStyle(CBrowserWindow *window) :
  CBrowserObject(window, CHtmlTagId::BIG)
 {
+  setDisplay(CBrowserObject::Display::INLINE);
+
+  font_.setBig();
 }
 
 CBrowserBigStyle::
 ~CBrowserBigStyle()
 {
-}
-
-void
-CBrowserBigStyle::
-initProcess()
-{
-  window_->increaseFontSize();
-}
-
-void
-CBrowserBigStyle::
-termProcess()
-{
-  window_->decreaseFontSize();
 }
 
 //---
@@ -60,25 +38,14 @@ CBrowserBlinkStyle::
 CBrowserBlinkStyle(CBrowserWindow *window) :
  CBrowserObject(window, CHtmlTagId::BLINK)
 {
+  setDisplay(CBrowserObject::Display::INLINE);
+
+  font_.setBold();
 }
 
 CBrowserBlinkStyle::
 ~CBrowserBlinkStyle()
 {
-}
-
-void
-CBrowserBlinkStyle::
-initProcess()
-{
-  window_->startBold();
-}
-
-void
-CBrowserBlinkStyle::
-termProcess()
-{
-  window_->endBold();
 }
 
 //---
@@ -87,25 +54,14 @@ CBrowserCiteStyle::
 CBrowserCiteStyle(CBrowserWindow *window) :
  CBrowserObject(window, CHtmlTagId::CITE)
 {
+  setDisplay(CBrowserObject::Display::INLINE);
+
+  font_.setItalic();
 }
 
 CBrowserCiteStyle::
 ~CBrowserCiteStyle()
 {
-}
-
-void
-CBrowserCiteStyle::
-initProcess()
-{
-  window_->startItalic();
-}
-
-void
-CBrowserCiteStyle::
-termProcess()
-{
-  window_->endItalic();
 }
 
 //---
@@ -114,25 +70,14 @@ CBrowserDfnStyle::
 CBrowserDfnStyle(CBrowserWindow *window) :
  CBrowserObject(window, CHtmlTagId::DFN)
 {
+  setDisplay(CBrowserObject::Display::INLINE);
+
+  font_.setItalic();
 }
 
 CBrowserDfnStyle::
 ~CBrowserDfnStyle()
 {
-}
-
-void
-CBrowserDfnStyle::
-initProcess()
-{
-  window_->startItalic();
-}
-
-void
-CBrowserDfnStyle::
-termProcess()
-{
-  window_->endItalic();
 }
 
 //---
@@ -141,6 +86,9 @@ CBrowserEmStyle::
 CBrowserEmStyle(CBrowserWindow *window) :
  CBrowserObject(window, CHtmlTagId::EM)
 {
+  setDisplay(CBrowserObject::Display::INLINE);
+
+  font_.setItalic();
 }
 
 CBrowserEmStyle::
@@ -148,89 +96,83 @@ CBrowserEmStyle::
 {
 }
 
-void
-CBrowserEmStyle::
-initProcess()
-{
-  window_->startItalic();
-}
-
-void
-CBrowserEmStyle::
-termProcess()
-{
-  window_->endItalic();
-}
-
 //---
 
-CBrowserFontStyle::
-CBrowserFontStyle(CBrowserWindow *window, const CBrowserFontData &data) :
+CBrowserFontStyleObj::
+CBrowserFontStyleObj(CBrowserWindow *window, const CBrowserFontData &data) :
  CBrowserObject(window, CHtmlTagId::FONT), data_(data)
 {
+  setDisplay(CBrowserObject::Display::INLINE);
 }
 
-CBrowserFontStyle::
-~CBrowserFontStyle()
+CBrowserFontStyleObj::
+~CBrowserFontStyleObj()
 {
 }
 
 void
-CBrowserFontStyle::
-initProcess()
+CBrowserFontStyleObj::
+init()
 {
-  // push current font state
-  std::string face      = window_->getCurrentFontFace();
-  std::string colorName = window_->getFontColor();
-  CRGBA       color     = window_->getTextColor();
-  int         size      = window_->getFontSize();
-
-  saveData_ = CBrowserSaveFontData(face, colorName, color, size);
-
-  //---
-
-  // start new font
-  if (data_.face != "") {
-    window_->setCurrentFontFace(data_.face);
-
-    saveData_.setFlag(CBrowserSaveFontData::Flag::FACE);
-  }
-
-  if (data_.color != "") {
-    window_->setFontColor(data_.color);
-    window_->setTextColor(CRGBName::toRGBA(data_.color));
-
-    saveData_.setFlag(CBrowserSaveFontData::Flag::COLOR);
-  }
-
-  int base_size = window_->getBaseFontSize();
-
-  if (data_.delta != 0)
-    size = base_size + data_.delta*data_.size;
-  else
-    size = data_.size;
-
-  if (size > 0) {
-    window_->setFontSize(size);
-
-    saveData_.setFlag(CBrowserSaveFontData::Flag::SIZE);
-  }
+  CBrowserObject::init();
 }
 
 void
-CBrowserFontStyle::
-termProcess()
+CBrowserFontStyleObj::
+setNameValue(const std::string &name, const std::string &value)
 {
-  if (saveData_.getFlag(CBrowserSaveFontData::Flag::FACE))
-    window_->setCurrentFontFace(saveData_.getFace());
+  std::string lname = CStrUtil::toLower(name);
 
-  if (saveData_.getFlag(CBrowserSaveFontData::Flag::COLOR)) {
-    window_->setFontColor(saveData_.getColorName());
-    window_->setTextColor(saveData_.getColor());
+  if      (lname == "color") {
+    data_.color = value;
+
+    setForeground(CBrowserColor(data_.color));
   }
+  else if (lname == "face") {
+    data_.face = value;
 
-  if (saveData_.getFlag(CBrowserSaveFontData::Flag::SIZE))
-    window_->setFontSize(saveData_.getSize());
+    font_.setFamily(CBrowserFontFamily(data_.face));
+  }
+  else if (lname == "size") {
+    std::string value1 = value;
+
+    if      (value1[0] == '+' || value1[0] == '-') {
+      data_.delta = (value1[0] == '+' ? 1 : -1);
+
+      value1 = value1.substr(1);
+    }
+    else
+      data_.delta = 0;
+
+    if (CStrUtil::isInteger(value1)) {
+      data_.size = CStrUtil::toInteger(value1);
+    }
+    else {
+      window_->displayError("Illegal 'font' Value for Size '%s'\n", value.c_str());
+
+      data_.size  = -1;
+      data_.delta = 1;
+    }
+
+    //---
+
+    if (data_.delta != 0) {
+      if (data_.delta > 0)
+        font_.setSize(CBrowserFontSize(CBrowserFontSize::Type::LARGER, data_.delta));
+      else
+        font_.setSize(CBrowserFontSize(CBrowserFontSize::Type::SMALLER, data_.delta));
+    }
+    else {
+      if (data_.size >= 0) {
+        font_.setSize(CBrowserFontSize(window_->sizeToFontSize(data_.size)));
+      }
+    }
+
+    data_.sizeSet = true;
+  }
+  else {
+    CBrowserObject::setNameValue(name, value);
+  }
 }
 
 //---
@@ -239,25 +181,14 @@ CBrowserIStyle::
 CBrowserIStyle(CBrowserWindow *window) :
  CBrowserObject(window, CHtmlTagId::I)
 {
+  setDisplay(CBrowserObject::Display::INLINE);
+
+  font_.setItalic();
 }
 
 CBrowserIStyle::
 ~CBrowserIStyle()
 {
-}
-
-void
-CBrowserIStyle::
-initProcess()
-{
-  window_->startItalic();
-}
-
-void
-CBrowserIStyle::
-termProcess()
-{
-  window_->endItalic();
 }
 
 //---
@@ -266,25 +197,14 @@ CBrowserSmallStyle::
 CBrowserSmallStyle(CBrowserWindow *window) :
  CBrowserObject(window, CHtmlTagId::SMALL)
 {
+  setDisplay(CBrowserObject::Display::INLINE);
+
+  font_.setSmall();
 }
 
 CBrowserSmallStyle::
 ~CBrowserSmallStyle()
 {
-}
-
-void
-CBrowserSmallStyle::
-initProcess()
-{
-  window_->decreaseFontSize();
-}
-
-void
-CBrowserSmallStyle::
-termProcess()
-{
-  window_->increaseFontSize();
 }
 
 //---
@@ -293,25 +213,14 @@ CBrowserStrikeStyle::
 CBrowserStrikeStyle(CBrowserWindow *window) :
  CBrowserObject(window, CHtmlTagId::STRIKE)
 {
+  setDisplay(CBrowserObject::Display::INLINE);
+
+  textProp_.setDecoration(CBrowserTextDecoration("line-through"));
 }
 
 CBrowserStrikeStyle::
 ~CBrowserStrikeStyle()
 {
-}
-
-void
-CBrowserStrikeStyle::
-initProcess()
-{
-  window_->setTextStrike(true);
-}
-
-void
-CBrowserStrikeStyle::
-termProcess()
-{
-  window_->setTextStrike(false);
 }
 
 //---
@@ -320,25 +229,14 @@ CBrowserStrongStyle::
 CBrowserStrongStyle(CBrowserWindow *window) :
  CBrowserObject(window, CHtmlTagId::STRONG)
 {
+  setDisplay(CBrowserObject::Display::INLINE);
+
+  font_.setBold();
 }
 
 CBrowserStrongStyle::
 ~CBrowserStrongStyle()
 {
-}
-
-void
-CBrowserStrongStyle::
-initProcess()
-{
-  window_->startBold();
-}
-
-void
-CBrowserStrongStyle::
-termProcess()
-{
-  window_->endBold();
 }
 
 //---
@@ -347,25 +245,16 @@ CBrowserSubStyle::
 CBrowserSubStyle(CBrowserWindow *window) :
  CBrowserObject(window, CHtmlTagId::SUB)
 {
+  setDisplay(CBrowserObject::Display::INLINE);
+
+  textProp_.setVerticalAlign(CBrowserTextVerticalAlign("sub"));
+
+  font_.setSmall();
 }
 
 CBrowserSubStyle::
 ~CBrowserSubStyle()
 {
-}
-
-void
-CBrowserSubStyle::
-initProcess()
-{
-  window_->setTextPlace(CBrowserTextPlaceType::SUBSCRIPT);
-}
-
-void
-CBrowserSubStyle::
-termProcess()
-{
-  window_->setTextPlace(CBrowserTextPlaceType::NORMAL);
 }
 
 //---
@@ -374,25 +263,16 @@ CBrowserSupStyle::
 CBrowserSupStyle(CBrowserWindow *window) :
  CBrowserObject(window, CHtmlTagId::SUP)
 {
+  setDisplay(CBrowserObject::Display::INLINE);
+
+  textProp_.setVerticalAlign(CBrowserTextVerticalAlign("super"));
+
+  font_.setSmall();
 }
 
 CBrowserSupStyle::
 ~CBrowserSupStyle()
 {
-}
-
-void
-CBrowserSupStyle::
-initProcess()
-{
-  window_->setTextPlace(CBrowserTextPlaceType::SUPERSCRIPT);
-}
-
-void
-CBrowserSupStyle::
-termProcess()
-{
-  window_->setTextPlace(CBrowserTextPlaceType::NORMAL);
 }
 
 //---
@@ -401,25 +281,14 @@ CBrowserUStyle::
 CBrowserUStyle(CBrowserWindow *window) :
  CBrowserObject(window, CHtmlTagId::U)
 {
+  setDisplay(CBrowserObject::Display::INLINE);
+
+  textProp_.setDecoration(CBrowserTextDecoration("underline"));
 }
 
 CBrowserUStyle::
 ~CBrowserUStyle()
 {
-}
-
-void
-CBrowserUStyle::
-initProcess()
-{
-  window_->setTextUnderline(true);
-}
-
-void
-CBrowserUStyle::
-termProcess()
-{
-  window_->setTextUnderline(false);
 }
 
 //---
@@ -428,23 +297,12 @@ CBrowserVarStyle::
 CBrowserVarStyle(CBrowserWindow *window) :
  CBrowserObject(window, CHtmlTagId::VAR)
 {
+  setDisplay(CBrowserObject::Display::INLINE);
+
+  font_.setItalic();
 }
 
 CBrowserVarStyle::
 ~CBrowserVarStyle()
 {
-}
-
-void
-CBrowserVarStyle::
-initProcess()
-{
-  window_->startItalic();
-}
-
-void
-CBrowserVarStyle::
-termProcess()
-{
-  window_->endItalic();
 }

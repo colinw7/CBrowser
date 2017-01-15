@@ -6,29 +6,26 @@
 
 class CHtmlParserTokens;
 
-extern bool HtmlReadURL
-             (CBrowserWindow *window, const std::string &url, CHtmlParserTokens &tokens);
-extern bool HtmlReadHttp
-             (CBrowserWindow *window, const std::string &site, const std::string &file,
-              const std::string &target, const CUrl::SearchList &searches,
-              CHtmlParserTokens &tokens);
-extern bool HtmlReadScript
-             (CBrowserWindow *window, const std::string &filename, CHtmlParserTokens &tokens);
-extern bool HtmlReadFile
-             (const std::string &filename, CHtmlParserTokens &tokens);
-extern bool HtmlReadDirectory
-             (const std::string &dirname, CHtmlParserTokens &tokens);
-extern bool HtmlReadImageFile
-             (const std::string &filename, CHtmlParserTokens &tokens);
-extern bool HtmlReadTextFile
-             (const std::string &filename, CHtmlParserTokens &tokens);
-extern bool HtmlReadBinaryFile
-             (const std::string &filename, CHtmlParserTokens &tokens);
-extern bool HtmlReadScriptFile
-             (const std::string &filename, CHtmlParserTokens &tokens);
-extern bool HtmlReadHTMLString
-             (const std::string &str, CHtmlParserTokens &tokens);
-extern bool HtmlReadHTMLFile
-             (const std::string &filename, CHtmlParserTokens &tokens);
+class CBrowserFileMgr {
+ public:
+  CBrowserFileMgr(CBrowserWindow *window);
+
+  bool readURL(const std::string &url, CHtmlParserTokens &tokens);
+  bool readHttp(const std::string &site, const std::string &file,
+                const std::string &target, const CUrl::SearchList &searches,
+                CHtmlParserTokens &tokens);
+  bool readScript(const std::string &filename, CHtmlParserTokens &tokens);
+  bool readFile(const std::string &filename, CHtmlParserTokens &tokens);
+  bool readDirectory(const std::string &dirname, CHtmlParserTokens &tokens);
+  bool readImageFile(const std::string &filename, CHtmlParserTokens &tokens);
+  bool readTextFile(const std::string &filename, CHtmlParserTokens &tokens);
+  bool readBinaryFile(const std::string &filename, CHtmlParserTokens &tokens);
+  bool readScriptFile(const std::string &filename, CHtmlParserTokens &tokens);
+  bool readHTMLString(const std::string &str, CHtmlParserTokens &tokens);
+  bool readHTMLFile(const std::string &filename, CHtmlParserTokens &tokens);
+
+ private:
+  CBrowserWindow *window_ { nullptr };
+};
 
 #endif

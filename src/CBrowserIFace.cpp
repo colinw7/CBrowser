@@ -1,6 +1,7 @@
 #include <CBrowserIFace.h>
 #include <CBrowserWindowWidget.h>
 #include <CBrowserWindow.h>
+#include <CBrowserMain.h>
 #include <CBrowserGraphics.h>
 #include <CBrowserJS.h>
 #include <CBrowserDomTree.h>
@@ -123,6 +124,8 @@ createMenus()
   quitMenuItem->setShortcut("Ctrl+Q");
   quitMenuItem->connect(this, SLOT(quitProc()));
 
+  //---
+
   CQMenu *goMenu = new CQMenu(this, "&Go");
 
   CQMenuItem *backMenuItem = new CQMenuItem(goMenu, "&Back");
@@ -133,7 +136,18 @@ createMenus()
 
   forwardMenuItem->connect(this, SLOT(goForwardProc()));
 
+  //---
+
+  CQMenu *viewMenu = new CQMenu(this, "&View");
+
+  CQMenuItem *viewBoxes = new CQMenuItem(viewMenu, "&Boxes");
+  viewBoxes->connect(this, SLOT(viewBoxesProc()));
+
+  //---
+
   historyMenu_ = new CQMenu(this, "&History");
+
+  //---
 
   CQMenu *helpMenu = new CQMenu(this, "&Help");
 
@@ -153,6 +167,12 @@ createStatusBar()
   message_ = new QLabel(" ");
 
   statusBar()->addWidget(message_);
+
+  posLabel_ = new QLabel;
+
+  posLabel_->setObjectName("pos");
+
+  statusBar()->addPermanentWidget(posLabel_ );
 }
 
 void
@@ -226,7 +246,7 @@ setSize(int width, int height)
     int maximum = list_hbar_->maximum();
 
     if (maximum != width1 - 1)
-      list_hbar_->setRange(0, width1 - 1);
+      list_hbar_->setRange(0, width1 - canvas_width_ - 1);
 
     list_hbar_->setValue(canvas_x_offset_);
 
@@ -234,7 +254,7 @@ setSize(int width, int height)
     list_hbar_->setPageStep(canvas_width_);
   }
 
-  /*-----------*/
+  //---
 
   if (vbar_displayed) {
     int hbar_height = 0;
@@ -248,12 +268,12 @@ setSize(int width, int height)
     int maximum = list_vbar_->maximum();
 
     if (maximum != height1 - 1)
-      list_vbar_->setRange(0, height1 - 1);
+      list_vbar_->setRange(0, height1 - canvas_height_ - 1);
 
     list_vbar_->setValue(canvas_y_offset_);
 
-    list_hbar_->setSingleStep(canvas_height_/10);
-    list_hbar_->setPageStep(canvas_height_);
+    list_vbar_->setSingleStep(canvas_height_/10);
+    list_vbar_->setPageStep(canvas_height_);
   }
 
   //w_->resize(width, height);
@@ -307,7 +327,7 @@ newProc()
 
   std::string directory = home + "/data/html";
 
-  /*------------*/
+  //---
 
   QString file =
     QFileDialog::getOpenFileName(this, "Select HTML File", directory.c_str(), "*.html");
@@ -315,7 +335,7 @@ newProc()
   if (file == "")
     return;
 
-  /*------------*/
+  //---
 
   CBrowserIFace *iface = new CBrowserIFace;
 
@@ -330,7 +350,7 @@ readProc()
 
   std::string directory = home + "/data/html";
 
-  /*------------*/
+  //---
 
   QString file =
     QFileDialog::getOpenFileName(this, "Select HTML File", directory.c_str(), "*.html");
@@ -338,7 +358,7 @@ readProc()
   if (file == "")
     return;
 
-  /*------------*/
+  //---
 
   window_->setDocument(file.toStdString());
 }
@@ -398,6 +418,13 @@ goForwardProc()
 
 void
 CBrowserIFace::
+viewBoxesProc()
+{
+  CBrowserMainInst->setShowBoxes(! CBrowserMainInst->getShowBoxes());
+}
+
+void
+CBrowserIFace::
 hscrollProc()
 {
   canvas_x_offset_ = list_hbar_->value();
@@ -434,7 +461,7 @@ resize()
   canvas_width_  = w_->width ();
   canvas_height_ = w_->height();
 
-  /*---------------*/
+  //---
 
   window_->resize();
 }
@@ -447,20 +474,20 @@ draw()
 
   w_->startDoubleBuffer();
 
-  /*----------------*/
+  //---
 
-  w_->clear(window_->getBg());
+  w_->clear(window_->getBgColor());
 
-  /*
-  if (bg_image_)
-    drawTiledImage(0, 0, pixmap_width_, pixmap_height_, bg_image_);
-*/
+  CImagePtr bg_image = window_->getBgImage();
 
-  /*----------------*/
+  if (bg_image.isValid())
+    w_->drawTiledImage(0, 0, w_->width(), w_->height(), bg_image);
+
+  //---
 
   window_->drawDocument();
 
-  /*---------------*/
+  //---
 
   w_->endDoubleBuffer();
 
@@ -479,6 +506,8 @@ mouseMotion(int x, int y)
   else {
     w_->setCursor(Qt::ArrowCursor);
   }
+
+  posLabel_->setText(QString("%1,%2").arg(x).arg(y));
 }
 
 void

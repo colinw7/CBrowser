@@ -2,6 +2,7 @@
 #include <CBrowserWindow.h>
 #include <CBrowserDocument.h>
 #include <CBrowserProperty.h>
+#include <CUrl.h>
 #include <CDir.h>
 
 CBrowserLinkMgr::
@@ -29,7 +30,8 @@ startSourceLink(const CBrowserLinkData &data)
   if (title1 == "")
     title1 = href1;
 
-  CBrowserLink *link = new CBrowserLink(CBrowserLink::Type::SOURCE, "", href1, title1);
+  CBrowserAnchorLink *link =
+    new CBrowserAnchorLink(CBrowserAnchorLink::Type::SOURCE, "", href1, title1);
 
   window_->getDocument()->addLink(link);
 
@@ -50,7 +52,8 @@ startDestLink(const CBrowserLinkData &data)
   if (title1 == "")
     title1 = data.id;
 
-  CBrowserLink *link = new CBrowserLink(CBrowserLink::Type::DEST, data.id, "", title1);
+  CBrowserAnchorLink *link =
+    new CBrowserAnchorLink(CBrowserAnchorLink::Type::DEST, data.id, "", title1);
 
   window_->getDocument()->addAnchor(link);
 
@@ -67,7 +70,7 @@ endLink()
   current_link_ = nullptr;
 }
 
-CBrowserLink *
+CBrowserAnchorLink *
 CBrowserLinkMgr::
 getCurrentLink()
 {
@@ -84,7 +87,7 @@ deleteLinkRects()
   int num_links = window_->getDocument()->getNumLinks();
 
   for (int i = 0; i < num_links; i++) {
-    CBrowserLink *link = window_->getDocument()->getLink(i);
+    CBrowserAnchorLink *link = window_->getDocument()->getLink(i);
 
     link->deleteRects();
   }
@@ -92,13 +95,13 @@ deleteLinkRects()
   int num_anchors = window_->getDocument()->getNumAnchors();
 
   for (int i = 0; i < num_anchors; i++) {
-    CBrowserLink *anchor = window_->getDocument()->getAnchor(i);
+    CBrowserAnchorLink *anchor = window_->getDocument()->getAnchor(i);
 
     anchor->deleteRects();
   }
 }
 
-CBrowserLink *
+CBrowserAnchorLink *
 CBrowserLinkMgr::
 getSourceLink(int x, int y)
 {
@@ -108,9 +111,9 @@ getSourceLink(int x, int y)
   int num_links = window_->getDocument()->getNumLinks();
 
   for (int i = 0; i < num_links; i++) {
-    CBrowserLink *link = window_->getDocument()->getLink(i);
+    CBrowserAnchorLink *link = window_->getDocument()->getLink(i);
 
-    if (link->getType() != CBrowserLink::Type::SOURCE)
+    if (link->getType() != CBrowserAnchorLink::Type::SOURCE)
       continue;
 
     int num_rects = link->getNumRects();
@@ -136,9 +139,9 @@ getDestLinkPos(const std::string &name, int *x, int *y)
   int num_links = window_->getDocument()->getNumAnchors();
 
   for (int i = 0; i < num_links; i++) {
-    CBrowserLink *anchor = window_->getDocument()->getAnchor(i);
+    CBrowserAnchorLink *anchor = window_->getDocument()->getAnchor(i);
 
-    if (anchor->getType() != CBrowserLink::Type::DEST)
+    if (anchor->getType() != CBrowserAnchorLink::Type::DEST)
       continue;
 
     if (anchor->getName() == name)
@@ -207,42 +210,42 @@ expandDestLink(const std::string &dest) const
 
   dest1 = CStrUtil::stripSpaces(dest1);
 
-  std::string dest2 = prefix + ":" + dest1;
+  std::string dest2 = prefix + "://" + dest1;
 
   return dest2;
 }
 
 //------
 
-CBrowserLink::
-CBrowserLink(Type type, const std::string &name, const std::string &dest,
-             const std::string &title) :
+CBrowserAnchorLink::
+CBrowserAnchorLink(Type type, const std::string &name, const std::string &dest,
+                   const std::string &title) :
  type_(type), name_(name), dest_(dest), title_(title)
 {
 }
 
-CBrowserLink::
-~CBrowserLink()
+CBrowserAnchorLink::
+~CBrowserAnchorLink()
 {
   deleteRects();
 }
 
 int
-CBrowserLink::
+CBrowserAnchorLink::
 getNumRects()
 {
   return rects_.size();
 }
 
 CBrowserLinkRect *
-CBrowserLink::
+CBrowserAnchorLink::
 getRect(int i)
 {
   return rects_[i];
 }
 
 void
-CBrowserLink::
+CBrowserAnchorLink::
 addRect(int x1, int y1, int x2, int y2)
 {
   CBrowserLinkRect *rect = new CBrowserLinkRect;
@@ -256,7 +259,7 @@ addRect(int x1, int y1, int x2, int y2)
 }
 
 void
-CBrowserLink::
+CBrowserAnchorLink::
 deleteRects()
 {
   int num_rects = rects_.size();
@@ -269,66 +272,173 @@ deleteRects()
 
 //------
 
-CBrowserLinkObj::
-CBrowserLinkObj(CBrowserWindow *window, const CBrowserLinkData &data) :
- CBrowserObject(window, CHtmlTagId::A), data_(data)
+CBrowserAnchor::
+CBrowserAnchor(CBrowserWindow *window, const CBrowserLinkData &data) :
+ CBrowserObject(window, CHtmlTagId::A, data), data_(data)
 {
-  std::vector<std::string> strs = {{
-    "download", "href", "id", "methods", "name", "rel", "rev", "target", "type", "title", "url" }};
+  setDisplay(CBrowserObject::Display::INLINE);
 
-  setProperties(strs);
+  setForeground(CBrowserColor(window_->getDocument()->getLinkColor()));
 
-  //---
-
-  if (data.id != "")
-    setId(data.id);
+  textProp_.setDecoration(CBrowserTextDecoration("underline"));
 }
 
-CBrowserLinkObj::
-~CBrowserLinkObj()
+CBrowserAnchor::
+~CBrowserAnchor()
 {
 }
 
 void
-CBrowserLinkObj::
+CBrowserAnchor::
+setNameValue(const std::string &name, const std::string &value)
+{
+  std::string lname = CStrUtil::toLower(name);
+
+  if      (lname == "download") {
+    data_.download = value;
+  }
+  else if (lname == "href") {
+    data_.href = value;
+  }
+  else if (lname == "methods") {
+    data_.methods = value;
+  }
+  else if (lname == "rel") {
+    data_.rel = value;
+  }
+  else if (lname == "rev") {
+    data_.rev = value;
+  }
+  else if (lname == "target") {
+    data_.target = value;
+  }
+  else if (lname == "type") {
+    data_.type = value;
+  }
+  else if (lname == "title") {
+    data_.title = value;
+  }
+  else if (lname == "url") {
+    data_.url = value;
+  }
+  else if (lname == "itemprop") {
+  }
+  else {
+    CBrowserObject::setNameValue(name, value);
+  }
+}
+
+void
+CBrowserAnchor::
+init()
+{
+  std::vector<std::string> strs = {{
+    "download", "href", "methods", "rel", "rev", "target", "title", "url" }};
+
+  addProperties(strs);
+
+  //---
+
+  if (data_.href == "" && data_.id == "")
+    window_->displayError("No 'href' or 'name' specified for 'a' Tag'\n");
+}
+
+void
+CBrowserAnchor::
 initProcess()
 {
   if (data_.href != "") {
     window_->linkMgr()->startSourceLink(data_);
-
-    window_->setTextColor(window_->getDocument()->getLinkColor());
-
-    window_->setTextUnderline(true);
   }
   else
     window_->linkMgr()->startDestLink(data_);
 }
 
 void
-CBrowserLinkObj::
+CBrowserAnchor::
 termProcess()
 {
-  window_->setTextUnderline(false);
-
-  window_->setTextColor(window_->getDocument()->getFgColor());
-
   window_->linkMgr()->endLink();
 }
 
 std::string
-CBrowserLinkObj::
+CBrowserAnchor::
 propertyValue(int i) const
 {
-  if      (i == 0) return CBrowserProperty::toString(data_.download);
-  else if (i == 1) return CBrowserProperty::toString(data_.href);
-  else if (i == 2) return CBrowserProperty::toString(data_.id);
-  else if (i == 3) return CBrowserProperty::toString(data_.methods);
-  else if (i == 4) return CBrowserProperty::toString(data_.rel);
-  else if (i == 5) return CBrowserProperty::toString(data_.rev);
-  else if (i == 6) return CBrowserProperty::toString(data_.target);
-  else if (i == 7) return CBrowserProperty::toString(data_.type);
-  else if (i == 8) return CBrowserProperty::toString(data_.title);
-  else if (i == 9) return CBrowserProperty::toString(data_.url);
+  const std::string &name = propertyName(i);
 
-  return "";
+  if      (name == "download") return CBrowserProperty::toString(data_.download);
+  else if (name == "href"    ) return CBrowserProperty::toString(data_.href);
+  else if (name == "methods" ) return CBrowserProperty::toString(data_.methods);
+  else if (name == "rel"     ) return CBrowserProperty::toString(data_.rel);
+  else if (name == "rev"     ) return CBrowserProperty::toString(data_.rev);
+  else if (name == "target"  ) return CBrowserProperty::toString(data_.target);
+  else if (name == "title"   ) return CBrowserProperty::toString(data_.title);
+  else if (name == "url"     ) return CBrowserProperty::toString(data_.url);
+
+  return CBrowserObject::propertyValue(i);
+}
+
+//------
+
+CBrowserLink::
+CBrowserLink(CBrowserWindow *window, const CBrowserLinkData &data) :
+ CBrowserObject(window, CHtmlTagId::LINK), data_(data)
+{
+}
+
+CBrowserLink::
+~CBrowserLink()
+{
+}
+
+void
+CBrowserLink::
+init()
+{
+}
+
+void
+CBrowserLink::
+setNameValue(const std::string &name, const std::string &value)
+{
+  std::string lname  = CStrUtil::toLower(name);
+  std::string lvalue = CStrUtil::toLower(value);
+
+  if      (lname == "rel") {
+    data_.rel = value;
+  }
+  else if (lname == "href") {
+    data_.href = value;
+  }
+  else {
+    CBrowserObject::setNameValue(name, value);
+  }
+}
+
+void
+CBrowserLink::
+initProcess()
+{
+  if (data_.rel == "stylesheet") {
+    std::string href = window_->linkMgr()->expandDestLink(data_.href);
+
+    if (href == "")
+      return;
+
+    CUrl url(href);
+
+  //std::string prefix = url.getPrefix();
+    std::string file   = url.getFile();
+  //std::string target = url.getTarget();
+
+    if (! window_->loadCSSFile(file))
+      return;
+  }
+}
+
+void
+CBrowserLink::
+termProcess()
+{
 }

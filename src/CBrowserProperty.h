@@ -15,7 +15,7 @@ class CBrowserPropertyTraits<std::string> {
  public:
   std::string toString(const std::string &str) { return str; }
 
-  bool fromString(const std::string &str, std::string &value) { value = str; return false; }
+  bool fromString(const std::string &str, std::string &value) { value = str; return true; }
 };
 
 template<>

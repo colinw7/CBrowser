@@ -8,11 +8,9 @@ class CBrowserPre : public CBrowserObject {
  public:
   CBrowserPre(CBrowserWindow *window, const CBrowserPreData &data);
 
-  void initProcess() override;
-  void termProcess() override;
+  void init() override;
 
-  void initLayout() override;
-  void termLayout() override;
+  void setNameValue(const std::string &name, const std::string &value) override;
 
  private:
   CBrowserPreData data_;

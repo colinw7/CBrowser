@@ -6,16 +6,5 @@ CBrowserTitle::
 CBrowserTitle(CBrowserWindow *window) :
  CBrowserObject(window, CHtmlTagId::TITLE)
 {
-}
-
-void
-CBrowserTitle::
-initLayout()
-{
-}
-
-void
-CBrowserTitle::
-termLayout()
-{
+  setDisplay(Display::NONE);
 }

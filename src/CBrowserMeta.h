@@ -6,9 +6,6 @@
 class CBrowserMeta : public CBrowserObject {
  public:
   CBrowserMeta(CBrowserWindow *window);
-
-  void initLayout() override;
-  void termLayout() override;
 };
 
 #endif

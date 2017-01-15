@@ -8,6 +8,10 @@ class CBrowserBody : public CBrowserObject {
  public:
   CBrowserBody(CBrowserWindow *window, const CBrowserBodyData &data);
 
+  void setNameValue(const std::string &name, const std::string &value) override;
+
+  void init() override;
+
   void initProcess() override;
   void termProcess() override;
 

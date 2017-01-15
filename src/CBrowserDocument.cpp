@@ -34,7 +34,7 @@ setUrl(const std::string &url)
 
 void
 CBrowserDocument::
-addLink(CBrowserLink *link)
+addLink(CBrowserAnchorLink *link)
 {
   links_.push_back(link);
 }
@@ -46,7 +46,7 @@ getNumLinks() const
   return links_.size();
 }
 
-CBrowserLink *
+CBrowserAnchorLink *
 CBrowserDocument::
 getLink(uint i)
 {
@@ -55,7 +55,7 @@ getLink(uint i)
 
 void
 CBrowserDocument::
-addAnchor(CBrowserLink *anchor)
+addAnchor(CBrowserAnchorLink *anchor)
 {
   anchors_.push_back(anchor);
 }
@@ -67,7 +67,7 @@ getNumAnchors() const
   return anchors_.size();
 }
 
-CBrowserLink *
+CBrowserAnchorLink *
 CBrowserDocument::
 getAnchor(uint i)
 {
@@ -97,7 +97,7 @@ read(const std::string &url)
 
   url_ = url;
 
-  HtmlReadURL(window_, url_, tokens_);
+  window_->fileMgr()->readURL(url_, tokens_);
 }
 
 void
@@ -114,18 +114,30 @@ CBrowserDocument::
 setBgColor(const std::string &color)
 {
   if (color != "")
-    bg_color_ = CRGBName::toRGBA(color);
+    bgColor_ = CRGBName::toRGBA(color);
+}
+
+void
+CBrowserDocument::
+setBgColor(const CRGBA &color)
+{
+  bgColor_ = color;
 }
 
 void
 CBrowserDocument::
 setFgColor(const std::string &color)
 {
-  if (color != "") {
-    fg_color_ = CRGBName::toRGBA(color);
+  if (color != "")
+    fgColor_ = CRGBName::toRGBA(color);
+}
 
-    window_->setFontColor(color);
-  }
+void
+CBrowserDocument::
+setBgImage(const CImagePtr &image, bool fixed)
+{
+  bgImage_ = image;
+  bgFixed_ = fixed;
 }
 
 void
@@ -150,4 +162,11 @@ setVLinkColor(const std::string &color)
 {
   if (color != "")
     vlink_color_ = CRGBName::toRGBA(color);
+}
+
+void
+CBrowserDocument::
+addForm(CBrowserForm *form)
+{
+  forms_.push_back(form);
 }

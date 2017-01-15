@@ -6,9 +6,6 @@
 class CBrowserCenter : public CBrowserObject {
  public:
   CBrowserCenter(CBrowserWindow *window);
-
-  void initLayout() override;
-  void termLayout() override;
 };
 
 #endif

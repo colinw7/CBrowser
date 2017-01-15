@@ -5,38 +5,12 @@ CBrowserXmp::
 CBrowserXmp(CBrowserWindow *window) :
  CBrowserObject(window, CHtmlTagId::XMP)
 {
-}
+  setDisplay(Display::BLOCK);
 
-void
-CBrowserXmp::
-initProcess()
-{
-  window_->startFontFace("courier");
+  font_.setFamily(CBrowserFontFamily("monospace"));
 
-  window_->setTextBreakup(false);
-  window_->setTextFormat (false);
-}
+  marginRef().setTop   (CBrowserUnitValue("1em"));
+  marginRef().setBottom(CBrowserUnitValue("1em"));
 
-void
-CBrowserXmp::
-termProcess()
-{
-  window_->setTextBreakup(true);
-  window_->setTextFormat (true);
-
-  window_->endFontFace();
-}
-
-void
-CBrowserXmp::
-initLayout()
-{
-  window_->skipLine();
-}
-
-void
-CBrowserXmp::
-termLayout()
-{
-  window_->skipLine();
+  setWhiteSpace(WhiteSpace::PRE);
 }

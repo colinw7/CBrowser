@@ -15,7 +15,7 @@ CXX           = g++
 DEFINES       = -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -m64 -pipe -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -m64 -pipe -std=c++11 -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I. -I. -I../include -I../../CJavaScript/include -I../../CJson/include -I../../CHtml/include -I../../CQUtil/include -I../../CImageLib/include -I../../CFont/include -I../../CCeil/include -I../../CArgs/include -I../../CFile/include -I../../CFileUtil/include -I../../COS/include -I../../CStrUtil/include -I../../CRegExp/include -I../../CUtil/include -I../../CMath/include -I../../CGlob/include -I../../CReadLine/include -I../../CRGBName/include -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64
+INCPATH       = -I. -I. -I../include -I../../CJavaScript/include -I../../CJson/include -I../../CHtml/include -I../../CCSS/include -I../../CQUtil/include -I../../CImageLib/include -I../../CFont/include -I../../CCeil/include -I../../CArgs/include -I../../CFile/include -I../../CFileUtil/include -I../../COS/include -I../../CStrUtil/include -I../../CRegExp/include -I../../CUtil/include -I../../CMath/include -I../../CGlob/include -I../../CReadLine/include -I../../CRGBName/include -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -I.moc -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64
 QMAKE         = /usr/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -36,7 +36,7 @@ DISTNAME      = CBrowser1.0.0
 DISTDIR = /home/colinw/git/CBrowser/obj/CBrowser1.0.0
 LINK          = g++
 LFLAGS        = -m64
-LIBS          = $(SUBLIBS) -L/usr/X11R6/lib64 -L../lib -L../../CHtml/lib -L../../CJson/lib -L../../CJavaScript/lib -L../../CQUtil/lib -L../../CImageLib/lib -L../../CFont/lib -L../../CCeil/lib -L../../CArgs/lib -L../../CConfig/lib -L../../CReadLine/lib -L../../CFile/lib -L../../CFileUtil/lib -L../../CStrUtil/lib -L../../CRegExp/lib -L../../CGlob/lib -L../../CUtil/lib -L../../COS/lib -L../../CRGBName/lib -lCJavaScript -lCJson -lCHtml -lCQUtil -lCImageLib -lCFont -lCCeil -lCArgs -lCConfig -lCReadLine -lCFile -lCFileUtil -lCStrUtil -lCGlob -lCRegExp -lCRGBName -lCUtil -lCOS -ljpeg -lpng -lcurses -ltre -lQt5Widgets -lQt5Gui -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -L/usr/X11R6/lib64 -L../lib -L../../CJavaScript/lib -L../../CJson/lib -L../../CHtml/lib -L../../CCSS/lib -L../../CXML/lib -L../../CQUtil/lib -L../../CImageLib/lib -L../../CFont/lib -L../../CCeil/lib -L../../CArgs/lib -L../../CConfig/lib -L../../CReadLine/lib -L../../CFile/lib -L../../CFileUtil/lib -L../../CStrUtil/lib -L../../CRegExp/lib -L../../CGlob/lib -L../../CUtil/lib -L../../COS/lib -L../../CRGBName/lib -lCJavaScript -lCJson -lCHtml -lCCSS -lCXML -lCQUtil -lCImageLib -lCFont -lCCeil -lCArgs -lCConfig -lCReadLine -lCFile -lCFileUtil -lCStrUtil -lCGlob -lCRegExp -lCRGBName -lCUtil -lCOS -ljpeg -lpng -lcurses -ltre -lQt5Widgets -lQt5Gui -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -49,14 +49,17 @@ OBJECTS_DIR   = ../obj/
 ####### Files
 
 SOURCES       = CBrowserAddress.cpp \
+		CBrowserArea.cpp \
 		CBrowserBaseFont.cpp \
 		CBrowserBlockQuote.cpp \
 		CBrowserBody.cpp \
+		CBrowserBox.cpp \
 		CBrowserBreak.cpp \
 		CBrowserCanvas.cpp \
 		CBrowserCenter.cpp \
 		CBrowserCode.cpp \
-		CBrowserWindowWidget.cpp \
+		CBrowser.cpp \
+		CBrowserCSSStyle.cpp \
 		CBrowserDiv.cpp \
 		CBrowserDocument.cpp \
 		CBrowserFile.cpp \
@@ -70,9 +73,11 @@ SOURCES       = CBrowserAddress.cpp \
 		CBrowserIFace.cpp \
 		CBrowserImage.cpp \
 		CBrowserKbd.cpp \
-		CBrowserLabel.cpp \
+		CBrowserLayout.cpp \
+		CBrowserLine.cpp \
 		CBrowserLink.cpp \
 		CBrowserList.cpp \
+		CBrowserListItem.cpp \
 		CBrowserMain.cpp \
 		CBrowserMeta.cpp \
 		CBrowserMisc.cpp \
@@ -81,21 +86,23 @@ SOURCES       = CBrowserAddress.cpp \
 		CBrowserObject.cpp \
 		CBrowserObjProp.cpp \
 		CBrowserOutput.cpp \
-		CBrowserOutputList.cpp \
 		CBrowserOutputTag.cpp \
 		CBrowserParagraph.cpp \
 		CBrowserPre.cpp \
+		CBrowserRenderer.cpp \
 		CBrowserRule.cpp \
 		CBrowserSamp.cpp \
 		CBrowserScript.cpp \
 		CBrowserStyle.cpp \
-		CBrowserSymbol.cpp \
+		CBrowserStyleData.cpp \
 		CBrowserTable.cpp \
 		CBrowserText.cpp \
 		CBrowserTitle.cpp \
 		CBrowserTT.cpp \
-		CBrowserXmp.cpp \
 		CBrowserWindow.cpp \
+		CBrowserWindowWidget.cpp \
+		CBrowserWord.cpp \
+		CBrowserXmp.cpp \
 		CBrowserDomTree.cpp \
 		CBrowserCeil.cpp \
 		CBrowserJS.cpp \
@@ -108,59 +115,61 @@ SOURCES       = CBrowserAddress.cpp \
 		CQJCanvasPattern.cpp \
 		CQJCanvasRadialGradient.cpp \
 		CQJCanvasWidget.cpp \
+		CQJColorEdit.cpp \
+		CQJComboBox.cpp \
 		CQJDialog.cpp \
 		CQJDocument.cpp \
 		CQJEvent.cpp \
+		CQJForm.cpp \
+		CQJHtmlCollection.cpp \
 		CQJHtmlObj.cpp \
 		CQJImage.cpp \
 		CQJInput.cpp \
 		CQJIntervalFunction.cpp \
-		CQJColorEdit.cpp \
 		CQJLineEdit.cpp \
-		CQJComboBox.cpp \
-		CQJSlider.cpp \
 		CQJObject.cpp \
+		CQJSlider.cpp \
 		CQJWindow.cpp \
 		CQJWindowTimer.cpp \
-		CHtmlLayoutArea.cpp \
-		CHtmlLayoutBox.cpp \
-		CHtmlLayoutCell.cpp \
-		CHtmlLayoutMgr.cpp \
-		CHtmlLayoutSubCell.cpp \
 		CQHistoryLineEdit.cpp \
 		CRomanNumber.cpp \
 		CPrint.cpp \
-		CUrl.cpp moc_CBrowserForm.cpp \
-		moc_CBrowserIFace.cpp \
-		moc_CBrowserMain.cpp \
-		moc_CBrowserObjProp.cpp \
-		moc_CBrowserDomTree.cpp \
-		moc_CQJCanvasFontMetrics.cpp \
-		moc_CQJCanvas.cpp \
-		moc_CQJCanvasImageDataArray.cpp \
-		moc_CQJCanvasImageData.cpp \
-		moc_CQJCanvasWidget.cpp \
-		moc_CQJDialog.cpp \
-		moc_CQJDocument.cpp \
-		moc_CQJHtmlObj.cpp \
-		moc_CQJInput.cpp \
-		moc_CQJColorEdit.cpp \
-		moc_CQJLineEdit.cpp \
-		moc_CQJComboBox.cpp \
-		moc_CQJSlider.cpp \
-		moc_CQJObject.cpp \
-		moc_CQJWindow.cpp \
-		moc_CQJWindowTimer.cpp \
-		moc_CQHistoryLineEdit.cpp
+		CUrl.cpp .moc/moc_CBrowserForm.cpp \
+		.moc/moc_CBrowserIFace.cpp \
+		.moc/moc_CBrowserMain.cpp \
+		.moc/moc_CBrowserObjProp.cpp \
+		.moc/moc_CBrowserDomTree.cpp \
+		.moc/moc_CQJCanvasFontMetrics.cpp \
+		.moc/moc_CQJCanvas.cpp \
+		.moc/moc_CQJCanvasImageDataArray.cpp \
+		.moc/moc_CQJCanvasImageData.cpp \
+		.moc/moc_CQJCanvasWidget.cpp \
+		.moc/moc_CQJColorEdit.cpp \
+		.moc/moc_CQJComboBox.cpp \
+		.moc/moc_CQJDialog.cpp \
+		.moc/moc_CQJDocument.cpp \
+		.moc/moc_CQJForm.cpp \
+		.moc/moc_CQJHtmlCollection.cpp \
+		.moc/moc_CQJHtmlObj.cpp \
+		.moc/moc_CQJInput.cpp \
+		.moc/moc_CQJLineEdit.cpp \
+		.moc/moc_CQJObject.cpp \
+		.moc/moc_CQJSlider.cpp \
+		.moc/moc_CQJWindow.cpp \
+		.moc/moc_CQJWindowTimer.cpp \
+		.moc/moc_CQHistoryLineEdit.cpp
 OBJECTS       = ../obj/CBrowserAddress.o \
+		../obj/CBrowserArea.o \
 		../obj/CBrowserBaseFont.o \
 		../obj/CBrowserBlockQuote.o \
 		../obj/CBrowserBody.o \
+		../obj/CBrowserBox.o \
 		../obj/CBrowserBreak.o \
 		../obj/CBrowserCanvas.o \
 		../obj/CBrowserCenter.o \
 		../obj/CBrowserCode.o \
-		../obj/CBrowserWindowWidget.o \
+		../obj/CBrowser.o \
+		../obj/CBrowserCSSStyle.o \
 		../obj/CBrowserDiv.o \
 		../obj/CBrowserDocument.o \
 		../obj/CBrowserFile.o \
@@ -174,9 +183,11 @@ OBJECTS       = ../obj/CBrowserAddress.o \
 		../obj/CBrowserIFace.o \
 		../obj/CBrowserImage.o \
 		../obj/CBrowserKbd.o \
-		../obj/CBrowserLabel.o \
+		../obj/CBrowserLayout.o \
+		../obj/CBrowserLine.o \
 		../obj/CBrowserLink.o \
 		../obj/CBrowserList.o \
+		../obj/CBrowserListItem.o \
 		../obj/CBrowserMain.o \
 		../obj/CBrowserMeta.o \
 		../obj/CBrowserMisc.o \
@@ -185,21 +196,23 @@ OBJECTS       = ../obj/CBrowserAddress.o \
 		../obj/CBrowserObject.o \
 		../obj/CBrowserObjProp.o \
 		../obj/CBrowserOutput.o \
-		../obj/CBrowserOutputList.o \
 		../obj/CBrowserOutputTag.o \
 		../obj/CBrowserParagraph.o \
 		../obj/CBrowserPre.o \
+		../obj/CBrowserRenderer.o \
 		../obj/CBrowserRule.o \
 		../obj/CBrowserSamp.o \
 		../obj/CBrowserScript.o \
 		../obj/CBrowserStyle.o \
-		../obj/CBrowserSymbol.o \
+		../obj/CBrowserStyleData.o \
 		../obj/CBrowserTable.o \
 		../obj/CBrowserText.o \
 		../obj/CBrowserTitle.o \
 		../obj/CBrowserTT.o \
-		../obj/CBrowserXmp.o \
 		../obj/CBrowserWindow.o \
+		../obj/CBrowserWindowWidget.o \
+		../obj/CBrowserWord.o \
+		../obj/CBrowserXmp.o \
 		../obj/CBrowserDomTree.o \
 		../obj/CBrowserCeil.o \
 		../obj/CBrowserJS.o \
@@ -212,25 +225,22 @@ OBJECTS       = ../obj/CBrowserAddress.o \
 		../obj/CQJCanvasPattern.o \
 		../obj/CQJCanvasRadialGradient.o \
 		../obj/CQJCanvasWidget.o \
+		../obj/CQJColorEdit.o \
+		../obj/CQJComboBox.o \
 		../obj/CQJDialog.o \
 		../obj/CQJDocument.o \
 		../obj/CQJEvent.o \
+		../obj/CQJForm.o \
+		../obj/CQJHtmlCollection.o \
 		../obj/CQJHtmlObj.o \
 		../obj/CQJImage.o \
 		../obj/CQJInput.o \
 		../obj/CQJIntervalFunction.o \
-		../obj/CQJColorEdit.o \
 		../obj/CQJLineEdit.o \
-		../obj/CQJComboBox.o \
-		../obj/CQJSlider.o \
 		../obj/CQJObject.o \
+		../obj/CQJSlider.o \
 		../obj/CQJWindow.o \
 		../obj/CQJWindowTimer.o \
-		../obj/CHtmlLayoutArea.o \
-		../obj/CHtmlLayoutBox.o \
-		../obj/CHtmlLayoutCell.o \
-		../obj/CHtmlLayoutMgr.o \
-		../obj/CHtmlLayoutSubCell.o \
 		../obj/CQHistoryLineEdit.o \
 		../obj/CRomanNumber.o \
 		../obj/CPrint.o \
@@ -245,15 +255,17 @@ OBJECTS       = ../obj/CBrowserAddress.o \
 		../obj/moc_CQJCanvasImageDataArray.o \
 		../obj/moc_CQJCanvasImageData.o \
 		../obj/moc_CQJCanvasWidget.o \
+		../obj/moc_CQJColorEdit.o \
+		../obj/moc_CQJComboBox.o \
 		../obj/moc_CQJDialog.o \
 		../obj/moc_CQJDocument.o \
+		../obj/moc_CQJForm.o \
+		../obj/moc_CQJHtmlCollection.o \
 		../obj/moc_CQJHtmlObj.o \
 		../obj/moc_CQJInput.o \
-		../obj/moc_CQJColorEdit.o \
 		../obj/moc_CQJLineEdit.o \
-		../obj/moc_CQJComboBox.o \
-		../obj/moc_CQJSlider.o \
 		../obj/moc_CQJObject.o \
+		../obj/moc_CQJSlider.o \
 		../obj/moc_CQJWindow.o \
 		../obj/moc_CQJWindowTimer.o \
 		../obj/moc_CQHistoryLineEdit.o
@@ -315,30 +327,43 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
 		CBrowser.pro CBrowserAddress.h \
+		CBrowserArea.h \
+		CBrowserBackground.h \
 		CBrowserBaseFont.h \
 		CBrowserBlockQuote.h \
 		CBrowserBody.h \
+		CBrowserBorder.h \
+		CBrowserBox.h \
 		CBrowserBreak.h \
 		CBrowserCanvas.h \
 		CBrowserCenter.h \
-		CBrowserDiv.cpp \
+		CBrowserClear.h \
+		CBrowserCode.h \
+		CBrowserColor.h \
+		CBrowserCSSData.h \
+		CBrowserCSSStyle.h \
+		CBrowserData.h \
+		CBrowserDiv.h \
 		CBrowserDocument.h \
 		CBrowserFile.h \
+		CBrowserFloat.h \
 		CBrowserFont.h \
 		CBrowserForm.h \
 		CBrowserGraphics.h \
-		CBrowserHead.h \
 		CBrowserHeader.h \
+		CBrowserHead.h \
 		CBrowserHistory.h \
 		CBrowserHtml.h \
-		CBrowserHtmlI.h \
 		CBrowserIFace.h \
 		CBrowserImage.h \
 		CBrowserKbd.h \
-		CBrowserLabel.h \
+		CBrowserLayout.h \
+		CBrowserLine.h \
 		CBrowserLink.h \
 		CBrowserList.h \
+		CBrowserListItem.h \
 		CBrowserMain.h \
+		CBrowserMargin.h \
 		CBrowserMeta.h \
 		CBrowserMisc.h \
 		CBrowserNamedImage.h \
@@ -346,22 +371,30 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		CBrowserObject.h \
 		CBrowserObjProp.h \
 		CBrowserOutput.h \
-		CBrowserOutputList.h \
+		CBrowserOutputTag.h \
+		CBrowserPadding.h \
 		CBrowserParagraph.h \
+		CBrowserPixmaps.h \
 		CBrowserPre.h \
+		CBrowserProperty.h \
+		CBrowserRegion.h \
+		CBrowserRenderer.h \
 		CBrowserRule.h \
 		CBrowserSamp.h \
 		CBrowserScript.h \
+		CBrowserStyleData.h \
 		CBrowserStyle.h \
-		CBrowserSymbol.h \
 		CBrowserTable.h \
 		CBrowserText.h \
+		CBrowserTextProp.h \
 		CBrowserTitle.h \
 		CBrowserTT.h \
 		CBrowserTypes.h \
-		CBrowserXmp.h \
+		CBrowserUnitValue.h \
 		CBrowserWindow.h \
 		CBrowserWindowWidget.h \
+		CBrowserWord.h \
+		CBrowserXmp.h \
 		CBrowserDomTree.h \
 		CBrowserCeil.h \
 		CBrowserJS.h \
@@ -374,41 +407,38 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		CQJCanvasPattern.h \
 		CQJCanvasRadialGradient.h \
 		CQJCanvasWidget.h \
+		CQJColorEdit.h \
+		CQJComboBox.h \
 		CQJDialog.h \
 		CQJDocument.h \
 		CQJEvent.h \
+		CQJForm.h \
+		CQJHtmlCollection.h \
 		CQJHtmlObj.h \
 		CQJImage.h \
 		CQJInput.h \
 		CQJIntervalFunction.h \
-		CQJColorEdit.h \
 		CQJLineEdit.h \
-		CQJComboBox.h \
-		CQJSlider.h \
 		CQJObject.h \
+		CQJSlider.h \
 		CQJUtil.h \
 		CQJWindow.h \
 		CQJWindowTimer.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutBox.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayout.h \
-		CHtmlLayoutMgr.h \
-		CHtmlLayoutSubCell.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutVisitor.h \
 		CQHistoryLineEdit.h \
 		CRomanNumber.h \
 		CPrint.h \
 		CUrl.h CBrowserAddress.cpp \
+		CBrowserArea.cpp \
 		CBrowserBaseFont.cpp \
 		CBrowserBlockQuote.cpp \
 		CBrowserBody.cpp \
+		CBrowserBox.cpp \
 		CBrowserBreak.cpp \
 		CBrowserCanvas.cpp \
 		CBrowserCenter.cpp \
 		CBrowserCode.cpp \
-		CBrowserWindowWidget.cpp \
+		CBrowser.cpp \
+		CBrowserCSSStyle.cpp \
 		CBrowserDiv.cpp \
 		CBrowserDocument.cpp \
 		CBrowserFile.cpp \
@@ -422,9 +452,11 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		CBrowserIFace.cpp \
 		CBrowserImage.cpp \
 		CBrowserKbd.cpp \
-		CBrowserLabel.cpp \
+		CBrowserLayout.cpp \
+		CBrowserLine.cpp \
 		CBrowserLink.cpp \
 		CBrowserList.cpp \
+		CBrowserListItem.cpp \
 		CBrowserMain.cpp \
 		CBrowserMeta.cpp \
 		CBrowserMisc.cpp \
@@ -433,21 +465,23 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		CBrowserObject.cpp \
 		CBrowserObjProp.cpp \
 		CBrowserOutput.cpp \
-		CBrowserOutputList.cpp \
 		CBrowserOutputTag.cpp \
 		CBrowserParagraph.cpp \
 		CBrowserPre.cpp \
+		CBrowserRenderer.cpp \
 		CBrowserRule.cpp \
 		CBrowserSamp.cpp \
 		CBrowserScript.cpp \
 		CBrowserStyle.cpp \
-		CBrowserSymbol.cpp \
+		CBrowserStyleData.cpp \
 		CBrowserTable.cpp \
 		CBrowserText.cpp \
 		CBrowserTitle.cpp \
 		CBrowserTT.cpp \
-		CBrowserXmp.cpp \
 		CBrowserWindow.cpp \
+		CBrowserWindowWidget.cpp \
+		CBrowserWord.cpp \
+		CBrowserXmp.cpp \
 		CBrowserDomTree.cpp \
 		CBrowserCeil.cpp \
 		CBrowserJS.cpp \
@@ -460,25 +494,22 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		CQJCanvasPattern.cpp \
 		CQJCanvasRadialGradient.cpp \
 		CQJCanvasWidget.cpp \
+		CQJColorEdit.cpp \
+		CQJComboBox.cpp \
 		CQJDialog.cpp \
 		CQJDocument.cpp \
 		CQJEvent.cpp \
+		CQJForm.cpp \
+		CQJHtmlCollection.cpp \
 		CQJHtmlObj.cpp \
 		CQJImage.cpp \
 		CQJInput.cpp \
 		CQJIntervalFunction.cpp \
-		CQJColorEdit.cpp \
 		CQJLineEdit.cpp \
-		CQJComboBox.cpp \
-		CQJSlider.cpp \
 		CQJObject.cpp \
+		CQJSlider.cpp \
 		CQJWindow.cpp \
 		CQJWindowTimer.cpp \
-		CHtmlLayoutArea.cpp \
-		CHtmlLayoutBox.cpp \
-		CHtmlLayoutCell.cpp \
-		CHtmlLayoutMgr.cpp \
-		CHtmlLayoutSubCell.cpp \
 		CQHistoryLineEdit.cpp \
 		CRomanNumber.cpp \
 		CPrint.cpp \
@@ -651,8 +682,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents CBrowserAddress.h CBrowserBaseFont.h CBrowserBlockQuote.h CBrowserBody.h CBrowserBreak.h CBrowserCanvas.h CBrowserCenter.h CBrowserDiv.cpp CBrowserDocument.h CBrowserFile.h CBrowserFont.h CBrowserForm.h CBrowserGraphics.h CBrowserHead.h CBrowserHeader.h CBrowserHistory.h CBrowserHtml.h CBrowserHtmlI.h CBrowserIFace.h CBrowserImage.h CBrowserKbd.h CBrowserLabel.h CBrowserLink.h CBrowserList.h CBrowserMain.h CBrowserMeta.h CBrowserMisc.h CBrowserNamedImage.h CBrowserNoBr.h CBrowserObject.h CBrowserObjProp.h CBrowserOutput.h CBrowserOutputList.h CBrowserParagraph.h CBrowserPre.h CBrowserRule.h CBrowserSamp.h CBrowserScript.h CBrowserStyle.h CBrowserSymbol.h CBrowserTable.h CBrowserText.h CBrowserTitle.h CBrowserTT.h CBrowserTypes.h CBrowserXmp.h CBrowserWindow.h CBrowserWindowWidget.h CBrowserDomTree.h CBrowserCeil.h CBrowserJS.h CQJCanvasContext2D.h CQJCanvasFontMetrics.h CQJCanvas.h CQJCanvasImageDataArray.h CQJCanvasImageData.h CQJCanvasLinearGradient.h CQJCanvasPattern.h CQJCanvasRadialGradient.h CQJCanvasWidget.h CQJDialog.h CQJDocument.h CQJEvent.h CQJHtmlObj.h CQJImage.h CQJInput.h CQJIntervalFunction.h CQJColorEdit.h CQJLineEdit.h CQJComboBox.h CQJSlider.h CQJObject.h CQJUtil.h CQJWindow.h CQJWindowTimer.h CHtmlLayoutArea.h CHtmlLayoutBox.h CHtmlLayoutCell.h CHtmlLayout.h CHtmlLayoutMgr.h CHtmlLayoutSubCell.h CHtmlLayoutTypes.h CHtmlLayoutVisitor.h CQHistoryLineEdit.h CRomanNumber.h CPrint.h CUrl.h $(DISTDIR)/
-	$(COPY_FILE) --parents CBrowserAddress.cpp CBrowserBaseFont.cpp CBrowserBlockQuote.cpp CBrowserBody.cpp CBrowserBreak.cpp CBrowserCanvas.cpp CBrowserCenter.cpp CBrowserCode.cpp CBrowserWindowWidget.cpp CBrowserDiv.cpp CBrowserDocument.cpp CBrowserFile.cpp CBrowserFont.cpp CBrowserForm.cpp CBrowserGraphics.cpp CBrowserHead.cpp CBrowserHeader.cpp CBrowserHistory.cpp CBrowserHtml.cpp CBrowserIFace.cpp CBrowserImage.cpp CBrowserKbd.cpp CBrowserLabel.cpp CBrowserLink.cpp CBrowserList.cpp CBrowserMain.cpp CBrowserMeta.cpp CBrowserMisc.cpp CBrowserNamedImage.cpp CBrowserNoBr.cpp CBrowserObject.cpp CBrowserObjProp.cpp CBrowserOutput.cpp CBrowserOutputList.cpp CBrowserOutputTag.cpp CBrowserParagraph.cpp CBrowserPre.cpp CBrowserRule.cpp CBrowserSamp.cpp CBrowserScript.cpp CBrowserStyle.cpp CBrowserSymbol.cpp CBrowserTable.cpp CBrowserText.cpp CBrowserTitle.cpp CBrowserTT.cpp CBrowserXmp.cpp CBrowserWindow.cpp CBrowserDomTree.cpp CBrowserCeil.cpp CBrowserJS.cpp CQJCanvasContext2D.cpp CQJCanvas.cpp CQJCanvasFontMetrics.cpp CQJCanvasImageDataArray.cpp CQJCanvasImageData.cpp CQJCanvasLinearGradient.cpp CQJCanvasPattern.cpp CQJCanvasRadialGradient.cpp CQJCanvasWidget.cpp CQJDialog.cpp CQJDocument.cpp CQJEvent.cpp CQJHtmlObj.cpp CQJImage.cpp CQJInput.cpp CQJIntervalFunction.cpp CQJColorEdit.cpp CQJLineEdit.cpp CQJComboBox.cpp CQJSlider.cpp CQJObject.cpp CQJWindow.cpp CQJWindowTimer.cpp CHtmlLayoutArea.cpp CHtmlLayoutBox.cpp CHtmlLayoutCell.cpp CHtmlLayoutMgr.cpp CHtmlLayoutSubCell.cpp CQHistoryLineEdit.cpp CRomanNumber.cpp CPrint.cpp CUrl.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents CBrowserAddress.h CBrowserArea.h CBrowserBackground.h CBrowserBaseFont.h CBrowserBlockQuote.h CBrowserBody.h CBrowserBorder.h CBrowserBox.h CBrowserBreak.h CBrowserCanvas.h CBrowserCenter.h CBrowserClear.h CBrowserCode.h CBrowserColor.h CBrowserCSSData.h CBrowserCSSStyle.h CBrowserData.h CBrowserDiv.h CBrowserDocument.h CBrowserFile.h CBrowserFloat.h CBrowserFont.h CBrowserForm.h CBrowserGraphics.h CBrowserHeader.h CBrowserHead.h CBrowserHistory.h CBrowserHtml.h CBrowserIFace.h CBrowserImage.h CBrowserKbd.h CBrowserLayout.h CBrowserLine.h CBrowserLink.h CBrowserList.h CBrowserListItem.h CBrowserMain.h CBrowserMargin.h CBrowserMeta.h CBrowserMisc.h CBrowserNamedImage.h CBrowserNoBr.h CBrowserObject.h CBrowserObjProp.h CBrowserOutput.h CBrowserOutputTag.h CBrowserPadding.h CBrowserParagraph.h CBrowserPixmaps.h CBrowserPre.h CBrowserProperty.h CBrowserRegion.h CBrowserRenderer.h CBrowserRule.h CBrowserSamp.h CBrowserScript.h CBrowserStyleData.h CBrowserStyle.h CBrowserTable.h CBrowserText.h CBrowserTextProp.h CBrowserTitle.h CBrowserTT.h CBrowserTypes.h CBrowserUnitValue.h CBrowserWindow.h CBrowserWindowWidget.h CBrowserWord.h CBrowserXmp.h CBrowserDomTree.h CBrowserCeil.h CBrowserJS.h CQJCanvasContext2D.h CQJCanvasFontMetrics.h CQJCanvas.h CQJCanvasImageDataArray.h CQJCanvasImageData.h CQJCanvasLinearGradient.h CQJCanvasPattern.h CQJCanvasRadialGradient.h CQJCanvasWidget.h CQJColorEdit.h CQJComboBox.h CQJDialog.h CQJDocument.h CQJEvent.h CQJForm.h CQJHtmlCollection.h CQJHtmlObj.h CQJImage.h CQJInput.h CQJIntervalFunction.h CQJLineEdit.h CQJObject.h CQJSlider.h CQJUtil.h CQJWindow.h CQJWindowTimer.h CQHistoryLineEdit.h CRomanNumber.h CPrint.h CUrl.h $(DISTDIR)/
+	$(COPY_FILE) --parents CBrowserAddress.cpp CBrowserArea.cpp CBrowserBaseFont.cpp CBrowserBlockQuote.cpp CBrowserBody.cpp CBrowserBox.cpp CBrowserBreak.cpp CBrowserCanvas.cpp CBrowserCenter.cpp CBrowserCode.cpp CBrowser.cpp CBrowserCSSStyle.cpp CBrowserDiv.cpp CBrowserDocument.cpp CBrowserFile.cpp CBrowserFont.cpp CBrowserForm.cpp CBrowserGraphics.cpp CBrowserHead.cpp CBrowserHeader.cpp CBrowserHistory.cpp CBrowserHtml.cpp CBrowserIFace.cpp CBrowserImage.cpp CBrowserKbd.cpp CBrowserLayout.cpp CBrowserLine.cpp CBrowserLink.cpp CBrowserList.cpp CBrowserListItem.cpp CBrowserMain.cpp CBrowserMeta.cpp CBrowserMisc.cpp CBrowserNamedImage.cpp CBrowserNoBr.cpp CBrowserObject.cpp CBrowserObjProp.cpp CBrowserOutput.cpp CBrowserOutputTag.cpp CBrowserParagraph.cpp CBrowserPre.cpp CBrowserRenderer.cpp CBrowserRule.cpp CBrowserSamp.cpp CBrowserScript.cpp CBrowserStyle.cpp CBrowserStyleData.cpp CBrowserTable.cpp CBrowserText.cpp CBrowserTitle.cpp CBrowserTT.cpp CBrowserWindow.cpp CBrowserWindowWidget.cpp CBrowserWord.cpp CBrowserXmp.cpp CBrowserDomTree.cpp CBrowserCeil.cpp CBrowserJS.cpp CQJCanvasContext2D.cpp CQJCanvas.cpp CQJCanvasFontMetrics.cpp CQJCanvasImageDataArray.cpp CQJCanvasImageData.cpp CQJCanvasLinearGradient.cpp CQJCanvasPattern.cpp CQJCanvasRadialGradient.cpp CQJCanvasWidget.cpp CQJColorEdit.cpp CQJComboBox.cpp CQJDialog.cpp CQJDocument.cpp CQJEvent.cpp CQJForm.cpp CQJHtmlCollection.cpp CQJHtmlObj.cpp CQJImage.cpp CQJInput.cpp CQJIntervalFunction.cpp CQJLineEdit.cpp CQJObject.cpp CQJSlider.cpp CQJWindow.cpp CQJWindowTimer.cpp CQHistoryLineEdit.cpp CRomanNumber.cpp CPrint.cpp CUrl.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -675,22 +706,12 @@ check: first
 
 compiler_rcc_make_all:
 compiler_rcc_clean:
-compiler_moc_header_make_all: moc_CBrowserForm.cpp moc_CBrowserIFace.cpp moc_CBrowserMain.cpp moc_CBrowserObjProp.cpp moc_CBrowserDomTree.cpp moc_CQJCanvasFontMetrics.cpp moc_CQJCanvas.cpp moc_CQJCanvasImageDataArray.cpp moc_CQJCanvasImageData.cpp moc_CQJCanvasWidget.cpp moc_CQJDialog.cpp moc_CQJDocument.cpp moc_CQJHtmlObj.cpp moc_CQJInput.cpp moc_CQJColorEdit.cpp moc_CQJLineEdit.cpp moc_CQJComboBox.cpp moc_CQJSlider.cpp moc_CQJObject.cpp moc_CQJWindow.cpp moc_CQJWindowTimer.cpp moc_CQHistoryLineEdit.cpp
+compiler_moc_header_make_all: .moc/moc_CBrowserForm.cpp .moc/moc_CBrowserIFace.cpp .moc/moc_CBrowserMain.cpp .moc/moc_CBrowserObjProp.cpp .moc/moc_CBrowserDomTree.cpp .moc/moc_CQJCanvasFontMetrics.cpp .moc/moc_CQJCanvas.cpp .moc/moc_CQJCanvasImageDataArray.cpp .moc/moc_CQJCanvasImageData.cpp .moc/moc_CQJCanvasWidget.cpp .moc/moc_CQJColorEdit.cpp .moc/moc_CQJComboBox.cpp .moc/moc_CQJDialog.cpp .moc/moc_CQJDocument.cpp .moc/moc_CQJForm.cpp .moc/moc_CQJHtmlCollection.cpp .moc/moc_CQJHtmlObj.cpp .moc/moc_CQJInput.cpp .moc/moc_CQJLineEdit.cpp .moc/moc_CQJObject.cpp .moc/moc_CQJSlider.cpp .moc/moc_CQJWindow.cpp .moc/moc_CQJWindowTimer.cpp .moc/moc_CQHistoryLineEdit.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_CBrowserForm.cpp moc_CBrowserIFace.cpp moc_CBrowserMain.cpp moc_CBrowserObjProp.cpp moc_CBrowserDomTree.cpp moc_CQJCanvasFontMetrics.cpp moc_CQJCanvas.cpp moc_CQJCanvasImageDataArray.cpp moc_CQJCanvasImageData.cpp moc_CQJCanvasWidget.cpp moc_CQJDialog.cpp moc_CQJDocument.cpp moc_CQJHtmlObj.cpp moc_CQJInput.cpp moc_CQJColorEdit.cpp moc_CQJLineEdit.cpp moc_CQJComboBox.cpp moc_CQJSlider.cpp moc_CQJObject.cpp moc_CQJWindow.cpp moc_CQJWindowTimer.cpp moc_CQHistoryLineEdit.cpp
-moc_CBrowserForm.cpp: CBrowserObject.h \
+	-$(DEL_FILE) .moc/moc_CBrowserForm.cpp .moc/moc_CBrowserIFace.cpp .moc/moc_CBrowserMain.cpp .moc/moc_CBrowserObjProp.cpp .moc/moc_CBrowserDomTree.cpp .moc/moc_CQJCanvasFontMetrics.cpp .moc/moc_CQJCanvas.cpp .moc/moc_CQJCanvasImageDataArray.cpp .moc/moc_CQJCanvasImageData.cpp .moc/moc_CQJCanvasWidget.cpp .moc/moc_CQJColorEdit.cpp .moc/moc_CQJComboBox.cpp .moc/moc_CQJDialog.cpp .moc/moc_CQJDocument.cpp .moc/moc_CQJForm.cpp .moc/moc_CQJHtmlCollection.cpp .moc/moc_CQJHtmlObj.cpp .moc/moc_CQJInput.cpp .moc/moc_CQJLineEdit.cpp .moc/moc_CQJObject.cpp .moc/moc_CQJSlider.cpp .moc/moc_CQJWindow.cpp .moc/moc_CQJWindowTimer.cpp .moc/moc_CQHistoryLineEdit.cpp
+.moc/moc_CBrowserForm.cpp: CBrowserObject.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserData.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -703,43 +724,141 @@ moc_CBrowserForm.cpp: CBrowserObject.h \
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
 		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
 		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
 		../../CImageLib/include/CImageFile.h \
-		CBrowserForm.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CBrowserForm.h -o moc_CBrowserForm.cpp
-
-moc_CBrowserIFace.cpp: CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
 		../../CJavaScript/include/CJavaScript.h \
 		../../CJavaScript/include/CJTypes.h \
 		../../CJavaScript/include/CJToken.h \
 		../../CJavaScript/include/CJKeyword.h \
 		../../CJavaScript/include/CJNameSpace.h \
 		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserForm.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CBrowserForm.h -o .moc/moc_CBrowserForm.cpp
+
+.moc/moc_CBrowserIFace.cpp: CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
 		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
 		../../CJavaScript/include/CJIdentifier.h \
 		../../CJavaScript/include/CJObj.h \
 		../../CJavaScript/include/CJObjType.h \
@@ -781,7 +900,19 @@ moc_CBrowserIFace.cpp: CBrowserTypes.h \
 		../../CImageLib/include/CImageLib.h \
 		../../CFile/include/CFile.h \
 		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		CBrowserIFace.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CBrowserIFace.h -o .moc/moc_CBrowserIFace.cpp
+
+.moc/moc_CBrowserMain.cpp: CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -794,44 +925,36 @@ moc_CBrowserIFace.cpp: CBrowserTypes.h \
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
 		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CStrUtil/include/CStrUtil.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		CBrowserIFace.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CBrowserIFace.h -o moc_CBrowserIFace.cpp
-
-moc_CBrowserMain.cpp: CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
 		CBrowserMain.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CBrowserMain.h -o moc_CBrowserMain.cpp
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CBrowserMain.h -o .moc/moc_CBrowserMain.cpp
 
-moc_CBrowserObjProp.cpp: CBrowserObjProp.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CBrowserObjProp.h -o moc_CBrowserObjProp.cpp
+.moc/moc_CBrowserObjProp.cpp: CBrowserObjProp.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CBrowserObjProp.h -o .moc/moc_CBrowserObjProp.cpp
 
-moc_CBrowserDomTree.cpp: CBrowserDomTree.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CBrowserDomTree.h -o moc_CBrowserDomTree.cpp
+.moc/moc_CBrowserDomTree.cpp: CBrowserDomTree.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CBrowserDomTree.h -o .moc/moc_CBrowserDomTree.cpp
 
-moc_CQJCanvasFontMetrics.cpp: ../../CJavaScript/include/CJObj.h \
+.moc/moc_CQJCanvasFontMetrics.cpp: ../../CJavaScript/include/CJObj.h \
 		../../CJavaScript/include/CJObjType.h \
 		../../CJavaScript/include/CJNameSpace.h \
 		../../CJavaScript/include/CJTypes.h \
@@ -842,74 +965,12 @@ moc_CQJCanvasFontMetrics.cpp: ../../CJavaScript/include/CJObj.h \
 		../../CJavaScript/include/CJValue.h \
 		CQJObject.h \
 		CQJCanvasFontMetrics.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJCanvasFontMetrics.h -o moc_CQJCanvasFontMetrics.cpp
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJCanvasFontMetrics.h -o .moc/moc_CQJCanvasFontMetrics.cpp
 
-moc_CQJCanvas.cpp: CQJHtmlObj.h \
+.moc/moc_CQJCanvas.cpp: CQJHtmlObj.h \
 		CBrowserObject.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CQJObject.h \
-		../../CJavaScript/include/CJObj.h \
-		../../CJavaScript/include/CJObjType.h \
-		../../CJavaScript/include/CJNameSpace.h \
-		../../CJavaScript/include/CJTypes.h \
-		../../CJavaScript/include/CJPropertyValue.h \
-		../../CUtil/include/COptVal.h \
-		../../CJavaScript/include/CJToken.h \
-		../../CJavaScript/include/CJDictionary.h \
-		../../CJavaScript/include/CJValue.h \
-		CQJCanvas.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJCanvas.h -o moc_CQJCanvas.cpp
-
-moc_CQJCanvasImageDataArray.cpp: ../../CJavaScript/include/CJObj.h \
-		../../CJavaScript/include/CJObjType.h \
-		../../CJavaScript/include/CJNameSpace.h \
-		../../CJavaScript/include/CJTypes.h \
-		../../CJavaScript/include/CJPropertyValue.h \
-		../../CUtil/include/COptVal.h \
-		../../CJavaScript/include/CJToken.h \
-		../../CJavaScript/include/CJDictionary.h \
-		../../CJavaScript/include/CJValue.h \
-		CQJObject.h \
-		CQJCanvasImageData.h \
-		CQJCanvasImageDataArray.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJCanvasImageDataArray.h -o moc_CQJCanvasImageDataArray.cpp
-
-moc_CQJCanvasImageData.cpp: ../../CJavaScript/include/CJObj.h \
-		../../CJavaScript/include/CJObjType.h \
-		../../CJavaScript/include/CJNameSpace.h \
-		../../CJavaScript/include/CJTypes.h \
-		../../CJavaScript/include/CJPropertyValue.h \
-		../../CUtil/include/COptVal.h \
-		../../CJavaScript/include/CJToken.h \
-		../../CJavaScript/include/CJDictionary.h \
-		../../CJavaScript/include/CJValue.h \
-		CQJObject.h \
-		CQJCanvasImageData.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJCanvasImageData.h -o moc_CQJCanvasImageData.cpp
-
-moc_CQJCanvasWidget.cpp: CBrowserObject.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserData.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -922,13 +983,60 @@ moc_CQJCanvasWidget.cpp: CBrowserObject.h \
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
 		../../CJavaScript/include/CJavaScript.h \
 		../../CJavaScript/include/CJTypes.h \
 		../../CJavaScript/include/CJToken.h \
 		../../CJavaScript/include/CJKeyword.h \
 		../../CJavaScript/include/CJNameSpace.h \
 		../../CJavaScript/include/CJPropertyValue.h \
-		../../CUtil/include/COptVal.h \
 		../../CJavaScript/include/CJIdentifier.h \
 		../../CJavaScript/include/CJObj.h \
 		../../CJavaScript/include/CJObjType.h \
@@ -966,15 +1074,12 @@ moc_CQJCanvasWidget.cpp: CBrowserObject.h \
 		../../CJavaScript/include/CJGlobalFunction.h \
 		../../CJavaScript/include/CJRealFunction.h \
 		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
 		CQJObject.h \
-		CQJCanvasWidget.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJCanvasWidget.h -o moc_CQJCanvasWidget.cpp
+		CQJCanvas.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJCanvas.h -o .moc/moc_CQJCanvas.cpp
 
-moc_CQJDialog.cpp: CQJDialog.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJDialog.h -o moc_CQJDialog.cpp
-
-moc_CQJDocument.cpp: CQJObject.h \
-		../../CJavaScript/include/CJObj.h \
+.moc/moc_CQJCanvasImageDataArray.cpp: ../../CJavaScript/include/CJObj.h \
 		../../CJavaScript/include/CJObjType.h \
 		../../CJavaScript/include/CJNameSpace.h \
 		../../CJavaScript/include/CJTypes.h \
@@ -983,76 +1088,175 @@ moc_CQJDocument.cpp: CQJObject.h \
 		../../CJavaScript/include/CJToken.h \
 		../../CJavaScript/include/CJDictionary.h \
 		../../CJavaScript/include/CJValue.h \
-		CQJDocument.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJDocument.h -o moc_CQJDocument.cpp
+		CQJObject.h \
+		CQJCanvasImageData.h \
+		CQJCanvasImageDataArray.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJCanvasImageDataArray.h -o .moc/moc_CQJCanvasImageDataArray.cpp
 
-moc_CQJHtmlObj.cpp: CBrowserObject.h \
+.moc/moc_CQJCanvasImageData.cpp: ../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CUtil/include/COptVal.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		CQJObject.h \
+		CQJCanvasImageData.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJCanvasImageData.h -o .moc/moc_CQJCanvasImageData.cpp
+
+.moc/moc_CQJCanvasWidget.cpp: CBrowserObject.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
 		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CQJObject.h \
-		../../CJavaScript/include/CJObj.h \
-		../../CJavaScript/include/CJObjType.h \
-		../../CJavaScript/include/CJNameSpace.h \
-		../../CJavaScript/include/CJTypes.h \
-		../../CJavaScript/include/CJPropertyValue.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
 		../../CUtil/include/COptVal.h \
-		../../CJavaScript/include/CJToken.h \
-		../../CJavaScript/include/CJDictionary.h \
-		../../CJavaScript/include/CJValue.h \
-		CQJHtmlObj.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJHtmlObj.h -o moc_CQJHtmlObj.cpp
-
-moc_CQJInput.cpp: CQJHtmlObj.h \
-		CBrowserObject.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
 		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CQJObject.h \
-		../../CJavaScript/include/CJObj.h \
-		../../CJavaScript/include/CJObjType.h \
-		../../CJavaScript/include/CJNameSpace.h \
-		../../CJavaScript/include/CJTypes.h \
-		../../CJavaScript/include/CJPropertyValue.h \
-		../../CUtil/include/COptVal.h \
-		../../CJavaScript/include/CJToken.h \
-		../../CJavaScript/include/CJDictionary.h \
-		../../CJavaScript/include/CJValue.h \
-		CQJInput.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJInput.h -o moc_CQJInput.cpp
-
-moc_CQJColorEdit.cpp: CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
 		../../CJavaScript/include/CJavaScript.h \
 		../../CJavaScript/include/CJTypes.h \
 		../../CJavaScript/include/CJToken.h \
 		../../CJavaScript/include/CJKeyword.h \
 		../../CJavaScript/include/CJNameSpace.h \
 		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CQJObject.h \
+		CQJCanvasWidget.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJCanvasWidget.h -o .moc/moc_CQJCanvasWidget.cpp
+
+.moc/moc_CQJColorEdit.cpp: CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
 		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
 		../../CJavaScript/include/CJIdentifier.h \
 		../../CJavaScript/include/CJObj.h \
 		../../CJavaScript/include/CJObjType.h \
@@ -1091,80 +1295,48 @@ moc_CQJColorEdit.cpp: CBrowserTypes.h \
 		../../CJavaScript/include/CJRealFunction.h \
 		../../CJavaScript/include/CJRandFunction.h \
 		CQJColorEdit.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJColorEdit.h -o moc_CQJColorEdit.cpp
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJColorEdit.h -o .moc/moc_CQJColorEdit.cpp
 
-moc_CQJLineEdit.cpp: CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
+.moc/moc_CQJComboBox.cpp: CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
 		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
 		../../CJavaScript/include/CJavaScript.h \
 		../../CJavaScript/include/CJTypes.h \
 		../../CJavaScript/include/CJToken.h \
 		../../CJavaScript/include/CJKeyword.h \
 		../../CJavaScript/include/CJNameSpace.h \
 		../../CJavaScript/include/CJPropertyValue.h \
-		../../CUtil/include/COptVal.h \
-		../../CJavaScript/include/CJIdentifier.h \
-		../../CJavaScript/include/CJObj.h \
-		../../CJavaScript/include/CJObjType.h \
-		../../CJavaScript/include/CJDictionary.h \
-		../../CJavaScript/include/CJValue.h \
-		../../CJavaScript/include/CJUndefined.h \
-		../../CJavaScript/include/CJNull.h \
-		../../CJavaScript/include/CJTrue.h \
-		../../CJavaScript/include/CJFalse.h \
-		../../CJavaScript/include/CJBoolean.h \
-		../../CJavaScript/include/CJNumber.h \
-		../../CJavaScript/include/CJUtil.h \
-		../../COS/include/COSNaN.h \
-		../../CJavaScript/include/CJString.h \
-		../../CJavaScript/include/CJArray.h \
-		../../CJavaScript/include/CJOperator.h \
-		../../CJavaScript/include/CJFunctionBase.h \
-		../../CJavaScript/include/CJRegExp.h \
-		../../CRegExp/include/CRegExp.h \
-		../../CJavaScript/include/CJDate.h \
-		../../CJavaScript/include/CJFunction.h \
-		../../CJavaScript/include/CJLValue.h \
-		../../CJavaScript/include/CJObject.h \
-		../../CJavaScript/include/CJTypeValue.h \
-		../../CJavaScript/include/CJUserObject.h \
-		../../CJavaScript/include/CJTypeFunction.h \
-		../../CJavaScript/include/CJGetterSetter.h \
-		../../CJavaScript/include/CJExecBlock.h \
-		../../CJavaScript/include/CJExecStatement.h \
-		../../CJavaScript/include/CJExecExpression.h \
-		../../CJavaScript/include/CJExecExpressionList.h \
-		../../CJavaScript/include/CJTypeObjectFunction.h \
-		../../CJavaScript/include/CJExecData.h \
-		../../CJavaScript/include/CJPropertyData.h \
-		../../CJavaScript/include/CJGlobalFunction.h \
-		../../CJavaScript/include/CJRealFunction.h \
-		../../CJavaScript/include/CJRandFunction.h \
-		CQJLineEdit.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJLineEdit.h -o moc_CQJLineEdit.cpp
-
-moc_CQJComboBox.cpp: CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CJavaScript/include/CJavaScript.h \
-		../../CJavaScript/include/CJTypes.h \
-		../../CJavaScript/include/CJToken.h \
-		../../CJavaScript/include/CJKeyword.h \
-		../../CJavaScript/include/CJNameSpace.h \
-		../../CJavaScript/include/CJPropertyValue.h \
-		../../CUtil/include/COptVal.h \
 		../../CJavaScript/include/CJIdentifier.h \
 		../../CJavaScript/include/CJObj.h \
 		../../CJavaScript/include/CJObjType.h \
@@ -1203,24 +1375,504 @@ moc_CQJComboBox.cpp: CBrowserTypes.h \
 		../../CJavaScript/include/CJRealFunction.h \
 		../../CJavaScript/include/CJRandFunction.h \
 		CQJComboBox.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJComboBox.h -o moc_CQJComboBox.cpp
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJComboBox.h -o .moc/moc_CQJComboBox.cpp
 
-moc_CQJSlider.cpp: CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
+.moc/moc_CQJDialog.cpp: CQJDialog.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJDialog.h -o .moc/moc_CQJDialog.cpp
+
+.moc/moc_CQJDocument.cpp: CQJObject.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CUtil/include/COptVal.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		CQJDocument.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJDocument.h -o .moc/moc_CQJDocument.cpp
+
+.moc/moc_CQJForm.cpp: CQJHtmlObj.h \
+		CBrowserObject.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
 		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
 		../../CJavaScript/include/CJavaScript.h \
 		../../CJavaScript/include/CJTypes.h \
 		../../CJavaScript/include/CJToken.h \
 		../../CJavaScript/include/CJKeyword.h \
 		../../CJavaScript/include/CJNameSpace.h \
 		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CQJObject.h \
+		CQJForm.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJForm.h -o .moc/moc_CQJForm.cpp
+
+.moc/moc_CQJHtmlCollection.cpp: ../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJPropertyValue.h \
 		../../CUtil/include/COptVal.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		CQJObject.h \
+		CQJHtmlCollection.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJHtmlCollection.h -o .moc/moc_CQJHtmlCollection.cpp
+
+.moc/moc_CQJHtmlObj.cpp: CBrowserObject.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CQJObject.h \
+		CQJHtmlObj.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJHtmlObj.h -o .moc/moc_CQJHtmlObj.cpp
+
+.moc/moc_CQJInput.cpp: CQJHtmlObj.h \
+		CBrowserObject.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CQJObject.h \
+		CQJInput.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJInput.h -o .moc/moc_CQJInput.cpp
+
+.moc/moc_CQJLineEdit.cpp: CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CQJLineEdit.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJLineEdit.h -o .moc/moc_CQJLineEdit.cpp
+
+.moc/moc_CQJObject.cpp: ../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CUtil/include/COptVal.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		CQJObject.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJObject.h -o .moc/moc_CQJObject.cpp
+
+.moc/moc_CQJSlider.cpp: CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
 		../../CJavaScript/include/CJIdentifier.h \
 		../../CJavaScript/include/CJObj.h \
 		../../CJavaScript/include/CJObjType.h \
@@ -1259,21 +1911,9 @@ moc_CQJSlider.cpp: CBrowserTypes.h \
 		../../CJavaScript/include/CJRealFunction.h \
 		../../CJavaScript/include/CJRandFunction.h \
 		CQJSlider.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJSlider.h -o moc_CQJSlider.cpp
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJSlider.h -o .moc/moc_CQJSlider.cpp
 
-moc_CQJObject.cpp: ../../CJavaScript/include/CJObj.h \
-		../../CJavaScript/include/CJObjType.h \
-		../../CJavaScript/include/CJNameSpace.h \
-		../../CJavaScript/include/CJTypes.h \
-		../../CJavaScript/include/CJPropertyValue.h \
-		../../CUtil/include/COptVal.h \
-		../../CJavaScript/include/CJToken.h \
-		../../CJavaScript/include/CJDictionary.h \
-		../../CJavaScript/include/CJValue.h \
-		CQJObject.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJObject.h -o moc_CQJObject.cpp
-
-moc_CQJWindow.cpp: CQJObject.h \
+.moc/moc_CQJWindow.cpp: CQJObject.h \
 		../../CJavaScript/include/CJObj.h \
 		../../CJavaScript/include/CJObjType.h \
 		../../CJavaScript/include/CJNameSpace.h \
@@ -1284,9 +1924,9 @@ moc_CQJWindow.cpp: CQJObject.h \
 		../../CJavaScript/include/CJDictionary.h \
 		../../CJavaScript/include/CJValue.h \
 		CQJWindow.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJWindow.h -o moc_CQJWindow.cpp
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJWindow.h -o .moc/moc_CQJWindow.cpp
 
-moc_CQJWindowTimer.cpp: CQJWindow.h \
+.moc/moc_CQJWindowTimer.cpp: CQJWindow.h \
 		CQJObject.h \
 		../../CJavaScript/include/CJObj.h \
 		../../CJavaScript/include/CJObjType.h \
@@ -1298,11 +1938,11 @@ moc_CQJWindowTimer.cpp: CQJWindow.h \
 		../../CJavaScript/include/CJDictionary.h \
 		../../CJavaScript/include/CJValue.h \
 		CQJWindowTimer.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJWindowTimer.h -o moc_CQJWindowTimer.cpp
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQJWindowTimer.h -o .moc/moc_CQJWindowTimer.cpp
 
-moc_CQHistoryLineEdit.cpp: ../../CUtil/include/CAutoPtr.h \
+.moc/moc_CQHistoryLineEdit.cpp: ../../CUtil/include/CAutoPtr.h \
 		CQHistoryLineEdit.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQHistoryLineEdit.h -o moc_CQHistoryLineEdit.cpp
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQHistoryLineEdit.h -o .moc/moc_CQHistoryLineEdit.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -1321,20 +1961,7 @@ compiler_clean: compiler_moc_header_clean
 ../obj/CBrowserAddress.o: CBrowserAddress.cpp CBrowserAddress.h \
 		CBrowserObject.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserOutput.h \
-		CBrowserData.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -1347,281 +1974,60 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CISize2D.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIPoint2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CUtil/include/COptVal.h \
-		../../CImageLib/include/CImagePtr.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CStrUtil/include/CStrUtil.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserAddress.o CBrowserAddress.cpp
-
-../obj/CBrowserBaseFont.o: CBrowserBaseFont.cpp CBrowserBaseFont.h \
-		CBrowserObject.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
 		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserData.h \
-		../../CUtil/include/CRGBA.h \
-		../../CUtil/include/CRGB.h \
-		../../CUtil/include/CHSV.h \
-		../../CUtil/include/CRGBUtil.h \
-		../../CUtil/include/CCMYK.h \
-		../../CUtil/include/CHSL.h \
-		../../CUtil/include/CHSB.h \
-		../../CUtil/include/CHSI.h \
-		../../CMath/include/CMathGen.h \
-		../../COS/include/NaN.h \
-		../../CRGBName/include/CRGBName.h \
-		../../CUtil/include/CColorComponent.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserOutput.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
 		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CStrUtil/include/CStrUtil.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserBaseFont.o CBrowserBaseFont.cpp
-
-../obj/CBrowserBlockQuote.o: CBrowserBlockQuote.cpp CBrowserBlockQuote.h \
-		CBrowserObject.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserOutput.h \
-		CBrowserData.h \
-		../../CUtil/include/CRGBA.h \
-		../../CUtil/include/CRGB.h \
-		../../CUtil/include/CHSV.h \
-		../../CUtil/include/CRGBUtil.h \
-		../../CUtil/include/CCMYK.h \
-		../../CUtil/include/CHSL.h \
-		../../CUtil/include/CHSB.h \
-		../../CUtil/include/CHSI.h \
-		../../CMath/include/CMathGen.h \
-		../../COS/include/NaN.h \
-		../../CRGBName/include/CRGBName.h \
-		../../CUtil/include/CColorComponent.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
 		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
 		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CISize2D.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIPoint2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CUtil/include/COptVal.h \
-		../../CImageLib/include/CImagePtr.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CStrUtil/include/CStrUtil.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserBlockQuote.o CBrowserBlockQuote.cpp
-
-../obj/CBrowserBody.o: CBrowserBody.cpp CBrowserBody.h \
-		CBrowserObject.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserData.h \
-		../../CUtil/include/CRGBA.h \
-		../../CUtil/include/CRGB.h \
-		../../CUtil/include/CHSV.h \
-		../../CUtil/include/CRGBUtil.h \
-		../../CUtil/include/CCMYK.h \
-		../../CUtil/include/CHSL.h \
-		../../CUtil/include/CHSB.h \
-		../../CUtil/include/CHSI.h \
-		../../CMath/include/CMathGen.h \
-		../../COS/include/NaN.h \
-		../../CRGBName/include/CRGBName.h \
-		../../CUtil/include/CColorComponent.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserOutput.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
 		../../CFile/include/CFile.h \
 		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
 		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CISize2D.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIPoint2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CUtil/include/COptVal.h \
-		../../CImageLib/include/CImagePtr.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
 		../../CImageLib/include/CImageFile.h \
-		CBrowserDocument.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserBody.o CBrowserBody.cpp
-
-../obj/CBrowserBreak.o: CBrowserBreak.cpp CBrowserBreak.h \
-		CBrowserObject.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
 		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
+		CTextBox.h \
+		CBrowserRegion.h \
 		CBrowserData.h \
-		../../CUtil/include/CRGBA.h \
-		../../CUtil/include/CRGB.h \
-		../../CUtil/include/CHSV.h \
-		../../CUtil/include/CRGBUtil.h \
-		../../CUtil/include/CCMYK.h \
-		../../CUtil/include/CHSL.h \
-		../../CUtil/include/CHSB.h \
-		../../CUtil/include/CHSI.h \
-		../../CMath/include/CMathGen.h \
-		../../COS/include/NaN.h \
-		../../CRGBName/include/CRGBName.h \
-		../../CUtil/include/CColorComponent.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserOutput.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CISize2D.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIPoint2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CUtil/include/COptVal.h \
-		../../CImageLib/include/CImagePtr.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CStrUtil/include/CStrUtil.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserBreak.o CBrowserBreak.cpp
-
-../obj/CBrowserCanvas.o: CBrowserCanvas.cpp CBrowserCanvas.h \
-		CBrowserObject.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserData.h \
-		../../CUtil/include/CRGBA.h \
-		../../CUtil/include/CRGB.h \
-		../../CUtil/include/CHSV.h \
-		../../CUtil/include/CRGBUtil.h \
-		../../CUtil/include/CCMYK.h \
-		../../CUtil/include/CHSL.h \
-		../../CUtil/include/CHSB.h \
-		../../CUtil/include/CHSI.h \
-		../../CMath/include/CMathGen.h \
-		../../COS/include/NaN.h \
-		../../CRGBName/include/CRGBName.h \
-		../../CUtil/include/CColorComponent.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
 		../../CJavaScript/include/CJavaScript.h \
 		../../CJavaScript/include/CJTypes.h \
 		../../CJavaScript/include/CJToken.h \
 		../../CJavaScript/include/CJKeyword.h \
 		../../CJavaScript/include/CJNameSpace.h \
 		../../CJavaScript/include/CJPropertyValue.h \
-		../../CUtil/include/COptVal.h \
 		../../CJavaScript/include/CJIdentifier.h \
 		../../CJavaScript/include/CJObj.h \
 		../../CJavaScript/include/CJObjType.h \
@@ -1659,13 +2065,504 @@ compiler_clean: compiler_moc_header_clean
 		../../CJavaScript/include/CJGlobalFunction.h \
 		../../CJavaScript/include/CJRealFunction.h \
 		../../CJavaScript/include/CJRandFunction.h \
-		CQJCanvasWidget.h \
-		CQJObject.h \
-		CBrowserWindowWidget.h \
+		CBrowserProperty.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserAddress.o CBrowserAddress.cpp
+
+../obj/CBrowserArea.o: CBrowserArea.cpp CBrowserArea.h \
+		CBrowserObject.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserArea.o CBrowserArea.cpp
+
+../obj/CBrowserBaseFont.o: CBrowserBaseFont.cpp CBrowserBaseFont.h \
+		CBrowserObject.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserBaseFont.o CBrowserBaseFont.cpp
+
+../obj/CBrowserBlockQuote.o: CBrowserBlockQuote.cpp CBrowserBlockQuote.h \
+		CBrowserObject.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserBlockQuote.o CBrowserBlockQuote.cpp
+
+../obj/CBrowserBody.o: CBrowserBody.cpp CBrowserBody.h \
+		CBrowserObject.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h \
+		CBrowserDocument.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserBody.o CBrowserBody.cpp
+
+../obj/CBrowserBox.o: CBrowserBox.cpp CBrowserBox.h \
+		CBrowserWord.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
 		../../CImageLib/include/CImageLib.h \
 		../../CFile/include/CFile.h \
 		../../CFile/include/CFileBase.h \
 		../../CFile/include/CFileType.h \
+		../../CUtil/include/CAlignType.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
 		../../CImageLib/include/CImageState.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
@@ -1673,43 +2570,286 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
-		../../CImageLib/include/CImagePtr.h \
-		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
 		../../CImageLib/include/CImageFile.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserWindow.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		CBrowserOutput.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		CBrowserFont.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h \
+		CBrowserMain.h \
+		CBrowserLine.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserBox.o CBrowserBox.cpp
+
+../obj/CBrowserBreak.o: CBrowserBreak.cpp CBrowserBreak.h \
+		CBrowserObject.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
 		../../CFont/include/CFont.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserBreak.o CBrowserBreak.cpp
+
+../obj/CBrowserCanvas.o: CBrowserCanvas.cpp CBrowserCanvas.h \
+		CBrowserObject.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CQJCanvasWidget.h \
+		CQJObject.h \
+		CBrowserWindowWidget.h \
 		CBrowserMain.h \
 		CBrowserText.h \
 		CBrowserLink.h \
 		CBrowserWindow.h \
-		CBrowserSymbol.h \
 		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
 		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
+		../../CCSS/include/CCSS.h \
 		CBrowserDocument.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserCanvas.o CBrowserCanvas.cpp
 
 ../obj/CBrowserCenter.o: CBrowserCenter.cpp CBrowserCenter.h \
 		CBrowserObject.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserOutput.h \
-		CBrowserData.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -1722,102 +2862,60 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
 		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserCenter.o CBrowserCenter.cpp
-
-../obj/CBrowserCode.o: CBrowserCode.cpp CBrowserCode.h \
-		CBrowserObject.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
 		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserOutput.h \
+		CTextBox.h \
+		CBrowserRegion.h \
 		CBrowserData.h \
-		../../CUtil/include/CRGBA.h \
-		../../CUtil/include/CRGB.h \
-		../../CUtil/include/CHSV.h \
-		../../CUtil/include/CRGBUtil.h \
-		../../CUtil/include/CCMYK.h \
-		../../CUtil/include/CHSL.h \
-		../../CUtil/include/CHSB.h \
-		../../CUtil/include/CHSI.h \
-		../../CMath/include/CMathGen.h \
-		../../COS/include/NaN.h \
-		../../CRGBName/include/CRGBName.h \
-		../../CUtil/include/CColorComponent.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CISize2D.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIPoint2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CUtil/include/COptVal.h \
-		../../CImageLib/include/CImagePtr.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CStrUtil/include/CStrUtil.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserCode.o CBrowserCode.cpp
-
-../obj/CBrowserWindowWidget.o: CBrowserWindowWidget.cpp CBrowserWindowWidget.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
 		../../CJavaScript/include/CJavaScript.h \
 		../../CJavaScript/include/CJTypes.h \
 		../../CJavaScript/include/CJToken.h \
 		../../CJavaScript/include/CJKeyword.h \
 		../../CJavaScript/include/CJNameSpace.h \
 		../../CJavaScript/include/CJPropertyValue.h \
-		../../CUtil/include/COptVal.h \
 		../../CJavaScript/include/CJIdentifier.h \
 		../../CJavaScript/include/CJObj.h \
 		../../CJavaScript/include/CJObjType.h \
@@ -1855,10 +2953,19 @@ compiler_clean: compiler_moc_header_clean
 		../../CJavaScript/include/CJGlobalFunction.h \
 		../../CJavaScript/include/CJRealFunction.h \
 		../../CJavaScript/include/CJRandFunction.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
+		CBrowserProperty.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserCenter.o CBrowserCenter.cpp
+
+../obj/CBrowserCode.o: CBrowserCode.cpp CBrowserCode.h \
+		CBrowserObject.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -1871,86 +2978,265 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
 		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
 		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserCode.o CBrowserCode.cpp
+
+../obj/CBrowser.o: CBrowser.cpp ../../CQUtil/include/CQApp.h \
+		../../CArgs/include/CArgs.h \
+		CBrowserMain.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowser.o CBrowser.cpp
+
+../obj/CBrowserCSSStyle.o: CBrowserCSSStyle.cpp CBrowserCSSStyle.h \
+		CBrowserObject.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
 		../../CFont/include/CFont.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
-		CBrowserGraphics.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserObject.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
 		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserOutput.h \
+		CTextBox.h \
+		CBrowserRegion.h \
 		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
 		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		CBrowserIFace.h \
-		../../CQUtil/include/CQMainWindow.h \
-		CBrowserJS.h \
-		CQJDocument.h \
-		CQJObject.h \
-		CQJWindow.h \
-		CQJEvent.h \
-		../../CUtil/include/CEnv.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserWindowWidget.o CBrowserWindowWidget.cpp
+		../../CCSS/include/CCSS.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserCSSStyle.o CBrowserCSSStyle.cpp
 
 ../obj/CBrowserDiv.o: CBrowserDiv.cpp CBrowserDiv.h \
 		CBrowserObject.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserData.h \
-		../../CUtil/include/CRGBA.h \
-		../../CUtil/include/CRGB.h \
-		../../CUtil/include/CHSV.h \
-		../../CUtil/include/CRGBUtil.h \
-		../../CUtil/include/CCMYK.h \
-		../../CUtil/include/CHSL.h \
-		../../CUtil/include/CHSB.h \
-		../../CUtil/include/CHSI.h \
-		../../CMath/include/CMathGen.h \
-		../../COS/include/NaN.h \
-		../../CRGBName/include/CRGBName.h \
-		../../CUtil/include/CColorComponent.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserDiv.o CBrowserDiv.cpp
-
-../obj/CBrowserDocument.o: CBrowserDocument.cpp CBrowserDocument.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CHtml/include/CHtmlTypes.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -1963,31 +3249,221 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserObject.h \
-		CHtmlLayoutBox.h \
-		CBrowserOutput.h \
-		CBrowserData.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
 		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
 		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserDiv.o CBrowserDiv.cpp
+
+../obj/CBrowserDocument.o: CBrowserDocument.cpp CBrowserDocument.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CHtml/include/CHtmlTypes.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		../../CStrUtil/include/CStrUtil.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		CBrowserFont.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		../../CCSS/include/CCSS.h \
 		CBrowserLink.h \
+		CBrowserObject.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		CBrowserMargin.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserBackground.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
 		CBrowserFile.h \
 		CUrl.h \
 		CBrowserText.h
@@ -1995,22 +3471,7 @@ compiler_clean: compiler_moc_header_clean
 
 ../obj/CBrowserFile.o: CBrowserFile.cpp CBrowserFile.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		CUrl.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserObject.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserOutput.h \
-		CBrowserData.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -2023,29 +3484,50 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
 		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
-		../../CImageLib/include/CImageMgr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CUrl.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserData.h \
+		CBrowserClear.h \
 		../../CStrUtil/include/CStrUtil.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		CBrowserFont.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
 		../../CImageLib/include/CImageAnim.h \
 		../../CImageLib/include/CImageFile.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CHtml/include/CHtmlTypes.h \
+		../../CCSS/include/CCSS.h \
 		CBrowserCeil.h \
 		CBrowserJS.h \
 		../../CJavaScript/include/CJavaScript.h \
@@ -2101,22 +3583,7 @@ compiler_clean: compiler_moc_header_clean
 
 ../obj/CBrowserFont.o: CBrowserFont.cpp CBrowserFont.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -2129,77 +3596,61 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CISize2D.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIPoint2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CUtil/include/COptVal.h \
-		../../CImageLib/include/CImagePtr.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CStrUtil/include/CStrUtil.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h \
-		../../CFont/include/CFontMgr.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserFont.o CBrowserFont.cpp
-
-../obj/CBrowserForm.o: CBrowserForm.cpp CBrowserForm.h \
-		CBrowserObject.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
 		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserData.h \
-		../../CUtil/include/CRGBA.h \
-		../../CUtil/include/CRGB.h \
-		../../CUtil/include/CHSV.h \
-		../../CUtil/include/CRGBUtil.h \
-		../../CUtil/include/CCMYK.h \
-		../../CUtil/include/CHSL.h \
-		../../CUtil/include/CHSB.h \
-		../../CUtil/include/CHSI.h \
-		../../CMath/include/CMathGen.h \
-		../../COS/include/NaN.h \
-		../../CRGBName/include/CRGBName.h \
-		../../CUtil/include/CColorComponent.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
 		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
 		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CStrUtil/include/CStrUtil.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h \
-		CBrowserImage.h \
-		CBrowserDocument.h \
-		../../CHtml/include/CHtmlParser.h \
 		../../CUtil/include/CAutoPtr.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserOutput.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		../../CStrUtil/include/CStrUtil.h \
 		../../CFont/include/CFont.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
-		CBrowserIFace.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CHtml/include/CHtmlTypes.h \
+		../../CCSS/include/CCSS.h \
+		CBrowserBaseFont.h \
+		CBrowserObject.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		CBrowserMargin.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserBackground.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
 		../../CJavaScript/include/CJavaScript.h \
 		../../CJavaScript/include/CJTypes.h \
 		../../CJavaScript/include/CJToken.h \
@@ -2243,6 +3694,127 @@ compiler_clean: compiler_moc_header_clean
 		../../CJavaScript/include/CJGlobalFunction.h \
 		../../CJavaScript/include/CJRealFunction.h \
 		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		../../CFont/include/CFontMgr.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserFont.o CBrowserFont.cpp
+
+../obj/CBrowserForm.o: CBrowserForm.cpp CBrowserForm.h \
+		CBrowserObject.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserImage.h \
+		CBrowserDocument.h \
+		../../CHtml/include/CHtmlParser.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CCSS/include/CCSS.h \
+		CBrowserIFace.h \
 		../../CQUtil/include/CQMainWindow.h \
 		CBrowserWindowWidget.h \
 		CBrowserCeil.h \
@@ -2254,8 +3826,6 @@ compiler_clean: compiler_moc_header_clean
 		../../CQUtil/include/CQUtil.h \
 		../../CUtil/include/CEvent.h \
 		../../CUtil/include/CKeyType.h \
-		../../CUtil/include/CLineDash.h \
-		../../CUtil/include/CILineDash.h \
 		../../CMath/include/CAngle.h \
 		../../CMath/include/CPoint2D.h \
 		../../CMath/include/CBBox2D.h \
@@ -2268,19 +3838,9 @@ compiler_clean: compiler_moc_header_clean
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserForm.o CBrowserForm.cpp
 
 ../obj/CBrowserGraphics.o: CBrowserGraphics.cpp CBrowserGraphics.h \
+		CBrowserRenderer.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -2293,16 +3853,30 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
 		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
 		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
@@ -2356,54 +3930,14 @@ compiler_clean: compiler_moc_header_clean
 		../../CJavaScript/include/CJRandFunction.h \
 		../../CQUtil/include/CQMainWindow.h \
 		CBrowserWindowWidget.h \
-		../../CQUtil/include/CQUtil.h \
-		../../CUtil/include/CEvent.h \
-		../../CUtil/include/CKeyType.h \
-		../../CUtil/include/CLineDash.h \
-		../../CUtil/include/CILineDash.h \
-		../../CMath/include/CAngle.h \
-		../../CMath/include/CPoint2D.h \
-		../../CMath/include/CBBox2D.h \
-		../../CMath/include/CVector2D.h \
-		../../CMath/include/CSize2D.h \
-		../../CMath/include/CMatrix2D.h \
-		../../CMath/include/CMathMacros.h \
-		../../CMath/include/CMatrixType.h \
-		../../CUtil/include/CThrow.h \
 		../../CFont/include/CFontMgr.h \
-		CPrint.h \
-		../../CUtil/include/CAutoPtr.h
+		CPrint.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserGraphics.o CBrowserGraphics.cpp
 
 ../obj/CBrowserHead.o: CBrowserHead.cpp CBrowserHead.h \
 		CBrowserObject.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserHead.o CBrowserHead.cpp
-
-../obj/CBrowserHeader.o: CBrowserHeader.cpp CBrowserHeader.h \
-		CBrowserObject.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserData.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -2416,161 +3950,434 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		../../CFont/include/CFont.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
 		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
 		../../CImageLib/include/CImageLib.h \
 		../../CFile/include/CFile.h \
 		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
 		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CISize2D.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIPoint2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CUtil/include/COptVal.h \
-		../../CImageLib/include/CImagePtr.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
 		../../CImageLib/include/CImageFile.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserOutput.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		CBrowserFont.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserHeader.o CBrowserHeader.cpp
-
-../obj/CBrowserHistory.o: CBrowserHistory.cpp CBrowserHistory.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserObject.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
 		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserOutput.h \
+		CTextBox.h \
+		CBrowserRegion.h \
 		CBrowserData.h \
-		../../CUtil/include/CRGBA.h \
-		../../CUtil/include/CRGB.h \
-		../../CUtil/include/CHSV.h \
-		../../CUtil/include/CRGBUtil.h \
-		../../CUtil/include/CCMYK.h \
-		../../CUtil/include/CHSL.h \
-		../../CUtil/include/CHSB.h \
-		../../CUtil/include/CHSI.h \
-		../../CMath/include/CMathGen.h \
-		../../COS/include/NaN.h \
-		../../CRGBName/include/CRGBName.h \
-		../../CUtil/include/CColorComponent.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CISize2D.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIPoint2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CUtil/include/COptVal.h \
-		../../CImageLib/include/CImagePtr.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CStrUtil/include/CStrUtil.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserHistory.o CBrowserHistory.cpp
-
-../obj/CBrowserHtml.o: CBrowserHtml.cpp CBrowserHtml.h \
-		CBrowserObject.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserData.h \
-		../../CUtil/include/CRGBA.h \
-		../../CUtil/include/CRGB.h \
-		../../CUtil/include/CHSV.h \
-		../../CUtil/include/CRGBUtil.h \
-		../../CUtil/include/CCMYK.h \
-		../../CUtil/include/CHSL.h \
-		../../CUtil/include/CHSB.h \
-		../../CUtil/include/CHSI.h \
-		../../CMath/include/CMathGen.h \
-		../../COS/include/NaN.h \
-		../../CRGBName/include/CRGBName.h \
-		../../CUtil/include/CColorComponent.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserOutput.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CISize2D.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIPoint2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CUtil/include/COptVal.h \
-		../../CImageLib/include/CImagePtr.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CStrUtil/include/CStrUtil.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h \
-		CBrowserDocument.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserHtml.o CBrowserHtml.cpp
-
-../obj/CBrowserIFace.o: CBrowserIFace.cpp CBrowserIFace.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
 		../../CJavaScript/include/CJavaScript.h \
 		../../CJavaScript/include/CJTypes.h \
 		../../CJavaScript/include/CJToken.h \
 		../../CJavaScript/include/CJKeyword.h \
 		../../CJavaScript/include/CJNameSpace.h \
 		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserHead.o CBrowserHead.cpp
+
+../obj/CBrowserHeader.o: CBrowserHeader.cpp CBrowserHeader.h \
+		CBrowserObject.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
 		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserHeader.o CBrowserHeader.cpp
+
+../obj/CBrowserHistory.o: CBrowserHistory.cpp CBrowserHistory.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		../../CStrUtil/include/CStrUtil.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		CBrowserFont.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CHtml/include/CHtmlTypes.h \
+		../../CCSS/include/CCSS.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserHistory.o CBrowserHistory.cpp
+
+../obj/CBrowserHtml.o: CBrowserHtml.cpp CBrowserHtml.h \
+		CBrowserObject.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h \
+		CBrowserDocument.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserHtml.o CBrowserHtml.cpp
+
+../obj/CBrowserIFace.o: CBrowserIFace.cpp CBrowserIFace.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
 		../../CJavaScript/include/CJIdentifier.h \
 		../../CJavaScript/include/CJObj.h \
 		../../CJavaScript/include/CJObjType.h \
@@ -2612,28 +4419,7 @@ compiler_clean: compiler_moc_header_clean
 		../../CImageLib/include/CImageLib.h \
 		../../CFile/include/CFile.h \
 		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CUtil/include/CRGBA.h \
-		../../CUtil/include/CRGB.h \
-		../../CUtil/include/CHSV.h \
-		../../CUtil/include/CRGBUtil.h \
-		../../CUtil/include/CCMYK.h \
-		../../CUtil/include/CHSL.h \
-		../../CUtil/include/CHSB.h \
-		../../CUtil/include/CHSI.h \
-		../../CMath/include/CMathGen.h \
-		../../COS/include/NaN.h \
-		../../CRGBName/include/CRGBName.h \
-		../../CUtil/include/CColorComponent.h \
 		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CISize2D.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIPoint2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CImageLib/include/CImagePtr.h \
-		../../CUtil/include/CRefPtr.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
@@ -2643,15 +4429,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CUtil/include/CFlags.h \
 		CBrowserWindowWidget.h \
 		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserObject.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
 		CBrowserOutput.h \
 		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		CBrowserFont.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
 		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
+		../../CHtml/include/CHtmlTypes.h \
+		../../CCSS/include/CCSS.h \
+		CBrowserMain.h \
 		CBrowserGraphics.h \
+		CBrowserRenderer.h \
 		CBrowserJS.h \
 		CBrowserDomTree.h \
 		CQJDocument.h \
@@ -2667,17 +4458,7 @@ compiler_clean: compiler_moc_header_clean
 ../obj/CBrowserImage.o: CBrowserImage.cpp CBrowserImage.h \
 		CBrowserObject.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserData.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -2690,57 +4471,115 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
 		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
 		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
 		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
 		CBrowserNamedImage.h \
 		CBrowserMain.h \
 		CBrowserText.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
 		CBrowserLink.h \
 		CBrowserWindow.h \
-		CBrowserSymbol.h \
 		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
 		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		CBrowserDocument.h \
-		CBrowserProperty.h
+		../../CCSS/include/CCSS.h \
+		CBrowserDocument.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserImage.o CBrowserImage.cpp
 
 ../obj/CBrowserKbd.o: CBrowserKbd.cpp CBrowserKbd.h \
 		CBrowserObject.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserOutput.h \
-		CBrowserData.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -2753,101 +4592,294 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		../../CHtml/include/CHtmlParser.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
 		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
 		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CISize2D.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIPoint2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CUtil/include/COptVal.h \
-		../../CImageLib/include/CImagePtr.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CStrUtil/include/CStrUtil.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserKbd.o CBrowserKbd.cpp
-
-../obj/CBrowserLabel.o: CBrowserLabel.cpp CBrowserLabel.h \
-		CBrowserObject.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
 		../../CImageLib/include/CImageLib.h \
 		../../CFile/include/CFile.h \
 		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CUtil/include/CRGBA.h \
-		../../CUtil/include/CRGB.h \
-		../../CUtil/include/CHSV.h \
-		../../CUtil/include/CRGBUtil.h \
-		../../CUtil/include/CCMYK.h \
-		../../CUtil/include/CHSL.h \
-		../../CUtil/include/CHSB.h \
-		../../CUtil/include/CHSI.h \
-		../../CMath/include/CMathGen.h \
-		../../COS/include/NaN.h \
-		../../CRGBName/include/CRGBName.h \
-		../../CUtil/include/CColorComponent.h \
 		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CISize2D.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIPoint2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CUtil/include/COptVal.h \
-		../../CImageLib/include/CImagePtr.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
 		../../CImageLib/include/CImageFile.h \
-		CBrowserText.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
 		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
 		CBrowserWindow.h \
-		CBrowserSymbol.h \
 		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
 		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserKbd.o CBrowserKbd.cpp
+
+../obj/CBrowserLayout.o: CBrowserLayout.cpp CBrowserLayout.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIVector2D.h \
+		CBrowserWindow.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
 		../../CUtil/include/CAutoPtr.h \
-		CBrowserLink.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserLabel.o CBrowserLabel.cpp
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserOutput.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		../../CStrUtil/include/CStrUtil.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		CBrowserFont.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CHtml/include/CHtmlTypes.h \
+		../../CCSS/include/CCSS.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		CBrowserMargin.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		CTextBox.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserLayout.o CBrowserLayout.cpp
+
+../obj/CBrowserLine.o: CBrowserLine.cpp CBrowserLine.h \
+		CBrowserWord.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/CAlignType.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserWindow.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		CBrowserOutput.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		CBrowserFont.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CHtml/include/CHtmlTypes.h \
+		../../CCSS/include/CCSS.h \
+		CBrowserForm.h \
+		CBrowserObject.h \
+		CBrowserBox.h \
+		CBrowserMargin.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserBackground.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserLine.o CBrowserLine.cpp
 
 ../obj/CBrowserLink.o: CBrowserLink.cpp CBrowserLink.h \
 		CBrowserObject.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserData.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -2860,51 +4892,113 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserOutput.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
 		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
 		../../CImageLib/include/CImageFile.h \
-		CBrowserDocument.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
 		CBrowserProperty.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h \
+		CBrowserDocument.h \
+		CUrl.h \
 		../../CFile/include/CDir.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserLink.o CBrowserLink.cpp
 
 ../obj/CBrowserList.o: CBrowserList.cpp CBrowserList.h \
 		CBrowserObject.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserData.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -2917,48 +5011,260 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		CBrowserSymbol.h \
-		CBrowserWindow.h \
-		CBrowserOutput.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
 		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
 		../../CImageLib/include/CImageFile.h \
-		CBrowserOutputList.h \
-		CBrowserLabel.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserList.o CBrowserList.cpp
+
+../obj/CBrowserListItem.o: CBrowserListItem.cpp CBrowserListItem.h \
+		CBrowserObject.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserList.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h \
 		CBrowserMisc.h \
 		CRomanNumber.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserList.o CBrowserList.cpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserListItem.o CBrowserListItem.cpp
 
 ../obj/CBrowserMain.o: CBrowserMain.cpp CBrowserMain.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
 		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
 		CBrowserIFace.h \
 		../../CJavaScript/include/CJavaScript.h \
 		../../CJavaScript/include/CJTypes.h \
@@ -2966,7 +5272,6 @@ compiler_clean: compiler_moc_header_clean
 		../../CJavaScript/include/CJKeyword.h \
 		../../CJavaScript/include/CJNameSpace.h \
 		../../CJavaScript/include/CJPropertyValue.h \
-		../../CUtil/include/COptVal.h \
 		../../CJavaScript/include/CJIdentifier.h \
 		../../CJavaScript/include/CJObj.h \
 		../../CJavaScript/include/CJObjType.h \
@@ -3008,7 +5313,33 @@ compiler_clean: compiler_moc_header_clean
 		../../CImageLib/include/CImageLib.h \
 		../../CFile/include/CFile.h \
 		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		CBrowserFont.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CHtml/include/CHtmlTypes.h \
+		../../CCSS/include/CCSS.h \
+		../../CQUtil/include/CQApp.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserMain.o CBrowserMain.cpp
+
+../obj/CBrowserMeta.o: CBrowserMeta.cpp CBrowserMeta.h \
+		CBrowserObject.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -3021,59 +5352,135 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
 		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
 		../../CImageLib/include/CImageFile.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserObject.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
 		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserOutput.h \
+		CTextBox.h \
+		CBrowserRegion.h \
 		CBrowserData.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CQUtil/include/CQApp.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserMain.o CBrowserMain.cpp
-
-../obj/CBrowserMeta.o: CBrowserMeta.cpp CBrowserMeta.h \
-		CBrowserObject.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserMeta.o CBrowserMeta.cpp
 
 ../obj/CBrowserMisc.o: CBrowserMisc.cpp CBrowserMisc.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
 		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserMisc.o CBrowserMisc.cpp
 
 ../obj/CBrowserNamedImage.o: CBrowserNamedImage.cpp CBrowserNamedImage.h \
@@ -3109,199 +5516,44 @@ compiler_clean: compiler_moc_header_clean
 		../../CImageLib/include/CImageAnim.h \
 		../../CImageLib/include/CImageFile.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
 		CBrowserImage.h \
 		CBrowserObject.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserData.h \
-		CBrowserPixmaps.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserNamedImage.o CBrowserNamedImage.cpp
-
-../obj/CBrowserNoBr.o: CBrowserNoBr.cpp CBrowserNoBr.h \
-		CBrowserObject.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserOutput.h \
-		CBrowserData.h \
-		../../CUtil/include/CRGBA.h \
-		../../CUtil/include/CRGB.h \
-		../../CUtil/include/CHSV.h \
-		../../CUtil/include/CRGBUtil.h \
-		../../CUtil/include/CCMYK.h \
-		../../CUtil/include/CHSL.h \
-		../../CUtil/include/CHSB.h \
-		../../CUtil/include/CHSI.h \
-		../../CMath/include/CMathGen.h \
-		../../COS/include/NaN.h \
-		../../CRGBName/include/CRGBName.h \
-		../../CUtil/include/CColorComponent.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
 		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CISize2D.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIPoint2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CUtil/include/COptVal.h \
-		../../CImageLib/include/CImagePtr.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CStrUtil/include/CStrUtil.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserNoBr.o CBrowserNoBr.cpp
-
-../obj/CBrowserObject.o: CBrowserObject.cpp CBrowserObject.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
 		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		../../CHtml/include/CHtmlTagDef.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserObject.o CBrowserObject.cpp
-
-../obj/CBrowserObjProp.o: CBrowserObjProp.cpp CBrowserObjProp.h \
-		CBrowserWindow.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		CBrowserSymbol.h \
-		CBrowserObject.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserOutput.h \
+		CTextBox.h \
+		CBrowserRegion.h \
 		CBrowserData.h \
-		../../CUtil/include/CRGBA.h \
-		../../CUtil/include/CRGB.h \
-		../../CUtil/include/CHSV.h \
-		../../CUtil/include/CRGBUtil.h \
-		../../CUtil/include/CCMYK.h \
-		../../CUtil/include/CHSL.h \
-		../../CUtil/include/CHSB.h \
-		../../CUtil/include/CHSI.h \
-		../../CMath/include/CMathGen.h \
-		../../COS/include/NaN.h \
-		../../CRGBName/include/CRGBName.h \
-		../../CUtil/include/CColorComponent.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CISize2D.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIPoint2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CUtil/include/COptVal.h \
-		../../CImageLib/include/CImagePtr.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CStrUtil/include/CStrUtil.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h \
-		CBrowserText.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserObjProp.o CBrowserObjProp.cpp
-
-../obj/CBrowserOutput.o: CBrowserOutput.cpp CBrowserOutput.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		CBrowserOutputTag.h \
-		CBrowserSymbol.h \
-		CBrowserObject.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		../../CHtml/include/CHtmlLib.h \
-		../../CHtml/include/CHtml.h \
-		../../CHtml/include/CHtmlComment.h \
-		../../CHtml/include/CHtmlNamedChar.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CHtml/include/CHtmlTag.h \
-		../../CHtml/include/CHtmlText.h \
-		../../CHtml/include/CHtmlToken.h \
-		../../CHtml/include/CHtmlTagDef.h \
-		../../CUtil/include/CRGBA.h \
-		../../CUtil/include/CRGB.h \
-		../../CUtil/include/CHSV.h \
-		../../CUtil/include/CRGBUtil.h \
-		../../CUtil/include/CCMYK.h \
-		../../CUtil/include/CHSL.h \
-		../../CUtil/include/CHSB.h \
-		../../CUtil/include/CHSI.h \
-		../../CMath/include/CMathGen.h \
-		../../COS/include/NaN.h \
-		../../CRGBName/include/CRGBName.h \
-		../../CUtil/include/CColorComponent.h \
-		CBrowserAddress.h \
-		CBrowserBaseFont.h \
-		CBrowserData.h \
-		CBrowserBlockQuote.h \
-		CBrowserBody.h \
-		CBrowserBreak.h \
-		CBrowserCanvas.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
 		../../CJavaScript/include/CJavaScript.h \
 		../../CJavaScript/include/CJTypes.h \
 		../../CJavaScript/include/CJToken.h \
 		../../CJavaScript/include/CJKeyword.h \
 		../../CJavaScript/include/CJNameSpace.h \
 		../../CJavaScript/include/CJPropertyValue.h \
-		../../CUtil/include/COptVal.h \
 		../../CJavaScript/include/CJIdentifier.h \
 		../../CJavaScript/include/CJObj.h \
 		../../CJavaScript/include/CJObjType.h \
@@ -3339,71 +5591,14 @@ compiler_clean: compiler_moc_header_clean
 		../../CJavaScript/include/CJGlobalFunction.h \
 		../../CJavaScript/include/CJRealFunction.h \
 		../../CJavaScript/include/CJRandFunction.h \
-		CBrowserCenter.h \
-		CBrowserCode.h \
-		CBrowserDiv.h \
-		CBrowserDocument.h \
-		CBrowserForm.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CISize2D.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIPoint2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CImageLib/include/CImagePtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CStrUtil/include/CStrUtil.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h \
-		CBrowserHead.h \
-		CBrowserHeader.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		CBrowserHtml.h \
-		CBrowserImage.h \
-		CBrowserKbd.h \
-		CBrowserLabel.h \
-		CBrowserLink.h \
-		CBrowserList.h \
-		CBrowserMisc.h \
-		CBrowserMeta.h \
-		CBrowserNoBr.h \
-		CBrowserOutputList.h \
-		CBrowserParagraph.h \
-		CBrowserPre.h \
-		CBrowserRule.h \
-		CBrowserSamp.h \
-		CBrowserScript.h \
-		CBrowserStyle.h \
-		CBrowserTable.h \
-		CBrowserText.h \
-		CBrowserTitle.h \
-		CBrowserTT.h \
-		CBrowserWindow.h \
-		CBrowserXmp.h \
-		CBrowserMain.h \
-		CBrowserCeil.h \
-		CBrowserJS.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserOutput.o CBrowserOutput.cpp
+		CBrowserProperty.h \
+		CBrowserPixmaps.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserNamedImage.o CBrowserNamedImage.cpp
 
-../obj/CBrowserOutputList.o: CBrowserOutputList.cpp CBrowserOutputList.h \
+../obj/CBrowserNoBr.o: CBrowserNoBr.cpp CBrowserNoBr.h \
 		CBrowserObject.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserData.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -3416,49 +5611,507 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserOutput.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
 		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserOutputList.o CBrowserOutputList.cpp
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserNoBr.o CBrowserNoBr.cpp
+
+../obj/CBrowserObject.o: CBrowserObject.cpp CBrowserObject.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h \
+		CQJHtmlObj.h \
+		CQJObject.h \
+		../../CHtml/include/CHtmlTagDef.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserObject.o CBrowserObject.cpp
+
+../obj/CBrowserObjProp.o: CBrowserObjProp.cpp CBrowserObjProp.h \
+		CBrowserWindow.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserOutput.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		../../CStrUtil/include/CStrUtil.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		CBrowserFont.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CHtml/include/CHtmlTypes.h \
+		../../CCSS/include/CCSS.h \
+		CBrowserText.h \
+		CBrowserObject.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		CBrowserMargin.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserBackground.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserObjProp.o CBrowserObjProp.cpp
+
+../obj/CBrowserOutput.o: CBrowserOutput.cpp CBrowserOutput.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserOutputTag.h \
+		../../CHtml/include/CHtmlLib.h \
+		../../CHtml/include/CHtmlTypes.h \
+		../../CHtml/include/CHtml.h \
+		../../CHtml/include/CHtmlComment.h \
+		../../CHtml/include/CHtmlNamedChar.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CHtml/include/CHtmlTag.h \
+		../../CHtml/include/CHtmlText.h \
+		../../CHtml/include/CHtmlToken.h \
+		../../CHtml/include/CHtmlTagDef.h \
+		CBrowserAddress.h \
+		CBrowserObject.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserArea.h \
+		CBrowserBaseFont.h \
+		CBrowserBlockQuote.h \
+		CBrowserBody.h \
+		CBrowserBreak.h \
+		CBrowserCanvas.h \
+		CBrowserCenter.h \
+		CBrowserCode.h \
+		CBrowserCSSStyle.h \
+		CBrowserDiv.h \
+		CBrowserDocument.h \
+		CBrowserForm.h \
+		CBrowserHead.h \
+		CBrowserHeader.h \
+		CBrowserHtml.h \
+		CBrowserImage.h \
+		CBrowserKbd.h \
+		CBrowserLayout.h \
+		CBrowserLink.h \
+		CBrowserList.h \
+		CBrowserListItem.h \
+		CBrowserMisc.h \
+		CBrowserMeta.h \
+		CBrowserNoBr.h \
+		CBrowserParagraph.h \
+		CBrowserPre.h \
+		CBrowserRule.h \
+		CBrowserSamp.h \
+		CBrowserScript.h \
+		CBrowserStyle.h \
+		CBrowserTable.h \
+		CBrowserText.h \
+		CBrowserTitle.h \
+		CBrowserTT.h \
+		CBrowserWindow.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CCSS/include/CCSS.h \
+		CBrowserXmp.h \
+		CBrowserMain.h \
+		CBrowserCeil.h \
+		CBrowserJS.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserOutput.o CBrowserOutput.cpp
 
 ../obj/CBrowserOutputTag.o: CBrowserOutputTag.cpp CBrowserOutputTag.h \
-		CBrowserSymbol.h \
-		CBrowserObject.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
 		../../CHtml/include/CHtmlLib.h \
+		../../CHtml/include/CHtmlTypes.h \
 		../../CHtml/include/CHtml.h \
 		../../CHtml/include/CHtmlComment.h \
 		../../CHtml/include/CHtmlNamedChar.h \
@@ -3488,17 +6141,7 @@ compiler_clean: compiler_moc_header_clean
 ../obj/CBrowserParagraph.o: CBrowserParagraph.cpp CBrowserParagraph.h \
 		CBrowserObject.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserData.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -3511,49 +6154,110 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserOutput.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
 		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
 		../../CImageLib/include/CImageFile.h \
-		CBrowserProperty.h
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserParagraph.o CBrowserParagraph.cpp
 
 ../obj/CBrowserPre.o: CBrowserPre.cpp CBrowserPre.h \
 		CBrowserObject.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserData.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -3566,51 +6270,214 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserOutput.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
 		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserPre.o CBrowserPre.cpp
+
+../obj/CBrowserRenderer.o: CBrowserRenderer.cpp CBrowserRenderer.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		CBrowserWindowWidget.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		../../CQUtil/include/CQUtil.h \
+		../../CUtil/include/CEvent.h \
+		../../CUtil/include/CKeyType.h \
+		../../CMath/include/CAngle.h \
+		../../CMath/include/CPoint2D.h \
+		../../CMath/include/CBBox2D.h \
+		../../CMath/include/CVector2D.h \
+		../../CMath/include/CSize2D.h \
+		../../CMath/include/CMatrix2D.h \
+		../../CMath/include/CMathMacros.h \
+		../../CMath/include/CMatrixType.h \
+		../../CUtil/include/CThrow.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserRenderer.o CBrowserRenderer.cpp
 
 ../obj/CBrowserRule.o: CBrowserRule.cpp CBrowserRule.h \
 		CBrowserObject.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserOutput.h \
-		CBrowserData.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -3623,48 +6490,110 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
 		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserRule.o CBrowserRule.cpp
 
 ../obj/CBrowserSamp.o: CBrowserSamp.cpp CBrowserSamp.h \
 		CBrowserObject.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserOutput.h \
-		CBrowserData.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -3677,45 +6606,110 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
 		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserSamp.o CBrowserSamp.cpp
 
 ../obj/CBrowserScript.o: CBrowserScript.cpp CBrowserScript.h \
 		CBrowserObject.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserData.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -3728,49 +6722,111 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserOutput.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
 		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
 		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h \
 		CBrowserCeil.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserScript.o CBrowserScript.cpp
 
 ../obj/CBrowserStyle.o: CBrowserStyle.cpp CBrowserStyle.h \
 		CBrowserObject.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserData.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -3783,101 +6839,113 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserOutput.h \
-		../../CHtml/include/CHtmlParser.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
 		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
 		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CISize2D.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIPoint2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CUtil/include/COptVal.h \
-		../../CImageLib/include/CImagePtr.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CStrUtil/include/CStrUtil.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserStyle.o CBrowserStyle.cpp
-
-../obj/CBrowserSymbol.o: CBrowserSymbol.cpp CBrowserSymbol.h \
-		CBrowserObject.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserText.h \
-		CBrowserData.h \
-		../../CUtil/include/CRGBA.h \
-		../../CUtil/include/CRGB.h \
-		../../CUtil/include/CHSV.h \
-		../../CUtil/include/CRGBUtil.h \
-		../../CUtil/include/CCMYK.h \
-		../../CUtil/include/CHSL.h \
-		../../CUtil/include/CHSB.h \
-		../../CUtil/include/CHSI.h \
-		../../CMath/include/CMathGen.h \
-		../../COS/include/NaN.h \
-		../../CRGBName/include/CRGBName.h \
-		../../CUtil/include/CColorComponent.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
 		../../CImageLib/include/CImageLib.h \
 		../../CFile/include/CFile.h \
 		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
 		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CISize2D.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIPoint2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CUtil/include/COptVal.h \
-		../../CImageLib/include/CImagePtr.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
 		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
 		CBrowserWindow.h \
 		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
 		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserSymbol.o CBrowserSymbol.cpp
+		../../CCSS/include/CCSS.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserStyle.o CBrowserStyle.cpp
+
+../obj/CBrowserStyleData.o: CBrowserStyleData.cpp CBrowserStyleData.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserStyleData.o CBrowserStyleData.cpp
 
 ../obj/CBrowserTable.o: CBrowserTable.cpp CBrowserTable.h \
 		CBrowserObject.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -3890,49 +6958,110 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserOutput.h \
-		CBrowserData.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
 		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserTable.o CBrowserTable.cpp
 
 ../obj/CBrowserText.o: CBrowserText.cpp CBrowserText.h \
 		CBrowserObject.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserData.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -3945,49 +7074,111 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		../../CFont/include/CFont.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
 		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
 		../../CImageLib/include/CImageLib.h \
 		../../CFile/include/CFile.h \
 		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
 		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CISize2D.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIPoint2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CUtil/include/COptVal.h \
-		../../CImageLib/include/CImagePtr.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
 		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
 		CBrowserWindow.h \
-		CBrowserSymbol.h \
 		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
 		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
+		../../CCSS/include/CCSS.h \
 		CBrowserLink.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserText.o CBrowserText.cpp
 
 ../obj/CBrowserTitle.o: CBrowserTitle.cpp CBrowserTitle.h \
 		CBrowserObject.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserData.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -4000,52 +7191,111 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserOutput.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
 		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
 		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h \
 		CBrowserDocument.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserTitle.o CBrowserTitle.cpp
 
 ../obj/CBrowserTT.o: CBrowserTT.cpp CBrowserTT.h \
 		CBrowserObject.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserOutput.h \
-		CBrowserData.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -4058,136 +7308,163 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CISize2D.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIPoint2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CUtil/include/COptVal.h \
-		../../CImageLib/include/CImagePtr.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CStrUtil/include/CStrUtil.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserTT.o CBrowserTT.cpp
-
-../obj/CBrowserXmp.o: CBrowserXmp.cpp CBrowserXmp.h \
-		CBrowserObject.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
 		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserOutput.h \
-		CBrowserData.h \
-		../../CUtil/include/CRGBA.h \
-		../../CUtil/include/CRGB.h \
-		../../CUtil/include/CHSV.h \
-		../../CUtil/include/CRGBUtil.h \
-		../../CUtil/include/CCMYK.h \
-		../../CUtil/include/CHSL.h \
-		../../CUtil/include/CHSB.h \
-		../../CUtil/include/CHSI.h \
-		../../CMath/include/CMathGen.h \
-		../../COS/include/NaN.h \
-		../../CRGBName/include/CRGBName.h \
-		../../CUtil/include/CColorComponent.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
 		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CStrUtil/include/CStrUtil.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserXmp.o CBrowserXmp.cpp
-
-../obj/CBrowserWindow.o: CBrowserWindow.cpp CBrowserWindow.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		CBrowserSymbol.h \
-		CBrowserObject.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserOutput.h \
-		CBrowserData.h \
-		../../CUtil/include/CRGBA.h \
-		../../CUtil/include/CRGB.h \
-		../../CUtil/include/CHSV.h \
-		../../CUtil/include/CRGBUtil.h \
-		../../CUtil/include/CCMYK.h \
-		../../CUtil/include/CHSL.h \
-		../../CUtil/include/CHSB.h \
-		../../CUtil/include/CHSI.h \
-		../../CMath/include/CMathGen.h \
-		../../COS/include/NaN.h \
-		../../CRGBName/include/CRGBName.h \
-		../../CUtil/include/CColorComponent.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
 		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
 		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
 		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CISize2D.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIPoint2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CUtil/include/COptVal.h \
-		../../CImageLib/include/CImagePtr.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
 		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserTT.o CBrowserTT.cpp
+
+../obj/CBrowserWindow.o: CBrowserWindow.cpp CBrowserWindow.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserOutput.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		../../CStrUtil/include/CStrUtil.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		CBrowserFont.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CHtml/include/CHtmlTypes.h \
+		../../CCSS/include/CCSS.h \
 		CBrowserDocument.h \
 		CBrowserHistory.h \
 		CBrowserIFace.h \
@@ -4236,40 +7513,381 @@ compiler_clean: compiler_moc_header_clean
 		../../CJavaScript/include/CJRandFunction.h \
 		../../CQUtil/include/CQMainWindow.h \
 		CBrowserWindowWidget.h \
-		CBrowserFont.h \
 		CBrowserMain.h \
 		CBrowserBreak.h \
+		CBrowserObject.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		CBrowserMargin.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserBackground.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		CBrowserProperty.h \
 		CBrowserCanvas.h \
 		CBrowserImage.h \
 		CBrowserNamedImage.h \
-		CBrowserLabel.h \
+		CBrowserLayout.h \
 		CBrowserLink.h \
+		CBrowserFile.h \
+		CUrl.h \
 		CBrowserRule.h \
 		CBrowserTable.h \
 		CBrowserText.h \
 		CBrowserForm.h \
 		CBrowserJS.h \
+		../../CFont/include/CFontMgr.h \
 		../../CUtil/include/CEnv.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserWindow.o CBrowserWindow.cpp
+
+../obj/CBrowserWindowWidget.o: CBrowserWindowWidget.cpp CBrowserWindowWidget.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		CBrowserGraphics.h \
+		CBrowserRenderer.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		CBrowserFont.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CHtml/include/CHtmlTypes.h \
+		../../CCSS/include/CCSS.h \
+		CBrowserIFace.h \
+		../../CQUtil/include/CQMainWindow.h \
+		CBrowserJS.h \
+		CQJDocument.h \
+		CQJObject.h \
+		CQJWindow.h \
+		CQJEvent.h \
+		../../CUtil/include/CEnv.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserWindowWidget.o CBrowserWindowWidget.cpp
+
+../obj/CBrowserWord.o: CBrowserWord.cpp CBrowserWord.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/CAlignType.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserForm.h \
+		CBrowserObject.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		CBrowserBox.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserWord.o CBrowserWord.cpp
+
+../obj/CBrowserXmp.o: CBrowserXmp.cpp CBrowserXmp.h \
+		CBrowserObject.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserXmp.o CBrowserXmp.cpp
 
 ../obj/CBrowserDomTree.o: CBrowserDomTree.cpp CBrowserDomTree.h \
 		CBrowserObjProp.h \
 		CBrowserWindow.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		CBrowserSymbol.h \
-		CBrowserObject.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserOutput.h \
-		CBrowserData.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -4282,48 +7900,110 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
 		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
-		../../CImageLib/include/CImageMgr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserOutput.h \
+		CBrowserData.h \
+		CBrowserClear.h \
 		../../CStrUtil/include/CStrUtil.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		CBrowserFont.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
 		../../CImageLib/include/CImageAnim.h \
 		../../CImageLib/include/CImageFile.h \
-		CBrowserText.h
+		../../CHtml/include/CHtmlParser.h \
+		../../CHtml/include/CHtmlTypes.h \
+		../../CCSS/include/CCSS.h \
+		CBrowserText.h \
+		CBrowserObject.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		CBrowserMargin.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserBackground.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserDomTree.o CBrowserDomTree.cpp
 
 ../obj/CBrowserCeil.o: CBrowserCeil.cpp CBrowserWindow.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		CBrowserSymbol.h \
-		CBrowserObject.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserOutput.h \
-		CBrowserData.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -4336,29 +8016,48 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
 		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
-		../../CImageLib/include/CImageMgr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserOutput.h \
+		CBrowserData.h \
+		CBrowserClear.h \
 		../../CStrUtil/include/CStrUtil.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		CBrowserFont.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
 		../../CImageLib/include/CImageAnim.h \
 		../../CImageLib/include/CImageFile.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CHtml/include/CHtmlTypes.h \
+		../../CCSS/include/CCSS.h \
 		CBrowserDocument.h \
 		CBrowserFile.h \
 		CUrl.h \
@@ -4461,21 +8160,45 @@ compiler_clean: compiler_moc_header_clean
 
 ../obj/CBrowserJS.o: CBrowserJS.cpp CBrowserJS.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
 		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
 		../../CJavaScript/include/CJavaScript.h \
 		../../CJavaScript/include/CJTypes.h \
 		../../CJavaScript/include/CJToken.h \
 		../../CJavaScript/include/CJKeyword.h \
 		../../CJavaScript/include/CJNameSpace.h \
 		../../CJavaScript/include/CJPropertyValue.h \
-		../../CUtil/include/COptVal.h \
 		../../CJavaScript/include/CJIdentifier.h \
 		../../CJavaScript/include/CJObj.h \
 		../../CJavaScript/include/CJObjType.h \
@@ -4519,7 +8242,57 @@ compiler_clean: compiler_moc_header_clean
 		../../CImageLib/include/CImageLib.h \
 		../../CFile/include/CFile.h \
 		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		CBrowserFont.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CHtml/include/CHtmlTypes.h \
+		../../CCSS/include/CCSS.h \
+		CBrowserObject.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		CBrowserMargin.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserBackground.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		CBrowserProperty.h \
+		CBrowserCanvas.h \
+		CBrowserForm.h \
+		CQJDocument.h \
+		CQJObject.h \
+		CQJWindow.h \
+		CQJCanvas.h \
+		CQJHtmlObj.h \
+		CQJForm.h \
+		CQJInput.h \
+		CQJImage.h \
+		../../CJavaScript/include/CJObjTypeFunction.h \
+		CQJIntervalFunction.h \
+		../../CStrUtil/include/CStrParse.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserJS.o CBrowserJS.cpp
+
+../obj/CQJCanvasContext2D.o: CQJCanvasContext2D.cpp CQJCanvasContext2D.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -4532,61 +8305,31 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
 		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CStrUtil/include/CStrUtil.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
-		CBrowserObject.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserOutput.h \
-		CBrowserData.h \
-		../../CHtml/include/CHtmlParser.h \
 		../../CUtil/include/CAutoPtr.h \
-		CBrowserCanvas.h \
-		CBrowserForm.h \
-		CQJDocument.h \
-		CQJObject.h \
-		CQJWindow.h \
-		CQJCanvas.h \
-		CQJHtmlObj.h \
-		CQJInput.h \
-		CQJImage.h \
-		../../CJavaScript/include/CJObjTypeFunction.h \
-		CQJIntervalFunction.h \
-		../../CStrUtil/include/CStrParse.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserJS.o CBrowserJS.cpp
-
-../obj/CQJCanvasContext2D.o: CQJCanvasContext2D.cpp CQJCanvasContext2D.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
 		../../CJavaScript/include/CJObj.h \
 		../../CJavaScript/include/CJObjType.h \
 		../../CJavaScript/include/CJNameSpace.h \
 		../../CJavaScript/include/CJTypes.h \
 		../../CJavaScript/include/CJPropertyValue.h \
-		../../CUtil/include/COptVal.h \
 		../../CJavaScript/include/CJToken.h \
 		../../CJavaScript/include/CJDictionary.h \
 		../../CJavaScript/include/CJValue.h \
@@ -4599,22 +8342,34 @@ compiler_clean: compiler_moc_header_clean
 		CQJCanvas.h \
 		CQJHtmlObj.h \
 		CBrowserObject.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
 		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserCanvas.h \
+		CTextBox.h \
+		CBrowserRegion.h \
 		CBrowserData.h \
-		../../CUtil/include/CRGBA.h \
-		../../CUtil/include/CRGB.h \
-		../../CUtil/include/CHSV.h \
-		../../CUtil/include/CRGBUtil.h \
-		../../CUtil/include/CCMYK.h \
-		../../CUtil/include/CHSL.h \
-		../../CUtil/include/CHSB.h \
-		../../CUtil/include/CHSI.h \
-		../../CMath/include/CMathGen.h \
-		../../COS/include/NaN.h \
-		../../CRGBName/include/CRGBName.h \
-		../../CUtil/include/CColorComponent.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
 		../../CJavaScript/include/CJavaScript.h \
 		../../CJavaScript/include/CJKeyword.h \
 		../../CJavaScript/include/CJIdentifier.h \
@@ -4650,6 +8405,8 @@ compiler_clean: compiler_moc_header_clean
 		../../CJavaScript/include/CJGlobalFunction.h \
 		../../CJavaScript/include/CJRealFunction.h \
 		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserCanvas.h \
 		CQJCanvasWidget.h \
 		CQJImage.h \
 		../../CJavaScript/include/CJObjTypeFunction.h \
@@ -4661,32 +8418,7 @@ compiler_clean: compiler_moc_header_clean
 		CQJHtmlObj.h \
 		CBrowserObject.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CQJObject.h \
-		../../CJavaScript/include/CJObj.h \
-		../../CJavaScript/include/CJObjType.h \
-		../../CJavaScript/include/CJNameSpace.h \
-		../../CJavaScript/include/CJTypes.h \
-		../../CJavaScript/include/CJPropertyValue.h \
-		../../CUtil/include/COptVal.h \
-		../../CJavaScript/include/CJToken.h \
-		../../CJavaScript/include/CJDictionary.h \
-		../../CJavaScript/include/CJValue.h \
-		CQJCanvasContext2D.h \
-		CQJImage.h \
-		../../CJavaScript/include/CJObjTypeFunction.h \
-		../../CJavaScript/include/CJFunctionBase.h \
-		CBrowserCanvas.h \
-		CBrowserData.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -4699,9 +8431,65 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
 		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
 		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
 		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
 		../../CJavaScript/include/CJUndefined.h \
 		../../CJavaScript/include/CJNull.h \
 		../../CJavaScript/include/CJTrue.h \
@@ -4713,6 +8501,7 @@ compiler_clean: compiler_moc_header_clean
 		../../CJavaScript/include/CJString.h \
 		../../CJavaScript/include/CJArray.h \
 		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
 		../../CJavaScript/include/CJRegExp.h \
 		../../CRegExp/include/CRegExp.h \
 		../../CJavaScript/include/CJDate.h \
@@ -4733,6 +8522,12 @@ compiler_clean: compiler_moc_header_clean
 		../../CJavaScript/include/CJGlobalFunction.h \
 		../../CJavaScript/include/CJRealFunction.h \
 		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CQJObject.h \
+		CQJCanvasContext2D.h \
+		CQJImage.h \
+		../../CJavaScript/include/CJObjTypeFunction.h \
+		CBrowserCanvas.h \
 		../../CStrUtil/include/CStrParse.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQJCanvas.o CQJCanvas.cpp
 
@@ -4890,17 +8685,7 @@ compiler_clean: compiler_moc_header_clean
 ../obj/CQJCanvasWidget.o: CQJCanvasWidget.cpp CQJCanvasWidget.h \
 		CBrowserObject.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserData.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -4913,13 +8698,60 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
 		../../CJavaScript/include/CJavaScript.h \
 		../../CJavaScript/include/CJTypes.h \
 		../../CJavaScript/include/CJToken.h \
 		../../CJavaScript/include/CJKeyword.h \
 		../../CJavaScript/include/CJNameSpace.h \
 		../../CJavaScript/include/CJPropertyValue.h \
-		../../CUtil/include/COptVal.h \
 		../../CJavaScript/include/CJIdentifier.h \
 		../../CJavaScript/include/CJObj.h \
 		../../CJavaScript/include/CJObjType.h \
@@ -4957,43 +8789,263 @@ compiler_clean: compiler_moc_header_clean
 		../../CJavaScript/include/CJGlobalFunction.h \
 		../../CJavaScript/include/CJRealFunction.h \
 		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
 		CQJObject.h \
 		CBrowserCanvas.h \
 		CBrowserWindowWidget.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CISize2D.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIPoint2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CImageLib/include/CImagePtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CStrUtil/include/CStrUtil.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
 		CBrowserMain.h \
 		CBrowserText.h \
 		CBrowserLink.h \
 		CBrowserWindow.h \
-		CBrowserSymbol.h \
 		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
 		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
+		../../CCSS/include/CCSS.h \
 		CBrowserDocument.h \
 		CQJEvent.h \
 		CQJHtmlObj.h \
 		../../CQUtil/include/CQImageGaussianBlur.h \
 		../../CMath/include/CGaussianBlur.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQJCanvasWidget.o CQJCanvasWidget.cpp
+
+../obj/CQJColorEdit.o: CQJColorEdit.cpp CQJColorEdit.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserForm.h \
+		CBrowserObject.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		CBrowserProperty.h \
+		CBrowserJS.h \
+		CBrowserIFace.h \
+		../../CQUtil/include/CQMainWindow.h \
+		CBrowserWindowWidget.h \
+		CQJWindow.h \
+		CQJObject.h \
+		CQJEvent.h \
+		CQJHtmlObj.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQJColorEdit.o CQJColorEdit.cpp
+
+../obj/CQJComboBox.o: CQJComboBox.cpp CQJComboBox.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserForm.h \
+		CBrowserObject.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		CBrowserProperty.h \
+		CBrowserJS.h \
+		CBrowserIFace.h \
+		../../CQUtil/include/CQMainWindow.h \
+		CBrowserWindowWidget.h \
+		CQJWindow.h \
+		CQJObject.h \
+		CQJEvent.h \
+		CQJHtmlObj.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQJComboBox.o CQJComboBox.cpp
 
 ../obj/CQJDialog.o: CQJDialog.cpp CQJDialog.h \
 		../../CJavaScript/include/CJavaScript.h \
@@ -5055,23 +9107,11 @@ compiler_clean: compiler_moc_header_clean
 		../../CJavaScript/include/CJToken.h \
 		../../CJavaScript/include/CJDictionary.h \
 		../../CJavaScript/include/CJValue.h \
-		CBrowserMain.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		CBrowserWindow.h \
-		CBrowserSymbol.h \
+		CQJHtmlCollection.h \
+		CQJHtmlObj.h \
 		CBrowserObject.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserOutput.h \
-		CBrowserData.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -5084,29 +9124,53 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		../../CHtml/include/CHtmlParser.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CFont/include/CFont.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
 		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
 		../../CImageLib/include/CImageFile.h \
-		CBrowserIFace.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
 		../../CJavaScript/include/CJavaScript.h \
 		../../CJavaScript/include/CJKeyword.h \
 		../../CJavaScript/include/CJIdentifier.h \
@@ -5142,6 +9206,17 @@ compiler_clean: compiler_moc_header_clean
 		../../CJavaScript/include/CJGlobalFunction.h \
 		../../CJavaScript/include/CJRealFunction.h \
 		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CBrowserMain.h \
+		CBrowserWindow.h \
+		CBrowserOutput.h \
+		CBrowserCSSData.h \
+		CBrowserStyleData.h \
+		../../CHtml/include/CHtmlParser.h \
+		../../CCSS/include/CCSS.h \
+		CBrowserDocument.h \
+		CBrowserForm.h \
+		CBrowserIFace.h \
 		../../CQUtil/include/CQMainWindow.h \
 		CBrowserJS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQJDocument.o CQJDocument.cpp
@@ -5194,20 +9269,121 @@ compiler_clean: compiler_moc_header_clean
 		../../CJavaScript/include/CJRandFunction.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQJEvent.o CQJEvent.cpp
 
-../obj/CQJHtmlObj.o: CQJHtmlObj.cpp CQJHtmlObj.h \
+../obj/CQJForm.o: CQJForm.cpp CQJForm.h \
+		CQJHtmlObj.h \
 		CBrowserObject.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
 		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
 		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
 		CQJObject.h \
+		CQJHtmlCollection.h \
+		CBrowserForm.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQJForm.o CQJForm.cpp
+
+../obj/CQJHtmlCollection.o: CQJHtmlCollection.cpp CQJHtmlCollection.h \
 		../../CJavaScript/include/CJObj.h \
 		../../CJavaScript/include/CJObjType.h \
 		../../CJavaScript/include/CJNameSpace.h \
@@ -5217,6 +9393,70 @@ compiler_clean: compiler_moc_header_clean
 		../../CJavaScript/include/CJToken.h \
 		../../CJavaScript/include/CJDictionary.h \
 		../../CJavaScript/include/CJValue.h \
+		CQJObject.h \
+		CQJHtmlObj.h \
+		CBrowserObject.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
 		../../CJavaScript/include/CJavaScript.h \
 		../../CJavaScript/include/CJKeyword.h \
 		../../CJavaScript/include/CJIdentifier.h \
@@ -5251,7 +9491,119 @@ compiler_clean: compiler_moc_header_clean
 		../../CJavaScript/include/CJPropertyData.h \
 		../../CJavaScript/include/CJGlobalFunction.h \
 		../../CJavaScript/include/CJRealFunction.h \
-		../../CJavaScript/include/CJRandFunction.h
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQJHtmlCollection.o CQJHtmlCollection.cpp
+
+../obj/CQJHtmlObj.o: CQJHtmlObj.cpp CQJHtmlObj.h \
+		CBrowserObject.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CQJObject.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQJHtmlObj.o CQJHtmlObj.cpp
 
 ../obj/CQJImage.o: CQJImage.cpp CQJImage.h \
@@ -5307,28 +9659,7 @@ compiler_clean: compiler_moc_header_clean
 		CQJHtmlObj.h \
 		CBrowserObject.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CQJObject.h \
-		../../CJavaScript/include/CJObj.h \
-		../../CJavaScript/include/CJObjType.h \
-		../../CJavaScript/include/CJNameSpace.h \
-		../../CJavaScript/include/CJTypes.h \
-		../../CJavaScript/include/CJPropertyValue.h \
-		../../CUtil/include/COptVal.h \
-		../../CJavaScript/include/CJToken.h \
-		../../CJavaScript/include/CJDictionary.h \
-		../../CJavaScript/include/CJValue.h \
-		CBrowserForm.h \
-		CBrowserData.h \
+		../../CUtil/include/CBrush.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CHSV.h \
@@ -5341,26 +9672,65 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CImageLib/include/CImageState.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
 		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
 		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
 		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
 		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
 		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
 		../../CJavaScript/include/CJUndefined.h \
 		../../CJavaScript/include/CJNull.h \
 		../../CJavaScript/include/CJTrue.h \
@@ -5392,7 +9762,10 @@ compiler_clean: compiler_moc_header_clean
 		../../CJavaScript/include/CJPropertyData.h \
 		../../CJavaScript/include/CJGlobalFunction.h \
 		../../CJavaScript/include/CJRealFunction.h \
-		../../CJavaScript/include/CJRandFunction.h
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserProperty.h \
+		CQJObject.h \
+		CBrowserForm.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQJInput.o CQJInput.cpp
 
 ../obj/CQJIntervalFunction.o: CQJIntervalFunction.cpp CQJIntervalFunction.h \
@@ -5410,14 +9783,38 @@ compiler_clean: compiler_moc_header_clean
 		CQJObject.h \
 		CBrowserJS.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
 		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
 		../../CJavaScript/include/CJavaScript.h \
 		../../CJavaScript/include/CJKeyword.h \
 		../../CJavaScript/include/CJIdentifier.h \
@@ -5454,124 +9851,47 @@ compiler_clean: compiler_moc_header_clean
 		../../CJavaScript/include/CJRandFunction.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQJIntervalFunction.o CQJIntervalFunction.cpp
 
-../obj/CQJColorEdit.o: CQJColorEdit.cpp CQJColorEdit.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CJavaScript/include/CJavaScript.h \
-		../../CJavaScript/include/CJTypes.h \
-		../../CJavaScript/include/CJToken.h \
-		../../CJavaScript/include/CJKeyword.h \
-		../../CJavaScript/include/CJNameSpace.h \
-		../../CJavaScript/include/CJPropertyValue.h \
-		../../CUtil/include/COptVal.h \
-		../../CJavaScript/include/CJIdentifier.h \
-		../../CJavaScript/include/CJObj.h \
-		../../CJavaScript/include/CJObjType.h \
-		../../CJavaScript/include/CJDictionary.h \
-		../../CJavaScript/include/CJValue.h \
-		../../CJavaScript/include/CJUndefined.h \
-		../../CJavaScript/include/CJNull.h \
-		../../CJavaScript/include/CJTrue.h \
-		../../CJavaScript/include/CJFalse.h \
-		../../CJavaScript/include/CJBoolean.h \
-		../../CJavaScript/include/CJNumber.h \
-		../../CJavaScript/include/CJUtil.h \
-		../../COS/include/COSNaN.h \
-		../../CJavaScript/include/CJString.h \
-		../../CJavaScript/include/CJArray.h \
-		../../CJavaScript/include/CJOperator.h \
-		../../CJavaScript/include/CJFunctionBase.h \
-		../../CJavaScript/include/CJRegExp.h \
-		../../CRegExp/include/CRegExp.h \
-		../../CJavaScript/include/CJDate.h \
-		../../CJavaScript/include/CJFunction.h \
-		../../CJavaScript/include/CJLValue.h \
-		../../CJavaScript/include/CJObject.h \
-		../../CJavaScript/include/CJTypeValue.h \
-		../../CJavaScript/include/CJUserObject.h \
-		../../CJavaScript/include/CJTypeFunction.h \
-		../../CJavaScript/include/CJGetterSetter.h \
-		../../CJavaScript/include/CJExecBlock.h \
-		../../CJavaScript/include/CJExecStatement.h \
-		../../CJavaScript/include/CJExecExpression.h \
-		../../CJavaScript/include/CJExecExpressionList.h \
-		../../CJavaScript/include/CJTypeObjectFunction.h \
-		../../CJavaScript/include/CJExecData.h \
-		../../CJavaScript/include/CJPropertyData.h \
-		../../CJavaScript/include/CJGlobalFunction.h \
-		../../CJavaScript/include/CJRealFunction.h \
-		../../CJavaScript/include/CJRandFunction.h \
-		CBrowserForm.h \
-		CBrowserObject.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserData.h \
-		../../CUtil/include/CRGBA.h \
-		../../CUtil/include/CRGB.h \
-		../../CUtil/include/CHSV.h \
-		../../CUtil/include/CRGBUtil.h \
-		../../CUtil/include/CCMYK.h \
-		../../CUtil/include/CHSL.h \
-		../../CUtil/include/CHSB.h \
-		../../CUtil/include/CHSI.h \
-		../../CMath/include/CMathGen.h \
-		../../COS/include/NaN.h \
-		../../CRGBName/include/CRGBName.h \
-		../../CUtil/include/CColorComponent.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CISize2D.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIPoint2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CImageLib/include/CImagePtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CStrUtil/include/CStrUtil.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h \
-		CBrowserJS.h \
-		CBrowserIFace.h \
-		../../CQUtil/include/CQMainWindow.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		CBrowserWindowWidget.h \
-		CQJWindow.h \
-		CQJObject.h \
-		CQJEvent.h \
-		CQJHtmlObj.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQJColorEdit.o CQJColorEdit.cpp
-
 ../obj/CQJLineEdit.o: CQJLineEdit.cpp CQJLineEdit.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
 		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
 		../../CJavaScript/include/CJavaScript.h \
 		../../CJavaScript/include/CJTypes.h \
 		../../CJavaScript/include/CJToken.h \
 		../../CJavaScript/include/CJKeyword.h \
 		../../CJavaScript/include/CJNameSpace.h \
 		../../CJavaScript/include/CJPropertyValue.h \
-		../../CUtil/include/COptVal.h \
 		../../CJavaScript/include/CJIdentifier.h \
 		../../CJavaScript/include/CJObj.h \
 		../../CJavaScript/include/CJObjType.h \
@@ -5611,252 +9931,44 @@ compiler_clean: compiler_moc_header_clean
 		../../CJavaScript/include/CJRandFunction.h \
 		CBrowserForm.h \
 		CBrowserObject.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserData.h \
-		../../CUtil/include/CRGBA.h \
-		../../CUtil/include/CRGB.h \
-		../../CUtil/include/CHSV.h \
-		../../CUtil/include/CRGBUtil.h \
-		../../CUtil/include/CCMYK.h \
-		../../CUtil/include/CHSL.h \
-		../../CUtil/include/CHSB.h \
-		../../CUtil/include/CHSI.h \
-		../../CMath/include/CMathGen.h \
-		../../COS/include/NaN.h \
-		../../CRGBName/include/CRGBName.h \
-		../../CUtil/include/CColorComponent.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
 		../../CImageLib/include/CImageLib.h \
 		../../CFile/include/CFile.h \
 		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
 		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CISize2D.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIPoint2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CImageLib/include/CImagePtr.h \
-		../../CUtil/include/CRefPtr.h \
 		../../CImageLib/include/CImageMgr.h \
 		../../CStrUtil/include/CStrUtil.h \
 		../../CImageLib/include/CImageAnim.h \
 		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		CBrowserProperty.h \
 		CBrowserJS.h \
 		CBrowserIFace.h \
 		../../CQUtil/include/CQMainWindow.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
 		CBrowserWindowWidget.h \
 		CQJWindow.h \
 		CQJObject.h \
 		CQJEvent.h \
 		CQJHtmlObj.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQJLineEdit.o CQJLineEdit.cpp
-
-../obj/CQJComboBox.o: CQJComboBox.cpp CQJComboBox.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CJavaScript/include/CJavaScript.h \
-		../../CJavaScript/include/CJTypes.h \
-		../../CJavaScript/include/CJToken.h \
-		../../CJavaScript/include/CJKeyword.h \
-		../../CJavaScript/include/CJNameSpace.h \
-		../../CJavaScript/include/CJPropertyValue.h \
-		../../CUtil/include/COptVal.h \
-		../../CJavaScript/include/CJIdentifier.h \
-		../../CJavaScript/include/CJObj.h \
-		../../CJavaScript/include/CJObjType.h \
-		../../CJavaScript/include/CJDictionary.h \
-		../../CJavaScript/include/CJValue.h \
-		../../CJavaScript/include/CJUndefined.h \
-		../../CJavaScript/include/CJNull.h \
-		../../CJavaScript/include/CJTrue.h \
-		../../CJavaScript/include/CJFalse.h \
-		../../CJavaScript/include/CJBoolean.h \
-		../../CJavaScript/include/CJNumber.h \
-		../../CJavaScript/include/CJUtil.h \
-		../../COS/include/COSNaN.h \
-		../../CJavaScript/include/CJString.h \
-		../../CJavaScript/include/CJArray.h \
-		../../CJavaScript/include/CJOperator.h \
-		../../CJavaScript/include/CJFunctionBase.h \
-		../../CJavaScript/include/CJRegExp.h \
-		../../CRegExp/include/CRegExp.h \
-		../../CJavaScript/include/CJDate.h \
-		../../CJavaScript/include/CJFunction.h \
-		../../CJavaScript/include/CJLValue.h \
-		../../CJavaScript/include/CJObject.h \
-		../../CJavaScript/include/CJTypeValue.h \
-		../../CJavaScript/include/CJUserObject.h \
-		../../CJavaScript/include/CJTypeFunction.h \
-		../../CJavaScript/include/CJGetterSetter.h \
-		../../CJavaScript/include/CJExecBlock.h \
-		../../CJavaScript/include/CJExecStatement.h \
-		../../CJavaScript/include/CJExecExpression.h \
-		../../CJavaScript/include/CJExecExpressionList.h \
-		../../CJavaScript/include/CJTypeObjectFunction.h \
-		../../CJavaScript/include/CJExecData.h \
-		../../CJavaScript/include/CJPropertyData.h \
-		../../CJavaScript/include/CJGlobalFunction.h \
-		../../CJavaScript/include/CJRealFunction.h \
-		../../CJavaScript/include/CJRandFunction.h \
-		CBrowserForm.h \
-		CBrowserObject.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserData.h \
-		../../CUtil/include/CRGBA.h \
-		../../CUtil/include/CRGB.h \
-		../../CUtil/include/CHSV.h \
-		../../CUtil/include/CRGBUtil.h \
-		../../CUtil/include/CCMYK.h \
-		../../CUtil/include/CHSL.h \
-		../../CUtil/include/CHSB.h \
-		../../CUtil/include/CHSI.h \
-		../../CMath/include/CMathGen.h \
-		../../COS/include/NaN.h \
-		../../CRGBName/include/CRGBName.h \
-		../../CUtil/include/CColorComponent.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CISize2D.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIPoint2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CImageLib/include/CImagePtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CStrUtil/include/CStrUtil.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h \
-		CBrowserJS.h \
-		CBrowserIFace.h \
-		../../CQUtil/include/CQMainWindow.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		CBrowserWindowWidget.h \
-		CQJWindow.h \
-		CQJObject.h \
-		CQJEvent.h \
-		CQJHtmlObj.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQJComboBox.o CQJComboBox.cpp
-
-../obj/CQJSlider.o: CQJSlider.cpp CQJSlider.h \
-		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
-		../../CJavaScript/include/CJavaScript.h \
-		../../CJavaScript/include/CJTypes.h \
-		../../CJavaScript/include/CJToken.h \
-		../../CJavaScript/include/CJKeyword.h \
-		../../CJavaScript/include/CJNameSpace.h \
-		../../CJavaScript/include/CJPropertyValue.h \
-		../../CUtil/include/COptVal.h \
-		../../CJavaScript/include/CJIdentifier.h \
-		../../CJavaScript/include/CJObj.h \
-		../../CJavaScript/include/CJObjType.h \
-		../../CJavaScript/include/CJDictionary.h \
-		../../CJavaScript/include/CJValue.h \
-		../../CJavaScript/include/CJUndefined.h \
-		../../CJavaScript/include/CJNull.h \
-		../../CJavaScript/include/CJTrue.h \
-		../../CJavaScript/include/CJFalse.h \
-		../../CJavaScript/include/CJBoolean.h \
-		../../CJavaScript/include/CJNumber.h \
-		../../CJavaScript/include/CJUtil.h \
-		../../COS/include/COSNaN.h \
-		../../CJavaScript/include/CJString.h \
-		../../CJavaScript/include/CJArray.h \
-		../../CJavaScript/include/CJOperator.h \
-		../../CJavaScript/include/CJFunctionBase.h \
-		../../CJavaScript/include/CJRegExp.h \
-		../../CRegExp/include/CRegExp.h \
-		../../CJavaScript/include/CJDate.h \
-		../../CJavaScript/include/CJFunction.h \
-		../../CJavaScript/include/CJLValue.h \
-		../../CJavaScript/include/CJObject.h \
-		../../CJavaScript/include/CJTypeValue.h \
-		../../CJavaScript/include/CJUserObject.h \
-		../../CJavaScript/include/CJTypeFunction.h \
-		../../CJavaScript/include/CJGetterSetter.h \
-		../../CJavaScript/include/CJExecBlock.h \
-		../../CJavaScript/include/CJExecStatement.h \
-		../../CJavaScript/include/CJExecExpression.h \
-		../../CJavaScript/include/CJExecExpressionList.h \
-		../../CJavaScript/include/CJTypeObjectFunction.h \
-		../../CJavaScript/include/CJExecData.h \
-		../../CJavaScript/include/CJPropertyData.h \
-		../../CJavaScript/include/CJGlobalFunction.h \
-		../../CJavaScript/include/CJRealFunction.h \
-		../../CJavaScript/include/CJRandFunction.h \
-		CBrowserForm.h \
-		CBrowserObject.h \
-		../../CHtml/include/CHtmlTypes.h \
-		CHtmlLayoutBox.h \
-		CBrowserData.h \
-		../../CUtil/include/CRGBA.h \
-		../../CUtil/include/CRGB.h \
-		../../CUtil/include/CHSV.h \
-		../../CUtil/include/CRGBUtil.h \
-		../../CUtil/include/CCMYK.h \
-		../../CUtil/include/CHSL.h \
-		../../CUtil/include/CHSB.h \
-		../../CUtil/include/CHSI.h \
-		../../CMath/include/CMathGen.h \
-		../../COS/include/NaN.h \
-		../../CRGBName/include/CRGBName.h \
-		../../CUtil/include/CColorComponent.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CISize2D.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIPoint2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CImageLib/include/CImagePtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CStrUtil/include/CStrUtil.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h \
-		CBrowserJS.h \
-		CBrowserIFace.h \
-		../../CQUtil/include/CQMainWindow.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontStyle.h \
-		../../CUtil/include/CFlags.h \
-		CBrowserWindowWidget.h \
-		CQJWindow.h \
-		CQJObject.h \
-		CQJEvent.h \
-		CQJHtmlObj.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQJSlider.o CQJSlider.cpp
 
 ../obj/CQJObject.o: CQJObject.cpp CQJObject.h \
 		../../CJavaScript/include/CJObj.h \
@@ -5870,14 +9982,38 @@ compiler_clean: compiler_moc_header_clean
 		../../CJavaScript/include/CJValue.h \
 		CBrowserJS.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
 		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
 		../../CJavaScript/include/CJavaScript.h \
 		../../CJavaScript/include/CJKeyword.h \
 		../../CJavaScript/include/CJIdentifier.h \
@@ -5914,6 +10050,125 @@ compiler_clean: compiler_moc_header_clean
 		../../CJavaScript/include/CJRealFunction.h \
 		../../CJavaScript/include/CJRandFunction.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQJObject.o CQJObject.cpp
+
+../obj/CQJSlider.o: CQJSlider.cpp CQJSlider.h \
+		CBrowserTypes.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		../../CJavaScript/include/CJavaScript.h \
+		../../CJavaScript/include/CJTypes.h \
+		../../CJavaScript/include/CJToken.h \
+		../../CJavaScript/include/CJKeyword.h \
+		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CJavaScript/include/CJIdentifier.h \
+		../../CJavaScript/include/CJObj.h \
+		../../CJavaScript/include/CJObjType.h \
+		../../CJavaScript/include/CJDictionary.h \
+		../../CJavaScript/include/CJValue.h \
+		../../CJavaScript/include/CJUndefined.h \
+		../../CJavaScript/include/CJNull.h \
+		../../CJavaScript/include/CJTrue.h \
+		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
+		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CJavaScript/include/CJString.h \
+		../../CJavaScript/include/CJArray.h \
+		../../CJavaScript/include/CJOperator.h \
+		../../CJavaScript/include/CJFunctionBase.h \
+		../../CJavaScript/include/CJRegExp.h \
+		../../CRegExp/include/CRegExp.h \
+		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJLValue.h \
+		../../CJavaScript/include/CJObject.h \
+		../../CJavaScript/include/CJTypeValue.h \
+		../../CJavaScript/include/CJUserObject.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
+		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
+		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
+		CBrowserForm.h \
+		CBrowserObject.h \
+		CBrowserBox.h \
+		CBrowserWord.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
+		CBrowserMargin.h \
+		CBrowserUnitValue.h \
+		../../CUtil/include/CScreenUnits.h \
+		CBrowserBorder.h \
+		CBrowserColor.h \
+		CBrowserPadding.h \
+		../../CHtml/include/CHtmlTypes.h \
+		CTextBox.h \
+		CBrowserRegion.h \
+		CBrowserData.h \
+		CBrowserClear.h \
+		CBrowserBackground.h \
+		CBrowserFont.h \
+		CBrowserTextProp.h \
+		CBrowserFloat.h \
+		CBrowserProperty.h \
+		CBrowserJS.h \
+		CBrowserIFace.h \
+		../../CQUtil/include/CQMainWindow.h \
+		CBrowserWindowWidget.h \
+		CQJWindow.h \
+		CQJObject.h \
+		CQJEvent.h \
+		CQJHtmlObj.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQJSlider.o CQJSlider.cpp
 
 ../obj/CQJWindow.o: CQJWindow.cpp CQJWindow.h \
 		CQJObject.h \
@@ -5978,14 +10233,38 @@ compiler_clean: compiler_moc_header_clean
 		../../CJavaScript/include/CJValue.h \
 		CBrowserJS.h \
 		CBrowserTypes.h \
-		CHtmlLayout.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutMgr.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
 		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
 		../../CJavaScript/include/CJavaScript.h \
 		../../CJavaScript/include/CJKeyword.h \
 		../../CJavaScript/include/CJIdentifier.h \
@@ -6022,47 +10301,6 @@ compiler_clean: compiler_moc_header_clean
 		../../CJavaScript/include/CJRealFunction.h \
 		../../CJavaScript/include/CJRandFunction.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQJWindowTimer.o CQJWindowTimer.cpp
-
-../obj/CHtmlLayoutArea.o: CHtmlLayoutArea.cpp CHtmlLayoutArea.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutMgr.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CHtmlLayoutArea.o CHtmlLayoutArea.cpp
-
-../obj/CHtmlLayoutBox.o: CHtmlLayoutBox.cpp CHtmlLayoutBox.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutVisitor.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CHtmlLayoutBox.o CHtmlLayoutBox.cpp
-
-../obj/CHtmlLayoutCell.o: CHtmlLayoutCell.cpp CHtmlLayoutCell.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutVisitor.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutBox.h \
-		CHtmlLayoutSubCell.h \
-		CHtmlLayoutMgr.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CHtmlLayoutCell.o CHtmlLayoutCell.cpp
-
-../obj/CHtmlLayoutMgr.o: CHtmlLayoutMgr.cpp CHtmlLayoutMgr.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutArea.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutVisitor.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutSubCell.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CHtmlLayoutMgr.o CHtmlLayoutMgr.cpp
-
-../obj/CHtmlLayoutSubCell.o: CHtmlLayoutSubCell.cpp CHtmlLayoutSubCell.h \
-		CHtmlLayoutTypes.h \
-		CHtmlLayoutVisitor.h \
-		../../CUtil/include/CAlignType.h \
-		CHtmlLayoutCell.h \
-		CHtmlLayoutBox.h \
-		CHtmlLayoutMgr.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CHtmlLayoutSubCell.o CHtmlLayoutSubCell.cpp
 
 ../obj/CQHistoryLineEdit.o: CQHistoryLineEdit.cpp CQHistoryLineEdit.h \
 		../../CUtil/include/CAutoPtr.h \
@@ -6121,71 +10359,77 @@ compiler_clean: compiler_moc_header_clean
 		../../CStrUtil/include/CStrUtil.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CUrl.o CUrl.cpp
 
-../obj/moc_CBrowserForm.o: moc_CBrowserForm.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CBrowserForm.o moc_CBrowserForm.cpp
+../obj/moc_CBrowserForm.o: .moc/moc_CBrowserForm.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CBrowserForm.o .moc/moc_CBrowserForm.cpp
 
-../obj/moc_CBrowserIFace.o: moc_CBrowserIFace.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CBrowserIFace.o moc_CBrowserIFace.cpp
+../obj/moc_CBrowserIFace.o: .moc/moc_CBrowserIFace.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CBrowserIFace.o .moc/moc_CBrowserIFace.cpp
 
-../obj/moc_CBrowserMain.o: moc_CBrowserMain.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CBrowserMain.o moc_CBrowserMain.cpp
+../obj/moc_CBrowserMain.o: .moc/moc_CBrowserMain.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CBrowserMain.o .moc/moc_CBrowserMain.cpp
 
-../obj/moc_CBrowserObjProp.o: moc_CBrowserObjProp.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CBrowserObjProp.o moc_CBrowserObjProp.cpp
+../obj/moc_CBrowserObjProp.o: .moc/moc_CBrowserObjProp.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CBrowserObjProp.o .moc/moc_CBrowserObjProp.cpp
 
-../obj/moc_CBrowserDomTree.o: moc_CBrowserDomTree.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CBrowserDomTree.o moc_CBrowserDomTree.cpp
+../obj/moc_CBrowserDomTree.o: .moc/moc_CBrowserDomTree.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CBrowserDomTree.o .moc/moc_CBrowserDomTree.cpp
 
-../obj/moc_CQJCanvasFontMetrics.o: moc_CQJCanvasFontMetrics.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJCanvasFontMetrics.o moc_CQJCanvasFontMetrics.cpp
+../obj/moc_CQJCanvasFontMetrics.o: .moc/moc_CQJCanvasFontMetrics.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJCanvasFontMetrics.o .moc/moc_CQJCanvasFontMetrics.cpp
 
-../obj/moc_CQJCanvas.o: moc_CQJCanvas.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJCanvas.o moc_CQJCanvas.cpp
+../obj/moc_CQJCanvas.o: .moc/moc_CQJCanvas.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJCanvas.o .moc/moc_CQJCanvas.cpp
 
-../obj/moc_CQJCanvasImageDataArray.o: moc_CQJCanvasImageDataArray.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJCanvasImageDataArray.o moc_CQJCanvasImageDataArray.cpp
+../obj/moc_CQJCanvasImageDataArray.o: .moc/moc_CQJCanvasImageDataArray.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJCanvasImageDataArray.o .moc/moc_CQJCanvasImageDataArray.cpp
 
-../obj/moc_CQJCanvasImageData.o: moc_CQJCanvasImageData.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJCanvasImageData.o moc_CQJCanvasImageData.cpp
+../obj/moc_CQJCanvasImageData.o: .moc/moc_CQJCanvasImageData.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJCanvasImageData.o .moc/moc_CQJCanvasImageData.cpp
 
-../obj/moc_CQJCanvasWidget.o: moc_CQJCanvasWidget.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJCanvasWidget.o moc_CQJCanvasWidget.cpp
+../obj/moc_CQJCanvasWidget.o: .moc/moc_CQJCanvasWidget.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJCanvasWidget.o .moc/moc_CQJCanvasWidget.cpp
 
-../obj/moc_CQJDialog.o: moc_CQJDialog.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJDialog.o moc_CQJDialog.cpp
+../obj/moc_CQJColorEdit.o: .moc/moc_CQJColorEdit.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJColorEdit.o .moc/moc_CQJColorEdit.cpp
 
-../obj/moc_CQJDocument.o: moc_CQJDocument.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJDocument.o moc_CQJDocument.cpp
+../obj/moc_CQJComboBox.o: .moc/moc_CQJComboBox.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJComboBox.o .moc/moc_CQJComboBox.cpp
 
-../obj/moc_CQJHtmlObj.o: moc_CQJHtmlObj.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJHtmlObj.o moc_CQJHtmlObj.cpp
+../obj/moc_CQJDialog.o: .moc/moc_CQJDialog.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJDialog.o .moc/moc_CQJDialog.cpp
 
-../obj/moc_CQJInput.o: moc_CQJInput.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJInput.o moc_CQJInput.cpp
+../obj/moc_CQJDocument.o: .moc/moc_CQJDocument.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJDocument.o .moc/moc_CQJDocument.cpp
 
-../obj/moc_CQJColorEdit.o: moc_CQJColorEdit.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJColorEdit.o moc_CQJColorEdit.cpp
+../obj/moc_CQJForm.o: .moc/moc_CQJForm.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJForm.o .moc/moc_CQJForm.cpp
 
-../obj/moc_CQJLineEdit.o: moc_CQJLineEdit.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJLineEdit.o moc_CQJLineEdit.cpp
+../obj/moc_CQJHtmlCollection.o: .moc/moc_CQJHtmlCollection.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJHtmlCollection.o .moc/moc_CQJHtmlCollection.cpp
 
-../obj/moc_CQJComboBox.o: moc_CQJComboBox.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJComboBox.o moc_CQJComboBox.cpp
+../obj/moc_CQJHtmlObj.o: .moc/moc_CQJHtmlObj.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJHtmlObj.o .moc/moc_CQJHtmlObj.cpp
 
-../obj/moc_CQJSlider.o: moc_CQJSlider.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJSlider.o moc_CQJSlider.cpp
+../obj/moc_CQJInput.o: .moc/moc_CQJInput.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJInput.o .moc/moc_CQJInput.cpp
 
-../obj/moc_CQJObject.o: moc_CQJObject.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJObject.o moc_CQJObject.cpp
+../obj/moc_CQJLineEdit.o: .moc/moc_CQJLineEdit.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJLineEdit.o .moc/moc_CQJLineEdit.cpp
 
-../obj/moc_CQJWindow.o: moc_CQJWindow.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJWindow.o moc_CQJWindow.cpp
+../obj/moc_CQJObject.o: .moc/moc_CQJObject.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJObject.o .moc/moc_CQJObject.cpp
 
-../obj/moc_CQJWindowTimer.o: moc_CQJWindowTimer.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJWindowTimer.o moc_CQJWindowTimer.cpp
+../obj/moc_CQJSlider.o: .moc/moc_CQJSlider.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJSlider.o .moc/moc_CQJSlider.cpp
 
-../obj/moc_CQHistoryLineEdit.o: moc_CQHistoryLineEdit.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQHistoryLineEdit.o moc_CQHistoryLineEdit.cpp
+../obj/moc_CQJWindow.o: .moc/moc_CQJWindow.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJWindow.o .moc/moc_CQJWindow.cpp
+
+../obj/moc_CQJWindowTimer.o: .moc/moc_CQJWindowTimer.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQJWindowTimer.o .moc/moc_CQJWindowTimer.cpp
+
+../obj/moc_CQHistoryLineEdit.o: .moc/moc_CQHistoryLineEdit.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQHistoryLineEdit.o .moc/moc_CQHistoryLineEdit.cpp
 
 ####### Install
 

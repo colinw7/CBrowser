@@ -53,16 +53,26 @@ CBrowserDomTreeDlg(CBrowserWindow *window) :
 {
   QVBoxLayout *layout = new QVBoxLayout(this);
 
+  QTabWidget *tab = new QTabWidget;
+
+  layout->addWidget(tab);
+
+  //---
+
   QSplitter *splitter = new QSplitter(this);
   splitter->setObjectName("splitter");
 
-  tree_ = new CBrowserDomTree(this, window);
-  prop_ = new CBrowserObjProp(this, window);
+  domTree_ = new CBrowserDomTree(this, window);
+  prop_    = new CBrowserObjProp(this, window);
 
-  splitter->addWidget(tree_);
+  splitter->addWidget(domTree_);
   splitter->addWidget(prop_);
 
   layout->addWidget(splitter);
+
+  //---
+
+  tab->addTab(splitter, "DOM");
 }
 
 //---
@@ -239,16 +249,10 @@ data(const QModelIndex &index, int role) const
     std::string name;
 
     if      (index.column() == 0) {
-      if      (obj->type() == CHtmlTagId::TEXT)
-        name = "text";
-      else if (obj->type() == CHtmlTagId::LABEL)
-        name = "label";
-      else if (obj->type() == CHtmlTagId::SYMBOL)
-        name = "symbol";
-      else if (obj->id() != "")
-        name = obj->typeName() + ":" + obj->id();
-      else
-        name = obj->typeName();
+      name = obj->typeName();
+
+      if (obj->id() != "")
+        name = name + ":" + obj->id();
     }
     else if (index.column() == 1) {
       if (obj->type() == CHtmlTagId::TEXT)

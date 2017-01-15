@@ -1,15 +1,10 @@
 #ifndef CBROWSER_TYPES_H
 #define CBROWSER_TYPES_H
 
-#include <CHtmlLayout.h>
+#include <CBrush.h>
+#include <CPen.h>
 #include <string>
 #include <list>
-
-enum class CBrowserUnitsType {
-  NONE,
-  PIXEL,
-  PERCENT,
-};
 
 enum class CBrowserBorderType {
   NONE,
@@ -51,15 +46,19 @@ enum class CBrowserFormInputType {
   NONE,
   BUTTON,
   CHECKBOX,
+  EMAIL,
   FILE,
   HIDDEN,
   IMAGE,
+  MONTH,
+  NUMBER,
   PASSWORD_TEXT,
   RADIO_BUTTON,
   RANGE,
   RESET_BUTTON,
   SELECT,
   SUBMIT_BUTTON,
+  TEL,
   TEXT,
   TEXTAREA
 };
@@ -70,11 +69,22 @@ enum class CBrowserFormTextAreaWrapType {
   PHYSICAL
 };
 
+enum class CBrowserCSSType {
+  NONE,
+  GLOBAL,
+  CLASS,
+  TYPE,
+  TYPE_CLASS,
+  NAME
+};
+
 //------
 
 class CBrowserCanvas;
 class CQJCanvasWidget;
+class CBrowserAnchorLink;
 class CBrowserDocument;
+class CBrowserFileMgr;
 class CBrowserFontFace;
 class CBrowserForm;
 class CBrowserFormInput;
@@ -97,7 +107,7 @@ class CBrowserGraphics;
 class CBrowserHistory;
 class CBrowserIFace;
 class CBrowserImage;
-class CBrowserLink;
+class CBrowserLayout;
 class CBrowserLinkMgr;
 class CBrowserLinkRect;
 class CBrowserObject;

@@ -79,6 +79,8 @@ class CBrowserIFace : public CQMainWindow {
   void goBackProc();
   void goForwardProc();
 
+  void viewBoxesProc();
+
   void hscrollProc();
   void vscrollProc();
 
@@ -90,6 +92,7 @@ class CBrowserIFace : public CQMainWindow {
   QScrollBar*           list_vbar_ { nullptr };
   QLabel*               message_ { nullptr };
   CQMenu*               historyMenu_ { nullptr };
+  QLabel*               posLabel_ { nullptr };
   int                   canvas_x_offset_ { 0 };
   int                   canvas_y_offset_ { 0 };
   int                   canvas_width_ { 0 };

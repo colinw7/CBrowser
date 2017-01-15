@@ -30,16 +30,30 @@ CBrowserMain::
 
 void
 CBrowserMain::
-setDebug(bool debug)
+setDebug(bool b)
 {
-  debug_ = debug;
+  debug_ = b;
 }
 
 void
 CBrowserMain::
-setUseAlt(bool use_alt)
+setUseAlt(bool b)
 {
-  use_alt_ = use_alt;
+  useAlt_ = b;
+}
+
+void
+CBrowserMain::
+setOldLayout(bool b)
+{
+  oldLayout_ = b;
+}
+
+void
+CBrowserMain::
+setShowBoxes(bool b)
+{
+  showBoxes_ = b;
 }
 
 void

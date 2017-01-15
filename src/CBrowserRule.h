@@ -2,26 +2,20 @@
 #define CBrowserRule_H
 
 #include <CBrowserObject.h>
-
-struct CBrowserRuleData {
-  CHAlignType       align = CHALIGN_TYPE_CENTER;
-  bool              shade = true;
-  int               size  = -1;
-  int               width = -1;
-  CBrowserUnitsType unit  = CBrowserUnitsType::PIXEL;
-};
+#include <CBrowserUnitValue.h>
 
 class CBrowserRule : public CBrowserObject {
  public:
   CBrowserRule(CBrowserWindow *window, const CBrowserRuleData &data);
  ~CBrowserRule();
 
-  void initLayout() override;
-  void termLayout() override;
+  void init() override;
 
-  void format(CHtmlLayoutMgr *) override;
+  void setNameValue(const std::string &name, const std::string &value) override;
 
-  void draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &) override;
+  CBrowserRegion calcRegion() const override;
+
+  void draw(const CTextBox &) override;
 
  private:
   CBrowserRuleData data_;

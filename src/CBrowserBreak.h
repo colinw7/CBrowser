@@ -3,21 +3,25 @@
 
 #include <CBrowserObject.h>
 #include <CBrowserData.h>
-#include <CHtmlLayout.h>
 
 class CBrowserBreak : public CBrowserObject {
  public:
   CBrowserBreak(CBrowserWindow *window, const CBrowserBreakData &data);
  ~CBrowserBreak();
 
-  CHtmlLayoutClearType getClear() const { return data_.clear; }
+  CBrowserClear::Type getClear() const { return data_.clear; }
 
-  void initLayout() override;
-  void termLayout() override;
+  void init();
 
-  void format(CHtmlLayoutMgr *) override;
+  void setNameValue(const std::string &name, const std::string &value) override;
 
-  void draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &) override;
+  void getInlineWords(Words &words) const;
+
+  CBrowserRegion calcRegion() const override;
+
+  bool isBreak() const override { return true; }
+
+  void draw(const CTextBox &) override;
 
  private:
   CBrowserBreakData data_;
@@ -29,9 +33,6 @@ class CBrowserWbr : public CBrowserObject {
  public:
   CBrowserWbr(CBrowserWindow *window);
  ~CBrowserWbr();
-
-  void initLayout() override;
-  void termLayout() override;
 };
 
 #endif

@@ -74,7 +74,7 @@ CQJCanvasContext2D(CJavaScript *js, CQJCanvas *canvas) :
   setStringProperty(js, "lineJoin" , "miter");
   setStringProperty(js, "lineCap"  , "square");
 
-  setStringProperty(js, "font", "10px sans-serif");
+  setStringProperty(js, "font", "12px sans-serif");
   setStringProperty(js, "textBaseline", "alphabetic");
   setStringProperty(js, "textAlign", "left");
 
@@ -633,7 +633,7 @@ initFont()
 
   //---
 
-  std::string fontStr = getStringProperty(js_, "font", "10px sans-serif");
+  std::string fontStr = getStringProperty(js_, "font", "12px sans-serif");
 
   if (fontStr == lastFont_)
     return;
@@ -719,7 +719,7 @@ initFont()
   parse.skipSpace();
 
   if (parse.isDigit()) {
-    int fontSize = 10;
+    int fontSize = 12;
 
     parse.readInteger(&fontSize);
 
@@ -741,7 +741,7 @@ initFont()
     if (parse.isChar('/')) {
       parse.skipChar();
 
-      int lineHeight = 10;
+      int lineHeight = 12;
 
       parse.readInteger(&lineHeight);
 

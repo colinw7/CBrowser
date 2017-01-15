@@ -11,6 +11,41 @@ CBrowserScript(CBrowserWindow *window, const CBrowserScriptData &data) :
 
 void
 CBrowserScript::
+init()
+{
+  if (data_.src != "") {
+    if      (CStrUtil::toLower(data_.language) == "ceil") {
+      CBrowserCeilInst->runScriptFile(window_, data_.src);
+    }
+    else if (CStrUtil::toLower(data_.type) == "text/javascript") {
+      window_->addScriptFile(data_.src);
+    }
+  }
+}
+
+void
+CBrowserScript::
+setNameValue(const std::string &name, const std::string &value)
+{
+  std::string lname  = CStrUtil::toLower(name);
+  std::string lvalue = CStrUtil::toLower(value);
+
+  if      (lname == "language") {
+    data_.language = value;
+  }
+  else if (lname == "src") {
+    data_.src = value;
+  }
+  else if (lname == "type") {
+    data_.type = value;
+  }
+  else {
+    CBrowserObject::setNameValue(name, value);
+  }
+}
+
+void
+CBrowserScript::
 initProcess()
 {
 }

@@ -27,8 +27,14 @@ class CBrowserMain : public QObject {
   bool getQuiet() const { return quiet_; }
   void setQuiet(bool b) { quiet_ = b; }
 
-  bool getUseAlt() const { return use_alt_; }
-  void setUseAlt(bool use_alt);
+  bool getUseAlt() const { return useAlt_; }
+  void setUseAlt(bool useAlt);
+
+  bool getOldLayout() const { return oldLayout_; }
+  void setOldLayout(bool oldLayout_);
+
+  bool getShowBoxes() const { return showBoxes_; }
+  void setShowBoxes(bool showBoxes_);
 
   void openDocument(const std::string &fileName);
 
@@ -44,7 +50,9 @@ class CBrowserMain : public QObject {
   IFaceList ifaces_;
   bool      debug_ { false };
   bool      quiet_ { false };
-  bool      use_alt_ { false };
+  bool      useAlt_ { false };
+  bool      oldLayout_ { false };
+  bool      showBoxes_ { false };
 };
 
 #endif

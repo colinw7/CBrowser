@@ -13,12 +13,12 @@ class CBrowserDomTreeDlg : public QWidget {
  public:
   CBrowserDomTreeDlg(CBrowserWindow *window);
 
-  CBrowserDomTree *tree() const { return tree_; }
-  CBrowserObjProp *prop() const { return prop_; }
+  CBrowserDomTree *domTree() const { return domTree_; }
+  CBrowserObjProp *prop   () const { return prop_; }
 
  private:
-  CBrowserDomTree *tree_ { nullptr };
-  CBrowserObjProp *prop_ { nullptr };
+  CBrowserDomTree *domTree_ { nullptr };
+  CBrowserObjProp *prop_    { nullptr };
 };
 
 //---

@@ -24,9 +24,32 @@
 #include <QMessageBox>
 #include <QMenu>
 
+namespace {
+
+void initWidget(const CBrowserObject *obj, QWidget *w) {
+  if (obj->background().color().isValid())
+    CQUtil::setBackground(w, CQUtil::toQColor(obj->background().color().color()));
+
+  w->setFont(CQUtil::toQFont(obj->getWindow()->getFont()));
+
+  //if (obj->width().isValid())
+  //  w->setFixedWidth(obj->width().value());
+}
+
+}
+
+//---
+
 CBrowserFormFileUpload::
 CBrowserFormFileUpload(CBrowserWindow *window, const CBrowserFormInputData &data) :
  CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::FILE, data)
+{
+  init();
+}
+
+void
+CBrowserFormFileUpload::
+init()
 {
   if (data_.name == "")
     data_.name = "file";
@@ -36,10 +59,10 @@ CBrowserFormFileUpload(CBrowserWindow *window, const CBrowserFormInputData &data
 
 void
 CBrowserFormFileUpload::
-createWidget(CBrowserWindow *window)
+createWidget() const
 {
   if (! widget_) {
-    QWidget *rowcol = new QWidget(window->widget());
+    QWidget *rowcol = new QWidget(window_->widget());
 
     rowcol->setObjectName(data_.name.c_str());
 
@@ -53,6 +76,8 @@ createWidget(CBrowserWindow *window)
 
     widget_ = edit;
 
+    initWidget(this, widget_);
+
     hlayout->addWidget(edit);
 
     if (maxlength_ > 0) edit->setMaxLength(maxlength_);
@@ -61,27 +86,40 @@ createWidget(CBrowserWindow *window)
 
     button->setText("Browse ...");
 
+    initWidget(this, button);
+
     QObject::connect(button, SIGNAL(clicked()), this, SLOT(buttonProc()));
 
     hlayout->addWidget(button);
-
-    QSize size = rowcol->sizeHint();
-
-    width_  = size.width () + 4;
-    height_ = size.height() + 4;
   }
+}
 
-  window->updateSubCellHeight(height_/2, height_/2);
-  window->updateSubCellWidth (width_);
+CBrowserRegion
+CBrowserFormFileUpload::
+calcRegion() const
+{
+  createWidget();
+
+  if (! widget_)
+    return CBrowserRegion();
+
+  //---
+
+  QSize size = widget_->sizeHint();
+
+  width_  = size.width () + 4;
+  height_ = size.height() + 4;
+
+  return CBrowserRegion(width_, height_/2, height_/2);
 }
 
 void
 CBrowserFormFileUpload::
-drawWidget(CBrowserWindow *, const CHtmlLayoutRegion &region)
+drawWidget(CBrowserWindow *, const CTextBox &region)
 {
   QWidget *container = widget_->parentWidget();
 
-  container->move(region.x + 2, region.y + 2);
+  container->move(region.x() + 2, region.y() + 2);
   container->resize(width_ - 4, height_ - 4);
 }
 
@@ -110,10 +148,10 @@ CBrowserFormRadio(CBrowserWindow *window, const CBrowserFormInputData &data) :
 
 void
 CBrowserFormRadio::
-createWidget(CBrowserWindow *window)
+createWidget() const
 {
   if (! widget_) {
-    QRadioButton *radio = new QRadioButton(window->widget());
+    QRadioButton *radio = new QRadioButton(window_->widget());
 
     radio->setObjectName(data_.name.c_str());
 
@@ -125,22 +163,33 @@ createWidget(CBrowserWindow *window)
       radio->setChecked(true);
 
     QObject::connect(radio, SIGNAL(clicked()), this, SLOT(buttonProc()));
-
-    QSize size = widget_->sizeHint();
-
-    width_  = size.width () + 4;
-    height_ = size.height() + 4;
   }
+}
 
-  window->updateSubCellHeight(height_/2, height_/2);
-  window->updateSubCellWidth (width_);
+CBrowserRegion
+CBrowserFormRadio::
+calcRegion() const
+{
+  createWidget();
+
+  if (! widget_)
+    return CBrowserRegion();
+
+  //---
+
+  QSize size = widget_->sizeHint();
+
+  width_  = size.width () + 4;
+  height_ = size.height() + 4;
+
+  return CBrowserRegion(width_, height_/2, height_/2);
 }
 
 void
 CBrowserFormRadio::
-drawWidget(CBrowserWindow *, const CHtmlLayoutRegion &region)
+drawWidget(CBrowserWindow *, const CTextBox &region)
 {
-  widget_->move(region.x + 2, region.y + 2);
+  widget_->move(region.x() + 2, region.y() + 2);
   widget_->resize(width_ - 4, height_ - 4);
 }
 
@@ -166,7 +215,7 @@ buttonProc()
         input1->getName() != getName())
       continue;
 
-    QWidget *widget1 = input1->getWidget();
+    QWidget *widget1 = const_cast<QWidget *>(input1->getWidget());
 
     QRadioButton *radio1 = qobject_cast<QRadioButton *>(widget1);
 
@@ -202,10 +251,12 @@ value() const
 
 void
 CBrowserFormRange::
-createWidget(CBrowserWindow *window)
+createWidget() const
 {
   if (! widget_) {
-    CQJSlider *slider = new CQJSlider(window->widget(), this);
+    CBrowserFormRange *th = const_cast<CBrowserFormRange *>(this);
+
+    CQJSlider *slider = new CQJSlider(window_->widget(), th);
 
     slider->blockSignals(true);
 
@@ -216,61 +267,90 @@ createWidget(CBrowserWindow *window)
 
     slider->blockSignals(false);
 
-    slider->setFixedWidth(100);
-
     slider->setObjectName(data_.name.c_str());
 
     widget_ = slider;
-
-    QSize size = widget_->sizeHint();
-
-    width_  = size.width () + 4;
-    height_ = size.height() + 4;
   }
+}
 
-  window->updateSubCellHeight(height_/2, height_/2);
-  window->updateSubCellWidth (width_);
+CBrowserRegion
+CBrowserFormRange::
+calcRegion() const
+{
+  createWidget();
+
+  if (! widget_)
+    return CBrowserRegion();
+
+  //---
+
+  QSize size = widget_->sizeHint();
+
+  width_  = size.width () + 4;
+  height_ = size.height() + 4;
+
+  return CBrowserRegion(width_, height_/2, height_/2);
 }
 
 void
 CBrowserFormRange::
-drawWidget(CBrowserWindow *, const CHtmlLayoutRegion &region)
+drawWidget(CBrowserWindow *, const CTextBox &region)
 {
-  widget_->move(region.x + 2, region.y + 2);
+  widget_->move(region.x() + 2, region.y() + 2);
+  widget_->resize(width_ - 4, height_ - 4);
 }
 
 //---
 
 CBrowserForm::
 CBrowserForm(CBrowserWindow *window, const CBrowserFormData &data) :
- CBrowserObject(window, CHtmlTagId::FORM), data_(data)
+ CBrowserObject(window, CHtmlTagId::FORM, data), data_(data)
 {
-  target_   = "";
-  encoding_ = "";
+  CBrowserDocument *document = window_->getDocument();
+
+  document->addForm(this);
+}
+
+CBrowserForm::
+~CBrowserForm()
+{
+  //CBrowserDocument *document = window_->getDocument();
+
+  //document->removeForm(this);
 }
 
 void
 CBrowserForm::
-initProcess()
+init()
 {
 }
 
 void
 CBrowserForm::
-termProcess()
+setNameValue(const std::string &name, const std::string &value)
 {
-}
+  std::string lname  = CStrUtil::toLower(name);
+  std::string lvalue = CStrUtil::toLower(value);
 
-void
-CBrowserForm::
-initLayout()
-{
-}
-
-void
-CBrowserForm::
-termLayout()
-{
+  if      (lname == "action") {
+    data_.action = value;
+  }
+  else if (lname == "enctype") {
+  }
+  else if (lname == "method") {
+    if      (lvalue == "get" )
+      data_.method = CBrowserFormMethodType::GET;
+    else if (lvalue == "post")
+      data_.method = CBrowserFormMethodType::POST;
+    else
+      window_->displayError("Illegal 'form' method '%s'\n", value.c_str());
+  }
+  else if (lname == "name") {
+    data_.name = value;
+  }
+  else {
+    CBrowserObject::setNameValue(name, value);
+  }
 }
 
 void
@@ -314,6 +394,8 @@ CBrowserFormOption::
 CBrowserFormOption(CBrowserWindow *window, const CBrowserFormOptionData &data) :
  CBrowserObject(window, CHtmlTagId::OPTION), data_(data)
 {
+  setDisplay(Display::INLINE);
+
   text_ = "";
 }
 
@@ -333,31 +415,16 @@ termProcess()
 {
 }
 
-void
-CBrowserFormOption::
-initLayout()
-{
-}
-
-void
-CBrowserFormOption::
-termLayout()
-{
-}
-
 //---
 
 CBrowserFormInput::
 CBrowserFormInput(CBrowserWindow *window, CHtmlTagId id, CBrowserFormInputType type,
                   const CBrowserFormInputData &data) :
- CBrowserObject(window, id), type_(type), data_(data)
+ CBrowserObject(window, id, data), type_(type), data_(data)
 {
   widget_ = nullptr;
   width_  = 0;
   height_ = 0;
-
-  if (data_.id != "")
-    setId(data_.id);
 }
 
 CBrowserFormInput::
@@ -383,54 +450,32 @@ termProcess()
 
 void
 CBrowserFormInput::
-initLayout()
+getInlineWords(Words &words) const
 {
-  window_->addCellRedrawData(this);
+  CBrowserFormInput *th = const_cast<CBrowserFormInput *>(this);
+
+  words.push_back(CBrowserWord(th, /*break*/false, isHierSelected()));
 }
 
 void
 CBrowserFormInput::
-termLayout()
-{
-}
-
-void
-CBrowserFormInput::
-format(CHtmlLayoutMgr *)
+draw(const CTextBox &region)
 {
   if (getType() == CBrowserFormInputType::HIDDEN)
     return;
 
   //---
 
-  window_->newSubCellRight(true);
-
-  //---
-
-  createWidget(window_);
-
-  //---
-
-  window_->addSubCellRedrawData(this);
-}
-
-void
-CBrowserFormInput::
-draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &region)
-{
-  if (getType() == CBrowserFormInputType::HIDDEN)
-    return;
-
-  //---
+  fillBackground(region);
 
   drawWidget(window_, region);
 
   //---
 
-  window_->drawOutline(region.getX(), region.getY(),
-                       region.getWidth(), region.getHeight(), CRGBA(1,0,0));
+  window_->drawOutline(region.x(), region.y(), region.width(), region.height(),
+                       CPen(CRGBA(1,0,0)));
 
-  //region.x += getWidth();
+  //region.setX(region.x() + getWidth());
 }
 
 void
@@ -450,6 +495,16 @@ onChangeProc()
 //---
 
 CBrowserFormButton::
+CBrowserFormButton(CBrowserWindow *window, const CBrowserFormButtonData &data) :
+ CBrowserFormInput(window, CHtmlTagId::BUTTON, CBrowserFormInputType::BUTTON, data)
+{
+  if (data_.name == "")
+    data_.name = "button";
+
+  setObjectName(data_.name.c_str());
+}
+
+CBrowserFormButton::
 CBrowserFormButton(CBrowserWindow *window, const CBrowserFormInputData &data) :
  CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::BUTTON, data)
 {
@@ -461,10 +516,10 @@ CBrowserFormButton(CBrowserWindow *window, const CBrowserFormInputData &data) :
 
 void
 CBrowserFormButton::
-createWidget(CBrowserWindow *window)
+createWidget() const
 {
   if (! widget_) {
-    QPushButton *button = new QPushButton(window->widget());
+    QPushButton *button = new QPushButton(window_->widget());
 
     button->setObjectName(data_.name.c_str());
 
@@ -478,23 +533,35 @@ createWidget(CBrowserWindow *window)
 
     widget_ = button;
 
-    widget_->setFont(CQUtil::toQFont(window_->getFont()));
-
-    QSize size = widget_->sizeHint();
-
-    width_  = size.width () + 4;
-    height_ = size.height() + 4;
+    initWidget(this, widget_);
   }
+}
 
-  window->updateSubCellHeight(height_/2, height_/2);
-  window->updateSubCellWidth (width_);
+CBrowserRegion
+CBrowserFormButton::
+calcRegion() const
+{
+  createWidget();
+
+  if (! widget_)
+    return CBrowserRegion();
+
+  //---
+
+  QSize size = widget_->sizeHint();
+
+  width_  = size.width () + 4;
+  height_ = size.height() + 4;
+
+  return CBrowserRegion(width_, height_/2, height_/2);
 }
 
 void
 CBrowserFormButton::
-drawWidget(CBrowserWindow *, const CHtmlLayoutRegion &region)
+drawWidget(CBrowserWindow *, const CTextBox &region)
 {
-  widget_->move(region.x + 2, region.y + 2);
+  widget_->move(region.x() + 2, region.y() + 2);
+  widget_->resize(width_ - 4, height_ - 4);
 }
 
 //---
@@ -511,10 +578,10 @@ CBrowserFormCheckBox(CBrowserWindow *window, const CBrowserFormInputData &data) 
 
 void
 CBrowserFormCheckBox::
-createWidget(CBrowserWindow *window)
+createWidget() const
 {
   if (! widget_) {
-    QCheckBox *button = new QCheckBox(window->widget());
+    QCheckBox *button = new QCheckBox(window_->widget());
 
     button->setObjectName(data_.name.c_str());
 
@@ -525,23 +592,35 @@ createWidget(CBrowserWindow *window)
     if (checked_)
       button->setChecked(true);
 
-    widget_->setFont(CQUtil::toQFont(window_->getFont()));
-
-    QSize size = widget_->sizeHint();
-
-    width_  = size.width () + 4;
-    height_ = size.height() + 4;
+    initWidget(this, widget_);
   }
+}
 
-  window->updateSubCellHeight(height_/2, height_/2);
-  window->updateSubCellWidth (width_);
+CBrowserRegion
+CBrowserFormCheckBox::
+calcRegion() const
+{
+  createWidget();
+
+  if (! widget_)
+    return CBrowserRegion();
+
+  //---
+
+  QSize size = widget_->sizeHint();
+
+  width_  = size.width () + 4;
+  height_ = size.height() + 4;
+
+  return CBrowserRegion(width_, height_/2, height_/2);
 }
 
 void
 CBrowserFormCheckBox::
-drawWidget(CBrowserWindow *, const CHtmlLayoutRegion &region)
+drawWidget(CBrowserWindow *, const CTextBox &region)
 {
-  widget_->move(region.x + 2, region.y + 2);
+  widget_->move(region.x() + 2, region.y() + 2);
+  widget_->resize(width_ - 4, height_ - 4);
 }
 
 //---
@@ -582,49 +661,38 @@ CBrowserFormImage(CBrowserWindow *window, const CBrowserFormInputData &data) :
 
 void
 CBrowserFormImage::
-createWidget(CBrowserWindow *window)
+createWidget() const
+{
+}
+
+CBrowserRegion
+CBrowserFormImage::
+calcRegion() const
 {
   int hspace = 2;
   int vspace = 2;
   int width  = image_->getWidth ();
   int height = image_->getHeight();
 
-  //---
-
-  CHtmlLayoutCell *redraw_cell = window->getCurrentCell();
-
-  CHtmlLayoutSubCell *sub_cell = redraw_cell->getCurrentSubCell();
-
-  if      (align_ == CBrowserImageAlign::LEFT)
-    sub_cell->setAlign(CHALIGN_TYPE_LEFT);
-  else if (align_ == CBrowserImageAlign::RIGHT)
-    sub_cell->setAlign(CHALIGN_TYPE_RIGHT);
-  else
-    sub_cell->setAlign(CHALIGN_TYPE_NONE);
-
-  //---
-
-  if      (align_ == CBrowserImageAlign::TOP    ||
-           align_ == CBrowserImageAlign::TEXTTOP)
-    window->updateSubCellHeight(vspace, height + vspace);
-  else if (align_ == CBrowserImageAlign::MIDDLE ||
-           align_ == CBrowserImageAlign::ABSMIDDLE)
-    window->updateSubCellHeight((height + 1)/2 + vspace,
-                                 height     /2 + vspace);
-  else
-    window->updateSubCellHeight(height + vspace, vspace);
-
-  window->updateSubCellWidth(width + 2*hspace);
-
-  //---
-
   width_  = width  + 2*hspace;
   height_ = height + 2*vspace;
+
+#if 0
+  if      (align_ == CBrowserImageAlign::TOP    ||
+           align_ == CBrowserImageAlign::TEXTTOP)
+    return CBrowserRegion(width_, vspace, height + vspace);
+  else if (align_ == CBrowserImageAlign::MIDDLE ||
+           align_ == CBrowserImageAlign::ABSMIDDLE)
+    return CBrowserRegion(width_, (height + 1)/2 + vspace, height/2 + vspace);
+  else
+    return CBrowserRegion(width_, height + vspace, vspace);
+#endif
+   return CBrowserRegion(width_, height_ - vspace, vspace);
 }
 
 void
 CBrowserFormImage::
-drawWidget(CBrowserWindow *window, const CHtmlLayoutRegion &region)
+drawWidget(CBrowserWindow *window, const CTextBox &region)
 {
   int hspace = 2;
   int vspace = 2;
@@ -632,19 +700,23 @@ drawWidget(CBrowserWindow *window, const CHtmlLayoutRegion &region)
 
   //---
 
-  int x1 = region.x + hspace;
-  int y1 = region.y + vspace;
+  int dy = height_ - region.height();
 
-  CHtmlLayoutSubCell *sub_cell = window->getCurrentSubCell();
+  int x1 = region.x() + hspace;
+  int y1 = region.y() + vspace;
 
-  if      (align_ == CBrowserImageAlign::TOP   )
-    y1 += sub_cell->getAscent();
+  if      (align_ == CBrowserImageAlign::TOP)
+    y1 += 0;
   else if (align_ == CBrowserImageAlign::MIDDLE)
-    y1 +=  sub_cell->getAscent() - image_->getHeight()/2;
+    y1 += dy; // TODO: ascent
+  else if (align_ == CBrowserImageAlign::BOTTOM)
+    y1 += dy; // TODO: ascent
+  else if (align_ == CBrowserImageAlign::TEXTTOP)
+    y1 += 0;
   else if (align_ == CBrowserImageAlign::ABSMIDDLE)
-    y1 += (sub_cell->getHeight() - image_->getHeight())/2;
+    y1 += dy/2;
   else if (align_ == CBrowserImageAlign::ABSBOTTOM)
-    y1 += sub_cell->getDescent();
+    y1 += dy;
   else
     y1 += 0;
 
@@ -652,12 +724,11 @@ drawWidget(CBrowserWindow *window, const CHtmlLayoutRegion &region)
 
   CRGBA color = window->getDocument()->getLinkColor();
 
-  window->setForeground(color);
-
   for (int i = 0; i < border; ++i)
     window->drawRectangle(x1 - i - 1, y1 - i - 1,
                           image_->getWidth () + 2*i + 1,
-                          image_->getHeight() + 2*i + 1);
+                          image_->getHeight() + 2*i + 1,
+                          CPen(color));
 
 /*
   int x2 = x1 + image_->getWidth ();
@@ -665,6 +736,501 @@ drawWidget(CBrowserWindow *window, const CHtmlLayoutRegion &region)
 
   link->addRect(x1, y1, x2, y2);
 */
+}
+
+//---
+
+CBrowserFormTel::
+CBrowserFormTel(CBrowserWindow *window, const CBrowserFormInputData &data) :
+ CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::TEL, data)
+{
+  if (data_.name == "")
+    data_.name = "tel";
+
+  setObjectName(data_.name.c_str());
+}
+
+void
+CBrowserFormTel::
+createWidget() const
+{
+  if (! widget_) {
+    QLineEdit *edit = new QLineEdit(window_->widget());
+
+    edit->setObjectName(data_.name.c_str());
+
+    edit->setText("");
+
+    widget_ = edit;
+
+    if (maxlength_ > 0) edit->setMaxLength(maxlength_);
+
+    initWidget(this, widget_);
+  }
+}
+
+CBrowserRegion
+CBrowserFormTel::
+calcRegion() const
+{
+  createWidget();
+
+  if (! widget_)
+    return CBrowserRegion();
+
+  //---
+
+  QSize size = widget_->sizeHint();
+
+  width_  = size.width () + 4;
+  height_ = size.height() + 4;
+
+  return CBrowserRegion(width_, height_/2, height_/2);
+}
+
+void
+CBrowserFormTel::
+drawWidget(CBrowserWindow *, const CTextBox &region)
+{
+  widget_->move(region.x() + 2, region.y() + 2);
+  widget_->resize(width_ - 4, height_ - 4);
+}
+
+void
+CBrowserFormTel::
+reset()
+{
+  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+
+  edit->setText("");
+}
+
+void
+CBrowserFormTel::
+submit(std::string &url)
+{
+  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+
+  QString value = edit->text();
+
+  url += data_.name;
+  url += "=";
+  url += value.toStdString();
+}
+
+//---
+
+CBrowserFormMonth::
+CBrowserFormMonth(CBrowserWindow *window, const CBrowserFormInputData &data) :
+ CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::MONTH, data)
+{
+  if (data_.name == "")
+    data_.name = "month";
+
+  setObjectName(data_.name.c_str());
+}
+
+void
+CBrowserFormMonth::
+createWidget() const
+{
+  if (! widget_) {
+    QLineEdit *edit = new QLineEdit(window_->widget());
+
+    edit->setObjectName(data_.name.c_str());
+
+    edit->setText("");
+
+    widget_ = edit;
+
+    if (maxlength_ > 0) edit->setMaxLength(maxlength_);
+
+    initWidget(this, widget_);
+  }
+}
+
+CBrowserRegion
+CBrowserFormMonth::
+calcRegion() const
+{
+  createWidget();
+
+  if (! widget_)
+    return CBrowserRegion();
+
+  //---
+
+  QSize size = widget_->sizeHint();
+
+  width_  = size.width () + 4;
+  height_ = size.height() + 4;
+
+  return CBrowserRegion(width_, height_/2, height_/2);
+}
+
+void
+CBrowserFormMonth::
+drawWidget(CBrowserWindow *, const CTextBox &region)
+{
+  widget_->move(region.x() + 2, region.y() + 2);
+  widget_->resize(width_ - 4, height_ - 4);
+}
+
+void
+CBrowserFormMonth::
+reset()
+{
+  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+
+  edit->setText("");
+}
+
+void
+CBrowserFormMonth::
+submit(std::string &url)
+{
+  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+
+  QString value = edit->text();
+
+  url += data_.name;
+  url += "=";
+  url += value.toStdString();
+}
+
+//---
+
+CBrowserFormDate::
+CBrowserFormDate(CBrowserWindow *window, const CBrowserFormInputData &data) :
+ CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::MONTH, data)
+{
+  if (data_.name == "")
+    data_.name = "date";
+
+  setObjectName(data_.name.c_str());
+}
+
+void
+CBrowserFormDate::
+createWidget() const
+{
+  if (! widget_) {
+    QLineEdit *edit = new QLineEdit(window_->widget());
+
+    edit->setObjectName(data_.name.c_str());
+
+    edit->setText("");
+
+    widget_ = edit;
+
+    if (maxlength_ > 0) edit->setMaxLength(maxlength_);
+
+    initWidget(this, widget_);
+  }
+}
+
+CBrowserRegion
+CBrowserFormDate::
+calcRegion() const
+{
+  createWidget();
+
+  if (! widget_)
+    return CBrowserRegion();
+
+  //---
+
+  QSize size = widget_->sizeHint();
+
+  width_  = size.width () + 4;
+  height_ = size.height() + 4;
+
+  return CBrowserRegion(width_, height_/2, height_/2);
+}
+
+void
+CBrowserFormDate::
+drawWidget(CBrowserWindow *, const CTextBox &region)
+{
+  widget_->move(region.x() + 2, region.y() + 2);
+  widget_->resize(width_ - 4, height_ - 4);
+}
+
+void
+CBrowserFormDate::
+reset()
+{
+  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+
+  edit->setText("");
+}
+
+void
+CBrowserFormDate::
+submit(std::string &url)
+{
+  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+
+  QString value = edit->text();
+
+  url += data_.name;
+  url += "=";
+  url += value.toStdString();
+}
+
+//---
+
+CBrowserFormSearch::
+CBrowserFormSearch(CBrowserWindow *window, const CBrowserFormInputData &data) :
+ CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::MONTH, data)
+{
+  if (data_.name == "")
+    data_.name = "search";
+
+  setObjectName(data_.name.c_str());
+}
+
+void
+CBrowserFormSearch::
+createWidget() const
+{
+  if (! widget_) {
+    QLineEdit *edit = new QLineEdit(window_->widget());
+
+    edit->setObjectName(data_.name.c_str());
+
+    edit->setText("");
+
+    widget_ = edit;
+
+    if (maxlength_ > 0) edit->setMaxLength(maxlength_);
+
+    initWidget(this, widget_);
+  }
+}
+
+CBrowserRegion
+CBrowserFormSearch::
+calcRegion() const
+{
+  createWidget();
+
+  if (! widget_)
+    return CBrowserRegion();
+
+  //---
+
+  QSize size = widget_->sizeHint();
+
+  width_  = size.width () + 4;
+  height_ = size.height() + 4;
+
+  return CBrowserRegion(width_, height_/2, height_/2);
+}
+
+void
+CBrowserFormSearch::
+drawWidget(CBrowserWindow *, const CTextBox &region)
+{
+  widget_->move(region.x() + 2, region.y() + 2);
+  widget_->resize(width_ - 4, height_ - 4);
+}
+
+void
+CBrowserFormSearch::
+reset()
+{
+  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+
+  edit->setText("");
+}
+
+void
+CBrowserFormSearch::
+submit(std::string &url)
+{
+  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+
+  QString value = edit->text();
+
+  url += data_.name;
+  url += "=";
+  url += value.toStdString();
+}
+
+//---
+
+CBrowserFormNumber::
+CBrowserFormNumber(CBrowserWindow *window, const CBrowserFormInputData &data) :
+ CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::NUMBER, data)
+{
+  if (data_.name == "")
+    data_.name = "number";
+
+  setObjectName(data_.name.c_str());
+}
+
+void
+CBrowserFormNumber::
+createWidget() const
+{
+  if (! widget_) {
+    CBrowserFormNumber *th = const_cast<CBrowserFormNumber *>(this);
+
+    CQJLineEdit *edit = new CQJLineEdit(window_->widget(), th);
+
+    edit->setText(data_.value.c_str());
+
+    edit->setPlaceholderText(data_.placeholder.c_str());
+
+    if (maxlength_ > 0)
+      edit->setMaxLength(maxlength_);
+
+    //if (data_.onchange != "")
+    //  QObject::connect(edit, SLOT(returnPressed()), this, SLOT(onChangeProc()));
+
+    widget_ = edit;
+
+    initWidget(this, widget_);
+  }
+}
+
+CBrowserRegion
+CBrowserFormNumber::
+calcRegion() const
+{
+  createWidget();
+
+  if (! widget_)
+    return CBrowserRegion();
+
+  //---
+
+  QSize size = widget_->sizeHint();
+
+  width_  = size.width () + 4;
+  height_ = size.height() + 4;
+
+  return CBrowserRegion(width_, height_/2, height_/2);
+}
+
+void
+CBrowserFormNumber::
+drawWidget(CBrowserWindow *, const CTextBox &region)
+{
+  widget_->move(region.x() + 2, region.y() + 2);
+  widget_->resize(width_ - 4, height_ - 4);
+}
+
+void
+CBrowserFormNumber::
+reset()
+{
+  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+
+  edit->setText("");
+}
+
+void
+CBrowserFormNumber::
+submit(std::string &url)
+{
+  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+
+  QString value = edit->text();
+
+  url += data_.name;
+  url += "=";
+  url += value.toStdString();
+}
+
+//---
+
+CBrowserFormEmail::
+CBrowserFormEmail(CBrowserWindow *window, const CBrowserFormInputData &data) :
+ CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::EMAIL, data)
+{
+  if (data_.name == "")
+    data_.name = "email";
+
+  setObjectName(data_.name.c_str());
+}
+
+std::string
+CBrowserFormEmail::
+text() const
+{
+  QLineEdit *edit = dynamic_cast<QLineEdit *>(widget_);
+
+  return (edit ? edit->text().toStdString() : "");
+}
+
+void
+CBrowserFormEmail::
+createWidget() const
+{
+  if (! widget_) {
+    QLineEdit *edit = new QLineEdit(window_->widget());
+
+    edit->setObjectName(data_.name.c_str());
+
+    edit->setText("");
+
+    widget_ = edit;
+
+    if (maxlength_ > 0) edit->setMaxLength(maxlength_);
+
+    initWidget(this, widget_);
+  }
+}
+
+CBrowserRegion
+CBrowserFormEmail::
+calcRegion() const
+{
+  createWidget();
+
+  if (! widget_)
+    return CBrowserRegion();
+
+  //---
+
+  QSize size = widget_->sizeHint();
+
+  width_  = size.width () + 4;
+  height_ = size.height() + 4;
+
+  return CBrowserRegion(width_, height_/2, height_/2);
+}
+
+void
+CBrowserFormEmail::
+drawWidget(CBrowserWindow *, const CTextBox &region)
+{
+  widget_->move(region.x() + 2, region.y() + 2);
+  widget_->resize(width_ - 4, height_ - 4);
+}
+
+void
+CBrowserFormEmail::
+reset()
+{
+  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+
+  edit->setText("");
+}
+
+void
+CBrowserFormEmail::
+submit(std::string &url)
+{
+  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+
+  QString value = edit->text();
+
+  url += data_.name;
+  url += "=";
+  url += value.toStdString();
 }
 
 //---
@@ -681,10 +1247,10 @@ CBrowserFormPassword(CBrowserWindow *window, const CBrowserFormInputData &data) 
 
 void
 CBrowserFormPassword::
-createWidget(CBrowserWindow *window)
+createWidget() const
 {
   if (! widget_) {
-    QLineEdit *edit = new QLineEdit(window->widget());
+    QLineEdit *edit = new QLineEdit(window_->widget());
 
     edit->setObjectName(data_.name.c_str());
 
@@ -696,23 +1262,35 @@ createWidget(CBrowserWindow *window)
 
     // TODO: make text unreadable
 
-    widget_->setFont(CQUtil::toQFont(window_->getFont()));
-
-    QSize size = widget_->sizeHint();
-
-    width_  = size.width () + 4;
-    height_ = size.height() + 4;
+    initWidget(this, widget_);
   }
+}
 
-  window->updateSubCellHeight(height_/2, height_/2);
-  window->updateSubCellWidth (width_);
+CBrowserRegion
+CBrowserFormPassword::
+calcRegion() const
+{
+  createWidget();
+
+  if (! widget_)
+    return CBrowserRegion();
+
+  //---
+
+  QSize size = widget_->sizeHint();
+
+  width_  = size.width () + 4;
+  height_ = size.height() + 4;
+
+  return CBrowserRegion(width_, height_/2, height_/2);
 }
 
 void
 CBrowserFormPassword::
-drawWidget(CBrowserWindow *, const CHtmlLayoutRegion &region)
+drawWidget(CBrowserWindow *, const CTextBox &region)
 {
-  widget_->move(region.x + 2, region.y + 2);
+  widget_->move(region.x() + 2, region.y() + 2);
+  widget_->resize(width_ - 4, height_ - 4);
 }
 
 void
@@ -751,15 +1329,16 @@ CBrowserFormHidden(CBrowserWindow *window, const CBrowserFormInputData &data) :
 
 void
 CBrowserFormHidden::
-createWidget(CBrowserWindow *)
+createWidget() const
 {
 }
 
 void
 CBrowserFormHidden::
-drawWidget(CBrowserWindow *, const CHtmlLayoutRegion &)
+drawWidget(CBrowserWindow *, const CTextBox &)
 {
-  //widget_->move(region.x + 2, region.y + 2);
+  //widget_->move(region.x() + 2, region.y() + 2);
+  //widget_->resize(width_ - 4, height_ - 4);
 }
 
 void
@@ -794,11 +1373,13 @@ text() const
 
 void
 CBrowserFormText::
-createWidget(CBrowserWindow *window)
+createWidget() const
 {
   if (! widget_) {
+    CBrowserFormText *th = const_cast<CBrowserFormText *>(this);
+
     if (classStr_ == "color") {
-      CQJColorEdit *colorEdit = new CQJColorEdit(window->widget(), this);
+      CQJColorEdit *colorEdit = new CQJColorEdit(window_->widget(), th);
 
       colorEdit->setText(data_.value.c_str());
 
@@ -811,11 +1392,11 @@ createWidget(CBrowserWindow *window)
       widget_ = colorEdit;
     }
     else {
-      CQJLineEdit *lineEdit = new CQJLineEdit(window->widget(), this);
+      CQJLineEdit *lineEdit = new CQJLineEdit(window_->widget(), th);
 
       lineEdit->setText(data_.value.c_str());
 
-      lineEdit->setPlaceholderText(placeholder_.c_str());
+      lineEdit->setPlaceholderText(data_.placeholder.c_str());
 
       if (maxlength_ > 0)
         lineEdit->setMaxLength(maxlength_);
@@ -826,23 +1407,34 @@ createWidget(CBrowserWindow *window)
       widget_ = lineEdit;
     }
 
-    widget_->setFont(CQUtil::toQFont(window_->getFont()));
-
-    QSize size = widget_->sizeHint();
-
-    width_  = size.width () + 4;
-    height_ = size.height() + 4;
+    initWidget(this, widget_);
   }
+}
 
-  window->updateSubCellHeight(height_/2, height_/2);
-  window->updateSubCellWidth (width_);
+CBrowserRegion
+CBrowserFormText::
+calcRegion() const
+{
+  createWidget();
+
+  if (! widget_)
+    return CBrowserRegion();
+
+  //---
+
+  QSize size = widget_->sizeHint();
+
+  width_  = size.width () + 4;
+  height_ = size.height() + 4;
+
+  return CBrowserRegion(width_, height_/2, height_/2);
 }
 
 void
 CBrowserFormText::
-drawWidget(CBrowserWindow *, const CHtmlLayoutRegion &region)
+drawWidget(CBrowserWindow *, const CTextBox &region)
 {
-  widget_->move  (region.x + 2, region.y + 2);
+  widget_->move  (region.x() + 2, region.y() + 2);
   widget_->resize(width_ - 4, height_ - 4);
 }
 
@@ -886,9 +1478,49 @@ CBrowserFormTextarea(CBrowserWindow *window, const CBrowserFormTextareaData &dat
     data_.name = "textarea";
 
   setObjectName(data_.name.c_str());
+}
 
-  if (data_.id != "")
-    setId(data_.id);
+void
+CBrowserFormTextarea::
+init()
+{
+}
+
+void
+CBrowserFormTextarea::
+setNameValue(const std::string &name, const std::string &value)
+{
+  std::string lname  = CStrUtil::toLower(name);
+  std::string lvalue = CStrUtil::toLower(value);
+
+  if      (lname == "cols") {
+    if (CStrUtil::isInteger(value))
+      data_.cols = CStrUtil::toInteger(value);
+    else {
+      window_->displayError("Illegal 'textarea' Value for cols '%s'\n", value.c_str());
+      data_.cols = 40;
+    }
+  }
+  else if (lname == "id") {
+    data_.id = value;
+  }
+  else if (lname == "name") {
+    data_.name = value;
+  }
+  else if (lname == "rows") {
+    if (CStrUtil::isInteger(value))
+      data_.rows = CStrUtil::toInteger(value);
+    else {
+      window_->displayError("Illegal 'textarea' Value for rows '%s'\n", value.c_str());
+      data_.rows = 5;
+    }
+  }
+  else if (lname == "wrap") {
+    data_.wrap = value;
+  }
+  else {
+    CBrowserObject::setNameValue(name, value);
+  }
 }
 
 void
@@ -909,34 +1541,51 @@ termLayout()
 
 void
 CBrowserFormTextarea::
-createWidget(CBrowserWindow *window)
+createWidget() const
 {
   if (! widget_) {
-    QTextEdit *edit = new QTextEdit(window->widget());
+    QTextEdit *edit = new QTextEdit(window_->widget());
 
     edit->setObjectName(data_.name.c_str());
 
-    edit->setText(data_.value.c_str());
+    std::string text = this->text();
+
+    if (text == "")
+      text = data_.value;
+
+    edit->setText(text.c_str());
 
     widget_ = edit;
 
-    widget_->setFont(CQUtil::toQFont(window_->getFont()));
-
-    QSize size = widget_->sizeHint();
-
-    width_  = size.width () + 4;
-    height_ = size.height() + 4;
+    initWidget(this, widget_);
   }
+}
 
-  window->updateSubCellHeight(height_/2, height_/2);
-  window->updateSubCellWidth (width_);
+CBrowserRegion
+CBrowserFormTextarea::
+calcRegion() const
+{
+  createWidget();
+
+  if (! widget_)
+    return CBrowserRegion();
+
+  //---
+
+  QSize size = widget_->sizeHint();
+
+  width_  = size.width () + 4;
+  height_ = size.height() + 4;
+
+  return CBrowserRegion(width_, height_/2, height_/2);
 }
 
 void
 CBrowserFormTextarea::
-drawWidget(CBrowserWindow *, const CHtmlLayoutRegion &region)
+drawWidget(CBrowserWindow *, const CTextBox &region)
 {
-  widget_->move(region.x + 2, region.y + 2);
+  widget_->move(region.x() + 2, region.y() + 2);
+  widget_->resize(width_ - 4, height_ - 4);
 }
 
 void
@@ -958,7 +1607,12 @@ reset()
 {
   QTextEdit *edit = qobject_cast<QTextEdit *>(widget_);
 
-  edit->setText(data_.value.c_str());
+  std::string text = this->text();
+
+  if (text == "")
+    text = data_.value;
+
+  edit->setText(text.c_str());
 }
 
 //---
@@ -975,10 +1629,10 @@ CBrowserFormReset(CBrowserWindow *window, const CBrowserFormInputData &data) :
 
 void
 CBrowserFormReset::
-createWidget(CBrowserWindow *window)
+createWidget() const
 {
   if (! widget_) {
-    QPushButton *button = new QPushButton(window->widget());
+    QPushButton *button = new QPushButton(window_->widget());
 
     button->setObjectName(data_.name.c_str());
 
@@ -991,23 +1645,35 @@ createWidget(CBrowserWindow *window)
     else
       button->setText("Reset");
 
-    widget_->setFont(CQUtil::toQFont(window_->getFont()));
-
-    QSize size = widget_->sizeHint();
-
-    width_  = size.width () + 4;
-    height_ = size.height() + 4;
+    initWidget(this, widget_);
   }
+}
 
-  window->updateSubCellHeight(height_/2, height_/2);
-  window->updateSubCellWidth (width_);
+CBrowserRegion
+CBrowserFormReset::
+calcRegion() const
+{
+  createWidget();
+
+  if (! widget_)
+    return CBrowserRegion();
+
+  //---
+
+  QSize size = widget_->sizeHint();
+
+  width_  = size.width () + 4;
+  height_ = size.height() + 4;
+
+  return CBrowserRegion(width_, height_/2, height_/2);
 }
 
 void
 CBrowserFormReset::
-drawWidget(CBrowserWindow *, const CHtmlLayoutRegion &region)
+drawWidget(CBrowserWindow *, const CTextBox &region)
 {
-  widget_->move(region.x + 2, region.y + 2);
+  widget_->move(region.x() + 2, region.y() + 2);
+  widget_->resize(width_ - 4, height_ - 4);
 }
 
 void
@@ -1028,9 +1694,45 @@ CBrowserFormSelect(CBrowserWindow *window, const CBrowserFormSelectData &data) :
     data_.name = "select";
 
   setObjectName(data_.name.c_str());
+}
 
-  if (data_.id != "")
-    setId(data_.id);
+void
+CBrowserFormSelect::
+init()
+{
+  CBrowserFormInput::init();
+}
+
+void
+CBrowserFormSelect::
+setNameValue(const std::string &name, const std::string &value)
+{
+  std::string lname = CStrUtil::toLower(name);
+
+  if      (lname == "multiple") {
+    data_.multiple = true;
+  }
+  else if (lname == "id") {
+    data_.id = value;
+  }
+  else if (lname == "name") {
+    data_.name = value;
+  }
+  else if (lname == "size") {
+    if (CStrUtil::isInteger(value))
+      data_.size = CStrUtil::toInteger(value);
+    else {
+      window_->displayError("Illegal 'select' Value '%s' for '%s'\n",
+                            value.c_str(), lname.c_str());
+      data_.size = 1;
+    }
+  }
+  else if (lname == "onchange") {
+    data_.onchange = value;
+  }
+  else {
+    CBrowserFormInput::setNameValue(name, value);
+  }
 }
 
 std::string
@@ -1067,23 +1769,13 @@ addOption(CBrowserFormOption *option)
 
 void
 CBrowserFormSelect::
-initLayout()
-{
-}
-
-void
-CBrowserFormSelect::
-termLayout()
-{
-}
-
-void
-CBrowserFormSelect::
-createWidget(CBrowserWindow *window)
+createWidget() const
 {
   if (! widget_) {
+    CBrowserFormSelect *th = const_cast<CBrowserFormSelect *>(this);
+
     if (data_.multiple || data_.size != 1) {
-      QListWidget *list = new QListWidget(window->widget());
+      QListWidget *list = new QListWidget(window_->widget());
 
       list->setObjectName(data_.name.c_str());
 
@@ -1106,7 +1798,7 @@ createWidget(CBrowserWindow *window)
       }
     }
     else {
-      CQJComboBox *combo = new CQJComboBox(window->widget(), this);
+      CQJComboBox *combo = new CQJComboBox(window_->widget(), th);
 
       combo->setObjectName(data_.name.c_str());
 
@@ -1121,23 +1813,34 @@ createWidget(CBrowserWindow *window)
       }
     }
 
-    widget_->setFont(CQUtil::toQFont(window_->getFont()));
-
-    QSize size = widget_->sizeHint();
-
-    width_  = size.width () + 4;
-    height_ = size.height() + 4;
+    initWidget(this, widget_);
   }
+}
 
-  window->updateSubCellHeight(height_/2, height_/2);
-  window->updateSubCellWidth (width_);
+CBrowserRegion
+CBrowserFormSelect::
+calcRegion() const
+{
+  createWidget();
+
+  if (! widget_)
+    return CBrowserRegion();
+
+  //---
+
+  QSize size = widget_->sizeHint();
+
+  width_  = size.width () + 4;
+  height_ = size.height() + 4;
+
+  return CBrowserRegion(width_, height_/2, height_/2);
 }
 
 void
 CBrowserFormSelect::
-drawWidget(CBrowserWindow *, const CHtmlLayoutRegion &region)
+drawWidget(CBrowserWindow *, const CTextBox &region)
 {
-  widget_->move(region.x + 2, region.y + 2);
+  widget_->move(region.x() + 2, region.y() + 2);
   widget_->resize(width_ - 4, height_ - 4);
 }
 
@@ -1155,10 +1858,10 @@ CBrowserFormSubmit(CBrowserWindow *window, const CBrowserFormInputData &data) :
 
 void
 CBrowserFormSubmit::
-createWidget(CBrowserWindow *window)
+createWidget() const
 {
   if (! widget_) {
-    QPushButton *button = new QPushButton(window->widget());
+    QPushButton *button = new QPushButton(window_->widget());
 
     button->setObjectName(data_.name.c_str());
 
@@ -1174,21 +1877,33 @@ createWidget(CBrowserWindow *window)
     else
       button->setText("Submit Query");
 
-    widget_->setFont(CQUtil::toQFont(window_->getFont()));
-
-    QSize size = widget_->sizeHint();
-
-    width_  = size.width () + 4;
-    height_ = size.height() + 4;
+    initWidget(this, widget_);
   }
+}
 
-  window->updateSubCellHeight(height_/2, height_/2);
-  window->updateSubCellWidth (width_);
+CBrowserRegion
+CBrowserFormSubmit::
+calcRegion() const
+{
+  createWidget();
+
+  if (! widget_)
+    return CBrowserRegion();
+
+  //---
+
+  QSize size = widget_->sizeHint();
+
+  width_  = size.width () + 4;
+  height_ = size.height() + 4;
+
+  return CBrowserRegion(width_, height_/2, height_/2);
 }
 
 void
 CBrowserFormSubmit::
-drawWidget(CBrowserWindow *, const CHtmlLayoutRegion &region)
+drawWidget(CBrowserWindow *, const CTextBox &region)
 {
-  widget_->move(region.x + 2, region.y + 2);
+  widget_->move(region.x() + 2, region.y() + 2);
+  widget_->resize(width_ - 4, height_ - 4);
 }

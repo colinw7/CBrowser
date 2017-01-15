@@ -9,6 +9,7 @@
 class CBrowserJS {
  public:
   typedef std::vector<CJValueP> EventArgs;
+  typedef std::set<CQJObject *> Objects;
 
  public:
   static CBrowserJS *instance();
@@ -24,6 +25,8 @@ class CBrowserJS {
   void addJSObject(CQJObject *obj);
   void removeJSObject(CQJObject *obj);
 
+  const Objects &objects() const { return objects_; }
+
   void runScript(CBrowserWindow *window, const std::string &text);
   void runScriptFile(CBrowserWindow *window, const std::string &filename);
 
@@ -38,7 +41,6 @@ class CBrowserJS {
   void init();
 
  private:
-  typedef std::set<CQJObject *>                Objects;
   typedef std::map<CBrowserObject *, CJValueP> ObjMap;
 
   CJavaScript *js_ { 0 };

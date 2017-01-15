@@ -238,7 +238,7 @@ HtmlRunCeilScriptLines(CBrowserWindow *window, std::vector<std::string> &lines, 
 
     CHtmlParserTokens tokens;
 
-    HtmlReadFile(output_document_file->getFile()->getPath(), tokens);
+    window->fileMgr()->readFile(output_document_file->getFile()->getPath(), tokens);
 
     CBrowserOutput output(window);
 
@@ -344,7 +344,7 @@ HtmlScriptDocumentOpen()
 
       CHtmlParserTokens tokens;
 
-      HtmlReadFile(output_document_file->getFile()->getPath(), tokens);
+      window->fileMgr()->readFile(output_document_file->getFile()->getPath(), tokens);
 
       CBrowserOutput output(window);
 
@@ -415,7 +415,7 @@ HtmlScriptDocumentClose()
 
       CHtmlParserTokens tokens;
 
-      HtmlReadFile(output_document_file->getFile()->getPath(), tokens);
+      window->fileMgr()->readFile(output_document_file->getFile()->getPath(), tokens);
 
       CBrowserOutput output(window);
 

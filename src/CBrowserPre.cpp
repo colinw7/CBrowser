@@ -6,38 +6,28 @@ CBrowserPre::
 CBrowserPre(CBrowserWindow *window, const CBrowserPreData &data) :
  CBrowserObject(window, CHtmlTagId::PRE), data_(data)
 {
+  setDisplay(Display::BLOCK);
+
+  font_.setFamily(CBrowserFontFamily("monospace"));
+
+  marginRef().setTop   (CBrowserUnitValue("1em"));
+  marginRef().setBottom(CBrowserUnitValue("1em"));
+
+  setWhiteSpace(WhiteSpace::PRE);
 }
 
 void
 CBrowserPre::
-initProcess()
+init()
 {
-  window_->startFontFace("courier");
-
-  window_->setTextBreakup(false);
-  window_->setTextFormat (false);
+  CBrowserObject::init();
 }
 
 void
 CBrowserPre::
-termProcess()
+setNameValue(const std::string &name, const std::string &value)
 {
-  window_->endFontFace();
+  font_.setFamily(CBrowserFontFamily("monospace"));
 
-  window_->setTextBreakup(true);
-  window_->setTextFormat (true);
-}
-
-void
-CBrowserPre::
-initLayout()
-{
-  window_->skipLine();
-}
-
-void
-CBrowserPre::
-termLayout()
-{
-  window_->skipLine();
+  CBrowserObject::setNameValue(name, value);
 }

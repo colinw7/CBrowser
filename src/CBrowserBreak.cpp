@@ -5,6 +5,7 @@ CBrowserBreak::
 CBrowserBreak(CBrowserWindow *window, const CBrowserBreakData &data) :
  CBrowserObject(window, CHtmlTagId::BR), data_(data)
 {
+  setDisplay(Display::INLINE);
 }
 
 CBrowserBreak::
@@ -14,39 +15,52 @@ CBrowserBreak::
 
 void
 CBrowserBreak::
-initLayout()
-{
-  window_->addCellRedrawData(this);
-}
-
-void
-CBrowserBreak::
-termLayout()
+init()
 {
 }
 
 void
 CBrowserBreak::
-format(CHtmlLayoutMgr *)
+setNameValue(const std::string &name, const std::string &value)
 {
-  CHtmlLayoutSubCell *sub_cell = window_->newSubCellBelow(false);
+  std::string lname  = CStrUtil::toLower(name);
+  std::string lvalue = CStrUtil::toLower(value);
 
-  sub_cell->setClear(data_.clear);
-
-  //----
-
-  window_->updateSubCellHeight(0, 0);
-  window_->updateSubCellWidth (0);
-
-  //----
-
-  window_->addSubCellRedrawData(this);
+  if (lname == "clear") {
+    if      (lvalue == "left" ) data_.clear = CBrowserClear::Type::LEFT;
+    else if (lvalue == "right") data_.clear = CBrowserClear::Type::RIGHT;
+    else if (lvalue == "all"  ) data_.clear = CBrowserClear::Type::BOTH;
+    else window_->displayError("Illegal 'br' Clear '%s'\n", value.c_str());
+  }
+  else {
+    CBrowserObject::setNameValue(name, value);
+  }
 }
 
 void
 CBrowserBreak::
-draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &)
+getInlineWords(Words &words) const
 {
+  words.push_back(CBrowserWord("", CPen(), hierFont(), /*break*/true, isHierSelected()));
+}
+
+CBrowserRegion
+CBrowserBreak::
+calcRegion() const
+{
+  int width, ascent, descent;
+
+  window_->getTextWidth (hierFont(), text_, &width);
+  window_->getTextHeight(hierFont(), &ascent, &descent);
+
+  return CBrowserRegion(width, ascent, descent);
+}
+
+void
+CBrowserBreak::
+draw(const CTextBox &region)
+{
+  fillBackground(region);
 }
 
 //------
@@ -55,21 +69,10 @@ CBrowserWbr::
 CBrowserWbr(CBrowserWindow *window) :
  CBrowserObject(window, CHtmlTagId::WBR)
 {
+  setDisplay(Display::INLINE);
 }
 
 CBrowserWbr::
 ~CBrowserWbr()
-{
-}
-
-void
-CBrowserWbr::
-initLayout()
-{
-}
-
-void
-CBrowserWbr::
-termLayout()
 {
 }

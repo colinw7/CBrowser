@@ -42,8 +42,9 @@ void
 CQJHtmlObj::
 init()
 {
-  objType_->addObjFunction(js_, "appendChild", objType_);
+  objType_->addObjFunction(js_, "appendChild" , objType_);
   objType_->addObjFunction(js_, "insertBefore", objType_);
+  objType_->addObjFunction(js_, "getAttribute", objType_);
 }
 
 CJValueP
@@ -64,5 +65,9 @@ CJValueP
 CQJHtmlObj::
 execNameFn(CJavaScript *js, const std::string &name, const Values &values)
 {
-  return CQJObject::execNameFn(js, name, values);
+  if      (name == "getAttribute") {
+    return CJValueP();
+  }
+  else
+    return CQJObject::execNameFn(js, name, values);
 }

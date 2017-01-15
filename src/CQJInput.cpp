@@ -35,10 +35,15 @@ CJValueP
 CQJInput::
 getProperty(CJavaScript *js, const std::string &name) const
 {
-  if (name == "value") {
+  if      (name == "value") {
     switch (input_->getType()) {
       case CBrowserFormInputType::CHECKBOX: {
         return CJValueP();
+      }
+      case CBrowserFormInputType::EMAIL: {
+        CBrowserFormEmail *text = dynamic_cast<CBrowserFormEmail *>(input_);
+
+        return js->createStringValue(text->text());
       }
       case CBrowserFormInputType::FILE: {
         return CJValueP();
@@ -48,6 +53,11 @@ getProperty(CJavaScript *js, const std::string &name) const
       }
       case CBrowserFormInputType::IMAGE: {
         return CJValueP();
+      }
+      case CBrowserFormInputType::NUMBER: {
+        CBrowserFormNumber *number = dynamic_cast<CBrowserFormNumber *>(input_);
+
+        return js->createStringValue(number->text());
       }
       case CBrowserFormInputType::PASSWORD_TEXT: {
         return CJValueP();
@@ -81,6 +91,17 @@ getProperty(CJavaScript *js, const std::string &name) const
       }
       default:
         break;
+    }
+  }
+  else if (name == "valueAsNumber") {
+    switch (input_->getType()) {
+      case CBrowserFormInputType::NUMBER: {
+        CBrowserFormNumber *number = dynamic_cast<CBrowserFormNumber *>(input_);
+
+        return js->createNumberValue(long(atoi(number->text().c_str())));
+      }
+      default:
+        return js->createNumberValue(long(0));
     }
   }
 

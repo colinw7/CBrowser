@@ -8,18 +8,20 @@ main(int argc, char **argv)
 {
   CQApp app(argc, argv);
 
-  CArgs cargs("-debug:f -use_alt:f -batch:f");
+  CArgs cargs("-debug:f -use_alt:f -batch:f -old_layout:f");
 
   cargs.parse(&argc, argv);
 
   bool debug   = cargs.getBooleanArg("-debug");
   bool use_alt = cargs.getBooleanArg("-use_alt");
   bool batch   = cargs.getBooleanArg("-batch");
+  bool old     = cargs.getBooleanArg("-old_layout");
 
   CBrowserMain *browser = CBrowserMainInst;
 
   browser->setDebug (debug);
   browser->setUseAlt(use_alt);
+  browser->setOldLayout(old);
 
   std::string fileName;
 

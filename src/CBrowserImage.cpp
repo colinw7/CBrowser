@@ -9,15 +9,10 @@
 #include <cstring>
 
 CBrowserImage::
-CBrowserImage(CBrowserWindow *window, const CImagePtr &image, const CBrowserImageData &data) :
- CBrowserObject(window, CHtmlTagId::IMG), image_(image), data_(data)
+CBrowserImage(CBrowserWindow *window, const CBrowserImageData &data) :
+ CBrowserObject(window, CHtmlTagId::IMG), data_(data)
 {
-  std::vector<std::string> strs = {{
-    "src", "align", "border", "width", "height", "usemap", "hspace", "vspace", "alt" }};
-
-  setProperties(strs);
-
-  //---
+  setDisplay(CBrowserObject::Display::INLINE);
 
   link_ = window->linkMgr()->getCurrentLink();
 }
@@ -29,94 +24,201 @@ CBrowserImage::
 
 void
 CBrowserImage::
-initLayout()
+init()
 {
-  window_->addCellRedrawData(this);
+  if (data_.src == "") {
+    window_->displayError("No Image Source Specified\n");
+    return;
+  }
+
+  //---
+
+  CImagePtr image;
+
+  if (data_.src.substr(0, 6) == "_html_") {
+    std::string name = data_.src.substr(6);
+
+    image = CBrowserNamedImage::lookup(name);
+  }
+  else
+    image = window_->lookupImage(data_);
+
+  if (! image.isValid())
+    image = CBrowserNamedImage::genNoImage();
+
+  setImage(image);
+
+  //---
+
+  std::vector<std::string> strs = {{
+    "src", "align", "border", "width", "height", "usemap", "hspace", "vspace", "alt" }};
+
+  addProperties(strs);
+
+  CBrowserObject::init();
 }
 
 void
 CBrowserImage::
-termLayout()
+setNameValue(const std::string &name, const std::string &value)
 {
+  std::string lname  = CStrUtil::toLower(name);
+  std::string lvalue = CStrUtil::toLower(value);
+
+  if      (lname == "align") {
+    if      (lvalue == "top"      ) data_.align = CBrowserImageAlign::TOP;
+    else if (lvalue == "middle"   ) data_.align = CBrowserImageAlign::MIDDLE;
+    else if (lvalue == "bottom"   ) data_.align = CBrowserImageAlign::BOTTOM;
+    else if (lvalue == "left"     ) data_.align = CBrowserImageAlign::LEFT;
+    else if (lvalue == "right"    ) data_.align = CBrowserImageAlign::RIGHT;
+    else if (lvalue == "texttop"  ) data_.align = CBrowserImageAlign::TEXTTOP;
+    else if (lvalue == "absmiddle") data_.align = CBrowserImageAlign::ABSMIDDLE;
+    else if (lvalue == "absbottom") data_.align = CBrowserImageAlign::ABSBOTTOM;
+    else window_->displayError("Illegal 'img' Align '%s'\n", value.c_str());
+  }
+  else if (lname == "alt") {
+    data_.alt = value;
+  }
+  else if (lname == "border") {
+    if (CStrUtil::isInteger(value))
+      data_.border = CStrUtil::toInteger(value);
+    else {
+      window_->displayError("Illegal 'img' Value for Border '%s'\n", value.c_str());
+      data_.border = 2;
+    }
+  }
+  else if (lname == "controls") {
+  }
+  else if (lname == "dynsrc") {
+  }
+  else if (lname == "height") {
+    if (CStrUtil::isInteger(value))
+      data_.height = CStrUtil::toInteger(value);
+    else {
+      window_->displayError("Illegal 'img' Value for Height '%s'\n", value.c_str());
+      data_.height = -1;
+    }
+  }
+  else if (lname == "hspace") {
+    if (CStrUtil::isInteger(value))
+      data_.hspace = CStrUtil::toInteger(value);
+    else {
+      window_->displayError("Illegal 'img' Value for HSpace '%s'\n", value.c_str());
+      data_.hspace = 2;
+    }
+  }
+  else if (lname == "ismap") {
+    //ismap = true;
+
+    std::string value = value;
+
+    if (value != "")
+      window_->displayError("No Value needed for IsMap\n");
+  }
+  else if (lname == "loop") {
+  }
+  else if (lname == "lowsrc") {
+  }
+  else if (lname == "src") {
+    data_.src = value;
+  }
+  else if (lname == "start") {
+  }
+  else if (lname == "usemap") {
+    data_.usemap = value;
+  }
+  else if (lname == "vspace") {
+    if (CStrUtil::isInteger(value))
+      data_.vspace = CStrUtil::toInteger(value);
+    else {
+      window_->displayError("Illegal 'img' Value for VSpace '%s'\n", value.c_str());
+      data_.vspace = 2;
+    }
+  }
+  else if (lname == "width") {
+    if (CStrUtil::isInteger(value))
+      data_.width = CStrUtil::toInteger(value);
+    else {
+      window_->displayError("Illegal 'img' Value for Width '%s'\n", value.c_str());
+      data_.width = -1;
+    }
+  }
+  else {
+    CBrowserObject::setNameValue(name, value);
+  }
+}
+
+void
+CBrowserImage::
+getInlineWords(Words &words) const
+{
+  words.push_back(CBrowserWord(image_, /*break*/false, isHierSelected()));
 }
 
 std::string
 CBrowserImage::
 propertyValue(int i) const
 {
-  if      (i == 0) return CBrowserProperty::toString(data_.src);
-  else if (i == 1) return CBrowserProperty::toString(data_.align);
-  else if (i == 2) return CBrowserProperty::toString(data_.border);
-  else if (i == 3) return CBrowserProperty::toString(data_.width);
-  else if (i == 4) return CBrowserProperty::toString(data_.height);
-  else if (i == 5) return CBrowserProperty::toString(data_.usemap);
-  else if (i == 6) return CBrowserProperty::toString(data_.hspace);
-  else if (i == 7) return CBrowserProperty::toString(data_.vspace);
-  else if (i == 8) return CBrowserProperty::toString(data_.alt);
+  const std::string &name = propertyName(i);
 
-  return "";
+  if      (name == "src"   ) return CBrowserProperty::toString(data_.src);
+  else if (name == "align" ) return CBrowserProperty::toString(data_.align);
+  else if (name == "border") return CBrowserProperty::toString(data_.border);
+  else if (name == "width" ) return CBrowserProperty::toString(data_.width);
+  else if (name == "height") return CBrowserProperty::toString(data_.height);
+  else if (name == "usemap") return CBrowserProperty::toString(data_.usemap);
+  else if (name == "hspace") return CBrowserProperty::toString(data_.hspace);
+  else if (name == "vspace") return CBrowserProperty::toString(data_.vspace);
+  else if (name == "alt"   ) return CBrowserProperty::toString(data_.alt);
+
+  return CBrowserObject::propertyValue(i);
 }
 
-void
+CBrowserRegion
 CBrowserImage::
-format(CHtmlLayoutMgr *)
+calcRegion() const
 {
-  window_->newSubCellRight(true);
-
-  CHtmlLayoutSubCell *sub_cell = window_->getCurrentSubCell();
-
-  if      (data_.align == CBrowserImageAlign::LEFT)
-    sub_cell->setAlign(CHALIGN_TYPE_LEFT);
-  else if (data_.align == CBrowserImageAlign::RIGHT)
-    sub_cell->setAlign(CHALIGN_TYPE_RIGHT);
-  else
-    sub_cell->setAlign(CHALIGN_TYPE_NONE);
-
-  //---
-
   int hspace = std::max(data_.hspace, data_.border);
   int vspace = std::max(data_.vspace, data_.border);
 
   //---
 
+  int width  = image_->getWidth () + 2*hspace;
+  int height = image_->getHeight() + 2*vspace;
+
   if      (data_.align == CBrowserImageAlign::TOP || data_.align == CBrowserImageAlign::TEXTTOP)
-    window_->updateSubCellHeight(vspace, image_->getHeight() + vspace);
+    return CBrowserRegion(width, vspace, height - vspace);
   else if (data_.align == CBrowserImageAlign::MIDDLE ||
            data_.align == CBrowserImageAlign::ABSMIDDLE)
-    window_->updateSubCellHeight((image_->getHeight() + 1)/2 + vspace,
-                                  image_->getHeight()     /2 + vspace);
+    return CBrowserRegion(width, (height + 1)/2, height/2);
   else
-    window_->updateSubCellHeight(image_->getHeight() + vspace, vspace);
-
-  window_->updateSubCellWidth(image_->getWidth() + 2*hspace);
-
-  //---
-
-  window_->addSubCellRedrawData(this);
+    return CBrowserRegion(width, height - vspace, vspace);
 }
 
 void
 CBrowserImage::
-draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &region)
+draw(const CTextBox &region)
 {
+  fillBackground(region);
+
+  //---
+
   int hspace = std::max(data_.hspace, data_.border);
   int vspace = std::max(data_.vspace, data_.border);
 
   /*-------------*/
 
-  CHtmlLayoutSubCell *sub_cell = window_->getCurrentSubCell();
-
-  int x1 = region.x + hspace;
-  int y1 = region.y + vspace;
+  int x1 = region.x() + hspace;
+  int y1 = region.y() + vspace;
 
   if      (data_.align == CBrowserImageAlign::TOP   )
-    y1 += sub_cell->getAscent();
+    y1 += region.ascent();
   else if (data_.align == CBrowserImageAlign::MIDDLE)
-    y1 += sub_cell->getAscent() - image_->getHeight()/2;
+    y1 += region.ascent() - image_->getHeight()/2;
   else if (data_.align == CBrowserImageAlign::ABSMIDDLE)
-    y1 += (sub_cell->getHeight() - image_->getHeight())/2;
+    y1 += (region.height() - image_->getHeight())/2;
   else if (data_.align == CBrowserImageAlign::ABSBOTTOM)
-    y1 += sub_cell->getDescent();
+    y1 += region.descent();
   else
     y1 += 0;
 
@@ -126,12 +228,11 @@ draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &region)
     if (link_->isSource()) {
       CRGBA color = window_->getDocument()->getLinkColor();
 
-      window_->setForeground(color);
-
       for (int i = 0; i < data_.border; i++)
         window_->drawRectangle(x1 - i - 1, y1 - i - 1,
                               image_->getWidth()  + 2*i + 1,
-                              image_->getHeight() + 2*i + 1);
+                              image_->getHeight() + 2*i + 1,
+                              CPen(color));
     }
 
     int x2 = x1 + image_->getWidth();
@@ -140,10 +241,10 @@ draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &region)
     link_->addRect(x1, y1, x2, y2);
   }
 
-  //region.x += image_->getWidth() + 2*hspace;
+  //region.setX(region.x() + image_->getWidth() + 2*hspace);
 
   //---
 
   if (isSelected())
-    window_->drawSelected(region.getX(), region.getY(), region.getWidth(), region.getHeight());
+    window_->drawSelected(region.x(), region.y(), region.width(), region.height());
 }

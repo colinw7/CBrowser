@@ -5,6 +5,16 @@ CBrowserRule::
 CBrowserRule(CBrowserWindow *window, const CBrowserRuleData &data) :
  CBrowserObject(window, CHtmlTagId::HR), data_(data)
 {
+  setDisplay(CBrowserObject::Display::BLOCK);
+
+  marginRef().setTop   (CBrowserUnitValue("0.50em"));
+  marginRef().setBottom(CBrowserUnitValue("0.50em"));
+  marginRef().setLeft  (CBrowserUnitValue("auto"));
+  marginRef().setRight (CBrowserUnitValue("auto"));
+
+  borderRef().setLineWidth(CBrowserUnitValue("1px"));
+  borderRef().setLineStyle(CBrowserBorder::stringToStyle("inset"));
+
   data_.size = std::max(data_.size, 2);
 }
 
@@ -15,79 +25,99 @@ CBrowserRule::
 
 void
 CBrowserRule::
-initLayout()
-{
-  window_->newLine();
-
-  window_->addCellRedrawData(this);
-
-  window_->newLine();
-}
-
-void
-CBrowserRule::
-termLayout()
+init()
 {
 }
 
 void
 CBrowserRule::
-format(CHtmlLayoutMgr *)
+setNameValue(const std::string &name, const std::string &value)
 {
-  window_->newSubCellBelow(false);
+  std::string lname  = CStrUtil::toLower(name);
+//std::string lvalue = CStrUtil::toLower(value);
 
-  int ascent;
+  if      (lname == "align") {
+    CHAlignType align;
+
+    window_->parseHAlignOption(value, align);
+
+    setHAlign(align);
+  }
+  else if (lname == "noshade") {
+    data_.shade = false;
+
+    if (value != "")
+      window_->displayError("No Value needed for Noshade\n");
+  }
+  else if (lname == "size") {
+    if (CStrUtil::isInteger(value))
+      data_.size = CStrUtil::toInteger(value);
+    else {
+      window_->displayError("Illegal 'hr' Value for Size '%s'\n", value.c_str());
+      data_.size = -1;
+    }
+  }
+  else {
+    CBrowserObject::setNameValue(name, value);
+  }
+}
+
+CBrowserRegion
+CBrowserRule::
+calcRegion() const
+{
+  int width, ascent, descent = 0;
 
   if (data_.size > 14)
     ascent = data_.size + 2;
   else
     ascent = 16;
 
-  window_->updateSubCellHeight(ascent, 0);
-
-  if (data_.width > 0 && data_.unit == CBrowserUnitsType::PIXEL)
-    window_->updateSubCellWidth(data_.width);
+  if (this->width().isValid() && this->width().units() == CScreenUnits::Units::PX)
+    width = this->width().value();
   else
-    window_->updateSubCellWidth(window_->getCurrentArea()->getWidth());
+    width = 0;
 
-  //---
-
-  window_->addSubCellRedrawData(this);
+  return CBrowserRegion(width, ascent, descent);
 }
 
 void
 CBrowserRule::
-draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &region)
+draw(const CTextBox &region)
 {
-  CHtmlLayoutSubCell *sub_cell = window_->getCurrentSubCell();
+  fillBackground(region);
+
+  //---
 
   int width;
 
-  if      (data_.width == -1)
-    width = sub_cell->getWidth();
-  else if (data_.unit == CBrowserUnitsType::PERCENT)
-    width = (int) (data_.width*sub_cell->getWidth()/100.0);
+  if      (! this->width().isValid())
+    width = region.width();
+  else if (this->width().units() == CScreenUnits::Units::PERCENT)
+    width = (int) (this->width().value()*region.width()/100.0);
   else
-    width = data_.width;
+    width = this->width().value();
 
-  int x1 = region.x;
+  int x1 = region.x();
 
-  if      (data_.align == CHALIGN_TYPE_CENTER)
-    x1 += (window_->getCurrentArea()->getWidth() - width)/2;
-  else if (data_.align == CHALIGN_TYPE_RIGHT)
-    x1 += window_->getCurrentArea()->getWidth() - width;
+  if      (halign() == CHALIGN_TYPE_CENTER)
+    x1 += (region.width() - width)/2;
+  else if (halign() == CHALIGN_TYPE_RIGHT)
+    x1 += region.width() - width;
 
   int x2 = x1 + width;
 
-  int y1 = region.y + sub_cell->getAscent()/2;
+  int y1 = region.y() + region.ascent()/2;
 
   //---
 
   if (data_.shade)
     window_->drawHRule(x1, x2, y1, data_.size);
-  else {
-    window_->setForeground(window_->getFg());
+  else
+    window_->fillRectangle(x1, y1, x2 - x1 + 1, data_.size, CBrush(window_->getFgColor()));
 
-    window_->fillRectangle(x1, y1, x2 - x1 + 1, data_.size);
-  }
+  //---
+
+  if (isSelected())
+    window_->drawSelected(region.x(), region.y(), region.width(), region.height());
 }

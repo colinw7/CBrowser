@@ -1,9 +1,11 @@
 #ifndef CBrowserOutputTag_H
 #define CBrowserOutputTag_H
 
-#include <CBrowserSymbol.h>
 #include <CHtmlLib.h>
 #include <CRGBA.h>
+
+class CBrowserWindow;
+class CBrowserObject;
 
 class CBrowserOutputTagBase {
  public:
@@ -13,13 +15,9 @@ class CBrowserOutputTagBase {
 
   virtual ~CBrowserOutputTagBase() { }
 
-  virtual bool isEmpty() const { return false; }
-
   const CHtmlTagId &id() const { return id_; }
 
   virtual CBrowserObject *start(CBrowserWindow *, CHtmlTag *) { return nullptr; }
-
-  virtual void init(CBrowserWindow *, CBrowserObject *) { }
 
   virtual void term(CBrowserWindow *, CHtmlTag *) { }
 
@@ -36,9 +34,58 @@ class CBrowserOutputATag : public CBrowserOutputTagBase {
   CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
 };
 
+class CBrowserOutputAbbrTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputAbbrTag() : CBrowserOutputTagBase(CHtmlTagId::ABBR) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
+class CBrowserOutputAcronymTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputAcronymTag() : CBrowserOutputTagBase(CHtmlTagId::ACRONYM) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
 class CBrowserOutputAddressTag : public CBrowserOutputTagBase {
  public:
   CBrowserOutputAddressTag() : CBrowserOutputTagBase(CHtmlTagId::ADDRESS) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
+class CBrowserOutputAppletTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputAppletTag() : CBrowserOutputTagBase(CHtmlTagId::APPLET) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
+class CBrowserOutputAreaTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputAreaTag() : CBrowserOutputTagBase(CHtmlTagId::AREA) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
+class CBrowserOutputArticleTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputArticleTag() : CBrowserOutputTagBase(CHtmlTagId::ARTICLE) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
+class CBrowserOutputASideTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputASideTag() : CBrowserOutputTagBase(CHtmlTagId::ASIDE) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
+class CBrowserOutputAudioTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputAudioTag() : CBrowserOutputTagBase(CHtmlTagId::AUDIO) { }
 
   CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
 };
@@ -50,9 +97,30 @@ class CBrowserOutputBTag : public CBrowserOutputTagBase {
   CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
 };
 
+class CBrowserOutputBaseTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputBaseTag() : CBrowserOutputTagBase(CHtmlTagId::BASE) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
 class CBrowserOutputBasefontTag : public CBrowserOutputTagBase {
  public:
   CBrowserOutputBasefontTag() : CBrowserOutputTagBase(CHtmlTagId::BASEFONT) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
+class CBrowserOutputBdiTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputBdiTag() : CBrowserOutputTagBase(CHtmlTagId::BDI) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
+class CBrowserOutputBdoTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputBdoTag() : CBrowserOutputTagBase(CHtmlTagId::BDO) { }
 
   CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
 };
@@ -89,7 +157,12 @@ class CBrowserOutputBrTag : public CBrowserOutputTagBase {
  public:
   CBrowserOutputBrTag() : CBrowserOutputTagBase(CHtmlTagId::BR) { }
 
-  virtual bool isEmpty() const override { return true; }
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
+class CBrowserOutputButtonTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputButtonTag() : CBrowserOutputTagBase(CHtmlTagId::BUTTON) { }
 
   CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
 };
@@ -132,6 +205,20 @@ class CBrowserOutputCodeTag : public CBrowserOutputTagBase {
 class CBrowserOutputDdTag : public CBrowserOutputTagBase {
  public:
   CBrowserOutputDdTag() : CBrowserOutputTagBase(CHtmlTagId::DD) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
+class CBrowserOutputDelTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputDelTag() : CBrowserOutputTagBase(CHtmlTagId::DEL) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
+class CBrowserOutputDetailsTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputDetailsTag() : CBrowserOutputTagBase(CHtmlTagId::DETAILS) { }
 
   CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
 };
@@ -180,9 +267,23 @@ class CBrowserOutputEmTag : public CBrowserOutputTagBase {
   CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
 };
 
+class CBrowserOutputFieldSetTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputFieldSetTag() : CBrowserOutputTagBase(CHtmlTagId::FIELDSET) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
 class CBrowserOutputFontTag : public CBrowserOutputTagBase {
  public:
   CBrowserOutputFontTag() : CBrowserOutputTagBase(CHtmlTagId::FONT) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
+class CBrowserOutputFooterTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputFooterTag() : CBrowserOutputTagBase(CHtmlTagId::FOOTER) { }
 
   CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
 };
@@ -243,11 +344,23 @@ class CBrowserOutputHeadTag : public CBrowserOutputTagBase {
   CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
 };
 
+class CBrowserOutputHeaderTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputHeaderTag() : CBrowserOutputTagBase(CHtmlTagId::HEADER) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
+class CBrowserOutputHGroupTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputHGroupTag() : CBrowserOutputTagBase(CHtmlTagId::HGROUP) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
 class CBrowserOutputHrTag : public CBrowserOutputTagBase {
  public:
   CBrowserOutputHrTag() : CBrowserOutputTagBase(CHtmlTagId::HR) { }
-
-  virtual bool isEmpty() const override { return true; }
 
   CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
 };
@@ -266,11 +379,16 @@ class CBrowserOutputITag : public CBrowserOutputTagBase {
   CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
 };
 
+class CBrowserOutputIFrameTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputIFrameTag() : CBrowserOutputTagBase(CHtmlTagId::IFRAME) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
 class CBrowserOutputImgTag : public CBrowserOutputTagBase {
  public:
   CBrowserOutputImgTag() : CBrowserOutputTagBase(CHtmlTagId::IMG) { }
-
-  virtual bool isEmpty() const override { return true; }
 
   CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
 };
@@ -279,7 +397,12 @@ class CBrowserOutputInputTag : public CBrowserOutputTagBase {
  public:
   CBrowserOutputInputTag() : CBrowserOutputTagBase(CHtmlTagId::INPUT) { }
 
-  virtual bool isEmpty() const override { return true; }
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
+class CBrowserOutputInsTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputInsTag() : CBrowserOutputTagBase(CHtmlTagId::INS) { }
 
   CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
 };
@@ -291,13 +414,46 @@ class CBrowserOutputKbdTag : public CBrowserOutputTagBase {
   CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
 };
 
+class CBrowserOutputLabelTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputLabelTag() : CBrowserOutputTagBase(CHtmlTagId::LABEL) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
+class CBrowserOutputLegendTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputLegendTag() : CBrowserOutputTagBase(CHtmlTagId::LEGEND) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
 class CBrowserOutputLiTag : public CBrowserOutputTagBase {
  public:
   CBrowserOutputLiTag() : CBrowserOutputTagBase(CHtmlTagId::LI) { }
 
   CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
 
-  void init(CBrowserWindow *, CBrowserObject *) override;
+class CBrowserOutputLinkTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputLinkTag() : CBrowserOutputTagBase(CHtmlTagId::LINK) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
+class CBrowserOutputNavTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputNavTag() : CBrowserOutputTagBase(CHtmlTagId::NAV) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
+class CBrowserOutputMapTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputMapTag() : CBrowserOutputTagBase(CHtmlTagId::MAP) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
 };
 
 class CBrowserOutputMenuTag : public CBrowserOutputTagBase {
@@ -312,8 +468,6 @@ class CBrowserOutputMetaTag : public CBrowserOutputTagBase {
   CBrowserOutputMetaTag() : CBrowserOutputTagBase(CHtmlTagId::META) { }
 
   CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
-
-  virtual bool isEmpty() const override { return true; }
 };
 
 class CBrowserOutputNobrTag : public CBrowserOutputTagBase {
@@ -333,6 +487,13 @@ class CBrowserOutputOlTag : public CBrowserOutputTagBase {
 class CBrowserOutputOptionTag : public CBrowserOutputTagBase {
  public:
   CBrowserOutputOptionTag() : CBrowserOutputTagBase(CHtmlTagId::OPTION) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
+class CBrowserOutputOutputTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputOutputTag() : CBrowserOutputTagBase(CHtmlTagId::OUTPUT) { }
 
   CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
 };
@@ -365,6 +526,13 @@ class CBrowserOutputScriptTag : public CBrowserOutputTagBase {
   CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
 };
 
+class CBrowserOutputSectionTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputSectionTag() : CBrowserOutputTagBase(CHtmlTagId::SECTION) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
 class CBrowserOutputSelectTag : public CBrowserOutputTagBase {
  public:
   CBrowserOutputSelectTag() : CBrowserOutputTagBase(CHtmlTagId::SELECT) { }
@@ -375,6 +543,13 @@ class CBrowserOutputSelectTag : public CBrowserOutputTagBase {
 class CBrowserOutputSmallTag : public CBrowserOutputTagBase {
  public:
   CBrowserOutputSmallTag() : CBrowserOutputTagBase(CHtmlTagId::SMALL) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
+class CBrowserOutputSpanTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputSpanTag() : CBrowserOutputTagBase(CHtmlTagId::SPAN) { }
 
   CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
 };
@@ -393,9 +568,23 @@ class CBrowserOutputStrongTag : public CBrowserOutputTagBase {
   CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
 };
 
+class CBrowserOutputStyleTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputStyleTag() : CBrowserOutputTagBase(CHtmlTagId::STYLE) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
 class CBrowserOutputSubTag : public CBrowserOutputTagBase {
  public:
   CBrowserOutputSubTag() : CBrowserOutputTagBase(CHtmlTagId::SUB) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
+class CBrowserOutputSummaryTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputSummaryTag() : CBrowserOutputTagBase(CHtmlTagId::SUMMARY) { }
 
   CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
 };
@@ -428,9 +617,37 @@ class CBrowserOutputTextareaTag : public CBrowserOutputTagBase {
   CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
 };
 
+class CBrowserOutputTBodyTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputTBodyTag() : CBrowserOutputTagBase(CHtmlTagId::TBODY) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
+class CBrowserOutputTFootTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputTFootTag() : CBrowserOutputTagBase(CHtmlTagId::TFOOT) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
 class CBrowserOutputThTag : public CBrowserOutputTagBase {
  public:
   CBrowserOutputThTag() : CBrowserOutputTagBase(CHtmlTagId::TH) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
+class CBrowserOutputTHeadTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputTHeadTag() : CBrowserOutputTagBase(CHtmlTagId::THEAD) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
+class CBrowserOutputTimeTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputTimeTag() : CBrowserOutputTagBase(CHtmlTagId::TIME) { }
 
   CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
 };
@@ -480,8 +697,6 @@ class CBrowserOutputVarTag : public CBrowserOutputTagBase {
 class CBrowserOutputWbrTag : public CBrowserOutputTagBase {
  public:
   CBrowserOutputWbrTag() : CBrowserOutputTagBase(CHtmlTagId::WBR) { }
-
-  bool isEmpty() const override { return true; }
 
   CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
 };

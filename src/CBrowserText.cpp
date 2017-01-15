@@ -4,18 +4,19 @@
 #include <CFont.h>
 
 CBrowserText::
-CBrowserText(CBrowserWindow *window, const std::string &text, const CBrowserTextData &data) :
- CBrowserObject(window, CHtmlTagId::TEXT), text_(text), data_(data)
+CBrowserText(CBrowserWindow *window, const std::string &text) :
+ CBrowserObject(window, CHtmlTagId::TEXT), text_(text)
 {
-  font_ = window->getFont();
+  setDisplay(Display::INLINE);
+
   link_ = window->linkMgr()->getCurrentLink();
 }
 
 CBrowserText::
 CBrowserText(CBrowserWindow *window, const CBrowserText &draw_text, const std::string &text) :
- CBrowserObject(window, CHtmlTagId::TEXT), text_(text), font_(draw_text.font_),
- data_(draw_text.data_), link_(draw_text.link_)
+ CBrowserObject(window, CHtmlTagId::TEXT), text_(text), link_(draw_text.link_)
 {
+  setDisplay(Display::INLINE);
 }
 
 CBrowserText::
@@ -25,169 +26,149 @@ CBrowserText::
 
 void
 CBrowserText::
-initLayout()
+getInlineWords(Words &words) const
 {
-  window_->addCellRedrawData(this);
-}
+  bool selected = isHierSelected();
 
-void
-CBrowserText::
-termLayout()
-{
-}
+  CFontPtr                   font = hierFont();
+  CPen                       pen  = hierFgColor();
+  CBrowserObject::WhiteSpace ws   = hierWhiteSpace();
 
-void
-CBrowserText::
-format(CHtmlLayoutMgr *)
-{
-  if (texts_.empty()) {
-    // split text into words
-    if      (data_.format && data_.breakup) {
-      int i = 0;
+  // whitespace:
+  //  normal  : collapse whitespace, suppress line break (wrapping) and break lines to fix in box
+  //  nowrap  : collapse whitespace, break lines at \n or <br>
+  //  pre     : keep whitespace, break lines at \n or <br>
+  //  pre-wrap: keep whitespace, break lines at \n or <br>, break lines to fix in box
+  //  pre-line: collapse whitespace, break lines at \n or <br>, break lines to fix in box
+  bool keep_newline (ws == CBrowserObject::WhiteSpace::PRE ||
+                     ws == CBrowserObject::WhiteSpace::PRE_LINE ||
+                     ws == CBrowserObject::WhiteSpace::PRE_WRAP);
 
-      CHtmlLayoutSubCell *sub_cell = window_->getCurrentSubCell();
+  bool keep_space = (ws == CBrowserObject::WhiteSpace::PRE ||
+                     ws == CBrowserObject::WhiteSpace::PRE_WRAP);
 
+  bool text_wrap = (ws != CBrowserObject::WhiteSpace::NOWRAP &&
+                    ws != CBrowserObject::WhiteSpace::PRE);
+
+  // split text into words
+  if      (! keep_newline && ! keep_space && text_wrap) {
+    int i = 0;
+
+    // skip space at start
+    if (text_[i] != '\0' && isspace(text_[i])) {
+      while (text_[i] != '\0' && isspace(text_[i]))
+        i++;
+
+      words.push_back(CBrowserWord(" ", pen, font, /*break*/false, selected));
+    }
+
+    while (text_[i] != '\0') {
+      // get word
+      int j = i;
+
+      while (text_[i] != '\0' && ! isspace(text_[i]))
+        i++;
+
+      if (i - j == 0)
+        break;
+
+      std::string word = text_.substr(j, i - j);
+
+      words.push_back(CBrowserWord(word, pen, font, /*break*/false, selected));
+
+      //--
+
+      // skip space after word
       if (text_[i] != '\0' && isspace(text_[i])) {
-        if (sub_cell && sub_cell->getLeftCell())
-          addText(" ", CBrowserTextPos::RIGHT, false);
-
         while (text_[i] != '\0' && isspace(text_[i]))
           i++;
-      }
 
-      while (text_[i] != '\0') {
-        int j = i;
-
-        while (text_[i] != '\0' && ! isspace(text_[i]))
-          i++;
-
-        if (i - j == 0)
-          break;
-
-        addText(text_.substr(j, i - j), CBrowserTextPos::RIGHT, true);
-
-        if (text_[i] != '\0' && isspace(text_[i])) {
-          addText(" ", CBrowserTextPos::RIGHT, false);
-
-          while (text_[i] != '\0' && isspace(text_[i]))
-            i++;
-        }
+        words.push_back(CBrowserWord(" ", pen, font, /*break*/false, selected));
       }
     }
-    // no split
-    else if (data_.format) {
-      addText(text_, CBrowserTextPos::RIGHT, true);
-    }
-    // split text into lines
-    else {
-      int i = 0;
+  }
+  // no split
+  else if (keep_newline && ! text_wrap) {
+    words.push_back(CBrowserWord(text_, pen, font, /*break*/false, selected));
+  }
+  // split text into lines
+  else {
+    int i = 0;
 
-      while (text_[i] != '\0') {
-        while (text_[i] == '\n') {
-          addText("", CBrowserTextPos::BELOW, false);
+    while (text_[i] != '\0') {
+      while (text_[i] == '\n') {
+        words.push_back(CBrowserWord("", pen, font, /*break*/true, selected));
 
-          i++;
-        }
+        i++;
+      }
 
-        int j = i;
+      // get line
+      int j = i;
 
-        while (text_[i] != '\0' && text_[i] != '\n')
-          i++;
+      while (text_[i] != '\0' && text_[i] != '\n')
+        i++;
 
-        if (i > j)
-          addText(text_.substr(j, i - j), CBrowserTextPos::RIGHT, false);
+      if (i > j) {
+        std::string line = text_.substr(j, i - j);
 
         if (text_[i] == '\n') {
-          addText("", CBrowserTextPos::BELOW, false);
+          words.push_back(CBrowserWord(line, pen, font, /*break*/true, selected));
 
-          i++;
+          ++i;
         }
+        else
+          words.push_back(CBrowserWord(line, pen, font, /*break*/false, selected));
       }
     }
   }
-
-  // format
-  for (const auto &t : texts_) {
-    if (t->pos_ == CBrowserTextPos::RIGHT)
-      window_->newSubCellRight(t->data_.breakup);
-    else
-      window_->newSubCellBelow(t->data_.breakup);
-
-    int ascent, descent;
-
-    window_->getTextHeight(t->font(), &ascent, &descent);
-
-    window_->updateSubCellHeight(ascent, descent);
-
-    int width;
-
-    window_->getTextWidth(t->font(), t->text(), &width);
-
-    window_->updateSubCellWidth(width);
-
-    window_->addSubCellRedrawData(t);
-  }
 }
 
-void
+CBrowserRegion
 CBrowserText::
-addText(const std::string &str, CBrowserTextPos pos, bool breakup)
+calcRegion() const
 {
-  CBrowserText *text = new CBrowserText(window_, *this, str);
-
-  text->data_.breakup = breakup;
-  text->pos_          = pos;
-
-  texts_.push_back(text);
-
-  text->parentText_ = this;
-
-  addChild(text);
-}
-
-void
-CBrowserText::
-draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &region)
-{
-  CHtmlLayoutSubCell *sub_cell = window_->getCurrentSubCell();
-
-  window_->setFont(font_);
-
-  window_->setForeground(data_.color);
+  CFontPtr font = hierFont();
 
   int width, ascent, descent;
 
-  getTextBounds(font_, text_, &width, &ascent, &descent);
+  window_->getTextWidth (font, text_, &width);
+  window_->getTextHeight(font, &ascent, &descent);
+
+  return CBrowserRegion(width, ascent, descent);
+}
+
+void
+CBrowserText::
+draw(const CTextBox &region)
+{
+  fillBackground(region);
+
+  //---
+
+  CFontPtr font = hierFont();
+
+  int width, ascent, descent;
+
+  getTextBounds(font, text_, &width, &ascent, &descent);
 
   int y_offset = 0;
 
-  if      (data_.place == CBrowserTextPlaceType::SUBSCRIPT)
-    y_offset =  ascent/2;
-  else if (data_.place == CBrowserTextPlaceType::SUPERSCRIPT)
-    y_offset = -ascent/2;
+  int x1 = region.x();
+  int y1 = region.y() + y_offset + region.ascent();
 
-  int x1 = region.x;
-  int y1 = region.y + y_offset + sub_cell->getAscent();
+  CPen pen(hierFgColor());
 
-  window_->drawString(x1, y1, text_);
-
-  if (data_.strike) {
-    window_->drawLine(x1, y1 - ascent/2    , x1 + width, y1 - ascent/2    );
-    window_->drawLine(x1, y1 - ascent/2 + 1, x1 + width, y1 - ascent/2 + 1);
-  }
-
-  if (data_.underline)
-    window_->drawLine(x1, y1 + 1, x1 + width, y1 + 1);
+  window_->drawText(x1, y1, text_, pen, font);
 
   if (link_)
-    link_->addRect(x1, y1 - sub_cell->getAscent(), x1 + width, y1 + sub_cell->getDescent());
+    link_->addRect(x1, y1 - region.ascent(), x1 + width, y1 + region.descent());
 
   //---
 
   if (isHierSelected())
-    window_->drawSelected(region.getX(), region.getY(), region.getWidth(), region.getHeight());
+    window_->drawSelected(region.x(), region.y(), region.width(), region.height());
 
-  //region.x += width;
+  //region.setX(region.x() + width);
 }
 
 bool
@@ -195,9 +176,6 @@ CBrowserText::
 isHierSelected() const
 {
   if (isSelected())
-    return true;
-
-  if (parentText_ && parentText_->isSelected())
     return true;
 
   const CBrowserObject *parent = this->parent();
@@ -215,4 +193,40 @@ getTextBounds(CFontPtr font, const std::string &text, int *width, int *ascent, i
   *width   = font->getStringWidth(text);
   *ascent  = font->getCharAscent();
   *descent = font->getCharDescent();
+}
+
+CFontPtr
+CBrowserText::
+hierFont() const
+{
+  CBrowserObject *parentObj = this->parent();
+
+  if (parentObj)
+    return parentObj->hierFont();
+
+  return window_->getFont();
+}
+
+CRGBA
+CBrowserText::
+hierFgColor() const
+{
+  CBrowserObject *parentObj = this->parent();
+
+  if (parentObj)
+    return parentObj->hierFgColor();
+
+  return window_->getFgColor();
+}
+
+CBrowserObject::WhiteSpace
+CBrowserText::
+hierWhiteSpace() const
+{
+  CBrowserObject *parentObj = this->parent();
+
+  if (parentObj)
+    return parentObj->hierWhiteSpace();
+
+  return CBrowserObject::WhiteSpace::NORMAL;
 }

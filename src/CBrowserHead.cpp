@@ -4,16 +4,19 @@ CBrowserHead::
 CBrowserHead(CBrowserWindow *window) :
  CBrowserObject(window, CHtmlTagId::HEAD)
 {
+  setDisplay(Display::NONE);
 }
 
 void
 CBrowserHead::
-initLayout()
+init()
 {
+  CBrowserObject::init();
 }
 
 void
 CBrowserHead::
-termLayout()
+setNameValue(const std::string &name, const std::string &value)
 {
+  CBrowserObject::setNameValue(name, value);
 }

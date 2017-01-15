@@ -6,7 +6,6 @@
 #include <CQJDocument.h>
 #include <CQJWindow.h>
 #include <CQJEvent.h>
-#include <CRGBName.h>
 #include <CEnv.h>
 #include <QMouseEvent>
 
@@ -17,6 +16,8 @@ CBrowserWindowWidget(CBrowserIFace *iface) :
   setObjectName("canvas");
 
   setFocusPolicy(Qt::StrongFocus);
+
+  setMouseTracking(true);
 
   graphics_ = new CBrowserGraphics(this);
 }
@@ -56,7 +57,7 @@ mousePressEvent(QMouseEvent *)
 
 void
 CBrowserWindowWidget::
-mouseMotionEvent(QMouseEvent *e)
+mouseMoveEvent(QMouseEvent *e)
 {
   int x = e->x();
   int y = e->y();
@@ -177,60 +178,58 @@ drawImage(int x, int y, const QImage &image)
 
 void
 CBrowserWindowWidget::
-drawRectangle(int x1, int y1, int x2, int y2)
+drawTiledImage(int x, int y, int width, int height, const CImagePtr &image)
 {
-  graphics_->drawRectangle(x1, y1, x2, y2);
+  graphics_->drawTiledImage(x, y, width, height, image);
 }
 
 void
 CBrowserWindowWidget::
-fillRectangle(int x1, int y1, int x2, int y2)
+drawRectangle(int x, int y, int w, int h, const CPen &pen)
 {
-  graphics_->fillRectangle(x1, y1, x2, y2);
+  graphics_->drawRectangle(x, y, w, h, pen);
 }
 
 void
 CBrowserWindowWidget::
-drawCircle(int x, int y, int r)
+fillRectangle(int x, int y, int w, int h, const CBrush &brush)
 {
-  graphics_->drawCircle(x, y, r);
+  graphics_->fillRectangle(x, y, w, h, brush);
 }
 
 void
 CBrowserWindowWidget::
-fillCircle(int x, int y, int r)
+drawCircle(int x, int y, int r, const CPen &pen)
 {
-  graphics_->fillCircle(x, y, r);
+  graphics_->drawCircle(x, y, r, pen);
 }
 
 void
 CBrowserWindowWidget::
-drawLine(int x1, int y1, int x2, int y2)
+fillCircle(int x, int y, int r, const CBrush &brush)
 {
-  graphics_->drawLine(x1, y1, x2, y2);
+  graphics_->fillCircle(x, y, r, brush);
 }
 
 void
 CBrowserWindowWidget::
-drawString(int x, int y, const std::string &str)
+drawLine(int x1, int y1, int x2, int y2, const CPen &pen)
 {
-  graphics_->drawString(x, y, str);
+  graphics_->drawLine(x1, y1, x2, y2, pen);
 }
 
 void
 CBrowserWindowWidget::
-drawOutline(int x, int y, int width, int height, const std::string &color_name)
+drawText(int x, int y, const std::string &str, const CPen &pen, const CFontPtr &font)
 {
-  CRGBA color = CRGBName::toRGBA(color_name);
-
-  drawOutline(x, y, width, height, color);
+  graphics_->drawText(x, y, str, pen, font);
 }
 
 void
 CBrowserWindowWidget::
-drawOutline(int x, int y, int width, int height, const CRGBA &c)
+drawOutline(int x, int y, int width, int height, const CPen &pen)
 {
-  graphics_->drawOutline(x, y, width, height, c);
+  graphics_->drawOutline(x, y, width, height, pen);
 }
 
 void
@@ -239,7 +238,7 @@ drawBorder(int x, int y, int width, int height, CBrowserBorderType type)
 {
   CBrowserWindow *window = iface_->getWindow();
 
-  graphics_->drawBorder(x, y, width, height, window->getBg(), type);
+  graphics_->drawBorder(x, y, width, height, CPen(window->getBgColor()), type);
 }
 
 void
@@ -248,19 +247,5 @@ drawHRule(int x1, int x2, int y, int height)
 {
   CBrowserWindow *window = iface_->getWindow();
 
-  graphics_->drawHRule(x1, x2, y, height, window->getBg());
-}
-
-void
-CBrowserWindowWidget::
-setForeground(const CRGBA &fg)
-{
-  graphics_->setForeground(fg);
-}
-
-void
-CBrowserWindowWidget::
-setFont(CFontPtr font)
-{
-  graphics_->setFont(font);
+  graphics_->drawHRule(x1, x2, y, height, CPen(window->getBgColor()));
 }

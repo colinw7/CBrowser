@@ -5,18 +5,7 @@ CBrowserTT::
 CBrowserTT(CBrowserWindow *window) :
  CBrowserObject(window, CHtmlTagId::TT)
 {
-}
+  setDisplay(Display::INLINE);
 
-void
-CBrowserTT::
-initProcess()
-{
-  window_->startFontFace("courier");
-}
-
-void
-CBrowserTT::
-termProcess()
-{
-  window_->endFontFace();
+  font_.setFamily(CBrowserFontFamily("monospace"));
 }

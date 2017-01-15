@@ -5,18 +5,5 @@ CBrowserKbd::
 CBrowserKbd(CBrowserWindow *window) :
  CBrowserObject(window, CHtmlTagId::KBD)
 {
-}
-
-void
-CBrowserKbd::
-initProcess()
-{
-  window_->startFontFace("courier");
-}
-
-void
-CBrowserKbd::
-termProcess()
-{
-  window_->endFontFace();
+  font_.setFamily(CBrowserFontFamily("monospace"));
 }

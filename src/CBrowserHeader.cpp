@@ -2,23 +2,49 @@
 #include <CBrowserWindow.h>
 #include <CBrowserFont.h>
 
+namespace {
+  int idToInd(CHtmlTagId id) {
+    static std::vector<CHtmlTagId> ids =
+      {{ CHtmlTagId::H1, CHtmlTagId::H2, CHtmlTagId::H3,
+         CHtmlTagId::H4, CHtmlTagId::H3, CHtmlTagId::H4 }};
+
+    for (uint i = 0; i < ids.size(); ++i) {
+      if (ids[i] == id)
+        return i;
+    }
+
+    return -1;
+  }
+}
+
 CBrowserHeader::
 CBrowserHeader(CBrowserWindow *window, CHtmlTagId id, const CBrowserHeaderData &data) :
  CBrowserObject(window, id), data_(data), ind_(-1)
 {
-  static std::vector<CHtmlTagId> ids =
-    {{ CHtmlTagId::H1, CHtmlTagId::H2, CHtmlTagId::H3,
-       CHtmlTagId::H4, CHtmlTagId::H3, CHtmlTagId::H4 }};
+  ind_ = idToInd(id);
 
-  for (uint i = 0; i < ids.size(); ++i) {
-    if (ids[i] != id) continue;
+  if      (id == CHtmlTagId::H1) font_.setSize(window_->sizeToFontSize(6));
+  else if (id == CHtmlTagId::H2) font_.setSize(window_->sizeToFontSize(5));
+  else if (id == CHtmlTagId::H3) font_.setSize(window_->sizeToFontSize(4));
+  else if (id == CHtmlTagId::H4) font_.setSize(window_->sizeToFontSize(3));
+  else if (id == CHtmlTagId::H5) font_.setSize(window_->sizeToFontSize(2));
+  else if (id == CHtmlTagId::H6) font_.setSize(window_->sizeToFontSize(1));
 
-    ind_ = i;
+  if      (id == CHtmlTagId::H1) marginRef().setTop(CBrowserUnitValue("0.67em"));
+  else if (id == CHtmlTagId::H2) marginRef().setTop(CBrowserUnitValue("0.83em"));
+  else if (id == CHtmlTagId::H3) marginRef().setTop(CBrowserUnitValue("1.00em"));
+  else if (id == CHtmlTagId::H4) marginRef().setTop(CBrowserUnitValue("1.33em"));
+  else if (id == CHtmlTagId::H5) marginRef().setTop(CBrowserUnitValue("1.67em"));
+  else if (id == CHtmlTagId::H6) marginRef().setTop(CBrowserUnitValue("2.33em"));
 
-    break;
-  }
+  if      (id == CHtmlTagId::H1) marginRef().setBottom(CBrowserUnitValue("0.67em"));
+  else if (id == CHtmlTagId::H2) marginRef().setBottom(CBrowserUnitValue("0.83em"));
+  else if (id == CHtmlTagId::H3) marginRef().setBottom(CBrowserUnitValue("1.00em"));
+  else if (id == CHtmlTagId::H4) marginRef().setBottom(CBrowserUnitValue("1.33em"));
+  else if (id == CHtmlTagId::H5) marginRef().setBottom(CBrowserUnitValue("1.67em"));
+  else if (id == CHtmlTagId::H6) marginRef().setBottom(CBrowserUnitValue("2.33em"));
 
-  font_ = window_->currentFontFace()->getBoldFont(6 - ind_);
+  font_.setBold();
 }
 
 CBrowserHeader::
@@ -28,78 +54,26 @@ CBrowserHeader::
 
 void
 CBrowserHeader::
-initProcess()
+init()
 {
-  window_->setFontSize(6 - ind_);
-
-  window_->startBold();
+  CBrowserObject::init();
 }
 
 void
 CBrowserHeader::
-termProcess()
+setNameValue(const std::string &name, const std::string &value)
 {
-  window_->endBold();
+  std::string lname  = CStrUtil::toLower(name);
+  std::string lvalue = CStrUtil::toLower(value);
 
-  window_->resetFontSize();
-}
+  if (lname == "align") {
+    CHAlignType align;
 
-void
-CBrowserHeader::
-initLayout()
-{
-  window_->skipLine();
+    window_->parseHAlignOption(lvalue, align);
 
-  window_->setAlign(data_.align, CVALIGN_TYPE_TOP);
-
-  window_->addCellRedrawData(this);
-}
-
-void
-CBrowserHeader::
-termLayout()
-{
-  window_->skipLine();
-
-  window_->setAlign(CHALIGN_TYPE_LEFT, CVALIGN_TYPE_TOP);
-}
-
-void
-CBrowserHeader::
-format(CHtmlLayoutMgr *)
-{
-  window_->newSubCellRight(true);
-
-  int ascent, descent;
-
-  window_->getTextHeight(font_, &ascent, &descent);
-
-  window_->updateSubCellHeight(ascent, descent);
-
-  int width;
-
-  window_->getTextWidth(font_, text_, &width);
-
-  window_->updateSubCellWidth(width);
-
-  //---
-
-  window_->addSubCellRedrawData(this);
-}
-
-void
-CBrowserHeader::
-draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &region)
-{
-  window_->setFont(font_);
-
-  CHtmlLayoutSubCell *sub_cell = window_->getCurrentSubCell();
-
-  int x1 = region.x;
-  int y1 = region.y + sub_cell->getAscent();
-
-  window_->drawString(x1, y1, text_);
-
-  if (isSelected())
-    window_->drawSelected(region.getX(), region.getY(), region.getWidth(), region.getHeight());
+    setHAlign(align);
+  }
+  else {
+    CBrowserObject::setNameValue(name, value);
+  }
 }

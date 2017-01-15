@@ -7,9 +7,6 @@
 class CBrowserTitle : public CBrowserObject {
  public:
   CBrowserTitle(CBrowserWindow *window);
-
-  void initLayout() override;
-  void termLayout() override;
 };
 
 #endif

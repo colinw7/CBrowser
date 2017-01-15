@@ -5,23 +5,5 @@ CBrowserAddress::
 CBrowserAddress(CBrowserWindow *window) :
  CBrowserObject(window, CHtmlTagId::ADDRESS)
 {
-}
-
-CBrowserAddress::
-~CBrowserAddress()
-{
-}
-
-void
-CBrowserAddress::
-initProcess()
-{
-  window_->startItalic();
-}
-
-void
-CBrowserAddress::
-termProcess()
-{
-  window_->endItalic();
+  font_.setStyle(CBrowserFontStyle(CBrowserFontStyle::Type::ITALIC));
 }

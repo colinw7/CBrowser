@@ -2,6 +2,7 @@
 #define CBrowserTable_H
 
 #include <CBrowserObject.h>
+#include <CBrowserUnitValue.h>
 #include <CRGBA.h>
 
 struct CBrowserTableData {
@@ -10,12 +11,11 @@ struct CBrowserTableData {
   int               vspace       = 2;
   CHAlignType       halign       = CHALIGN_TYPE_NONE;
   CVAlignType       valign       = CVALIGN_TYPE_NONE;
-  int               width        = -1;
-  CBrowserUnitsType width_unit   = CBrowserUnitsType::NONE;
+  CBrowserUnitValue width;
+  CBrowserUnitValue height;
   int               cell_padding = 0;
   int               cell_spacing = 0;
   CRGBA             border_color;
-  CRGBA             background_color;
   CRGBA             border_color_dark;
   CRGBA             border_color_light;
 };
@@ -24,7 +24,6 @@ struct CBrowserTableRowData {
   CHAlignType halign              = CHALIGN_TYPE_NONE;
   CVAlignType valign              = CVALIGN_TYPE_NONE;
   CRGBA       border_color;
-  CRGBA       background_color;
   CRGBA       border_color_dark;
   CRGBA       border_color_light;
 };
@@ -39,13 +38,12 @@ struct CBrowserTableCellData {
   std::string       id;
   CHAlignType       halign     = CHALIGN_TYPE_NONE;
   CVAlignType       valign     = CVALIGN_TYPE_NONE;
-  int               width      = -1;
-  CBrowserUnitsType width_unit = CBrowserUnitsType::PIXEL;
+  CBrowserUnitValue width;
+  CBrowserUnitValue height;
   bool              wrap       = true;
   int               colspan    = 0;
   int               rowspan    = 0;
   CRGBA             border_color;
-  CRGBA             background_color;
   CRGBA             border_color_dark;
   CRGBA             border_color_light;
 };
@@ -69,13 +67,12 @@ class CBrowserTableRow : public CBrowserObject {
   CHAlignType getHAlign() const { return data_.halign; }
   CVAlignType getVAlign() const { return data_.valign; }
 
-  CRGBA getBackgroundColor() const { return data_.background_color; }
+  void init();
+
+  void setNameValue(const std::string &name, const std::string &value) override;
 
   void initProcess() override;
   void termProcess() override;
-
-  void initLayout() override;
-  void termLayout() override;
 
  private:
   CBrowserTableRowData data_;
@@ -87,17 +84,17 @@ class CBrowserTableCell : public CBrowserObject {
  public:
   CBrowserTableCell(CBrowserWindow *window, CHtmlTagId id, const CBrowserTableCellData &data);
 
-  virtual ~CBrowserTableCell() {
-    delete area_data_;
-  }
+  virtual ~CBrowserTableCell();
+
+  void init() override;
+
+  void setNameValue(const std::string &name, const std::string &value) override;
 
   bool getPad() const { return pad_; }
 
-  int getWidth() const { return data_.width; }
+  int getWidth() const { return data_.width.value(); }
 
-  CBrowserUnitsType getWidthUnit() const { return data_.width_unit; }
-
-  int getHeight() const { return height_; }
+  CScreenUnits::Units getWidthUnit() const { return data_.width.units(); }
 
   CHAlignType getHAlign() const { return data_.halign; }
   CVAlignType getVAlign() const { return data_.valign; }
@@ -105,23 +102,14 @@ class CBrowserTableCell : public CBrowserObject {
   int getColSpan() const { return data_.colspan; }
   int getRowSpan() const { return data_.rowspan; }
 
-  CRGBA getBackgroundColor() const { return data_.background_color; }
-
-  CHtmlLayoutArea *getAreaData() const { return area_data_; }
-
   void initProcess() override;
   void termProcess() override;
 
-  void initLayout() override;
-  void termLayout() override;
+  CBrowserRegion calcRegion() const override;
 
  protected:
   CBrowserTableCellData data_;
   bool                  pad_ { false };
-  int                   x_ { 0 };
-  int                   y_ { 0 };
-  int                   height_ { 0 };
-  CHtmlLayoutArea*      area_data_ { nullptr };
 };
 
 //------
@@ -137,24 +125,20 @@ class CBrowserTableCaption : public CBrowserObject {
  public:
   CBrowserTableCaption(CBrowserWindow *window, const CBrowserTableCaptionData &data);
 
- ~CBrowserTableCaption() {
-    delete area_data_;
-  }
+ ~CBrowserTableCaption();
 
   CHAlignType getHAlign() const { return data_.halign; }
   CVAlignType getVAlign() const { return data_.valign; }
 
-  CHtmlLayoutArea *getAreaData() const { return area_data_; }
+  void init() override;
+
+  void setNameValue(const std::string &name, const std::string &value) override;
 
   void initProcess() override;
   void termProcess() override;
 
-  void initLayout() override;
-  void termLayout() override;
-
  private:
   CBrowserTableCaptionData data_;
-  CHtmlLayoutArea*         area_data_ { nullptr };
 };
 
 //------
@@ -164,16 +148,18 @@ class CBrowserTable : public CBrowserObject {
   CBrowserTable(CBrowserWindow *window, const CBrowserTableData &data);
  ~CBrowserTable();
 
+  void init();
+
+  void setNameValue(const std::string &name, const std::string &value) override;
+
   void endTable();
 
   CHAlignType getHAlign() const { return data_.halign; }
   CVAlignType getVAlign() const { return data_.valign; }
 
-  int getWidth() const { return data_.width; }
+  int getWidth() const { return data_.width.value(); }
 
-  CBrowserUnitsType getWidthUnit() const { return data_.width_unit; }
-
-  CRGBA getBackgroundColor() const { return data_.background_color; }
+  CScreenUnits::Units getWidthUnit() const { return data_.width.units(); }
 
   int getRowNum() const { return row_num_; }
   int getColNum() const { return col_num_; }
@@ -195,15 +181,14 @@ class CBrowserTable : public CBrowserObject {
 
   void addRowCell(int row, CBrowserTableCell *cell);
 
-  void initProcess() override;
-  void termProcess() override;
+  void layout() override;
 
-  void initLayout() override;
-  void termLayout() override;
+  CBrowserRegion calcRegion() const override;
 
-  void format(CHtmlLayoutMgr *) override;
+  void draw(const CTextBox &) override;
 
-  void draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &) override;
+ private:
+  void addPadCells();
 
  private:
   typedef std::vector<CBrowserTableCell *> Cells;

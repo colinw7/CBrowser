@@ -6,10 +6,6 @@
 class CBrowserAddress : public CBrowserObject {
  public:
   CBrowserAddress(CBrowserWindow *window);
- ~CBrowserAddress();
-
-  void initProcess() override;
-  void termProcess() override;
 };
 
 #endif

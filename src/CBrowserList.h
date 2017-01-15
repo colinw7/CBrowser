@@ -3,68 +3,53 @@
 
 #include <CBrowserObject.h>
 #include <CBrowserData.h>
-#include <CBrowserSymbol.h>
+#include <string>
+#include <vector>
 
-class CBrowserOutputList;
-
-class CBrowserListItem : public CBrowserObject {
+class CBrowserList : public CBrowserObject {
  public:
-  struct LabelSymbolData {
-    enum class Type {
-      NONE,
-      LABEL,
-      SYMBOL
-    };
-
-    LabelSymbolData(const std::string &text1, int width1, CHAlignType align1, const CRGBA &color1) :
-     type(Type::LABEL), text(text1), width(width1), align(align1), color(color1) {
-    }
-
-    LabelSymbolData(CBrowserSymbol::Type symbol1) :
-     type(Type::SYMBOL), symbol(symbol1) {
-    }
-
-    Type                 type { Type::NONE };
-    std::string          text;
-    int                  width { 0 };
-    CHAlignType          align { CHALIGN_TYPE_LEFT };
-    CRGBA                color;
-    CBrowserSymbol::Type symbol { CBrowserSymbol::Type::NONE };
+  enum class SymbolType {
+    NONE,
+    BLOCK,
+    CIRCLE,
+    DECIMAL,
+    DECIMAL_ZERO,
+    DISC,
+    LOWER_ALPHA,
+    LOWER_LATIN,
+    LOWER_ROMAN,
+    SQUARE,
+    UPPER_ALPHA,
+    UPPER_LATIN,
+    UPPER_ROMAN,
+    INITIAL,
+    INHERIT
   };
 
-  typedef std::vector<LabelSymbolData> LabelSymbolDatas;
-
  public:
-  CBrowserListItem(CBrowserWindow *window, const CBrowserOutputListItemData &data);
+  static SymbolType stringToSymbol(const std::string &value);
 
-  void init();
+  CBrowserList(CBrowserWindow *window, CHtmlTagId id, const CBrowserOutputListData &data);
 
-  void addLabelSymbols();
+  const std::string &getSymbol() const { return data_.symbol; }
+  void setSymbol(const std::string &symbol) { data_.symbol = symbol; }
 
-  void initLayout() override;
-  void termLayout() override;
+  int  getItemNum() const { return data_.item_num; }
+  void setItemNum(int item_num) { data_.item_num = item_num; }
 
-  const CBrowserOutputList *currentList() const;
+  bool getCompact() const { return data_.compact; }
+  void setCompact(bool compact) { data_.compact = compact; }
+
+  void setNameValue(const std::string &name, const std::string &value) override;
+
+  void init() override;
+
+  int listDepth() const;
 
  private:
-  CBrowserOutputListItemData data_;
-  LabelSymbolDatas           labelSymbolDatas_;
-};
-
-class CBrowserDataListData : public CBrowserObject {
- public:
-  CBrowserDataListData(CBrowserWindow *window);
-
-  void initLayout() override;
-  void termLayout() override;
-};
-
-class CBrowserDataListTerm : public CBrowserObject {
- public:
-  CBrowserDataListTerm(CBrowserWindow *window);
-
-  void initProcess() override;
-  void termProcess() override;
+  CBrowserOutputListData data_;
+  SymbolType             symbolType_ { SymbolType::NONE };
+  int                    indent_ { 0 };
 };
 
 #endif

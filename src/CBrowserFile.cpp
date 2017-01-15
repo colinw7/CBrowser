@@ -16,8 +16,15 @@ class CBrowserHtmlFileMgr : public CHtmlFileMgr {
   std::string getTypeImage(CFileType file_type);
 };
 
+CBrowserFileMgr::
+CBrowserFileMgr(CBrowserWindow *window) :
+ window_(window)
+{
+}
+
 bool
-HtmlReadURL(CBrowserWindow *window, const std::string &url_name, CHtmlParserTokens &tokens)
+CBrowserFileMgr::
+readURL(const std::string &url_name, CHtmlParserTokens &tokens)
 {
   CUrl url(url_name);
 
@@ -26,15 +33,15 @@ HtmlReadURL(CBrowserWindow *window, const std::string &url_name, CHtmlParserToke
   std::string target = url.getTarget();
 
   if      (prefix == "ceil")
-    HtmlReadScript(window, file, tokens);
+    readScript(file, tokens);
   else if (prefix == "file") {
 
     if (! CFile::exists(file)) {
-      window->errorDialog("File '" + file + "' does not exist");
+      window_->errorDialog("File '" + file + "' does not exist");
       return false;
     }
     else {
-      if (! HtmlReadFile(file, tokens))
+      if (! readFile(file, tokens))
         return false;
     }
   }
@@ -42,22 +49,23 @@ HtmlReadURL(CBrowserWindow *window, const std::string &url_name, CHtmlParserToke
     std::string      site     = url.getSite    ();
     CUrl::SearchList searches = url.getSearches();
 
-    if (! HtmlReadHttp(window, site, file, target, searches, tokens))
+    if (! readHttp(site, file, target, searches, tokens))
       return false;
   }
   else
     return false;
 
   if (target != "")
-    window->setTarget(target);
+    window_->setTarget(target);
 
   return true;
 }
 
 bool
-HtmlReadHttp(CBrowserWindow *window, const std::string &site, const std::string &file,
-             const std::string & /*target*/, const CUrl::SearchList & /*searches*/,
-             CHtmlParserTokens &tokens)
+CBrowserFileMgr::
+readHttp(const std::string &site, const std::string &file,
+         const std::string & /*target*/, const CUrl::SearchList & /*searches*/,
+         CHtmlParserTokens &tokens)
 {
   if (site != "localhost")
     return false;
@@ -71,7 +79,7 @@ HtmlReadHttp(CBrowserWindow *window, const std::string &site, const std::string 
   if (dir == NULL)
     return false;
 
-  std::string url = "file:";
+  std::string url = "file://";
 
   url += dir;
   url += "/";
@@ -97,40 +105,41 @@ HtmlReadHttp(CBrowserWindow *window, const std::string &site, const std::string 
   CEnvInst.set("CONTENT_TYPE"     , "");
   CEnvInst.set("CONTENT_LENGTH"   , "");
 
-  return HtmlReadURL(window, url, tokens);
+  return readURL(url, tokens);
 }
 
 bool
-HtmlReadScript(CBrowserWindow *window, const std::string &filename,
-               CHtmlParserTokens &tokens)
+CBrowserFileMgr::
+readScript(const std::string &filename, CHtmlParserTokens &tokens)
 {
-  std::string str = CBrowserCeilInst->runScriptCommand(window, filename);
+  std::string str = CBrowserCeilInst->runScriptCommand(window_, filename);
 
-  return HtmlReadHTMLString(str, tokens);
+  return readHTMLString(str, tokens);
 }
 
 bool
-HtmlReadFile(const std::string &filename, CHtmlParserTokens &tokens)
+CBrowserFileMgr::
+readFile(const std::string &filename, CHtmlParserTokens &tokens)
 {
   CFile file(filename);
 
   CFileType type = CFileUtil::getType(&file);
 
   if (type & CFILE_TYPE_IMAGE)
-    return HtmlReadImageFile(filename, tokens);
+    return readImageFile(filename, tokens);
 
   switch (type) {
     case CFILE_TYPE_INODE_DIR:
-      return HtmlReadDirectory(filename, tokens);
+      return readDirectory(filename, tokens);
     case CFILE_TYPE_TEXT_HTML:
     case CFILE_TYPE_TEXT_XML:
-      return HtmlReadHTMLFile(filename, tokens);
+      return readHTMLFile(filename, tokens);
     case CFILE_TYPE_APP_SH:
-      return HtmlReadScriptFile(filename, tokens);
+      return readScriptFile(filename, tokens);
     case CFILE_TYPE_TEXT_PLAIN:
-      return HtmlReadTextFile(filename, tokens);
+      return readTextFile(filename, tokens);
     case CFILE_TYPE_TEXT_BINARY:
-      return HtmlReadBinaryFile(filename, tokens);
+      return readBinaryFile(filename, tokens);
     default:
       break;
   }
@@ -139,7 +148,8 @@ HtmlReadFile(const std::string &filename, CHtmlParserTokens &tokens)
 }
 
 bool
-HtmlReadDirectory(const std::string &directory, CHtmlParserTokens &tokens)
+CBrowserFileMgr::
+readDirectory(const std::string &directory, CHtmlParserTokens &tokens)
 {
   CDir dir(directory);
 
@@ -151,7 +161,7 @@ HtmlReadDirectory(const std::string &directory, CHtmlParserTokens &tokens)
 
   /*------------*/
 
-  bool flag = HtmlReadHTMLFile(temp_file.getFile()->getPath(), tokens);
+  bool flag = readHTMLFile(temp_file.getFile()->getPath(), tokens);
 
   /*------------*/
 
@@ -163,7 +173,8 @@ HtmlReadDirectory(const std::string &directory, CHtmlParserTokens &tokens)
 }
 
 bool
-HtmlReadImageFile(const std::string &filename, CHtmlParserTokens &tokens)
+CBrowserFileMgr::
+readImageFile(const std::string &filename, CHtmlParserTokens &tokens)
 {
   CTempFile temp_file;
 
@@ -173,7 +184,7 @@ HtmlReadImageFile(const std::string &filename, CHtmlParserTokens &tokens)
 
   /*------------*/
 
-  bool flag = HtmlReadHTMLFile(temp_file.getFile()->getPath(), tokens);
+  bool flag = readHTMLFile(temp_file.getFile()->getPath(), tokens);
 
   /*------------*/
 
@@ -186,7 +197,8 @@ HtmlReadImageFile(const std::string &filename, CHtmlParserTokens &tokens)
 }
 
 bool
-HtmlReadTextFile(const std::string &filename, CHtmlParserTokens &tokens)
+CBrowserFileMgr::
+readTextFile(const std::string &filename, CHtmlParserTokens &tokens)
 {
   CTempFile temp_file;
 
@@ -196,7 +208,7 @@ HtmlReadTextFile(const std::string &filename, CHtmlParserTokens &tokens)
 
   /*------------*/
 
-  bool flag = HtmlReadHTMLFile(temp_file.getFile()->getPath(), tokens);
+  bool flag = readHTMLFile(temp_file.getFile()->getPath(), tokens);
 
   /*------------*/
 
@@ -206,7 +218,8 @@ HtmlReadTextFile(const std::string &filename, CHtmlParserTokens &tokens)
 }
 
 bool
-HtmlReadBinaryFile(const std::string &filename, CHtmlParserTokens &tokens)
+CBrowserFileMgr::
+readBinaryFile(const std::string &filename, CHtmlParserTokens &tokens)
 {
   CTempFile temp_file;
 
@@ -216,7 +229,7 @@ HtmlReadBinaryFile(const std::string &filename, CHtmlParserTokens &tokens)
 
   /*------------*/
 
-  bool flag = HtmlReadHTMLFile(temp_file.getFile()->getPath(), tokens);
+  bool flag = readHTMLFile(temp_file.getFile()->getPath(), tokens);
 
   /*------------*/
 
@@ -228,7 +241,8 @@ HtmlReadBinaryFile(const std::string &filename, CHtmlParserTokens &tokens)
 }
 
 bool
-HtmlReadScriptFile(const std::string &filename, CHtmlParserTokens &tokens)
+CBrowserFileMgr::
+readScriptFile(const std::string &filename, CHtmlParserTokens &tokens)
 {
   CTempFile temp_file;
 
@@ -238,7 +252,7 @@ HtmlReadScriptFile(const std::string &filename, CHtmlParserTokens &tokens)
 
   /*------------*/
 
-  bool flag = HtmlReadHTMLFile(temp_file.getFile()->getPath(), tokens);
+  bool flag = readHTMLFile(temp_file.getFile()->getPath(), tokens);
 
   /*------------*/
 
@@ -250,7 +264,8 @@ HtmlReadScriptFile(const std::string &filename, CHtmlParserTokens &tokens)
 }
 
 bool
-HtmlReadHTMLString(const std::string &str, CHtmlParserTokens &tokens)
+CBrowserFileMgr::
+readHTMLString(const std::string &str, CHtmlParserTokens &tokens)
 {
   CHtml html;
 
@@ -261,7 +276,8 @@ HtmlReadHTMLString(const std::string &str, CHtmlParserTokens &tokens)
 }
 
 bool
-HtmlReadHTMLFile(const std::string &filename, CHtmlParserTokens &tokens)
+CBrowserFileMgr::
+readHTMLFile(const std::string &filename, CHtmlParserTokens &tokens)
 {
   CHtml html;
 

@@ -22,26 +22,25 @@ class CBrowserLinkMgr {
   void startDestLink  (const CBrowserLinkData &data);
   void endLink();
 
-  CBrowserLink *getCurrentLink();
+  CBrowserAnchorLink *getCurrentLink();
 
   void deleteLinkRects();
   void freeLinks();
 
-  CBrowserLink *getSourceLink(int, int);
+  CBrowserAnchorLink *getSourceLink(int, int);
 
   int getDestLinkPos(const std::string &, int *, int *);
 
- private:
   std::string expandDestLink(const std::string &dest) const;
 
  private:
-  CBrowserWindow *window_       { nullptr };
-  CBrowserLink   *current_link_ { nullptr };
+  CBrowserWindow     *window_       { nullptr };
+  CBrowserAnchorLink *current_link_ { nullptr };
 };
 
 //------
 
-class CBrowserLink {
+class CBrowserAnchorLink {
  public:
   enum class Type {
     SOURCE,
@@ -49,9 +48,9 @@ class CBrowserLink {
   };
 
  public:
-  CBrowserLink(Type type, const std::string &name,
-               const std::string &dest, const std::string &title);
- ~CBrowserLink();
+  CBrowserAnchorLink(Type type, const std::string &name,
+                     const std::string &dest, const std::string &title);
+ ~CBrowserAnchorLink();
 
   Type        getType () const { return type_ ; }
   std::string getName () const { return name_ ; }
@@ -80,12 +79,34 @@ class CBrowserLink {
 
 //-----
 
-class CBrowserLinkObj : public CBrowserObject {
+class CBrowserAnchor : public CBrowserObject {
  public:
-  CBrowserLinkObj(CBrowserWindow *window, const CBrowserLinkData &data);
- ~CBrowserLinkObj();
+  CBrowserAnchor(CBrowserWindow *window, const CBrowserLinkData &data);
+ ~CBrowserAnchor();
+
+  void init() override;
+
+  void setNameValue(const std::string &name, const std::string &value) override;
 
   std::string propertyValue(int i) const override;
+
+  void initProcess() override;
+  void termProcess() override;
+
+ private:
+  CBrowserLinkData data_;
+};
+
+//-----
+
+class CBrowserLink : public CBrowserObject {
+ public:
+  CBrowserLink(CBrowserWindow *window, const CBrowserLinkData &data);
+ ~CBrowserLink();
+
+  void init() override;
+
+  void setNameValue(const std::string &name, const std::string &value) override;
 
   void initProcess() override;
   void termProcess() override;

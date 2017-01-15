@@ -1,7 +1,20 @@
 #ifndef CBrowserData_H
 #define CBrowserData_H
 
+#include <CBrowserClear.h>
 #include <CRGBA.h>
+#include <map>
+
+struct CBrowserBaseData {
+  typedef std::map<std::string,std::string> NameValues;
+
+  std::string id;
+  std::string name;
+  std::string cclass;
+  NameValues  nameValues;
+};
+
+//---
 
 namespace CBrowserDataConstants {
   const int LEFT_MARGIN   = 8;
@@ -20,47 +33,40 @@ struct CBrowserBaseFontData {
 
 //---
 
-struct CBrowserBodyData {
+struct CBrowserBodyData : public CBrowserBaseData {
   std::string text;
-  std::string bgcolor;
-  std::string background;
   std::string alink { "red" };
   bool        fixed { false };
-  int         leftmargin { CBrowserDataConstants::LEFT_MARGIN };
   std::string link { "blue" };
-  int         topmargin { CBrowserDataConstants::TOP_MARGIN };
   std::string vlink { "purple" };
 };
 
 //---
 
 struct CBrowserBreakData {
-  CHtmlLayoutClearType clear { CHtmlLayoutClearType::NONE };
+  CBrowserClear::Type clear { CBrowserClear::Type::NONE };
 };
 
 //---
 
-struct CBrowserDivData {
-  std::string id;
+struct CBrowserDivData : public CBrowserBaseData {
   std::string style;
 };
 
 //---
 
-struct CBrowserCanvasData {
-  std::string id;
-  int         width  { -1 };
-  int         height { -1 };
+struct CBrowserCanvasData : public CBrowserBaseData {
   std::string style;
 };
 
 //---
 
 struct CBrowserFontData {
-  std::string color { "black" };
-  std::string face  { "normal" };
+  std::string color;
+  std::string face;
   int         size  { -1 };
-  int         delta { 1 };
+  int         delta { 0 };
+  bool        sizeSet { false };
 };
 
 class CBrowserSaveFontData {
@@ -96,36 +102,36 @@ class CBrowserSaveFontData {
 
 //---
 
-struct CBrowserFormData {
-  std::string            name   { "" };
+struct CBrowserFormData : public CBrowserBaseData {
   CBrowserFormMethodType method { CBrowserFormMethodType::GET };
   std::string            action { "" };
 };
 
-struct CBrowserFormInputData {
+struct CBrowserFormInputData : public CBrowserBaseData {
   std::string align;
   bool        checked { false };
+  std::string max;
   int         maxlength { -1 };
-  std::string id;
-  std::string classStr;
-  std::string name;
-  std::string placeholder;
+  std::string min;
   std::string onblur;
   std::string onclick;
   std::string onchange;
   std::string onfocus;
+  std::string placeholder;
+  std::string required;
   int         size { -1 };
   std::string src;
-  std::string type;
-  std::string min;
-  std::string max;
   std::string step;
+  std::string type;
   std::string value;
 };
 
-struct CBrowserFormOptionData {
+struct CBrowserFormOptionData : public CBrowserBaseData {
   std::string value;
   bool        selected { false };
+};
+
+struct CBrowserFormButtonData : public CBrowserFormInputData {
 };
 
 struct CBrowserFormSelectData : public CBrowserFormInputData {
@@ -141,7 +147,6 @@ struct CBrowserFormTextareaData : public CBrowserFormInputData {
 //---
 
 struct CBrowserHeaderData {
-  CHAlignType align { CHALIGN_TYPE_LEFT };
 };
 
 //---
@@ -160,10 +165,9 @@ struct CBrowserImageData {
 
 //---
 
-struct CBrowserLinkData {
+struct CBrowserLinkData : public CBrowserBaseData {
   std::string download;
   std::string href;
-  std::string id;
   std::string methods;
   std::string rel;
   std::string rev;
@@ -175,7 +179,7 @@ struct CBrowserLinkData {
 
 //---
 
-struct CBrowserOutputListData {
+struct CBrowserOutputListData : public CBrowserBaseData {
   std::string symbol;
   int         item_num { 1 };
   bool        compact { false };
@@ -191,13 +195,18 @@ struct CBrowserOutputListItemData {
 //---
 
 struct CBrowserParagraphData {
-  CHAlignType align { CHALIGN_TYPE_LEFT };
 };
 
 //---
 
 struct CBrowserPreData {
-  int width { -1 };
+};
+
+//---
+
+struct CBrowserRuleData {
+  bool shade = true;
+  int  size  = -1;
 };
 
 //---
@@ -207,17 +216,6 @@ struct CBrowserScriptData {
   std::string src      { "" };
   std::string type     { "" };
   std::string text     { "" };
-};
-
-//---
-
-struct CBrowserTextData {
-  CRGBA                 color     { 0, 0, 0, 0 };
-  bool                  underline { false };
-  bool                  strike    { false };
-  CBrowserTextPlaceType place     { CBrowserTextPlaceType::NORMAL };
-  bool                  breakup   { true };
-  bool                  format    { true };
 };
 
 #endif

@@ -6,11 +6,125 @@ CBrowserTable::
 CBrowserTable(CBrowserWindow *window, const CBrowserTableData &data) :
  CBrowserObject(window, CHtmlTagId::TABLE), data_(data)
 {
+  setDisplay(Display::TABLE);
+
+//borderRef().setCollapse("separate");
+//borderRef().setSpacing("2px");
+  borderRef().setLineColor(CBrowserColor("gray"));
 }
 
 CBrowserTable::
 ~CBrowserTable()
 {
+}
+
+void
+CBrowserTable::
+init()
+{
+  CBrowserObject::init();
+}
+
+void
+CBrowserTable::
+setNameValue(const std::string &name, const std::string &value)
+{
+  std::string lname  = CStrUtil::toLower(name);
+  std::string lvalue = CStrUtil::toLower(value);
+
+  if      (lname == "align") {
+    if      (lvalue == "left") {
+      data_.halign = CHALIGN_TYPE_LEFT;
+    }
+    else if (lvalue == "center") {
+      data_.halign = CHALIGN_TYPE_CENTER;
+    }
+    else if (lvalue == "right") {
+      data_.halign = CHALIGN_TYPE_RIGHT;
+    }
+    else
+      window_->displayError("Illegal 'table' Alignment '%s'\n", value.c_str());
+  }
+  else if (lname == "border") {
+    if (value != "") {
+      if (CStrUtil::isInteger(value))
+        data_.border = (CStrUtil::toInteger(value) != 0);
+      else {
+        window_->displayError("Illegal 'table' Value for border '%s'\n", value.c_str());
+
+        data_.border = false;
+      }
+    }
+    else
+      data_.border = true;
+  }
+  else if (lname == "bordercolor") {
+    if (value != "")
+      data_.border_color = CRGBName::toRGBA(value);
+  }
+  else if (lname == "bordercolorlight") {
+    if (value != "")
+      data_.border_color_light = CRGBName::toRGBA(value);
+  }
+  else if (lname == "bordercolordark") {
+    if (value != "")
+      data_.border_color_dark = CRGBName::toRGBA(value);
+  }
+  else if (lname == "cellpadding") {
+    if (CStrUtil::isInteger(value))
+      data_.cell_padding = CStrUtil::toInteger(value);
+    else {
+      window_->displayError("Illegal 'table' Value for cellpadding '%s'\n", value.c_str());
+
+      data_.cell_padding = 1;
+    }
+  }
+  else if (lname == "cellspacing") {
+    if (CStrUtil::isInteger(value))
+      data_.cell_spacing = CStrUtil::toInteger(value);
+    else {
+      window_->displayError("Illegal 'table' Value for cellspacing '%s'\n", value.c_str());
+
+      data_.cell_spacing = 2;
+    }
+  }
+  else if (lname == "hspace") {
+    if (CStrUtil::isInteger(value))
+      data_.hspace = CStrUtil::toInteger(value);
+    else {
+      window_->displayError("Illegal 'table' Value for hspace '%s'\n", value.c_str());
+
+      data_.hspace = 0;
+    }
+  }
+  else if (lname == "valign") {
+    if      (lvalue == "top") {
+      data_.valign = CVALIGN_TYPE_TOP;
+    }
+    else if (lvalue == "bottom") {
+      data_.valign = CVALIGN_TYPE_BOTTOM;
+    }
+    else
+      window_->displayError("Illegal 'table' vertical alignment '%s'\n", value.c_str());
+  }
+  else if (lname == "vspace") {
+    if (CStrUtil::isInteger(value))
+      data_.vspace = CStrUtil::toInteger(value);
+    else {
+      window_->displayError("Illegal 'table' Value for vspace '%s'\n", value.c_str());
+
+      data_.vspace = 0;
+    }
+  }
+  else if (lname == "width") {
+    data_.width = CBrowserUnitValue(value);
+
+    if (! data_.width.isValid())
+      window_->displayError("Illegal 'table' value for width '%s'\n", value.c_str());
+  }
+  else {
+    CBrowserObject::setNameValue(name, value);
+  }
 }
 
 void
@@ -41,96 +155,64 @@ addRowCell(int row, CBrowserTableCell *cell)
 
 void
 CBrowserTable::
-initProcess()
+addPadCells()
 {
-}
-
-void
-CBrowserTable::
-termProcess()
-{
-}
-
-void
-CBrowserTable::
-initLayout()
-{
-}
-
-void
-CBrowserTable::
-termLayout()
-{
-  window_->addCellRedrawData(this);
-
-  //---
-
-  window_->newLine();
-}
-
-void
-CBrowserTable::
-format(CHtmlLayoutMgr *)
-{
-  for (int i = 0; i < getNumRows(); i++) {
+  for (int i = 0; i < getNumRows(); ++i) {
     int num_cols = row_cells_[i].size();
 
-    int j = 0;
+    for (int j = num_cols; j < getNumCols(); ++j) {
+      CBrowserTableCellData cellData;
 
-    for ( ; j < num_cols; j++) {
-      if (row_cells_[i][j]->getPad())
-        continue;
-
-      CHtmlLayoutArea *area_data = row_cells_[i][j]->getAreaData();
-
-      area_data->setX(0);
-      area_data->setY(0);
-
-      area_data->setHeight(0);
-
-      if (row_cells_[i][j]->getWidthUnit() == CBrowserUnitsType::PIXEL)
-        area_data->setWidth(row_cells_[i][j]->getWidth());
-      else
-        area_data->setWidth(0);
-
-      area_data->format(window_->getLayoutMgr());
-
-      if (getWidthUnit() == CBrowserUnitsType::PIXEL &&
-          area_data->getWidth() > getWidth()) {
-        area_data->setWidth(getWidth());
-
-        area_data->format(window_->getLayoutMgr());
-      }
-
-      if (area_data->getWidth() > window_->getCurrentArea()->getWidth()) {
-        area_data->setWidth(window_->getCurrentArea()->getWidth());
-
-        area_data->format(window_->getLayoutMgr());
-      }
-    }
-
-    //---
-
-    CBrowserTableCellData cellData;
-
-    for ( ; j < getNumCols(); j++) {
       CBrowserTableCell *table_cell = new CBrowserTablePadCell(window_, cellData);
 
       addRowCell(i, table_cell);
     }
   }
+}
+
+void
+CBrowserTable::
+layout()
+{
+  CIBBox2D box = this->content();
+
+  addPadCells();
+
+  for (int i = 0; i < getNumRows(); ++i) {
+    for (int j = 0; j < getNumCols(); ++j) {
+      CBrowserTableCell *rowCell = row_cells_[i][j];
+
+      if (rowCell->getPad())
+        continue;
+
+      if (rowCell->getWidthUnit() == CScreenUnits::Units::PX)
+        rowCell->setContentWidth(rowCell->getWidth());
+
+      if (getWidthUnit() == CScreenUnits::Units::PX && rowCell->contentWidth() > getWidth())
+        rowCell->setContentWidth(getWidth());
+
+      if (rowCell->contentWidth() > box.getWidth())
+        rowCell->setContentWidth(box.getWidth());
+    }
+  }
 
   //---
 
-  int *row_heights = new int [getNumRows() + 1];
+  // set row heights
+  std::vector<int> row_heights;
 
-  for (int i = 0; i < getNumRows(); i++) {
+  row_heights.resize(getNumRows() + 1);
+
+  for (int i = 0; i < getNumRows(); ++i) {
     row_heights[i] = 0;
 
-    for (int j = 0; j < getNumCols(); j++) {
+    for (int j = 0; j < getNumCols(); ++j) {
+      CBrowserTableCell *rowCell = row_cells_[i][j];
+
       int k = i;
 
-      if (row_cells_[i][j]->getPad()) {
+      // find index of first row if pad cell
+      if (rowCell->getPad()) {
         k--;
 
         while (k >= 0 && row_cells_[k][j]->getPad())
@@ -140,38 +222,43 @@ format(CHtmlLayoutMgr *)
           continue;
       }
 
-      CHtmlLayoutArea *area_data = row_cells_[k][j]->getAreaData();
+      CBrowserTableCell *rowCell1 = row_cells_[k][j];
 
-      int rowSpan = std::max(row_cells_[k][j]->getRowSpan(), 1);
+      CBrowserRegion cellRegion = rowCell1->calcRegion();
 
-      int height1 = area_data->getHeight()/rowSpan;
+      int rowSpan = std::max(rowCell1->getRowSpan(), 1);
 
-      if (height1 > row_heights[i])
-        row_heights[i] = height1;
+      int height1 = cellRegion.height()/rowSpan;
+
+      row_heights[i] = std::max(row_heights[i], height1);
     }
   }
 
-  for (int i = 0; i < getNumRows(); i++) {
-    for (int j = 0; j < getNumCols(); j++) {
-      CHtmlLayoutArea *area_data = row_cells_[i][j]->getAreaData();
+  for (int i = 0; i < getNumRows(); ++i) {
+    for (int j = 0; j < getNumCols(); ++j) {
+      CBrowserTableCell *rowCell = row_cells_[i][j];
 
-      area_data->setHeight(row_heights[i]);
+      rowCell->setContentHeight(row_heights[i]);
     }
   }
-
-  delete row_heights;
 
   //---
 
-  int *col_widths = new int [getNumCols() + 1];
+  // set columns widths
+  std::vector<int> col_widths;
 
-  for (int j = 0; j < getNumCols(); j++) {
+  col_widths.resize(getNumCols() + 1);
+
+  for (int j = 0; j < getNumCols(); ++j) {
     col_widths[j] = 0;
 
-    for (int i = 0; i < getNumRows(); i++) {
+    for (int i = 0; i < getNumRows(); ++i) {
+      CBrowserTableCell *rowCell = row_cells_[i][j];
+
       int k = j;
 
-      if (row_cells_[i][j]->getPad()) {
+      // find index of first column if pad cell
+      if (rowCell->getPad()) {
         k--;
 
         while (k >= 0 && row_cells_[i][k]->getPad())
@@ -181,37 +268,54 @@ format(CHtmlLayoutMgr *)
           continue;
       }
 
-      CHtmlLayoutArea *area_data = row_cells_[i][k]->getAreaData();
+      CBrowserTableCell *rowCell1 = row_cells_[i][k];
 
-      int colSpan = std::max(row_cells_[i][k]->getColSpan(), 1);
+      CBrowserRegion cellRegion = rowCell1->calcRegion();
 
-      int width1 = area_data->getWidth()/colSpan;
+      int colSpan = std::max(rowCell1->getColSpan(), 1);
 
-      if (width1 > col_widths[j])
-        col_widths[j] = width1;
+      int width1 = cellRegion.width()/colSpan;
+
+      col_widths[j] = std::max(col_widths[j], width1);
     }
   }
 
-  for (int j = 0; j < getNumCols(); j++) {
-    for (int i = 0; i < getNumRows(); i++) {
-      CHtmlLayoutArea *area_data = row_cells_[i][j]->getAreaData();
+  for (int j = 0; j < getNumCols(); ++j) {
+    for (int i = 0; i < getNumRows(); ++i) {
+      CBrowserTableCell *rowCell = row_cells_[i][j];
 
-      area_data->setWidth(col_widths[j]);
+      rowCell->setContentWidth(col_widths[j]);
     }
   }
 
-  delete col_widths;
-
   //---
 
-  window_->newSubCellBelow(false);
+  if (caption_) {
+    CBrowserRegion captionRegion;
 
-  //---
+    captionRegion.setX(0);
+    captionRegion.setY(0);
 
+    captionRegion.setWidth (box.getWidth());
+    captionRegion.setHeight(0);
+
+    setContentHeight(CBrowserBox::height() + captionRegion.height());
+  }
+}
+
+CBrowserRegion
+CBrowserTable::
+calcRegion() const
+{
   int width = 0;
 
-  for (int i = 0; i < getNumCols(); i++)
-    width += row_cells_[0][i]->getAreaData()->getWidth();
+  for (int i = 0; i < getNumCols(); ++i) {
+    CBrowserTableCell *rowCell = row_cells_[0][i];
+
+    CBrowserRegion cellRegion = rowCell->calcRegion();
+
+    width += cellRegion.width();
+  }
 
   width += 2*getNumCols()*data_.cell_padding;
 
@@ -224,8 +328,13 @@ format(CHtmlLayoutMgr *)
 
   int height = 0;
 
-  for (int i = 0; i < getNumRows(); i++)
-    height += row_cells_[i][0]->getAreaData()->getHeight();
+  for (int i = 0; i < getNumRows(); ++i) {
+    CBrowserTableCell *rowCell = row_cells_[i][0];
+
+    CBrowserRegion cellRegion = rowCell->calcRegion();
+
+    height += cellRegion.height();
+  }
 
   height += 2*getNumRows()*data_.cell_padding;
 
@@ -234,51 +343,32 @@ format(CHtmlLayoutMgr *)
   if (data_.border)
     height += 2*getNumRows() + 2*data_.border;
 
-  //---
-
-  if (caption_) {
-    CHtmlLayoutArea *area_data = caption_->getAreaData();
-
-    area_data->setX(0);
-    area_data->setY(0);
-
-    area_data->setWidth (width);
-    area_data->setHeight(0);
-
-    area_data->format(window_->getLayoutMgr());
-
-    if (area_data->getWidth() > width)
-      width = area_data->getWidth();
-
-    height += area_data->getHeight();
-  }
-
-  window_->updateSubCellWidth (width);
-  window_->updateSubCellHeight(height, 0);
-
-  //---
-
-  window_->addSubCellRedrawData(this);
+  return CBrowserRegion(width, height, 0);
 }
 
 void
 CBrowserTable::
-draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &region)
+draw(const CTextBox &box)
 {
-  int x1 = region.x;
-  int y1 = region.y;
+  addPadCells();
+
+  fillBackground(box);
 
   //---
 
+  int x1 = box.x();
+  int y1 = box.y();
+
+  //---
+
+  // place caption at top if align top
   if (caption_ && caption_->getVAlign() == CVALIGN_TYPE_TOP) {
-    CHtmlLayoutArea *area_data = caption_->getAreaData();
+    caption_->setX(x1);
+    caption_->setY(y1);
 
-    area_data->setX(x1);
-    area_data->setY(y1);
+    caption_->draw(caption_->contentBox());
 
-    area_data->redraw(window_->getLayoutMgr());
-
-    y1 += area_data->getHeight() + 2;
+    y1 += caption_->contentHeight();
   }
 
   //---
@@ -288,89 +378,109 @@ draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &region)
   if (data_.border)
     y2 += data_.border + 1;
 
-  for (int i = 0; i < getNumRows(); i++) {
+  for (int i = 0; i < getNumRows(); ++i) {
+    CBrowserTableRow *row = rows_[i];
+    assert(row);
+
+    //---
+
     int x2 = x1 + data_.cell_spacing;
 
     if (data_.border)
       x2 += data_.border + 1;
 
-    for (int j = 0; j < getNumCols(); j++) {
-      CHtmlLayoutArea *area_data = row_cells_[i][j]->getAreaData();
+    //---
 
-      if (! row_cells_[i][j]->getPad()) {
-        int width  = (area_data->getWidth()  + 2*data_.cell_padding)*
-                     row_cells_[i][j]->getColSpan();
-        int height = (area_data->getHeight() + 2*data_.cell_padding)*
-                     row_cells_[i][j]->getRowSpan();
+    CBrowserTableCell *rowCell = row_cells_[i][0];
 
-        if (row_cells_[i][j]->getColSpan() > 1) {
-          width += data_.cell_spacing*(row_cells_[i][j]->getColSpan() - 1);
+    if (row->background().color().isValid()) {
+      int height = rowCell->contentHeight();
+
+      CBrush brush(row->background().color().color());
+
+      window_->fillRectangle(x1, y2, box.width(), height, brush);
+    }
+
+    //---
+
+    for (int j = 0; j < getNumCols(); ++j) {
+      CBrowserTableCell *rowCell = row_cells_[i][j];
+      assert(rowCell);
+
+      if (! rowCell->getPad()) {
+        int width  = (rowCell->contentWidth () + 2*data_.cell_padding)*rowCell->getColSpan();
+        int height = (rowCell->contentHeight() + 2*data_.cell_padding)*rowCell->getRowSpan();
+
+        if (rowCell->getColSpan() > 1) {
+          width += data_.cell_spacing*(rowCell->getColSpan() - 1);
 
           if (data_.border)
-            width += 2*(row_cells_[i][j]->getColSpan() - 1);
+            width += 2*(rowCell->getColSpan() - 1);
         }
 
-        if (row_cells_[i][j]->getRowSpan() > 1) {
-          height += data_.cell_spacing*(row_cells_[i][j]->getRowSpan() - 1);
+        if (rowCell->getRowSpan() > 1) {
+          height += data_.cell_spacing*(rowCell->getRowSpan() - 1);
 
           if (data_.border)
-            height += 2*(row_cells_[i][j]->getRowSpan() - 1);
+            height += 2*(rowCell->getRowSpan() - 1);
         }
 
-        if (row_cells_[i][j]->getBackgroundColor() !=
-            window_->getBg()) {
-          window_->setForeground(row_cells_[i][j]->getBackgroundColor());
+        //---
 
-          window_->fillRectangle(x2, y2, width, height);
+        if (rowCell->background().color().isValid()) {
+          CBrush brush(rowCell->background().color().color());
+
+          window_->fillRectangle(x2, y2, width, height, brush);
         }
+
+        //---
 
         if (data_.border)
           window_->drawBorder(x2 - 1, y2 - 1, width + 2, height + 2, CBrowserBorderType::IN);
 
-        area_data->setX(x2 + data_.cell_padding);
-        area_data->setY(y2 + data_.cell_padding);
+        //---
 
-        width  = area_data->getWidth();
-        height = area_data->getHeight();
+        rowCell->setX(x2 + data_.cell_padding);
+        rowCell->setY(y2 + data_.cell_padding);
 
-        area_data->setWidth (width *row_cells_[i][j]->getColSpan());
-        area_data->setHeight(height*row_cells_[i][j]->getRowSpan());
+        width  = rowCell->contentWidth();
+        height = rowCell->contentHeight();
 
-        if (row_cells_[i][j]->getColSpan() > 1) {
-          area_data->setWidth(area_data->getWidth() +
-                              (2*data_.cell_padding + data_.cell_spacing)*
-                              (row_cells_[i][j]->getColSpan() - 1));
+        CTextBox rowBox = rowCell->contentBox();
 
-          if (data_.border)
-            area_data->setWidth(area_data->getWidth() +
-              2*(row_cells_[i][j]->getColSpan() - 1));
-        }
+        rowBox.setWidth (width *rowCell->getColSpan());
+        rowBox.setHeight(height*rowCell->getRowSpan());
 
-        if (row_cells_[i][j]->getRowSpan() > 1) {
-          area_data->setHeight(area_data->getHeight() +
-                               (2*data_.cell_padding + data_.cell_spacing)*
-                               (row_cells_[i][j]->getRowSpan() - 1));
+        if (rowCell->getColSpan() > 1) {
+          rowBox.setWidth(rowBox.width() +
+                          (2*data_.cell_padding + data_.cell_spacing)*
+                          (rowCell->getColSpan() - 1));
 
           if (data_.border)
-            area_data->setHeight(area_data->getHeight() +
-              2*(row_cells_[i][j]->getRowSpan() - 1));
+            rowBox.setWidth(rowBox.width() + 2*(rowCell->getColSpan() - 1));
         }
 
-        area_data->redraw(window_->getLayoutMgr());
+        if (rowCell->getRowSpan() > 1) {
+          rowBox.setHeight(rowBox.height() +
+                           (2*data_.cell_padding + data_.cell_spacing)*
+                           (rowCell->getRowSpan() - 1));
 
-        area_data->setWidth (width );
-        area_data->setHeight(height);
+          if (data_.border)
+            rowBox.setHeight(rowBox.height() + 2*(rowCell->getRowSpan() - 1));
+        }
+
+        rowCell->draw(rowBox);
       }
 
-      x2 += area_data->getWidth() + 2*data_.cell_padding + data_.cell_spacing;
+      x2 += rowCell->contentWidth() + 2*data_.cell_padding + data_.cell_spacing;
 
       if (data_.border)
         x2 += 2;
     }
 
-    CHtmlLayoutArea *area_data = row_cells_[i][0]->getAreaData();
+    //---
 
-    y2 += area_data->getHeight() + 2*data_.cell_padding + data_.cell_spacing;
+    y2 += rowCell->contentHeight() + 2*data_.cell_padding + data_.cell_spacing;
 
     if (data_.border)
       y2 += 2;
@@ -380,8 +490,11 @@ draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &region)
 
   int width = 0;
 
-  for (int i = 0; i < getNumCols(); i++)
-    width += row_cells_[0][i]->getAreaData()->getWidth();
+  for (int i = 0; i < getNumCols(); ++i) {
+    CBrowserTableCell *rowCell = row_cells_[0][i];
+
+    width += rowCell->contentWidth();
+  }
 
   width += 2*getNumCols()*data_.cell_padding;
 
@@ -394,8 +507,11 @@ draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &region)
 
   int height = 0;
 
-  for (int i = 0; i < getNumRows(); i++)
-    height += row_cells_[i][0]->getAreaData()->getHeight();
+  for (int i = 0; i < getNumRows(); ++i) {
+    CBrowserTableCell *rowCell = row_cells_[i][0];
+
+    height += rowCell->contentHeight();
+  }
 
   height += 2*getNumRows()*data_.cell_padding;
 
@@ -406,54 +522,27 @@ draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &region)
 
   //---
 
-  for (int i = 0; i < data_.border; i++)
+  for (int i = 0; i < data_.border; ++i)
     window_->drawBorder(x1 + i, y1 + i, width - 2*i, height - 2*i, CBrowserBorderType::OUT);
 
   //---
 
+  // place caption at bottom if align bottom
   if (caption_ && caption_->getVAlign() == CVALIGN_TYPE_BOTTOM) {
-    CHtmlLayoutArea *area_data = caption_->getAreaData();
+    y1 += height + 2;
 
-    area_data->setX(x1);
-    area_data->setY(y1 + height + 2);
+    caption_->setX(x1);
+    caption_->setY(y1);
 
-    area_data->redraw(window_->getLayoutMgr());
+    caption_->draw(caption_->contentBox());
 
-    y2 += area_data->getHeight() + 2;
+    y1 += caption_->contentHeight();
   }
 
   //---
 
-  //region.y = y2;
+  //box.setY(y2);
 }
-
-#if 0
-void
-CBrowserTable::
-freeProc()
-{
-  int num_rows = rows_.size();
-
-  for (int i = 0; i < num_rows; i++)
-    delete rows_[i];
-
-  //---
-
-  int num_row_cells = row_cells_.size();
-
-  for (int i = 0; i < num_row_cells; i++) {
-    int num_row_cells1 = row_cells_[i].size();
-
-    for (int j = 0; j < num_row_cells1; j++)
-      delete row_cells_[i][j];
-  }
-
-  //---
-
-  delete caption_;
-  delete this;
-}
-#endif
 
 //------
 
@@ -461,6 +550,46 @@ CBrowserTableRow::
 CBrowserTableRow(CBrowserWindow *window, const CBrowserTableRowData &data) :
  CBrowserObject(window, CHtmlTagId::TR), data_(data)
 {
+  setDisplay(Display::TABLE_ROW);
+
+//setNameValue("vertical-align", "inherit");
+  borderRef().setLineColor(CBrowserColor("inherit"));
+}
+
+void
+CBrowserTableRow::
+init()
+{
+  CBrowserObject::init();
+}
+
+void
+CBrowserTableRow::
+setNameValue(const std::string &name, const std::string &value)
+{
+  std::string lname = CStrUtil::toLower(name);
+
+  if      (lname == "align") {
+    window_->parseHAlignOption(value, data_.halign);
+  }
+  else if (lname == "bordercolor") {
+    if (value != "")
+      data_.border_color = CRGBName::toRGBA(value);
+  }
+  else if (lname == "bordercolorlight") {
+    if (value != "")
+      data_.border_color_light = CRGBName::toRGBA(value);
+  }
+  else if (lname == "bordercolordark") {
+    if (value != "")
+      data_.border_color_dark = CRGBName::toRGBA(value);
+  }
+  else if (lname == "valign") {
+    window_->parseVAlignOption(value, data_.valign);
+  }
+  else {
+    CBrowserObject::setNameValue(name, value);
+  }
 }
 
 void
@@ -489,24 +618,93 @@ termProcess()
 {
 }
 
-void
-CBrowserTableRow::
-initLayout()
-{
-}
-
-void
-CBrowserTableRow::
-termLayout()
-{
-}
-
 //------
 
 CBrowserTableCell::
 CBrowserTableCell(CBrowserWindow *window, CHtmlTagId id, const CBrowserTableCellData &data) :
  CBrowserObject(window, id), data_(data)
 {
+  setDisplay(Display::TABLE_CELL);
+
+//setNameValue("vertical-align", "inherit");
+}
+
+CBrowserTableCell::
+~CBrowserTableCell()
+{
+}
+
+void
+CBrowserTableCell::
+init()
+{
+}
+
+void
+CBrowserTableCell::
+setNameValue(const std::string &name, const std::string &value)
+{
+  std::string lname  = CStrUtil::toLower(name);
+  std::string lvalue = CStrUtil::toLower(value);
+
+  if      (lname == "align") {
+    window_->parseHAlignOption(lvalue, data_.halign);
+  }
+  else if (lname == "bordercolor") {
+    if (lvalue != "")
+      data_.border_color = CRGBName::toRGBA(lvalue);
+  }
+  else if (lname == "bordercolorlight") {
+    if (lvalue != "")
+      data_.border_color_light = CRGBName::toRGBA(lvalue);
+  }
+  else if (lname == "bordercolordark") {
+    if (lvalue != "")
+      data_.border_color_dark = CRGBName::toRGBA(lvalue);
+  }
+  else if (lname == "colspan") {
+    if (CStrUtil::isInteger(lvalue))
+      data_.colspan = CStrUtil::toInteger(lvalue);
+    else {
+      window_->displayError("Illegal 'td' Value for colspan '%s'\n", value.c_str());
+      data_.colspan = 1;
+    }
+  }
+  else if (lname == "id") {
+    data_.id = value;
+  }
+  else if (lname == "nowrap") {
+    data_.wrap = false;
+
+    if (value != "")
+      window_->displayError("No Value needed for nowrap\n");
+  }
+  else if (lname == "rowspan") {
+    if (CStrUtil::isInteger(lvalue))
+      data_.rowspan = CStrUtil::toInteger(lvalue);
+    else {
+      window_->displayError("Illegal 'td' value for rowspan '%s'\n", value.c_str());
+      data_.rowspan = 1;
+    }
+  }
+  else if (lname == "valign") {
+    window_->parseVAlignOption(lvalue, data_.valign);
+  }
+  else if (lname == "width") {
+    data_.width = CBrowserUnitValue(lvalue);
+
+    if (! data_.width.isValid())
+      window_->displayError("Illegal 'td' value for width '%s'\n", value.c_str());
+  }
+  else if (lname == "height") {
+    data_.height = CBrowserUnitValue(lvalue);
+
+    if (! data_.height.isValid())
+      window_->displayError("Illegal 'td' value for height '%s'\n", value.c_str());
+  }
+  else {
+    CBrowserObject::setNameValue(name, value);
+  }
 }
 
 void
@@ -546,8 +744,6 @@ initProcess()
       data_.valign = CVALIGN_TYPE_CENTER;
   }
 
-  area_data_ = new CHtmlLayoutArea();
-
   //---
 
   if (table) {
@@ -557,8 +753,8 @@ initProcess()
 
     table->addRowCell(table->getRowNum() - 1, this);
 
-    for (int i = 0; i < data_.rowspan; i++) {
-      for (int j = 0; j < data_.colspan; j++) {
+    for (int i = 0; i < data_.rowspan; ++i) {
+      for (int j = 0; j < data_.colspan; ++j) {
         if (i == 0 && j == 0)
           continue;
 
@@ -586,22 +782,18 @@ termProcess()
 {
 }
 
-void
+CBrowserRegion
 CBrowserTableCell::
-initLayout()
+calcRegion() const
 {
-  window_->startArea(getAreaData());
+  CBrowserRegion region;
 
-  window_->setAlign(getHAlign(), getVAlign());
+  for (auto &c : children_) {
+    if (c->type() == CHtmlTagId::TEXT)
+      region = c->calcRegion();
+  }
 
-  window_->newColumn();
-}
-
-void
-CBrowserTableCell::
-termLayout()
-{
-  window_->endArea();
+  return region;
 }
 
 //------
@@ -610,7 +802,6 @@ CBrowserTablePadCell::
 CBrowserTablePadCell(CBrowserWindow *window, const CBrowserTableCellData &data) :
  CBrowserTableCell(window, CHtmlTagId::NONE, data)
 {
-  area_data_ = new CHtmlLayoutArea();
 }
 
 //------
@@ -619,6 +810,63 @@ CBrowserTableCaption::
 CBrowserTableCaption(CBrowserWindow *window, const CBrowserTableCaptionData &data) :
  CBrowserObject(window, CHtmlTagId::CAPTION), data_(data)
 {
+  setDisplay(Display::TABLE_CAPTION);
+
+//setNameValue("text-align", "center");
+}
+
+CBrowserTableCaption::
+~CBrowserTableCaption()
+{
+}
+
+void
+CBrowserTableCaption::
+init()
+{
+}
+
+void
+CBrowserTableCaption::
+setNameValue(const std::string &name, const std::string &value)
+{
+  std::string lname  = CStrUtil::toLower(name);
+  std::string lvalue = CStrUtil::toLower(value);
+
+  if      (lname == "align") {
+    if      (lvalue == "left") {
+      data_.halign = CHALIGN_TYPE_LEFT;
+    }
+    else if (lvalue == "center") {
+      data_.halign = CHALIGN_TYPE_CENTER;
+    }
+    else if (lvalue == "right") {
+      data_.halign = CHALIGN_TYPE_RIGHT;
+    }
+    else if (lvalue == "top") {
+      data_.valign = CVALIGN_TYPE_TOP;
+    }
+    else if (lvalue == "bottom") {
+      data_.valign = CVALIGN_TYPE_BOTTOM;
+    }
+    else
+      window_->displayError("Illegal '%s' Alignment '%s'\n", "Table Caption",
+                            value.c_str());
+  }
+  else if (lname == "valign") {
+    if      (lvalue == "top") {
+      data_.valign = CVALIGN_TYPE_TOP;
+    }
+    else if (lvalue == "bottom") {
+      data_.valign = CVALIGN_TYPE_BOTTOM;
+    }
+    else
+      window_->displayError("Illegal '%s' Vertical Alignment '%s'\n", "Table Caption",
+                            value.c_str());
+  }
+  else {
+    CBrowserObject::setNameValue(name, value);
+  }
 }
 
 void
@@ -628,8 +876,6 @@ initProcess()
   CBrowserTable *table = parentType<CBrowserTable>();
 
   //---
-
-  area_data_ = new CHtmlLayoutArea();
 
   if (data_.halign == CHALIGN_TYPE_NONE && table)
     data_.halign = table->getHAlign();
@@ -654,22 +900,4 @@ void
 CBrowserTableCaption::
 termProcess()
 {
-}
-
-void
-CBrowserTableCaption::
-initLayout()
-{
-  window_->startArea(getAreaData());
-
-  window_->setAlign(getHAlign(), getVAlign());
-
-  window_->newLine();
-}
-
-void
-CBrowserTableCaption::
-termLayout()
-{
-  window_->endArea();
 }

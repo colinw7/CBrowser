@@ -8,8 +8,9 @@ class CBrowserDiv : public CBrowserObject {
  public:
   CBrowserDiv(CBrowserWindow *window, const CBrowserDivData &data);
 
-  void initLayout() override;
-  void termLayout() override;
+  void setNameValue(const std::string &name, const std::string &value) override;
+
+  void init() override;
 
  private:
   CBrowserDivData data_;

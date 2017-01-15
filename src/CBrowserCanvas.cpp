@@ -10,9 +10,8 @@
 
 CBrowserCanvas::
 CBrowserCanvas(CBrowserWindow *window, const CBrowserCanvasData &data) :
- CBrowserObject(window, CHtmlTagId::CANVAS), data_(data)
+ CBrowserObject(window, CHtmlTagId::CANVAS, data), data_(data)
 {
-  setId(data.id);
 }
 
 CBrowserCanvas::
@@ -22,24 +21,33 @@ CBrowserCanvas::
 
 void
 CBrowserCanvas::
-initLayout()
+init()
 {
-  window_->addCellRedrawData(this);
-
-  window_->skipLine();
 }
 
 void
 CBrowserCanvas::
-termLayout()
+setNameValue(const std::string &name, const std::string &value)
 {
+  std::string lname  = CStrUtil::toLower(name);
+//std::string lvalue = CStrUtil::toLower(value);
+
+  if      (lname == "id") {
+    data_.id = value;
+  }
+  else if (lname == "style") {
+    data_.style = value;
+  }
+  else {
+    CBrowserObject::setNameValue(name, value);
+  }
 }
 
 void
 CBrowserCanvas::
 setWidth(int w)
 {
-  data_.width = w;
+  CBrowserObject::setWidth(CBrowserUnitValue(w));
 
   window_->recalc();
 }
@@ -48,55 +56,44 @@ void
 CBrowserCanvas::
 setHeight(int h)
 {
-  data_.height = h;
+  CBrowserObject::setHeight(CBrowserUnitValue(h));
 
   window_->recalc();
 }
 
-void
+CBrowserRegion
 CBrowserCanvas::
-format(CHtmlLayoutMgr *)
+calcRegion() const
 {
-  window_->newSubCellRight(true);
-
-  CHtmlLayoutSubCell *sub_cell = window_->getCurrentSubCell();
-
-  sub_cell->setAlign(CHALIGN_TYPE_LEFT);
-
-  //---
-
   int hspace = 0, vspace = 0;
 
-  window_->updateSubCellHeight(vspace, height() + vspace);
-  window_->updateSubCellWidth (width() + 2*hspace);
+  int width   = this->width ().value() + 2*hspace;
+  int ascent  = this->height().value() + vspace;
+  int descent = vspace;
 
-  //---
-
-  createWidget();
-
-  //---
-
-  window_->addSubCellRedrawData(this);
+  return CBrowserRegion(width, ascent, descent);
 }
 
 void
 CBrowserCanvas::
-draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &region)
+draw(const CTextBox &region)
 {
+  fillBackground(region);
+
+  //---
+
   region_ = region;
 
-  canvas_->move  (region_.x, region_.y);
-  canvas_->resize(data_.width, data_.height);
+  canvas_->move  (region_.x(), region_.y());
+  canvas_->resize(width().value(), height().value());
   //int hspace = 0, vspace = 0;
 
   //---
 
-  //CHtmlLayoutSubCell *sub_cell = window_->getCurrentSubCell();
+  //int x1 = region.x() + hspace;
+  //int y1 = region.y() + vspace;
 
-  //int x1 = region.x + hspace;
-  //int y1 = region.y + vspace;
-
-  //region.x += width() + 2*hspace;
+  //region.setX(region.x() + width() + 2*hspace);
 }
 
 void
@@ -108,9 +105,9 @@ createWidget()
 
     canvas_->setObjectName("canvas");
 
-    canvas_->resize(data_.width, data_.height);
+    canvas_->resize(width().value(), height().value());
 
-    canvas_->updateSize(data_.width, data_.height);
+    canvas_->updateSize(width().value(), height().value());
   }
 }
 

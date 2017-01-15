@@ -7,23 +7,28 @@
 
 class CBrowserImage : public CBrowserObject {
  public:
-  CBrowserImage(CBrowserWindow *window, const CImagePtr &image,
-                const CBrowserImageData &data);
+  CBrowserImage(CBrowserWindow *window, const CBrowserImageData &data);
  ~CBrowserImage();
+
+  const CImagePtr &image() const { return image_; }
+  void setImage(const CImagePtr &v) { image_ = v; }
+
+  void init() override;
+
+  void setNameValue(const std::string &name, const std::string &value) override;
 
   std::string propertyValue(int i) const override;
 
-  void initLayout() override;
-  void termLayout() override;
+  void getInlineWords(Words &words) const override;
 
-  void format(CHtmlLayoutMgr *) override;
+  CBrowserRegion calcRegion() const override;
 
-  void draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &) override;
+  void draw(const CTextBox &) override;
 
  private:
-  CImagePtr         image_;
-  CBrowserImageData data_;
-  CBrowserLink*     link_ { nullptr };
+  CImagePtr           image_;
+  CBrowserImageData   data_;
+  CBrowserAnchorLink* link_ { nullptr };
 };
 
 #endif

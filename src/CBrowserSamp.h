@@ -6,9 +6,6 @@
 class CBrowserSamp : public CBrowserObject {
  public:
   CBrowserSamp(CBrowserWindow *window);
-
-  void initProcess() override;
-  void termProcess() override;
 };
 
 #endif

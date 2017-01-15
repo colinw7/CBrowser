@@ -6,9 +6,6 @@
 class CBrowserTT : public CBrowserObject {
  public:
   CBrowserTT(CBrowserWindow *window);
-
-  void initProcess() override;
-  void termProcess() override;
 };
 
 #endif

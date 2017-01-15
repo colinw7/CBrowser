@@ -10,38 +10,36 @@ class CBrowserForm : public QObject, public CBrowserObject {
   Q_OBJECT
 
  public:
-  CBrowserForm(CBrowserWindow *window, const CBrowserFormData &data);
+  typedef std::vector<CBrowserFormInput *> FormInputs;
 
-  std::string            getName  () const { return data_.name; }
+ public:
+  CBrowserForm(CBrowserWindow *window, const CBrowserFormData &data);
+ ~CBrowserForm();
+
+  void init() override;
+
   CBrowserFormMethodType getMethod() const { return data_.method; }
   std::string            getAction() const { return data_.action; }
 
   std::string getTarget  () const { return target_  ; }
   std::string getEncoding() const { return encoding_; }
 
-  void addInput(CBrowserFormInput *input) { input_list_.push_back(input); }
+  const FormInputs &inputs() const { return inputs_; }
+  void addInput(CBrowserFormInput *input) { inputs_.push_back(input); }
+  int getNumInputs() const { return inputs_.size(); }
+  CBrowserFormInput *getInput(int i) const { return inputs_[i]; }
 
-  int getNumInputs() const { return input_list_.size(); }
-
-  CBrowserFormInput *getInput(int i) const { return input_list_[i]; }
-
-  void initProcess() override;
-  void termProcess() override;
-
-  void initLayout() override;
-  void termLayout() override;
+  void setNameValue(const std::string &name, const std::string &value) override;
 
  public slots:
   void resetProc();
   void submitProc();
 
  private:
-  typedef std::vector<CBrowserFormInput *> FormInputs;
-
   CBrowserFormData data_;
   std::string      target_;
   std::string      encoding_;
-  FormInputs       input_list_;
+  FormInputs       inputs_;
 };
 
 //------
@@ -61,9 +59,6 @@ class CBrowserFormOption : public CBrowserObject {
   void initProcess() override;
   void termProcess() override;
 
-  void initLayout() override;
-  void termLayout() override;
-
  private:
   CBrowserFormOptionData data_;
   std::string            text_;
@@ -82,8 +77,6 @@ class CBrowserFormInput : public CBrowserObject {
 
   CBrowserForm *getForm() const { return form_; }
 
-  std::string getName() const { return data_.name; }
-
   std::string getValue() const { return data_.value; }
   void setValue(const std::string &value) { data_.value = value; }
 
@@ -92,27 +85,25 @@ class CBrowserFormInput : public CBrowserObject {
   std::string getOnChange() const { return data_.onchange; }
   std::string getOnFocus () const { return data_.onfocus ; }
 
-  QWidget *getWidget() const { return widget_; }
+  const QWidget *getWidget() const { return widget_; }
 
   int getWidth () const { return width_ ; }
   int getHeight() const { return height_; }
 
-  virtual void createWidget(CBrowserWindow *window) = 0;
+  virtual void createWidget() const = 0;
 
-  virtual void drawWidget(CBrowserWindow *window, const CHtmlLayoutRegion &) = 0;
+  virtual void drawWidget(CBrowserWindow *window, const CTextBox &) = 0;
 
   virtual void reset() { };
 
   virtual void submit(std::string & /*url*/) { };
 
+  virtual void getInlineWords(Words &words) const override;
+
   void initProcess() override;
   void termProcess() override;
 
-  void initLayout() override;
-  void termLayout() override;
-
-  void format(CHtmlLayoutMgr *) override;
-  void draw(CHtmlLayoutMgr *, const CHtmlLayoutRegion &) override;
+  void draw(const CTextBox &) override;
 
   void onClickProc ();
   void onChangeProc();
@@ -124,9 +115,9 @@ class CBrowserFormInput : public CBrowserObject {
   CBrowserFormInputData data_;
   CBrowserForm*         form_ { nullptr };
   std::string           value_;
-  QWidget*              widget_ { nullptr };
-  int                   width_ { 0 };
-  int                   height_ { 0 };
+  mutable QWidget*      widget_ { nullptr };
+  mutable int           width_ { 0 };
+  mutable int           height_ { 0 };
 };
 
 //------
@@ -135,11 +126,14 @@ class CBrowserFormButton : public QObject, public CBrowserFormInput {
   Q_OBJECT
 
  public:
+  CBrowserFormButton(CBrowserWindow *window, const CBrowserFormButtonData &data);
   CBrowserFormButton(CBrowserWindow *window, const CBrowserFormInputData &data);
 
-  void createWidget(CBrowserWindow *window);
+  void createWidget() const;
 
-  void drawWidget(CBrowserWindow *window, const CHtmlLayoutRegion &region) override;
+  void drawWidget(CBrowserWindow *window, const CTextBox &region) override;
+
+  CBrowserRegion calcRegion() const override;
 
  protected:
   int dummy { 0 };
@@ -153,9 +147,11 @@ class CBrowserFormCheckBox : public QObject, public CBrowserFormInput {
  public:
   CBrowserFormCheckBox(CBrowserWindow *window, const CBrowserFormInputData &data);
 
-  void createWidget(CBrowserWindow *window);
+  void createWidget() const;
 
-  void drawWidget(CBrowserWindow *window, const CHtmlLayoutRegion &region) override;
+  void drawWidget(CBrowserWindow *window, const CTextBox &region) override;
+
+  CBrowserRegion calcRegion() const override;
 
  protected:
   int checked_ { 0 };
@@ -169,9 +165,13 @@ class CBrowserFormFileUpload : public QObject, public CBrowserFormInput {
  public:
   CBrowserFormFileUpload(CBrowserWindow *window, const CBrowserFormInputData &data);
 
-  void createWidget(CBrowserWindow *window);
+  void init() override;
 
-  void drawWidget(CBrowserWindow *window, const CHtmlLayoutRegion &region) override;
+  void createWidget() const;
+
+  void drawWidget(CBrowserWindow *window, const CTextBox &region) override;
+
+  CBrowserRegion calcRegion() const override;
 
  public slots:
   void buttonProc();
@@ -189,9 +189,9 @@ class CBrowserFormHidden : public QObject, public CBrowserFormInput {
  public:
   CBrowserFormHidden(CBrowserWindow *window, const CBrowserFormInputData &data);
 
-  void createWidget(CBrowserWindow *window);
+  void createWidget() const;
 
-  void drawWidget(CBrowserWindow *window, const CHtmlLayoutRegion &region) override;
+  void drawWidget(CBrowserWindow *window, const CTextBox &region) override;
 
   void submit(std::string &url);
 
@@ -209,14 +209,156 @@ class CBrowserFormImage : public QObject, public CBrowserFormInput {
 
  ~CBrowserFormImage() { }
 
-  void createWidget(CBrowserWindow *window);
+  void createWidget() const;
 
-  void drawWidget(CBrowserWindow *window, const CHtmlLayoutRegion &region) override;
+  void drawWidget(CBrowserWindow *window, const CTextBox &region) override;
+
+  CBrowserRegion calcRegion() const override;
 
  protected:
   std::string        src_;
   CImagePtr          image_;
   CBrowserImageAlign align_;
+};
+
+//------
+
+class CBrowserFormTel : public QObject, public CBrowserFormInput {
+  Q_OBJECT
+
+ public:
+  CBrowserFormTel(CBrowserWindow *window, const CBrowserFormInputData &data);
+
+  void createWidget() const;
+
+  void drawWidget(CBrowserWindow *window, const CTextBox &region) override;
+
+  CBrowserRegion calcRegion() const override;
+
+  void reset();
+
+  void submit(std::string &url);
+
+ protected:
+  int size_ { 0 };
+  int maxlength_ { 0 };
+};
+
+//------
+
+class CBrowserFormMonth : public QObject, public CBrowserFormInput {
+  Q_OBJECT
+
+ public:
+  CBrowserFormMonth(CBrowserWindow *window, const CBrowserFormInputData &data);
+
+  void createWidget() const;
+
+  void drawWidget(CBrowserWindow *window, const CTextBox &region) override;
+
+  CBrowserRegion calcRegion() const override;
+
+  void reset();
+
+  void submit(std::string &url);
+
+ protected:
+  int size_ { 0 };
+  int maxlength_ { 0 };
+};
+
+//------
+
+class CBrowserFormDate : public QObject, public CBrowserFormInput {
+  Q_OBJECT
+
+ public:
+  CBrowserFormDate(CBrowserWindow *window, const CBrowserFormInputData &data);
+
+  void createWidget() const;
+
+  void drawWidget(CBrowserWindow *window, const CTextBox &region) override;
+
+  CBrowserRegion calcRegion() const override;
+
+  void reset();
+
+  void submit(std::string &url);
+
+ protected:
+  int size_ { 0 };
+  int maxlength_ { 0 };
+};
+
+//------
+
+class CBrowserFormSearch : public QObject, public CBrowserFormInput {
+  Q_OBJECT
+
+ public:
+  CBrowserFormSearch(CBrowserWindow *window, const CBrowserFormInputData &data);
+
+  void createWidget() const;
+
+  void drawWidget(CBrowserWindow *window, const CTextBox &region) override;
+
+  CBrowserRegion calcRegion() const override;
+
+  void reset();
+
+  void submit(std::string &url);
+
+ protected:
+  int size_ { 0 };
+  int maxlength_ { 0 };
+};
+
+//------
+
+class CBrowserFormNumber : public QObject, public CBrowserFormInput {
+  Q_OBJECT
+
+ public:
+  CBrowserFormNumber(CBrowserWindow *window, const CBrowserFormInputData &data);
+
+  void createWidget() const;
+
+  void drawWidget(CBrowserWindow *window, const CTextBox &region) override;
+
+  CBrowserRegion calcRegion() const override;
+
+  void reset();
+
+  void submit(std::string &url);
+
+ protected:
+  int size_ { 0 };
+  int maxlength_ { 0 };
+};
+
+//------
+
+class CBrowserFormEmail : public QObject, public CBrowserFormInput {
+  Q_OBJECT
+
+ public:
+  CBrowserFormEmail(CBrowserWindow *window, const CBrowserFormInputData &data);
+
+  std::string text() const;
+
+  void createWidget() const;
+
+  void drawWidget(CBrowserWindow *window, const CTextBox &region) override;
+
+  CBrowserRegion calcRegion() const override;
+
+  void reset();
+
+  void submit(std::string &url);
+
+ protected:
+  int size_ { 0 };
+  int maxlength_ { 0 };
 };
 
 //------
@@ -227,9 +369,11 @@ class CBrowserFormPassword : public QObject, public CBrowserFormInput {
  public:
   CBrowserFormPassword(CBrowserWindow *window, const CBrowserFormInputData &data);
 
-  void createWidget(CBrowserWindow *window);
+  void createWidget() const;
 
-  void drawWidget(CBrowserWindow *window, const CHtmlLayoutRegion &region) override;
+  void drawWidget(CBrowserWindow *window, const CTextBox &region) override;
+
+  CBrowserRegion calcRegion() const override;
 
   void reset();
 
@@ -248,9 +392,11 @@ class CBrowserFormRadio : public QObject, public CBrowserFormInput {
  public:
   CBrowserFormRadio(CBrowserWindow *window, const CBrowserFormInputData &data);
 
-  void createWidget(CBrowserWindow *window);
+  void createWidget() const;
 
-  void drawWidget(CBrowserWindow *window, const CHtmlLayoutRegion &region) override;
+  void drawWidget(CBrowserWindow *window, const CTextBox &region) override;
+
+  CBrowserRegion calcRegion() const override;
 
  public slots:
   void buttonProc();
@@ -269,9 +415,11 @@ class CBrowserFormRange : public QObject, public CBrowserFormInput {
 
   double value() const;
 
-  void createWidget(CBrowserWindow *window);
+  void createWidget() const;
 
-  void drawWidget(CBrowserWindow *window, const CHtmlLayoutRegion &region) override;
+  void drawWidget(CBrowserWindow *window, const CTextBox &region) override;
+
+  CBrowserRegion calcRegion() const override;
 
  protected:
   double min_ { 0.0 };
@@ -288,9 +436,11 @@ class CBrowserFormReset : public QObject, public CBrowserFormInput {
  public:
   CBrowserFormReset(CBrowserWindow *window, const CBrowserFormInputData &data);
 
-  void createWidget(CBrowserWindow *window);
+  void createWidget() const;
 
-  void drawWidget(CBrowserWindow *window, const CHtmlLayoutRegion &region) override;
+  void drawWidget(CBrowserWindow *window, const CTextBox &region) override;
+
+  CBrowserRegion calcRegion() const override;
 
  private slots:
   void resetProc();
@@ -307,6 +457,10 @@ class CBrowserFormSelect : public QObject, public CBrowserFormInput {
  public:
   CBrowserFormSelect(CBrowserWindow *window, const CBrowserFormSelectData &data);
 
+  void init();
+
+  void setNameValue(const std::string &name, const std::string &value) override;
+
   std::string value() const;
 
   void addOption(CBrowserFormOption *option);
@@ -315,12 +469,11 @@ class CBrowserFormSelect : public QObject, public CBrowserFormInput {
 
   CBrowserFormOption *getOption(int i) const { return options_[i]; }
 
-  void initLayout() override;
-  void termLayout() override;
+  void createWidget() const;
 
-  void createWidget(CBrowserWindow *window);
+  void drawWidget(CBrowserWindow *window, const CTextBox &region) override;
 
-  void drawWidget(CBrowserWindow *window, const CHtmlLayoutRegion &region) override;
+  CBrowserRegion calcRegion() const override;
 
   void print(std::ostream &os) const override { os << "input/select"; }
 
@@ -339,9 +492,11 @@ class CBrowserFormSubmit : public QObject, public CBrowserFormInput {
  public:
   CBrowserFormSubmit(CBrowserWindow *window, const CBrowserFormInputData &data);
 
-  void createWidget(CBrowserWindow *window);
+  void createWidget() const;
 
-  void drawWidget(CBrowserWindow *window, const CHtmlLayoutRegion &region) override;
+  void drawWidget(CBrowserWindow *window, const CTextBox &region) override;
+
+  CBrowserRegion calcRegion() const override;
 
  protected:
   int dummy_ { 0 };
@@ -357,9 +512,11 @@ class CBrowserFormText : public QObject, public CBrowserFormInput {
 
   std::string text() const;
 
-  void createWidget(CBrowserWindow *window);
+  void createWidget() const;
 
-  void drawWidget(CBrowserWindow *window, const CHtmlLayoutRegion &region) override;
+  void drawWidget(CBrowserWindow *window, const CTextBox &region) override;
+
+  CBrowserRegion calcRegion() const override;
 
   void reset();
 
@@ -371,7 +528,6 @@ class CBrowserFormText : public QObject, public CBrowserFormInput {
   std::string classStr_;
   int         size_ { 0 };
   int         maxlength_ { 0 };
-  std::string placeholder_;
 };
 
 //------
@@ -385,12 +541,18 @@ class CBrowserFormTextarea : public QObject, public CBrowserFormInput {
   const std::string &text() const { return text_; }
   void setText(const std::string &v) { text_ = v; }
 
+  void init() override;
+
   void initLayout() override;
   void termLayout() override;
 
-  void createWidget(CBrowserWindow *window);
+  void setNameValue(const std::string &name, const std::string &value) override;
 
-  void drawWidget(CBrowserWindow *window, const CHtmlLayoutRegion &region) override;
+  void createWidget() const;
+
+  void drawWidget(CBrowserWindow *window, const CTextBox &region) override;
+
+  CBrowserRegion calcRegion() const override;
 
   void reset();
 

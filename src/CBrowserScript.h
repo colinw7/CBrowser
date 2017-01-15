@@ -13,6 +13,10 @@ class CBrowserScript : public CBrowserObject {
 
   const CBrowserScriptData &data() const { return data_; }
 
+  void init() override;
+
+  void setNameValue(const std::string &name, const std::string &value) override;
+
   void initProcess() override;
   void termProcess() override;
 
