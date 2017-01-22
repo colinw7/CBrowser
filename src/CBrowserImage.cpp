@@ -152,7 +152,9 @@ void
 CBrowserImage::
 getInlineWords(Words &words) const
 {
-  words.push_back(CBrowserWord(image_, /*break*/false, isHierSelected()));
+  CBrowserImage *th = const_cast<CBrowserImage *>(this);
+
+  words.push_back(CBrowserWord(th, image_, isHierSelected()));
 }
 
 std::string
@@ -228,11 +230,13 @@ draw(const CTextBox &region)
     if (link_->isSource()) {
       CRGBA color = window_->getDocument()->getLinkColor();
 
+      CPen pen(color);
+
       for (int i = 0; i < data_.border; i++)
         window_->drawRectangle(x1 - i - 1, y1 - i - 1,
-                              image_->getWidth()  + 2*i + 1,
-                              image_->getHeight() + 2*i + 1,
-                              CPen(color));
+                               image_->getWidth () + 2*i + 1,
+                               image_->getHeight() + 2*i + 1,
+                               pen);
     }
 
     int x2 = x1 + image_->getWidth();

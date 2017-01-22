@@ -242,7 +242,10 @@ startObject(CBrowserObject *obj, bool add)
   objStack_.push_back(obj);
 
   if (add) {
-    objects_[obj->id()] = obj;
+    if (obj->id() != "")
+      idObjects_[obj->id()] = obj;
+
+    objects_.push_back(obj);
 
     CBrowserJSInst->addHtmlObject(obj);
   }
@@ -279,9 +282,9 @@ CBrowserObject *
 CBrowserWindow::
 getObject(const std::string &id) const
 {
-  auto p = objects_.find(id);
+  auto p = idObjects_.find(id);
 
-  if (p == objects_.end())
+  if (p == idObjects_.end())
     return nullptr;
 
   return (*p).second;
@@ -385,7 +388,7 @@ recalc()
 
   bbox_ = CIBBox2D(leftMargin_, topMargin_, w_->width() - leftMargin_, w_->height() - topMargin_);
 
-  linkMgr()->deleteLinkRects();
+  linkMgr()->clearLinkRects();
 
   //------
 
@@ -802,9 +805,6 @@ hoverLink(int x, int y, std::string &link_name)
 {
   CBrowserAnchorLink *link = linkMgr()->getSourceLink(x, y);
 
-  if (mouse_link_ == link)
-    return false;
-
   if (link) {
     mouse_link_ = link;
 
@@ -818,7 +818,7 @@ hoverLink(int x, int y, std::string &link_name)
 
   setStatus(link_name);
 
-  return true;
+  return link;
 }
 
 bool
@@ -1037,4 +1037,33 @@ sizeToFontSize(int size) const
   else if (size >= 7) return CBrowserFontSize("3.00em");
 
   return CBrowserFontSize("1.00em");
+}
+
+void
+CBrowserWindow::
+selectSingleObject(CBrowserObject *obj)
+{
+  bool changed = false;
+
+  for (auto &o : objects_) {
+    if (o == obj)
+      continue;
+
+    if (o->isSelected()) {
+      o->setSelected(false);
+
+      changed = true;
+    }
+  }
+
+  if (obj) {
+    if (! obj->isSelected()) {
+      obj->setSelected(true);
+
+      changed = true;
+    }
+  }
+
+  if (changed)
+    redraw();
 }

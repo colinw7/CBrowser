@@ -24,6 +24,8 @@ class CBrowserText : public CBrowserObject {
 
   const std::string &text() const { return text_; }
 
+  CBrowserAnchorLink *link() const { return link_; }
+
   const CBrowserTextPos &pos() const { return pos_; }
   void setPos(const CBrowserTextPos &pos) { pos_ = pos; }
 
@@ -33,7 +35,7 @@ class CBrowserText : public CBrowserObject {
 
   void getInlineWords(Words &words) const override;
 
-  void draw(const CTextBox &) override;
+  //void draw(const CTextBox &) override;
 
   void print(std::ostream &os) const override {
     os << "text '" << CStrUtil::stripSpaces(text_) << "'";

@@ -3,8 +3,8 @@
 #include <CBrowserWindow.h>
 
 CBrowserPre::
-CBrowserPre(CBrowserWindow *window, const CBrowserPreData &data) :
- CBrowserObject(window, CHtmlTagId::PRE), data_(data)
+CBrowserPre(CBrowserWindow *window) :
+ CBrowserObject(window, CHtmlTagId::PRE)
 {
   setDisplay(Display::BLOCK);
 

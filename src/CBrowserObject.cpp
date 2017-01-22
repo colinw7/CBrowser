@@ -129,8 +129,27 @@ setNameValue(const std::string &name, const std::string &value)
   else if (lname == "class") {
     setClass(value);
   }
+  else if (lname == "accesskey") {
+  }
   else if (lname == "background") {
-    background_ = CBrowserBackground(value);
+    // bg-color bg-image position/bg-size bg-repeat bg-origin bg-clip bg-attachment initial|inherit
+
+    CBrowserBackground bg;
+
+    std::vector<std::string> words;
+
+    CStrUtil::toWords(value, words);
+
+    if (words.size() > 0)
+      bg.setColor(CBrowserColor(words[0]));
+
+    if (words.size() > 1)
+      bg.setImage(CBrowserBackgroundImage(words[1]));
+
+    if (words.size() > 2)
+      bg.setPosition(words[2]);
+
+    setBackground(bg);
   }
   else if (lname == "background-color" || lname == "bgcolor") {
     background_.setColor(CBrowserColor(value));
@@ -156,8 +175,20 @@ setNameValue(const std::string &name, const std::string &value)
   else if (lname == "background-attachment") {
     background_.setAttachment(value);
   }
+  else if (lname == "clear") {
+    clear_ = CBrowserClear(value);
+  }
   else if (lname == "color") {
     foreground_ = CBrowserColor(value);
+  }
+  else if (lname == "contenteditable") {
+  }
+  else if (lname == "contentmenu") {
+  }
+  else if (lname == "cursor") {
+    // TODO
+  }
+  else if (lname == "dir") {
   }
   else if (lname == "display") {
     CBrowserObject::Display d;
@@ -165,8 +196,9 @@ setNameValue(const std::string &name, const std::string &value)
     if (CBrowserProperty::fromString<CBrowserObject::Display>(lvalue, d))
       setDisplay(d);
   }
-  else if (lname == "clear") {
-    clear_ = CBrowserClear(value);
+  else if (lname == "draggable") {
+  }
+  else if (lname == "dropzone") {
   }
   else if (lname == "float") {
     float_ = CBrowserFloat(value);
@@ -191,6 +223,21 @@ setNameValue(const std::string &name, const std::string &value)
   }
   else if (lname == "font") {
     // TODO
+  }
+  else if (lname == "hidden") {
+  }
+  else if (lname == "lang") {
+  }
+  else if (lname == "spellcheck") {
+  }
+  else if (lname == "style") {
+    processStyleAttribute(value);
+  }
+  else if (lname == "tabindex") {
+  }
+  else if (lname == "title") {
+  }
+  else if (lname == "translate") {
   }
   else if (lname == "width") {
     width_ = CBrowserUnitValue(value);
@@ -406,6 +453,17 @@ setNameValue(const std::string &name, const std::string &value)
   else if (lname == "padding-top") {
     paddingRef().setTop(CBrowserUnitValue(value));
   }
+  else if (lname == "position") {
+    position_.setType(value);
+  }
+  else if (lname == "top") {
+    position_.setTop(CBrowserUnitValue(value));
+  }
+  else if (lname == "left") {
+    position_.setLeft(CBrowserUnitValue(value));
+  }
+  else if (lname == "text-align") {
+  }
   else if (lname == "text-align") {
     textProp_.setAlign(CBrowserTextAlign(value));
   }
@@ -436,12 +494,36 @@ setNameValue(const std::string &name, const std::string &value)
     if (CBrowserProperty::fromString<CBrowserObject::WhiteSpace>(lvalue, w))
       setWhiteSpace(w);
   }
-  else if (lname == "cursor") {
-    // TODO
+  else if (lname.substr(0, 5) == "data-") {
   }
   else {
     window_->displayError("Illegal '%s' Option Name '%s' Value '%s'\n", typeName().c_str(),
                           name.c_str(), value.c_str());
+  }
+}
+
+void
+CBrowserObject::
+processStyleAttribute(const std::string &style)
+{
+  std::vector<std::string> words;
+
+  CStrUtil::addFields(style, words, ";");
+
+  for (const auto &word : words) {
+    std::vector<std::string> words1;
+
+    CStrUtil::addFields(word, words1, ":");
+
+    if (words1.size() != 2) {
+      window_->displayError("Style name:value '%s'", word.c_str());
+      continue;
+    }
+
+    std::string name  = CStrUtil::stripSpaces(words1[0]);
+    std::string value = CStrUtil::stripSpaces(words1[1]);
+
+    setNameValue(name, value);
   }
 }
 

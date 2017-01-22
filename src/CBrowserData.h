@@ -49,14 +49,7 @@ struct CBrowserBreakData {
 
 //---
 
-struct CBrowserDivData : public CBrowserBaseData {
-  std::string style;
-};
-
-//---
-
 struct CBrowserCanvasData : public CBrowserBaseData {
-  std::string style;
 };
 
 //---
@@ -195,11 +188,6 @@ struct CBrowserOutputListItemData {
 //---
 
 struct CBrowserParagraphData {
-};
-
-//---
-
-struct CBrowserPreData {
 };
 
 //---

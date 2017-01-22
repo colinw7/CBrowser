@@ -79,7 +79,7 @@ getCurrentLink()
 
 void
 CBrowserLinkMgr::
-deleteLinkRects()
+clearLinkRects()
 {
   if (! window_->getDocument())
     return;
@@ -89,7 +89,7 @@ deleteLinkRects()
   for (int i = 0; i < num_links; i++) {
     CBrowserAnchorLink *link = window_->getDocument()->getLink(i);
 
-    link->deleteRects();
+    link->clearRects();
   }
 
   int num_anchors = window_->getDocument()->getNumAnchors();
@@ -97,7 +97,7 @@ deleteLinkRects()
   for (int i = 0; i < num_anchors; i++) {
     CBrowserAnchorLink *anchor = window_->getDocument()->getAnchor(i);
 
-    anchor->deleteRects();
+    anchor->clearRects();
   }
 }
 
@@ -119,9 +119,9 @@ getSourceLink(int x, int y)
     int num_rects = link->getNumRects();
 
     for (int j = 0; j < num_rects; j++) {
-      CBrowserLinkRect *rect = link->getRect(j);
+      const CBrowserLinkRect &rect = link->getRect(j);
 
-      if (x >= rect->x1 && x <= rect->x2 && y >= rect->y1 && y <= rect->y2)
+      if (x >= rect.x1 && x <= rect.x2 && y >= rect.y1 && y <= rect.y2)
         return link;
     }
   }
@@ -150,10 +150,10 @@ getDestLinkPos(const std::string &name, int *x, int *y)
     int num_rects = anchor->getNumRects();
 
     if (num_rects > 0) {
-      CBrowserLinkRect *rect = anchor->getRect(0);
+      const CBrowserLinkRect &rect = anchor->getRect(0);
 
-      *x = rect->x1;
-      *y = rect->y1;
+      *x = rect.x1;
+      *y = rect.y1;
 
       return true;
     }
@@ -227,7 +227,6 @@ CBrowserAnchorLink(Type type, const std::string &name, const std::string &dest,
 CBrowserAnchorLink::
 ~CBrowserAnchorLink()
 {
-  deleteRects();
 }
 
 int
@@ -237,7 +236,7 @@ getNumRects()
   return rects_.size();
 }
 
-CBrowserLinkRect *
+const CBrowserLinkRect &
 CBrowserAnchorLink::
 getRect(int i)
 {
@@ -248,25 +247,13 @@ void
 CBrowserAnchorLink::
 addRect(int x1, int y1, int x2, int y2)
 {
-  CBrowserLinkRect *rect = new CBrowserLinkRect;
-
-  rect->x1 = x1;
-  rect->y1 = y1;
-  rect->x2 = x2;
-  rect->y2 = y2;
-
-  rects_.push_back(rect);
+  rects_.push_back(CBrowserLinkRect(x1, y1, x2, y2));
 }
 
 void
 CBrowserAnchorLink::
-deleteRects()
+clearRects()
 {
-  int num_rects = rects_.size();
-
-  for (int i = 0; i < num_rects; i++)
-    delete rects_[i];
-
   rects_.clear();
 }
 
@@ -281,6 +268,8 @@ CBrowserAnchor(CBrowserWindow *window, const CBrowserLinkData &data) :
   setForeground(CBrowserColor(window_->getDocument()->getLinkColor()));
 
   textProp_.setDecoration(CBrowserTextDecoration("underline"));
+
+  // cursor: auto
 }
 
 CBrowserAnchor::

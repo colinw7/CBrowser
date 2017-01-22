@@ -65,5 +65,19 @@ void
 CBrowserLayout::
 render(int dx, int dy)
 {
+  root_->setHierVisible(true);
+
   root_->render(dx, dy);
+}
+
+CBrowserBox *
+CBrowserLayout::
+boxAt(const CIPoint2D &p)
+{
+  CBrowserBox *box  = nullptr;
+  double       area = 0.0;
+
+  root_->boxAt(p, box, area);
+
+  return box;
 }

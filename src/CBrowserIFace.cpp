@@ -5,6 +5,9 @@
 #include <CBrowserGraphics.h>
 #include <CBrowserJS.h>
 #include <CBrowserDomTree.h>
+#include <CBrowserObject.h>
+#include <CBrowserLayout.h>
+#include <CBrowserBox.h>
 #include <CQJDocument.h>
 #include <CQJWindow.h>
 #include <CQJEvent.h>
@@ -167,6 +170,12 @@ createStatusBar()
   message_ = new QLabel(" ");
 
   statusBar()->addWidget(message_);
+
+  objLabel_ = new QLabel;
+
+  objLabel_->setObjectName("obj");
+
+  statusBar()->addPermanentWidget(objLabel_ );
 
   posLabel_ = new QLabel;
 
@@ -496,18 +505,40 @@ draw()
 
 void
 CBrowserIFace::
+mousePress(int, int)
+{
+}
+
+void
+CBrowserIFace::
 mouseMotion(int x, int y)
 {
+  int x1 = x + canvas_x_offset_;
+  int y1 = y + canvas_y_offset_;
+
+  CBrowserBox *box = window_->getLayout()->boxAt(CIPoint2D(x1, y1));
+
+  CBrowserObject *obj = dynamic_cast<CBrowserObject *>(box);
+
+  window_->selectSingleObject(obj);
+
+  if (obj)
+    objLabel_->setText(obj->typeName().c_str());
+  else
+    objLabel_->setText("");
+
+  //---
+
   std::string link_name;
 
-  if (window_->hoverLink(x + canvas_x_offset_, y + canvas_y_offset_, link_name)) {
+  if (window_->hoverLink(x1, y1, link_name)) {
     w_->setCursor(Qt::PointingHandCursor);
   }
   else {
     w_->setCursor(Qt::ArrowCursor);
   }
 
-  posLabel_->setText(QString("%1,%2").arg(x).arg(y));
+  posLabel_->setText(QString("%1,%2").arg(x1).arg(y1));
 }
 
 void

@@ -29,18 +29,9 @@ void
 CBrowserCanvas::
 setNameValue(const std::string &name, const std::string &value)
 {
-  std::string lname  = CStrUtil::toLower(name);
-//std::string lvalue = CStrUtil::toLower(value);
+  //std::string lname  = CStrUtil::toLower(name);
 
-  if      (lname == "id") {
-    data_.id = value;
-  }
-  else if (lname == "style") {
-    data_.style = value;
-  }
-  else {
-    CBrowserObject::setNameValue(name, value);
-  }
+  CBrowserObject::setNameValue(name, value);
 }
 
 void
@@ -84,16 +75,15 @@ draw(const CTextBox &region)
 
   region_ = region;
 
-  canvas_->move  (region_.x(), region_.y());
-  canvas_->resize(width().value(), height().value());
-  //int hspace = 0, vspace = 0;
+  if (canvas_) {
+    canvas_->move  (region_.x(), region_.y());
+    canvas_->resize(width().value(), height().value());
+  }
 
   //---
 
-  //int x1 = region.x() + hspace;
-  //int y1 = region.y() + vspace;
-
-  //region.setX(region.x() + width() + 2*hspace);
+  if (isSelected())
+    window_->drawSelected(region.x(), region.y(), region.width(), region.height());
 }
 
 void
@@ -115,5 +105,6 @@ void
 CBrowserCanvas::
 update()
 {
-  canvas_->update();
+  if (canvas_)
+    canvas_->update();
 }

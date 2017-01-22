@@ -5,6 +5,7 @@
 #include <CBrowserMargin.h>
 #include <CBrowserBorder.h>
 #include <CBrowserPadding.h>
+#include <CBrowserPosition.h>
 #include <CHtmlTypes.h>
 #include <CIBBox2D.h>
 #include <CTextBox.h>
@@ -134,15 +135,25 @@ class CBrowserBox {
 
   //---
 
+  virtual const CBrowserPosition &position() const = 0;
+
+  //---
+
   virtual CIBBox2D calcBBox() const = 0;
 
   virtual void heightForWidth(CTextBox &box) const = 0;
+
+  //---
 
   virtual CHtmlTagId type() const = 0;
 
   virtual std::string typeName() const = 0;
 
+  //---
+
   virtual void layout();
+
+  virtual bool layoutChildren() const = 0;
 
   virtual void getInlineWords(Words &words) const = 0;
 
@@ -150,9 +161,20 @@ class CBrowserBox {
 
   bool allChildrenInline() const;
 
+  void setHierVisible(bool visible);
+
+  virtual void show() = 0;
+  virtual void hide() = 0;
+
+  //---
+
   void render(int dx, int dy);
 
   virtual void draw(const CTextBox &box) = 0;
+
+  //---
+
+  void boxAt(const CIPoint2D &p, CBrowserBox* &box, double &area);
 
  private:
   void calcHeightForWidth(CTextBox &box);

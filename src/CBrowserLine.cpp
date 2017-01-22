@@ -1,6 +1,8 @@
 #include <CBrowserLine.h>
 #include <CBrowserWindow.h>
 #include <CBrowserForm.h>
+#include <CBrowserText.h>
+#include <CBrowserLink.h>
 
 void
 CBrowserLine::
@@ -26,18 +28,27 @@ draw(CBrowserWindow *window, int width, const CHAlignType &halign)
     xo = (width - width_)/2;
 
   for (auto &w : words_) {
-    if      (w.word.type() == CBrowserWord::Type::TEXT) {
-      window->drawText(xo + w.x, w.y + ascent_, w.word.text(), w.word.pen(), w.word.font());
+    CBrowserWord &word = w.word;
+
+    if      (word.type() == CBrowserWord::Type::TEXT) {
+      CBrowserText *text = word.textObj();
+
+      window->drawText(xo + w.x, w.y + ascent_, word.text(), word.pen(), word.font());
+
+      if (text->link())
+        text->link()->addRect(xo + w.x, w.y, xo + w.x + word.width(), w.y + word.height());
     }
-    else if (w.word.type() == CBrowserWord::Type::IMAGE) {
-      window->drawImage(xo + w.x, w.y, w.word.image());
+    else if (word.type() == CBrowserWord::Type::IMAGE) {
+      window->drawImage(xo + w.x, w.y, word.image());
     }
-    else if (w.word.type() == CBrowserWord::Type::INPUT) {
-      w.word.input()->drawWidget(window, CTextBox(xo + w.x, w.y, w.word.width(), w.word.height()));
+    else if (word.type() == CBrowserWord::Type::INPUT) {
+      CBrowserFormInput *input = word.inputObj();
+
+      input->drawWidget(window, CTextBox(xo + w.x, w.y, word.width(), word.height()));
     }
 
-    if (w.word.isSelected())
-      window->drawSelected(xo + w.x, w.y, w.word.width(), ascent_ + descent_);
+    if (word.isSelected())
+      window->drawSelected(xo + w.x, w.y, word.width(), ascent_ + descent_);
   }
 }
 

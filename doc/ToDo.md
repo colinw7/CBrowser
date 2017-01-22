@@ -6,3 +6,5 @@ TODO
 . Combine vertical margins ?
 . handle white space for text -> word correctly
 . Mouse over for links (all objects)
+. svg tag
+. label is hidden and associated width widget

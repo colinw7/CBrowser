@@ -10,6 +10,10 @@ struct CBrowserLinkRect {
   int y1;
   int x2;
   int y2;
+
+  CBrowserLinkRect(int x11, int y11, int x22, int y22) :
+   x1(x11), y1(y11), x2(x22), y2(y22) {
+  }
 };
 
 //------
@@ -24,8 +28,7 @@ class CBrowserLinkMgr {
 
   CBrowserAnchorLink *getCurrentLink();
 
-  void deleteLinkRects();
-  void freeLinks();
+  void clearLinkRects();
 
   CBrowserAnchorLink *getSourceLink(int, int);
 
@@ -61,14 +64,14 @@ class CBrowserAnchorLink {
 
   int getNumRects();
 
-  CBrowserLinkRect *getRect(int i);
+  const CBrowserLinkRect &getRect(int i);
 
   void addRect(int x1, int y1, int x2, int y2);
 
-  void deleteRects();
+  void clearRects();
 
  private:
-  typedef std::vector<CBrowserLinkRect *> LinkRects;
+  typedef std::vector<CBrowserLinkRect> LinkRects;
 
   Type        type_;
   std::string name_;

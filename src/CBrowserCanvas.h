@@ -23,6 +23,8 @@ class CBrowserCanvas : public CBrowserObject {
 
   void init() override;
 
+  bool layoutChildren() const override { return false; }
+
   void setNameValue(const std::string &name, const std::string &value) override;
 
   CBrowserRegion calcRegion() const override;

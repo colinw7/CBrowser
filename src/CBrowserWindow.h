@@ -189,6 +189,10 @@ class CBrowserWindow {
 
   CBrowserFontSize sizeToFontSize(int size) const;
 
+  //---
+
+  void selectSingleObject(CBrowserObject *obj);
+
  private:
   void init();
 
@@ -202,8 +206,9 @@ class CBrowserWindow {
 
  private:
   typedef std::list<CBrowserWindow *>             WindowList;
-  typedef std::map<std::string, CBrowserObject *> Objects;
+  typedef std::map<std::string, CBrowserObject *> IdObjects;
   typedef std::vector<CBrowserObject*>            ObjStack;
+  typedef std::vector<CBrowserObject*>            Objects;
   typedef std::vector<std::string>                Scripts;
   typedef std::vector<std::string>                ScriptFiles;
 
@@ -228,9 +233,10 @@ class CBrowserWindow {
   CBrowserLinkMgr*      linkMgr_ { nullptr };
   CBrowserFileMgr*      fileMgr_ { nullptr };
 
-  Objects               objects_;
   CBrowserObject*       rootObject_ { nullptr };
+  IdObjects             idObjects_;
   ObjStack              objStack_;
+  Objects               objects_;
   Scripts               scripts_;
   ScriptFiles           scriptFiles_;
 

@@ -28,6 +28,8 @@ void
 CBrowserText::
 getInlineWords(Words &words) const
 {
+  CBrowserText *th = const_cast<CBrowserText *>(this);
+
   bool selected = isHierSelected();
 
   CFontPtr                   font = hierFont();
@@ -59,7 +61,7 @@ getInlineWords(Words &words) const
       while (text_[i] != '\0' && isspace(text_[i]))
         i++;
 
-      words.push_back(CBrowserWord(" ", pen, font, /*break*/false, selected));
+      words.push_back(CBrowserWord(th, " ", pen, font, /*break*/false, selected));
     }
 
     while (text_[i] != '\0') {
@@ -74,7 +76,7 @@ getInlineWords(Words &words) const
 
       std::string word = text_.substr(j, i - j);
 
-      words.push_back(CBrowserWord(word, pen, font, /*break*/false, selected));
+      words.push_back(CBrowserWord(th, word, pen, font, /*break*/false, selected));
 
       //--
 
@@ -83,13 +85,13 @@ getInlineWords(Words &words) const
         while (text_[i] != '\0' && isspace(text_[i]))
           i++;
 
-        words.push_back(CBrowserWord(" ", pen, font, /*break*/false, selected));
+        words.push_back(CBrowserWord(th, " ", pen, font, /*break*/false, selected));
       }
     }
   }
   // no split
   else if (keep_newline && ! text_wrap) {
-    words.push_back(CBrowserWord(text_, pen, font, /*break*/false, selected));
+    words.push_back(CBrowserWord(th, text_, pen, font, /*break*/false, selected));
   }
   // split text into lines
   else {
@@ -97,7 +99,7 @@ getInlineWords(Words &words) const
 
     while (text_[i] != '\0') {
       while (text_[i] == '\n') {
-        words.push_back(CBrowserWord("", pen, font, /*break*/true, selected));
+        words.push_back(CBrowserWord(th, "", pen, font, /*break*/true, selected));
 
         i++;
       }
@@ -112,12 +114,12 @@ getInlineWords(Words &words) const
         std::string line = text_.substr(j, i - j);
 
         if (text_[i] == '\n') {
-          words.push_back(CBrowserWord(line, pen, font, /*break*/true, selected));
+          words.push_back(CBrowserWord(th, line, pen, font, /*break*/true, selected));
 
           ++i;
         }
         else
-          words.push_back(CBrowserWord(line, pen, font, /*break*/false, selected));
+          words.push_back(CBrowserWord(th, line, pen, font, /*break*/false, selected));
       }
     }
   }
@@ -137,6 +139,7 @@ calcRegion() const
   return CBrowserRegion(width, ascent, descent);
 }
 
+#if 0
 void
 CBrowserText::
 draw(const CTextBox &region)
@@ -170,6 +173,7 @@ draw(const CTextBox &region)
 
   //region.setX(region.x() + width);
 }
+#endif
 
 bool
 CBrowserText::

@@ -99,6 +99,7 @@ init()
   addTag<CBrowserOutputUTag         >();
   addTag<CBrowserOutputUlTag        >();
   addTag<CBrowserOutputVarTag       >();
+  addTag<CBrowserOutputVideoTag     >();
   addTag<CBrowserOutputWbrTag       >();
   addTag<CBrowserOutputXmpTag       >();
 }

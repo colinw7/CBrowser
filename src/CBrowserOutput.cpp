@@ -50,6 +50,7 @@ bool isParagraphObj(CBrowserObject *obj) {
   if (! obj) return false;
 
   if (obj->type() == CHtmlTagId::ADDRESS || obj->type() == CHtmlTagId::P  ||
+      obj->type() == CHtmlTagId::TD      ||
       obj->type() == CHtmlTagId::CENTER  || obj->type() == CHtmlTagId::LI ||
       obj->type() == CHtmlTagId::PRE     || obj->type() == CHtmlTagId::DT ||
       obj->type() == CHtmlTagId::H1      || obj->type() == CHtmlTagId::H2 ||
@@ -328,7 +329,8 @@ processText(CHtmlText *text)
 
   if (currentObj->type() == CHtmlTagId::BODY ||
       currentObj->type() == CHtmlTagId::FORM ||
-      currentObj->type() == CHtmlTagId::DIV) {
+      currentObj->type() == CHtmlTagId::DIV  ||
+      currentObj->type() == CHtmlTagId::SPAN) {
     if (sstr == "")
       return;
 
@@ -1107,9 +1109,7 @@ CBrowserOutputDirTag::start(CBrowserWindow *window, CHtmlTag *tag)
 CBrowserObject *
 CBrowserOutputDivTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
-  CBrowserDivData divData;
-
-  CBrowserDiv *div = new CBrowserDiv(window, divData);
+  CBrowserDiv *div = new CBrowserDiv(window);
 
   //---
 
@@ -2120,9 +2120,7 @@ CBrowserOutputPreTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserPreData preData;
-
-  CBrowserPre *pre = new CBrowserPre(window, preData);
+  CBrowserPre *pre = new CBrowserPre(window);
 
   //---
 
@@ -2681,6 +2679,24 @@ CBrowserOutputVarTag::start(CBrowserWindow *window, CHtmlTag *tag)
   style->init();
 
   return style;
+}
+
+CBrowserObject *
+CBrowserOutputVideoTag::start(CBrowserWindow *window, CHtmlTag *tag)
+{
+  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::VIDEO);
+
+  //---
+
+  for (const auto &option: tag->getOptions()) {
+    obj->setNameValue(option->getName(), option->getValue());
+  }
+
+  //---
+
+  obj->init();
+
+  return obj;
 }
 
 CBrowserObject *

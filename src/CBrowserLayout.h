@@ -20,6 +20,8 @@ class CBrowserLayout {
 
   void render(int dx=0, int dy=0);
 
+  CBrowserBox *boxAt(const CIPoint2D &p);
+
  private:
   typedef std::vector<CBrowserBox *> Boxes;
 

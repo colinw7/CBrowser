@@ -187,14 +187,6 @@ calcRegion() const
 
 void
 CBrowserFormRadio::
-drawWidget(CBrowserWindow *, const CTextBox &region)
-{
-  widget_->move(region.x() + 2, region.y() + 2);
-  widget_->resize(width_ - 4, height_ - 4);
-}
-
-void
-CBrowserFormRadio::
 buttonProc()
 {
   QRadioButton *radio = qobject_cast<QRadioButton *>(widget_);
@@ -290,14 +282,6 @@ calcRegion() const
   height_ = size.height() + 4;
 
   return CBrowserRegion(width_, height_/2, height_/2);
-}
-
-void
-CBrowserFormRange::
-drawWidget(CBrowserWindow *, const CTextBox &region)
-{
-  widget_->move(region.x() + 2, region.y() + 2);
-  widget_->resize(width_ - 4, height_ - 4);
 }
 
 //---
@@ -454,7 +438,23 @@ getInlineWords(Words &words) const
 {
   CBrowserFormInput *th = const_cast<CBrowserFormInput *>(this);
 
-  words.push_back(CBrowserWord(th, /*break*/false, isHierSelected()));
+  words.push_back(CBrowserWord(th, isHierSelected()));
+}
+
+void
+CBrowserFormInput::
+show()
+{
+  if (widget_)
+    widget_->show();
+}
+
+void
+CBrowserFormInput::
+hide()
+{
+  if (widget_)
+    widget_->hide();
 }
 
 void
@@ -476,6 +476,19 @@ draw(const CTextBox &region)
                        CPen(CRGBA(1,0,0)));
 
   //region.setX(region.x() + getWidth());
+
+  //---
+
+  if (isSelected())
+    window_->drawSelected(region.x(), region.y(), region.width(), region.height());
+}
+
+void
+CBrowserFormInput::
+drawWidget(CBrowserWindow *, const CTextBox &region)
+{
+  widget_->move(region.x() + 2, region.y() + 2);
+  widget_->resize(width_ - 4, height_ - 4);
 }
 
 void
@@ -556,14 +569,6 @@ calcRegion() const
   return CBrowserRegion(width_, height_/2, height_/2);
 }
 
-void
-CBrowserFormButton::
-drawWidget(CBrowserWindow *, const CTextBox &region)
-{
-  widget_->move(region.x() + 2, region.y() + 2);
-  widget_->resize(width_ - 4, height_ - 4);
-}
-
 //---
 
 CBrowserFormCheckBox::
@@ -613,14 +618,6 @@ calcRegion() const
   height_ = size.height() + 4;
 
   return CBrowserRegion(width_, height_/2, height_/2);
-}
-
-void
-CBrowserFormCheckBox::
-drawWidget(CBrowserWindow *, const CTextBox &region)
-{
-  widget_->move(region.x() + 2, region.y() + 2);
-  widget_->resize(width_ - 4, height_ - 4);
 }
 
 //---
@@ -790,14 +787,6 @@ calcRegion() const
 
 void
 CBrowserFormTel::
-drawWidget(CBrowserWindow *, const CTextBox &region)
-{
-  widget_->move(region.x() + 2, region.y() + 2);
-  widget_->resize(width_ - 4, height_ - 4);
-}
-
-void
-CBrowserFormTel::
 reset()
 {
   QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
@@ -866,14 +855,6 @@ calcRegion() const
   height_ = size.height() + 4;
 
   return CBrowserRegion(width_, height_/2, height_/2);
-}
-
-void
-CBrowserFormMonth::
-drawWidget(CBrowserWindow *, const CTextBox &region)
-{
-  widget_->move(region.x() + 2, region.y() + 2);
-  widget_->resize(width_ - 4, height_ - 4);
 }
 
 void
@@ -950,14 +931,6 @@ calcRegion() const
 
 void
 CBrowserFormDate::
-drawWidget(CBrowserWindow *, const CTextBox &region)
-{
-  widget_->move(region.x() + 2, region.y() + 2);
-  widget_->resize(width_ - 4, height_ - 4);
-}
-
-void
-CBrowserFormDate::
 reset()
 {
   QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
@@ -1026,14 +999,6 @@ calcRegion() const
   height_ = size.height() + 4;
 
   return CBrowserRegion(width_, height_/2, height_/2);
-}
-
-void
-CBrowserFormSearch::
-drawWidget(CBrowserWindow *, const CTextBox &region)
-{
-  widget_->move(region.x() + 2, region.y() + 2);
-  widget_->resize(width_ - 4, height_ - 4);
 }
 
 void
@@ -1112,14 +1077,6 @@ calcRegion() const
   height_ = size.height() + 4;
 
   return CBrowserRegion(width_, height_/2, height_/2);
-}
-
-void
-CBrowserFormNumber::
-drawWidget(CBrowserWindow *, const CTextBox &region)
-{
-  widget_->move(region.x() + 2, region.y() + 2);
-  widget_->resize(width_ - 4, height_ - 4);
 }
 
 void
@@ -1205,14 +1162,6 @@ calcRegion() const
 
 void
 CBrowserFormEmail::
-drawWidget(CBrowserWindow *, const CTextBox &region)
-{
-  widget_->move(region.x() + 2, region.y() + 2);
-  widget_->resize(width_ - 4, height_ - 4);
-}
-
-void
-CBrowserFormEmail::
 reset()
 {
   QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
@@ -1287,14 +1236,6 @@ calcRegion() const
 
 void
 CBrowserFormPassword::
-drawWidget(CBrowserWindow *, const CTextBox &region)
-{
-  widget_->move(region.x() + 2, region.y() + 2);
-  widget_->resize(width_ - 4, height_ - 4);
-}
-
-void
-CBrowserFormPassword::
 reset()
 {
   QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
@@ -1337,8 +1278,6 @@ void
 CBrowserFormHidden::
 drawWidget(CBrowserWindow *, const CTextBox &)
 {
-  //widget_->move(region.x() + 2, region.y() + 2);
-  //widget_->resize(width_ - 4, height_ - 4);
 }
 
 void
@@ -1428,14 +1367,6 @@ calcRegion() const
   height_ = size.height() + 4;
 
   return CBrowserRegion(width_, height_/2, height_/2);
-}
-
-void
-CBrowserFormText::
-drawWidget(CBrowserWindow *, const CTextBox &region)
-{
-  widget_->move  (region.x() + 2, region.y() + 2);
-  widget_->resize(width_ - 4, height_ - 4);
 }
 
 void
@@ -1582,14 +1513,6 @@ calcRegion() const
 
 void
 CBrowserFormTextarea::
-drawWidget(CBrowserWindow *, const CTextBox &region)
-{
-  widget_->move(region.x() + 2, region.y() + 2);
-  widget_->resize(width_ - 4, height_ - 4);
-}
-
-void
-CBrowserFormTextarea::
 submit(std::string &url)
 {
   QTextEdit *edit = qobject_cast<QTextEdit *>(widget_);
@@ -1666,14 +1589,6 @@ calcRegion() const
   height_ = size.height() + 4;
 
   return CBrowserRegion(width_, height_/2, height_/2);
-}
-
-void
-CBrowserFormReset::
-drawWidget(CBrowserWindow *, const CTextBox &region)
-{
-  widget_->move(region.x() + 2, region.y() + 2);
-  widget_->resize(width_ - 4, height_ - 4);
 }
 
 void
@@ -1836,14 +1751,6 @@ calcRegion() const
   return CBrowserRegion(width_, height_/2, height_/2);
 }
 
-void
-CBrowserFormSelect::
-drawWidget(CBrowserWindow *, const CTextBox &region)
-{
-  widget_->move(region.x() + 2, region.y() + 2);
-  widget_->resize(width_ - 4, height_ - 4);
-}
-
 //---
 
 CBrowserFormSubmit::
@@ -1898,12 +1805,4 @@ calcRegion() const
   height_ = size.height() + 4;
 
   return CBrowserRegion(width_, height_/2, height_/2);
-}
-
-void
-CBrowserFormSubmit::
-drawWidget(CBrowserWindow *, const CTextBox &region)
-{
-  widget_->move(region.x() + 2, region.y() + 2);
-  widget_->resize(width_ - 4, height_ - 4);
 }

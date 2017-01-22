@@ -51,8 +51,12 @@ resizeEvent(QResizeEvent *)
 
 void
 CBrowserWindowWidget::
-mousePressEvent(QMouseEvent *)
+mousePressEvent(QMouseEvent *e)
 {
+  int x = e->x();
+  int y = e->y();
+
+  iface_->mousePress(x, y);
 }
 
 void

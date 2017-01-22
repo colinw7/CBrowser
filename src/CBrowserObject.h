@@ -11,6 +11,7 @@
 #include <CBrowserTextProp.h>
 #include <CBrowserClear.h>
 #include <CBrowserFloat.h>
+#include <CBrowserPosition.h>
 #include <CHtmlTypes.h>
 #include <CJavaScript.h>
 
@@ -105,6 +106,9 @@ class CBrowserObject : public CBrowserBox {
   const CBrowserFloat &getFloat() const { return float_; }
   void setFloat(const CBrowserFloat &v) { float_ = v; }
 
+  const CBrowserPosition &position() const override { return position_; }
+  void setPosition(const CBrowserPosition &v) { position_ = v; }
+
   const CBrowserFont &font() const { return font_; }
 
   const CBrowserTextProp &textProp() const { return textProp_; }
@@ -128,6 +132,8 @@ class CBrowserObject : public CBrowserBox {
   virtual std::string propertyName(int i) const { return properties_[i]; }
   virtual std::string propertyValue(int i) const;
 
+  void processStyleAttribute(const std::string &value);
+
   virtual bool isHierSelected() const;
 
   virtual void initProcess() { }
@@ -145,6 +151,10 @@ class CBrowserObject : public CBrowserBox {
 
     return dynamic_cast<T *>(obj);
   }
+
+  //---
+
+  bool layoutChildren() const override { return true; }
 
   //---
 
@@ -167,6 +177,9 @@ class CBrowserObject : public CBrowserBox {
   virtual void heightForWidth(CTextBox &box) const override;
 
   virtual void getInlineWords(Words &words) const override;
+
+  void show() override { }
+  void hide() override { }
 
   void draw(const CTextBox &) override;
 
@@ -194,6 +207,7 @@ class CBrowserObject : public CBrowserBox {
   CBrowserColor      foreground_;
   CBrowserClear      clear_;
   CBrowserFloat      float_;
+  CBrowserPosition   position_;
   CBrowserFont       font_;
   CBrowserTextProp   textProp_;
   CBrowserUnitValue  width_;

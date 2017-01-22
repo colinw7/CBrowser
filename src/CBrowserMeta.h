@@ -6,6 +6,8 @@
 class CBrowserMeta : public CBrowserObject {
  public:
   CBrowserMeta(CBrowserWindow *window);
+
+  void setNameValue(const std::string &name, const std::string &value);
 };
 
 #endif

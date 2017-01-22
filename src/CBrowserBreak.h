@@ -21,8 +21,6 @@ class CBrowserBreak : public CBrowserObject {
 
   bool isBreak() const override { return true; }
 
-  void draw(const CTextBox &) override;
-
  private:
   CBrowserBreakData data_;
 };

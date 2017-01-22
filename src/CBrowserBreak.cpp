@@ -41,7 +41,9 @@ void
 CBrowserBreak::
 getInlineWords(Words &words) const
 {
-  words.push_back(CBrowserWord("", CPen(), hierFont(), /*break*/true, isHierSelected()));
+  CBrowserBreak *th = const_cast<CBrowserBreak *>(this);
+
+  words.push_back(CBrowserWord(th, isHierSelected()));
 }
 
 CBrowserRegion
@@ -56,15 +58,9 @@ calcRegion() const
   return CBrowserRegion(width, ascent, descent);
 }
 
-void
-CBrowserBreak::
-draw(const CTextBox &region)
-{
-  fillBackground(region);
-}
-
 //------
 
+// word break opportunity
 CBrowserWbr::
 CBrowserWbr(CBrowserWindow *window) :
  CBrowserObject(window, CHtmlTagId::WBR)
