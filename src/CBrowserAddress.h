@@ -5,7 +5,7 @@
 
 class CBrowserAddress : public CBrowserObject {
  public:
-  CBrowserAddress(CBrowserWindow *window);
+  explicit CBrowserAddress(CBrowserWindow *window);
 };
 
 #endif

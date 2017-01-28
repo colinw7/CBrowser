@@ -2,17 +2,17 @@
 #define CBrowserIFace_H
 
 #include <CBrowserTypes.h>
-#include <CJavaScript.h>
-
 #include <CQMainWindow.h>
-#include <CImageLib.h>
-#include <CFont.h>
 
+class CBrowserScrolledWindow;
 class CBrowserDomTreeDlg;
+class QLineEdit;
 class QScrollArea;
 class QScrollBar;
 class QLabel;
 class CQMenu;
+class CQToolBar;
+class CQMenuItem;
 
 class CBrowserIFace : public CQMainWindow {
   Q_OBJECT
@@ -23,30 +23,19 @@ class CBrowserIFace : public CQMainWindow {
 
   void init();
 
-  CBrowserWindow *getWindow() const { return window_; }
+  CBrowserScrolledWindow *addWindow();
 
-  CBrowserWindowWidget *widget() const { return w_; }
+  CBrowserScrolledWindow *currentWindow() const;
 
-  int getCanvasXOffset() const { return canvas_x_offset_; }
-  int getCanvasYOffset() const { return canvas_y_offset_; }
-
-  int getCanvasWidth () const { return canvas_width_ ; }
-  int getCanvasHeight() const { return canvas_height_; }
+  QLabel* objLabel() const { return objLabel_; }
+  QLabel* posLabel() const { return posLabel_; }
 
   void addHistoryItem(const std::string &item);
 
-  void setBusy ();
-  void setReady();
-
-  void expose();
-
-  void print(double xmin, double ymin, double xmax, double ymax);
+  void addDocument(const std::string &filename);
+  void setDocument(const std::string &filename);
 
   void saveImage(const std::string &filename);
-
-  void setSize(int width, int height);
-
-  void scrollTo(int x, int y);
 
   void setTitle(const std::string &title);
 
@@ -54,12 +43,8 @@ class CBrowserIFace : public CQMainWindow {
 
   void errorDialog(const std::string &msg);
 
-  void resize();
-  void draw();
-
-  void mousePress(int x, int y);
-  void mouseMotion(int x, int y);
-  void mouseRelease(int x, int y);
+  void setBusy ();
+  void setReady();
 
  private:
   QWidget *createCentralWidget();
@@ -69,38 +54,40 @@ class CBrowserIFace : public CQMainWindow {
   void createStatusBar();
 
  public slots:
+  void inputSlot();
+
+  void updateTitles();
+
   void newProc();
   void readProc();
   void printProc();
   void saveImageProc();
   void jsProc();
   void domProc();
-  void quitProc();
 
   void goBackProc();
   void goForwardProc();
 
   void viewBoxesProc();
+  void mouseOverProc();
 
-  void hscrollProc();
-  void vscrollProc();
+  void quitProc();
 
  private:
-  CBrowserWindow*       window_ { nullptr };
-  CBrowserWindowWidget* w_ { nullptr };
-  QScrollArea*          list_ { nullptr };
-  QScrollBar*           list_hbar_ { nullptr };
-  QScrollBar*           list_vbar_ { nullptr };
-  QLabel*               message_ { nullptr };
-  CQMenu*               historyMenu_ { nullptr };
-  QLabel*               objLabel_ { nullptr };
-  QLabel*               posLabel_ { nullptr };
-  int                   canvas_x_offset_ { 0 };
-  int                   canvas_y_offset_ { 0 };
-  int                   canvas_width_ { 0 };
-  int                   canvas_height_ { 0 };
-  CQJDialog*            jsDlg_ { nullptr };
-  CBrowserDomTreeDlg*   domDlg_ { nullptr };
+  typedef std::vector<CBrowserScrolledWindow *> Windows;
+
+  QLineEdit*          input_ { nullptr };
+  QTabWidget*         tab_ { nullptr };
+  Windows             windows_;
+  QLabel*             message_ { nullptr };
+  CQMenu*             historyMenu_ { nullptr };
+  QLabel*             objLabel_ { nullptr };
+  QLabel*             posLabel_ { nullptr };
+  CQJDialog*          jsDlg_ { nullptr };
+  CBrowserDomTreeDlg* domDlg_ { nullptr };
+  CQToolBar*          toolbar_ { nullptr };
+  CQMenuItem*         jsMenuItem_ { nullptr };
+  CQMenuItem*         domMenuItem_ { nullptr };
 };
 
 #endif

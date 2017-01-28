@@ -5,7 +5,7 @@
 
 class CBrowserSamp : public CBrowserObject {
  public:
-  CBrowserSamp(CBrowserWindow *window);
+  explicit CBrowserSamp(CBrowserWindow *window);
 };
 
 #endif

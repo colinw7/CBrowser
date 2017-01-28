@@ -21,6 +21,8 @@ class CBrowserMain : public QObject {
 
   void init(int argc, char **argv);
 
+  CBrowserIFace *iface() const;
+
   bool getDebug() const { return debug_; }
   void setDebug(bool b);
 
@@ -36,9 +38,11 @@ class CBrowserMain : public QObject {
   bool getShowBoxes() const { return showBoxes_; }
   void setShowBoxes(bool showBoxes_);
 
-  void openDocument(const std::string &fileName);
+  bool getMouseOver() const { return mouseOver_; }
+  void setMouseOver(bool b) { mouseOver_ = b; }
 
-  IFaceList ifaceList() const { return ifaces_; }
+  void setDocument(const std::string &fileName);
+  void addDocument(const std::string &fileName);
 
  private:
   CBrowserMain();
@@ -47,12 +51,13 @@ class CBrowserMain : public QObject {
   void exitSlot();
 
  private:
-  IFaceList ifaces_;
-  bool      debug_ { false };
-  bool      quiet_ { false };
-  bool      useAlt_ { false };
-  bool      oldLayout_ { false };
-  bool      showBoxes_ { false };
+  CBrowserIFace* iface_ { nullptr };
+  bool           debug_ { false };
+  bool           quiet_ { false };
+  bool           useAlt_ { false };
+  bool           oldLayout_ { false };
+  bool           showBoxes_ { false };
+  bool           mouseOver_ { false };
 };
 
 #endif

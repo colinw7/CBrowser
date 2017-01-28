@@ -12,7 +12,7 @@
 
 class CBrowserDomTreeModel : public QAbstractItemModel {
  public:
-  CBrowserDomTreeModel(CBrowserDomTree *tree);
+  explicit CBrowserDomTreeModel(CBrowserDomTree *tree);
 
   QModelIndex index(int row, int column, const QModelIndex &) const;
 
@@ -34,7 +34,7 @@ class CBrowserDomTreeModel : public QAbstractItemModel {
 
 class CBrowserDomTreeDelegate : public QStyledItemDelegate {
  public:
-  CBrowserDomTreeDelegate(CBrowserDomTree *tree);
+  explicit CBrowserDomTreeDelegate(CBrowserDomTree *tree);
 
   void paint(QPainter *painter, const QStyleOptionViewItem &option,
              const QModelIndex &index) const;
@@ -73,6 +73,13 @@ CBrowserDomTreeDlg(CBrowserWindow *window) :
   //---
 
   tab->addTab(splitter, "DOM");
+}
+
+CBrowserWindow *
+CBrowserDomTreeDlg::
+window() const
+{
+  return domTree_->window();
 }
 
 //---

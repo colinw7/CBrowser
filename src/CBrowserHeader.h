@@ -8,7 +8,7 @@
 
 class CBrowserHeader : public CBrowserObject {
  public:
-  CBrowserHeader(CBrowserWindow *window, CHtmlTagId id, const CBrowserHeaderData &data);
+  CBrowserHeader(CBrowserWindow *window, CHtmlTagId id);
  ~CBrowserHeader();
 
   void init() override;

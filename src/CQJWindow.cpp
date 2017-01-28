@@ -1,5 +1,6 @@
 #include <CQJWindow.h>
 #include <CQJWindowTimer.h>
+#include <CQJRequestAnimationFrame.h>
 #include <CJavaScript.h>
 
 CJObjTypeP CQJWindowType::type_;
@@ -29,12 +30,24 @@ CQJWindow::
 CQJWindow(CJavaScript *js) :
  CQJObject(js, CQJWindowType::instance(js))
 {
-  objType_->addObjFunction(js, "setTimeout", objType_);
+}
+
+void
+CQJWindow::
+init()
+{
+  objType_->addObjFunction(js_, "setTimeout", objType_);
 
   addPseudoProperty("innerWidth");
   addPseudoProperty("innerHeight");
 
-  //setProperty(js, "requestAnimationFrame", CJValueP(new CQJRequestAnimationFrame(js)));
+  CQJWindowP window = CJValue::cast<CQJWindow>(shared_from_this());
+
+  CJValueP requestAnimationFrame = CJValueP(new CQJRequestAnimationFrame(js_, window));
+
+  setProperty(js_, "requestAnimationFrame", window);
+
+  CQJObject::init();
 }
 
 long

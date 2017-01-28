@@ -21,13 +21,13 @@ setNameValue(const std::string &name, const std::string &value)
 {
   std::string lname = CStrUtil::toLower(name);
 
-  if      (name == "alt") {
+  if      (lname == "alt") {
   }
-  else if (name == "coords") {
+  else if (lname == "coords") {
   }
-  else if (name == "href") {
+  else if (lname == "href") {
   }
-  else if (name == "shape") {
+  else if (lname == "shape") {
   }
   else {
     CBrowserObject::setNameValue(name, value);

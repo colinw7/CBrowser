@@ -11,6 +11,8 @@
 #include <CFont.h>
 #include <QImage>
 
+class CBrowserScrolledWindow;
+
 class CBrowserWindow {
  public:
   enum class OutputState {
@@ -20,14 +22,18 @@ class CBrowserWindow {
   };
 
  public:
-  CBrowserWindow(const std::string &filename="");
+  explicit CBrowserWindow(const std::string &filename="");
+
  ~CBrowserWindow();
 
-  void setIFace(CBrowserIFace *iface);
+  void setIFace(CBrowserScrolledWindow *swindow);
 
   CBrowserWindowWidget *widget() const { return w_; }
 
   CBrowserDocument *getDocument() const { return document_; }
+
+  const std::string &filename() const { return filename_; }
+  void setFilename(const std::string &s) { filename_ = s; }
 
   int getX() const { return bbox_.getXMin(); }
   int getY() const { return bbox_.getYMin(); }
@@ -196,7 +202,7 @@ class CBrowserWindow {
  private:
   void init();
 
-  void loadResources();
+  void reset();
 
   void setPixmapSize(int width, int height);
 
@@ -213,16 +219,16 @@ class CBrowserWindow {
   typedef std::vector<std::string>                ScriptFiles;
 
   static WindowList          window_list_;
-  static std::string         default_font_face_;
-  static bool                ignore_redraw_;
   static std::string         window_target_;
   static CBrowserAnchorLink* mouse_link_;
 
   std::string           name_;
+  std::string           filename_;
   CBrowserDocument*     document_ { nullptr };
 
-  CBrowserIFace*        iface_ { nullptr };
-  CBrowserWindowWidget* w_ { nullptr };
+  CBrowserIFace*          iface_ { nullptr };
+  CBrowserScrolledWindow* swindow_ { nullptr };
+  CBrowserWindowWidget*   w_ { nullptr };
 
   CIBBox2D              bbox_;
   int                   leftMargin_ { 0 };
@@ -241,7 +247,6 @@ class CBrowserWindow {
   ScriptFiles           scriptFiles_;
 
   CBrowserOutput        output_;
-  OutputState           outputState_ { OutputState::NONE };
 
   CCSS                  css_;
   CBrowserCSSData       cssData_;

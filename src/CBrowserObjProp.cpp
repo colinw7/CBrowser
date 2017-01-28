@@ -9,7 +9,7 @@
 
 class CBrowserObjPropModel : public QAbstractItemModel {
  public:
-  CBrowserObjPropModel(CBrowserObjProp *tree);
+  explicit CBrowserObjPropModel(CBrowserObjProp *tree);
 
   QModelIndex index(int row, int column, const QModelIndex &) const;
 
@@ -35,7 +35,7 @@ class CBrowserObjPropModel : public QAbstractItemModel {
 
 class CBrowserObjPropDelegate : public QStyledItemDelegate {
  public:
-  CBrowserObjPropDelegate(CBrowserObjProp *tree);
+  explicit CBrowserObjPropDelegate(CBrowserObjProp *tree);
 
   void paint(QPainter *painter, const QStyleOptionViewItem &option,
              const QModelIndex &index) const;

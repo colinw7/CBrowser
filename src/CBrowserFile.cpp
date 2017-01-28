@@ -29,21 +29,28 @@ readURL(const std::string &url_name, CHtmlParserTokens &tokens)
   CUrl url(url_name);
 
   std::string prefix = url.getPrefix();
+  std::string site   = url.getSite();
   std::string file   = url.getFile();
   std::string target = url.getTarget();
 
-  if      (prefix == "ceil")
+  if      (prefix == "ceil") {
     readScript(file, tokens);
+  }
   else if (prefix == "file") {
+    std::string filename;
 
-    if (! CFile::exists(file)) {
-      window_->errorDialog("File '" + file + "' does not exist");
+    if (site == "")
+      filename = file;
+    else
+      filename = site + "/" + file;
+
+    if (! CFile::exists(filename)) {
+      window_->errorDialog("File '" + filename + "' does not exist");
       return false;
     }
-    else {
-      if (! readFile(file, tokens))
-        return false;
-    }
+
+    if (! readFile(filename, tokens))
+      return false;
   }
   else if (prefix == "http") {
     std::string      site     = url.getSite    ();
@@ -157,17 +164,23 @@ readDirectory(const std::string &directory, CHtmlParserTokens &tokens)
 
   CBrowserHtmlFileMgr mgr;
 
-  CHtmlUtil::listDirectory(dir, *temp_file.getFile(), mgr);
+  CFile *file = temp_file.getFile();
 
-  /*------------*/
+  file->open(CFile::READ);
 
-  bool flag = readHTMLFile(temp_file.getFile()->getPath(), tokens);
+  CHtmlUtil::listDirectory(dir, *file, mgr);
 
-  /*------------*/
+  file->close();
+
+  //---
+
+  bool flag = readHTMLFile(file->getPath(), tokens);
+
+  //---
 
   temp_file.getFile()->remove();
 
-  /*------------*/
+  //---
 
   return flag;
 }
@@ -178,19 +191,25 @@ readImageFile(const std::string &filename, CHtmlParserTokens &tokens)
 {
   CTempFile temp_file;
 
-  /*------------*/
+  //---
 
-  CHtmlUtil::listImage(filename, *temp_file.getFile());
+  CFile *file = temp_file.getFile();
 
-  /*------------*/
+  file->open(CFile::READ);
 
-  bool flag = readHTMLFile(temp_file.getFile()->getPath(), tokens);
+  CHtmlUtil::listImage(filename, *file);
 
-  /*------------*/
+  file->close();
+
+  //---
+
+  bool flag = readHTMLFile(file->getPath(), tokens);
+
+  //---
 
   temp_file.getFile()->remove();
 
-  /*------------*/
+  //---
 
   return flag;
 
@@ -202,15 +221,21 @@ readTextFile(const std::string &filename, CHtmlParserTokens &tokens)
 {
   CTempFile temp_file;
 
-  /*------------*/
+  //---
 
-  CHtmlUtil::listTextFile(filename, *temp_file.getFile());
+  CFile *file = temp_file.getFile();
 
-  /*------------*/
+  file->open(CFile::READ);
 
-  bool flag = readHTMLFile(temp_file.getFile()->getPath(), tokens);
+  CHtmlUtil::listTextFile(filename, *file);
 
-  /*------------*/
+  file->close();
+
+  //---
+
+  bool flag = readHTMLFile(file->getPath(), tokens);
+
+  //---
 
   temp_file.getFile()->remove();
 
@@ -223,19 +248,25 @@ readBinaryFile(const std::string &filename, CHtmlParserTokens &tokens)
 {
   CTempFile temp_file;
 
-  /*------------*/
+  //---
 
-  CHtmlUtil::listBinaryFile(filename, *temp_file.getFile());
+  CFile *file = temp_file.getFile();
 
-  /*------------*/
+  file->open(CFile::READ);
 
-  bool flag = readHTMLFile(temp_file.getFile()->getPath(), tokens);
+  CHtmlUtil::listBinaryFile(filename, *file);
 
-  /*------------*/
+  file->close();
+
+  //---
+
+  bool flag = readHTMLFile(file->getPath(), tokens);
+
+  //---
 
   temp_file.getFile()->remove();
 
-  /*------------*/
+  //---
 
   return flag;
 }
@@ -246,19 +277,25 @@ readScriptFile(const std::string &filename, CHtmlParserTokens &tokens)
 {
   CTempFile temp_file;
 
-  /*------------*/
+  //---
 
-  CHtmlUtil::listScriptFile(filename, *temp_file.getFile());
+  CFile *file = temp_file.getFile();
 
-  /*------------*/
+  file->open(CFile::READ);
 
-  bool flag = readHTMLFile(temp_file.getFile()->getPath(), tokens);
+  CHtmlUtil::listScriptFile(filename, *file);
 
-  /*------------*/
+  file->close();
+
+  //---
+
+  bool flag = readHTMLFile(file->getPath(), tokens);
+
+  //---
 
   temp_file.getFile()->remove();
 
-  /*------------*/
+  //---
 
   return flag;
 }

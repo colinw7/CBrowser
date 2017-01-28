@@ -2,8 +2,8 @@
 #include <CBrowserWindow.h>
 
 CBrowserRule::
-CBrowserRule(CBrowserWindow *window, const CBrowserRuleData &data) :
- CBrowserObject(window, CHtmlTagId::HR), data_(data)
+CBrowserRule(CBrowserWindow *window) :
+ CBrowserObject(window, CHtmlTagId::HR)
 {
   setDisplay(CBrowserObject::Display::BLOCK);
 
@@ -73,7 +73,9 @@ calcRegion() const
   else
     ascent = 16;
 
-  if (this->width().isValid() && this->width().units() == CScreenUnits::Units::PX)
+  if      (! this->width().isValid())
+    width = 0;
+  else if (this->width().units() != CScreenUnits::Units::PERCENT)
     width = this->width().value();
   else
     width = 0;

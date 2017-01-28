@@ -13,7 +13,7 @@ class QPainter;
 
 class CBrowserRenderer {
  public:
-  CBrowserRenderer(CBrowserWindowWidget *w);
+  explicit CBrowserRenderer(CBrowserWindowWidget *w);
 
   virtual ~CBrowserRenderer();
 

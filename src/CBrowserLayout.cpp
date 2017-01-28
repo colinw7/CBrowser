@@ -51,20 +51,26 @@ currentBox() const
 
 void
 CBrowserLayout::
-layout(const CIBBox2D &bbox)
+layout(CBrowserBox *root, const CIBBox2D &bbox)
 {
-  root_->setX(bbox.getXMin());
-  root_->setY(bbox.getYMin());
+  if (! root)
+    return;
 
-  root_->setSize(bbox.getWidth(), 0);
+  root->setX(bbox.getXMin());
+  root->setY(bbox.getYMin());
 
-  root_->layout();
+  root->setSize(bbox.getWidth(), 0);
+
+  root->layout();
 }
 
 void
 CBrowserLayout::
 render(int dx, int dy)
 {
+  if (! root_)
+    return;
+
   root_->setHierVisible(true);
 
   root_->render(dx, dy);
@@ -77,7 +83,8 @@ boxAt(const CIPoint2D &p)
   CBrowserBox *box  = nullptr;
   double       area = 0.0;
 
-  root_->boxAt(p, box, area);
+  if (root_)
+    root_->boxAt(p, box, area);
 
   return box;
 }

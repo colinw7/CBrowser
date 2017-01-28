@@ -5,7 +5,7 @@
 
 class CBrowserXmp : public CBrowserObject {
  public:
-  CBrowserXmp(CBrowserWindow *window);
+  explicit CBrowserXmp(CBrowserWindow *window);
 };
 
 #endif

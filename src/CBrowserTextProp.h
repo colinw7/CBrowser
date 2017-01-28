@@ -14,11 +14,11 @@ class CBrowserTextAlign {
   };
 
  public:
-  CBrowserTextAlign(Type type=Type::NONE) :
+  explicit CBrowserTextAlign(Type type=Type::NONE) :
     type_(type) {
   }
 
-  CBrowserTextAlign(const std::string &str) :
+  explicit CBrowserTextAlign(const std::string &str) :
    str_(str) {
     std::string lstr = CStrUtil::toLower(str);
 
@@ -67,11 +67,11 @@ class CBrowserTextDecoration {
   };
 
  public:
-  CBrowserTextDecoration(Type type=Type::INVALID) :
+  explicit CBrowserTextDecoration(Type type=Type::INVALID) :
    type_(type) {
   }
 
-  CBrowserTextDecoration(const std::string &str) :
+  explicit CBrowserTextDecoration(const std::string &str) :
    str_(str) {
     std::string lstr = CStrUtil::toLower(str);
 
@@ -118,11 +118,11 @@ class CBrowserTextShadow {
   };
 
  public:
-  CBrowserTextShadow(ColorType colorType=ColorType::INVALID) :
+  explicit CBrowserTextShadow(ColorType colorType=ColorType::INVALID) :
    colorType_(colorType) {
   }
 
-  CBrowserTextShadow(const std::string &str) :
+  explicit CBrowserTextShadow(const std::string &str) :
    str_(str) {
     std::vector<std::string> words;
 
@@ -162,7 +162,7 @@ class CBrowserTextShadow {
 
 //---
 
-class CBrowserTextVerticalAlign {
+class CBrowserTextVAlign {
  public:
   enum Type {
     INVALID,
@@ -175,16 +175,18 @@ class CBrowserTextVerticalAlign {
     MIDDLE,
     BOTTOM,
     TEXT_BOTTOM,
+    ABS_MIDDLE,
+    ABS_BOTTOM,
     INITIAL,
     INHERIT
   };
 
  public:
-  CBrowserTextVerticalAlign(Type type=Type::INVALID) :
+  explicit CBrowserTextVAlign(Type type=Type::INVALID) :
    type_(type) {
   }
 
-  CBrowserTextVerticalAlign(const std::string &str) :
+  explicit CBrowserTextVAlign(const std::string &str) :
    str_(str), type_(Type::INVALID) {
     std::string lstr = CStrUtil::toLower(str);
 
@@ -233,14 +235,14 @@ class CBrowserTextProp {
   const CBrowserTextShadow &shadow() const { return shadow_; }
   void setShadow(const CBrowserTextShadow &v) { shadow_ = v; }
 
-  const CBrowserTextVerticalAlign &verticalAlign() const { return verticalAlign_; }
-  void setVerticalAlign(const CBrowserTextVerticalAlign &v) { verticalAlign_ = v; }
+  const CBrowserTextVAlign &verticalAlign() const { return verticalAlign_; }
+  void setVerticalAlign(const CBrowserTextVAlign &v) { verticalAlign_ = v; }
 
  private:
-  CBrowserTextAlign         align_;
-  CBrowserTextDecoration    decoration_;
-  CBrowserTextShadow        shadow_;
-  CBrowserTextVerticalAlign verticalAlign_;
+  CBrowserTextAlign      align_;
+  CBrowserTextDecoration decoration_;
+  CBrowserTextShadow     shadow_;
+  CBrowserTextVAlign     verticalAlign_;
 };
 
 #endif

@@ -5,8 +5,8 @@
 #include <CRomanNumber.h>
 
 CBrowserListItem::
-CBrowserListItem(CBrowserWindow *window, const CBrowserOutputListItemData &data) :
- CBrowserObject(window, CHtmlTagId::LI), data_(data)
+CBrowserListItem(CBrowserWindow *window) :
+ CBrowserObject(window, CHtmlTagId::LI)
 {
 }
 

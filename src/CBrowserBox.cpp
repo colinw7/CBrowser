@@ -11,38 +11,61 @@ CBrowserBox(CBrowserWindow *window) :
 
 void
 CBrowserBox::
+hierMove(int dx, int dy)
+{
+  setX(x() + dx);
+  setY(y() + dy);
+
+  for (auto &child : children_)
+    child->hierMove(dx, dy);
+}
+
+// place and size all child objects
+void
+CBrowserBox::
 layout()
 {
   if (! isVisible())
     return;
 
+  // calc preferred height for width
+  // TODO: too small for child minimum width
   CTextBox box(this->width(), 0);
 
   (void) calcHeightForWidth(box);
 
   //---
 
+  // skip if children are ignored (e.g. canvas)
+  if (! layoutChildren())
+    return;
+
+  // no need to layout of all children are inline (we flow in parent box)
   bool allInline = allChildrenInline();
 
   if (allInline)
     return;
 
+  //---
+
+  // start at top left
   int x = this->x() + this->contentX();
   int y = this->y() + this->contentY();
 
+  // add our width if inline and not break
   if (isInline() && ! isBreak()) {
     CIBBox2D bbox = calcBBox();
 
     x += bbox.getWidth();
   }
 
-  if (! layoutChildren())
-    return;
-
   for (auto &child : children_) {
+    // skip invisible
     if (! child->isVisible())
       continue;
 
+    // update position if child is absolute positioned
+    // TODO: do we start from here for next child
     const CBrowserPosition &pos = child->position();
 
     if (pos.type() == CBrowserPosition::Type::ABSOLUTE) {
@@ -50,23 +73,44 @@ layout()
       y = pos.top ().value();
     }
 
+    // set position
     child->setX(x);
     child->setY(y);
 
+    // move to next line if force newline for non-inline child or break
     if (! child->isInline() || child->isBreak()) {
       x  = this->x() + this->contentX();
       y += child->height();
     }
-    else
+    // place right
+    else {
       x += child->width();
+    }
   }
+
+  //---
+
+  // layout children
+  int width = 0, height = 0;
 
   for (auto &child : children_) {
     if (! child->isVisible())
       continue;
 
+    if (child->width() == 0)
+      child->setSize(box.width(), child->height());
+
     child->layout();
+
+    width  = std::max(width , child->width ());
+    height = std::max(height, child->height());
   }
+
+  if (width > this->width())
+   setSize(width, this->height());
+
+  if (height > this->height())
+   setSize(this->width(), height);
 }
 
 void
@@ -140,7 +184,7 @@ render(int dx, int dy)
 
   //---
 
-  if (! layoutChildren())
+  if (! renderChildren())
     return;
 
   //---
@@ -148,6 +192,9 @@ render(int dx, int dy)
   bool allInline = allChildrenInline();
 
   if (! allInline) {
+    //int xo = box.x() + this->contentX();
+    //int yo = box.y() + this->contentY();
+
     for (auto &child : children_) {
       if (! child->isVisible())
         continue;
@@ -160,39 +207,40 @@ render(int dx, int dy)
 
     getHierWords(words);
 
-    //---
+    renderWords(words, box);
+  }
+}
 
-    CBrowserLine line;
+void
+CBrowserBox::
+renderWords(const Words &words, const CTextBox &box)
+{
+  if (hasFloatWords(words))
+    return renderFloatWords(words, box);
+  else
+    return renderLineWords(words, box);
+}
 
-    int width1 = content().getWidth();
+void
+CBrowserBox::
+renderLineWords(const Words &words, const CTextBox &box)
+{
+  CBrowserLine line;
 
-    int x = 0;
-    int y = 0;
+  int width1 = content().getWidth();
 
-    int xo = box.x() + this->contentX();
-    int yo = box.y() + this->contentY();
+  int x = 0;
+  int y = 0;
 
-    for (const auto &word : words) {
-      if (x == 0 && word.isSpace())
-        continue;
+  int xo = box.x() + this->contentX();
+  int yo = box.y() + this->contentY();
 
-      if (! word.isBreakup()) {
-        if (! line.isEmpty() && x + word.width() > width1 && ! word.isSpace()) {
-          line.draw(window_, width1, halign());
+  for (const auto &word : words) {
+    if (x == 0 && word.isSpace())
+      continue;
 
-          x  = 0;
-          y += line.height();
-
-          line.clear();
-        }
-
-        line.addWord(x + xo, y + yo, word);
-
-        x += word.width();
-      }
-      else {
-        line.addWord(x + xo, y + yo, word);
-
+    if (! word.isBreakup()) {
+      if (! line.isEmpty() && x + word.width() > width1 && ! word.isSpace()) {
         line.draw(window_, width1, halign());
 
         x  = 0;
@@ -200,15 +248,190 @@ render(int dx, int dy)
 
         line.clear();
       }
-    }
 
-    if (! line.isEmpty()) {
+      line.addWord(x + xo, y + yo, word);
+
+      x += word.width();
+    }
+    else {
+      line.addWord(x + xo, y + yo, word);
+
       line.draw(window_, width1, halign());
 
       x  = 0;
       y += line.height();
+
+      line.clear();
     }
   }
+
+  if (! line.isEmpty()) {
+    line.draw(window_, width1, halign());
+
+    //x  = 0;
+    //y += line.height();
+  }
+}
+
+class CBrowserBoxClear {
+ public:
+  CBrowserBoxClear() { }
+
+  void addLeftPoint(const CIPoint2D &p) {
+    leftPoints_.push_back(p);
+  }
+
+  void addRightPoint(const CIPoint2D &p) {
+    rightPoints_.push_back(p);
+  }
+
+  int getLeftPoint(int y) {
+    int x = 0;
+
+    while (! leftPoints_.empty()) {
+      const CIPoint2D &p = leftPoints_.back();
+
+      if (y < p.y) {
+        x = p.x;
+        break;
+      }
+
+      leftPoints_.pop_back();
+    }
+
+    return x;
+  }
+
+  int getRightPoint(int y, int width) {
+    int x = width;
+
+    while (! rightPoints_.empty()) {
+      const CIPoint2D &p = rightPoints_.back();
+
+      if (y < p.y) {
+        x = p.x;
+        break;
+      }
+
+      rightPoints_.pop_back();
+    }
+
+    return x;
+  }
+
+ private:
+  typedef std::vector<CIPoint2D> ClearPoints;
+
+  ClearPoints leftPoints_;
+  ClearPoints rightPoints_;
+};
+
+void
+CBrowserBox::
+renderFloatWords(const Words &words, const CTextBox &box)
+{
+  CBrowserBoxClear clear;
+
+  CBrowserLine line;
+
+  int width1 = content().getWidth();
+
+  int x = 0;
+  int y = 0;
+
+  int xo = box.x() + this->contentX();
+  int yo = box.y() + this->contentY();
+
+  for (const auto &word : words) {
+    if (x == 0 && word.isSpace())
+      continue;
+
+    if      (word.getFloat() == CBrowserWord::Float::LEFT) {
+      // start new line if line started
+      if (! line.isEmpty()) {
+        x  = clear.getLeftPoint(y + yo);
+        y += line.height();
+
+        line.draw(window_, width1, halign());
+
+        line.clear();
+      }
+
+      // add word at left
+      line.addWord(x + xo, y + yo, word);
+
+      x += word.width();
+
+      clear.addLeftPoint(CIPoint2D(x, y + word.height()));
+    }
+    else if (word.getFloat() == CBrowserWord::Float::RIGHT) {
+      // get right position
+      int x1 = width1 - word.width();
+
+      // if no room on right move to next line
+      if (! line.isEmpty() && x > x1) {
+        y += line.height();
+
+        line.draw(window_, width1, halign());
+
+        line.clear();
+      }
+
+      // add word at right
+      line.addWord(x1 + xo, y + yo, word);
+
+      clear.addRightPoint(CIPoint2D(x1, y + word.height()));
+    }
+    else if (! word.isBreakup()) {
+      int right = clear.getRightPoint(y + yo, width1);
+
+      // if word overflows line start new line
+      if (! line.isEmpty() && x + word.width() > right && ! word.isSpace()) {
+        x  = clear.getLeftPoint(y + yo);
+        y += line.height();
+
+        line.draw(window_, width1, halign());
+
+        line.clear();
+      }
+
+      // add word
+      line.addWord(x + xo, y + yo, word);
+
+      x += word.width();
+    }
+    else { // breakup
+      // add word
+      line.addWord(x + xo, y + yo, word);
+
+      // move to next line
+      x  = clear.getLeftPoint(y + yo);
+      y += line.height();
+
+      line.draw(window_, width1, halign());
+
+      line.clear();
+    }
+  }
+
+  if (! line.isEmpty()) {
+    line.draw(window_, width1, halign());
+
+    //x  = 0;
+    //y += line.height();
+  }
+}
+
+bool
+CBrowserBox::
+hasFloatWords(const Words &words) const
+{
+  for (const auto &word : words) {
+    if (word.getFloat() != CBrowserWord::Float::NONE)
+      return true;
+  }
+
+  return false;
 }
 
 void
@@ -295,6 +518,9 @@ calcHeightForWidth(CTextBox &box)
           }
 
           x += w;
+
+          if (x > width)
+            width = x;
         }
         else {
           x  = 0;
@@ -332,11 +558,6 @@ getHierWords(Words &words) const
 
   //---
 
-  if (! layoutChildren())
-    return;
-
-  //---
-
   for (const auto &child : children_) {
     if (! child->isVisible())
       continue;
@@ -350,11 +571,6 @@ CBrowserBox::
 allChildrenInline() const
 {
   if (children_.empty())
-    return true;
-
-  //---
-
-  if (! layoutChildren())
     return true;
 
   //---
@@ -383,6 +599,9 @@ boxAt(const CIPoint2D &p, CBrowserBox* &box, double &area)
   //---
 
   if (! layoutChildren())
+    return;
+
+  if (! renderChildren())
     return;
 
   //---

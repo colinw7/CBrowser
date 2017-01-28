@@ -115,7 +115,7 @@ class CBrowserPropertyTraits<CVAlignType> {
 
 class CBrowserProperty {
  public:
-  CBrowserProperty(const std::string &name) :
+  explicit CBrowserProperty(const std::string &name) :
    name_(name) {
   }
 

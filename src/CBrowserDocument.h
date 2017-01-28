@@ -13,7 +13,8 @@ class CBrowserDocument {
   typedef std::vector<CBrowserForm *> Forms;
 
  public:
-  CBrowserDocument(CBrowserWindow *window);
+  explicit CBrowserDocument(CBrowserWindow *window);
+
  ~CBrowserDocument();
 
   std::string getUrl() const { return url_; }

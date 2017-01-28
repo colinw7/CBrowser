@@ -12,8 +12,13 @@ addWord(int x, int y, const CBrowserWord &word)
 
   width_ += word.width();
 
-  ascent_  = std::max(ascent_ , word.ascent ());
-  descent_ = std::max(descent_, word.descent());
+  if (word.getFloat() == CBrowserWord::Float::NONE) {
+    ascent_  = std::max(ascent_ , word.ascent ());
+    descent_ = std::max(descent_, word.descent());
+  }
+
+  if (word.getFloat() != CBrowserWord::Float::RIGHT)
+    empty_ = false;
 }
 
 void
@@ -56,7 +61,8 @@ bool
 CBrowserLine::
 isEmpty() const
 {
-  return words_.empty();
+  return empty_;
+  //return words_.empty();
 }
 
 void
@@ -64,6 +70,8 @@ CBrowserLine::
 clear()
 {
   words_.clear();
+
+  empty_ = true;
 
   width_   = 0;
   ascent_  = 0;

@@ -7,11 +7,8 @@
 
 CBrowserObject::
 CBrowserObject(CBrowserWindow *window, CHtmlTagId type, const CBrowserBaseData &data) :
- CBrowserBox(window), window_(window), type_(type)
+ CBrowserBox(window), window_(window), type_(type), data_(data)
 {
-  setId(data.id);
-  setName(data.name);
-  setClass(data.cclass);
 }
 
 CBrowserObject::
@@ -62,6 +59,21 @@ typeName() const
   const CHtmlTagDef &tagDef = CHtmlTagDefLookupInst->lookup(type_);
 
   return tagDef.getName();
+}
+
+std::string
+CBrowserObject::
+hierTypeName() const
+{
+  const CBrowserObject *parent = this->parent();
+
+  if (! parent)
+    return typeName();
+
+  if (parent->type() == CHtmlTagId::HTML || parent->type() == CHtmlTagId::BODY)
+    return typeName();
+
+  return parent->hierTypeName() + "/" + typeName();
 }
 
 void
@@ -120,16 +132,7 @@ setNameValue(const std::string &name, const std::string &value)
   std::string lname  = CStrUtil::toLower(name);
   std::string lvalue = CStrUtil::toLower(value);
 
-  if      (lname == "id") {
-    setId(value);
-  }
-  else if (lname == "name") {
-    setName(value);
-  }
-  else if (lname == "class") {
-    setClass(value);
-  }
-  else if (lname == "accesskey") {
+  if      (lname == "accesskey") {
   }
   else if (lname == "background") {
     // bg-color bg-image position/bg-size bg-repeat bg-origin bg-clip bg-attachment initial|inherit
@@ -174,135 +177,6 @@ setNameValue(const std::string &name, const std::string &value)
   }
   else if (lname == "background-attachment") {
     background_.setAttachment(value);
-  }
-  else if (lname == "clear") {
-    clear_ = CBrowserClear(value);
-  }
-  else if (lname == "color") {
-    foreground_ = CBrowserColor(value);
-  }
-  else if (lname == "contenteditable") {
-  }
-  else if (lname == "contentmenu") {
-  }
-  else if (lname == "cursor") {
-    // TODO
-  }
-  else if (lname == "dir") {
-  }
-  else if (lname == "display") {
-    CBrowserObject::Display d;
-
-    if (CBrowserProperty::fromString<CBrowserObject::Display>(lvalue, d))
-      setDisplay(d);
-  }
-  else if (lname == "draggable") {
-  }
-  else if (lname == "dropzone") {
-  }
-  else if (lname == "float") {
-    float_ = CBrowserFloat(value);
-  }
-  else if (lname == "font-family") {
-    font_.setFamily(CBrowserFontFamily(value));
-  }
-  else if (lname == "font-size") {
-    font_.setSize(CBrowserFontSize(value));
-  }
-  else if (lname == "font-size-adjust") {
-    font_.setSizeAdjust(CBrowserFontSizeAdjust(value));
-  }
-  else if (lname == "font-stretch") {
-    font_.setStretch(CBrowserFontStretch(value));
-  }
-  else if (lname == "font-weight") {
-    font_.setWeight(CBrowserFontWeight(value));
-  }
-  else if (lname == "font-style") {
-    font_.setStyle(CBrowserFontStyle(value));
-  }
-  else if (lname == "font") {
-    // TODO
-  }
-  else if (lname == "hidden") {
-  }
-  else if (lname == "lang") {
-  }
-  else if (lname == "spellcheck") {
-  }
-  else if (lname == "style") {
-    processStyleAttribute(value);
-  }
-  else if (lname == "tabindex") {
-  }
-  else if (lname == "title") {
-  }
-  else if (lname == "translate") {
-  }
-  else if (lname == "width") {
-    width_ = CBrowserUnitValue(value);
-
-    if (! width_.isValid())
-      window_->displayError("Illegal '%s' Width '%s' Value '%s'\n", typeName().c_str(),
-                            name.c_str(), value.c_str());
-  }
-  else if (lname == "height") {
-    height_ = CBrowserUnitValue(value);
-
-    if (! height_.isValid())
-      window_->displayError("Illegal '%s' Height '%s' Value '%s'\n", typeName().c_str(),
-                            name.c_str(), value.c_str());
-  }
-  else if (lname == "margin") {
-    std::vector<std::string> words;
-
-    CStrUtil::toWords(value, words);
-
-    std::vector<CBrowserUnitValue> uvalues;
-
-    for (const auto &w : words)
-      uvalues.push_back(CBrowserUnitValue(w));
-
-    CBrowserMargin margin = this->margin();
-
-    if      (words.size() == 1) {
-      margin.setTop   (uvalues[0]);
-      margin.setRight (uvalues[0]);
-      margin.setBottom(uvalues[0]);
-      margin.setLeft  (uvalues[0]);
-    }
-    else if (words.size() == 2) {
-      margin.setTop   (uvalues[0]);
-      margin.setBottom(uvalues[0]);
-      margin.setRight (uvalues[1]);
-      margin.setLeft  (uvalues[1]);
-    }
-    else if (words.size() == 3) {
-      margin.setTop   (uvalues[0]);
-      margin.setRight (uvalues[1]);
-      margin.setLeft  (uvalues[1]);
-      margin.setBottom(uvalues[2]);
-    }
-    else if (words.size() == 4) {
-      margin.setTop   (uvalues[0]);
-      margin.setRight (uvalues[1]);
-      margin.setBottom(uvalues[2]);
-      margin.setLeft  (uvalues[3]);
-    }
-
-    setMargin(margin);
-  }
-  else if (lname == "margin-bottom") {
-    marginRef().setBottom(CBrowserUnitValue(value));
-  }
-  else if (lname == "margin-left") {
-    marginRef().setLeft(CBrowserUnitValue(value));
-  }
-  else if (lname == "margin-right") {
-    marginRef().setRight(CBrowserUnitValue(value));
-  }
-  else if (lname == "margin-top") {
-    marginRef().setTop(CBrowserUnitValue(value));
   }
   else if (lname == "border") {
     std::vector<std::string> words;
@@ -402,6 +276,141 @@ setNameValue(const std::string &name, const std::string &value)
   else if (lname == "border-width") {
     borderRef().setLineWidth(CBrowserUnitValue(value));
   }
+  else if (lname == "box-shadow") {
+    // TODO
+  }
+  else if (lname == "box-sizing") {
+    // TODO
+  }
+  else if (lname == "class") {
+    setClass(value);
+  }
+  else if (lname == "clear") {
+    clear_ = CBrowserClear(value);
+  }
+  else if (lname == "color") {
+    foreground_ = CBrowserColor(value);
+  }
+  else if (lname == "contenteditable") {
+  }
+  else if (lname == "contentmenu") {
+  }
+  else if (lname == "cursor") {
+    // TODO
+  }
+  else if (lname == "dir") {
+  }
+  else if (lname == "display") {
+    CBrowserObject::Display d;
+
+    if (CBrowserProperty::fromString<CBrowserObject::Display>(lvalue, d))
+      setDisplay(d);
+  }
+  else if (lname == "draggable") {
+  }
+  else if (lname == "dropzone") {
+  }
+  else if (lname == "float") {
+    float_ = CBrowserFloat(value);
+  }
+  else if (lname == "font-family") {
+    font_.setFamily(CBrowserFontFamily(value));
+  }
+  else if (lname == "font-size") {
+    font_.setSize(CBrowserFontSize(value));
+  }
+  else if (lname == "font-size-adjust") {
+    font_.setSizeAdjust(CBrowserFontSizeAdjust(value));
+  }
+  else if (lname == "font-stretch") {
+    font_.setStretch(CBrowserFontStretch(value));
+  }
+  else if (lname == "font-weight") {
+    font_.setWeight(CBrowserFontWeight(value));
+  }
+  else if (lname == "font-style") {
+    font_.setStyle(CBrowserFontStyle(value));
+  }
+  else if (lname == "font") {
+    // TODO
+  }
+  else if (lname == "height") {
+    height_ = CBrowserUnitValue(value);
+
+    if (! height_.isValid())
+      window_->displayError("Illegal '%s' Height '%s' Value '%s'\n", typeName().c_str(),
+                            name.c_str(), value.c_str());
+  }
+  else if (lname == "hidden") {
+  }
+  else if (lname == "id") {
+    setId(value);
+  }
+  else if (lname == "lang") {
+  }
+  else if (lname == "left") {
+    position_.setLeft(CBrowserUnitValue(value));
+  }
+  else if (lname == "margin") {
+    std::vector<std::string> words;
+
+    CStrUtil::toWords(value, words);
+
+    std::vector<CBrowserUnitValue> uvalues;
+
+    for (const auto &w : words)
+      uvalues.push_back(CBrowserUnitValue(w));
+
+    CBrowserMargin margin = this->margin();
+
+    if      (words.size() == 1) {
+      margin.setTop   (uvalues[0]);
+      margin.setRight (uvalues[0]);
+      margin.setBottom(uvalues[0]);
+      margin.setLeft  (uvalues[0]);
+    }
+    else if (words.size() == 2) {
+      margin.setTop   (uvalues[0]);
+      margin.setBottom(uvalues[0]);
+      margin.setRight (uvalues[1]);
+      margin.setLeft  (uvalues[1]);
+    }
+    else if (words.size() == 3) {
+      margin.setTop   (uvalues[0]);
+      margin.setRight (uvalues[1]);
+      margin.setLeft  (uvalues[1]);
+      margin.setBottom(uvalues[2]);
+    }
+    else if (words.size() == 4) {
+      margin.setTop   (uvalues[0]);
+      margin.setRight (uvalues[1]);
+      margin.setBottom(uvalues[2]);
+      margin.setLeft  (uvalues[3]);
+    }
+
+    setMargin(margin);
+  }
+  else if (lname == "margin-bottom") {
+    marginRef().setBottom(CBrowserUnitValue(value));
+  }
+  else if (lname == "margin-left") {
+    marginRef().setLeft(CBrowserUnitValue(value));
+  }
+  else if (lname == "margin-right") {
+    marginRef().setRight(CBrowserUnitValue(value));
+  }
+  else if (lname == "margin-top") {
+    marginRef().setTop(CBrowserUnitValue(value));
+  }
+  else if (lname == "name") {
+    setName(value);
+  }
+  else if (lname == "outline") {
+    // TODO
+  }
+  else if (lname == "overflow") {
+    // TODO
+  }
   else if (lname == "padding") {
     std::vector<std::string> words;
 
@@ -456,13 +465,12 @@ setNameValue(const std::string &name, const std::string &value)
   else if (lname == "position") {
     position_.setType(value);
   }
-  else if (lname == "top") {
-    position_.setTop(CBrowserUnitValue(value));
+  else if (lname == "spellcheck") {
   }
-  else if (lname == "left") {
-    position_.setLeft(CBrowserUnitValue(value));
+  else if (lname == "style") {
+    processStyleAttribute(value);
   }
-  else if (lname == "text-align") {
+  else if (lname == "tabindex") {
   }
   else if (lname == "text-align") {
     textProp_.setAlign(CBrowserTextAlign(value));
@@ -473,26 +481,29 @@ setNameValue(const std::string &name, const std::string &value)
   else if (lname == "text-shadow") {
     textProp_.setShadow(CBrowserTextShadow(value));
   }
-  else if (lname == "box-shadow") {
-    // TODO
+  else if (lname == "title") {
+    title_ = value;
   }
-  else if (lname == "box-sizing") {
-    // TODO
+  else if (lname == "top") {
+    position_.setTop(CBrowserUnitValue(value));
   }
-  else if (lname == "overflow") {
-    // TODO
-  }
-  else if (lname == "outline") {
-    // TODO
+  else if (lname == "translate") {
   }
   else if (lname == "vertical-align") {
-    textProp_.setVerticalAlign(CBrowserTextVerticalAlign(value));
+    textProp_.setVerticalAlign(CBrowserTextVAlign(value));
   }
   else if (lname == "white-space") {
     CBrowserObject::WhiteSpace w;
 
     if (CBrowserProperty::fromString<CBrowserObject::WhiteSpace>(lvalue, w))
       setWhiteSpace(w);
+  }
+  else if (lname == "width") {
+    width_ = CBrowserUnitValue(value);
+
+    if (! width_.isValid())
+      window_->displayError("Illegal '%s' Width '%s' Value '%s'\n", typeName().c_str(),
+                            name.c_str(), value.c_str());
   }
   else if (lname.substr(0, 5) == "data-") {
   }
@@ -511,9 +522,14 @@ processStyleAttribute(const std::string &style)
   CStrUtil::addFields(style, words, ";");
 
   for (const auto &word : words) {
+    std::string sword = CStrUtil::stripSpaces(word);
+
+    if (sword == "")
+      continue;
+
     std::vector<std::string> words1;
 
-    CStrUtil::addFields(word, words1, ":");
+    CStrUtil::addFields(sword, words1, ":");
 
     if (words1.size() != 2) {
       window_->displayError("Style name:value '%s'", word.c_str());
@@ -683,10 +699,8 @@ hierFont() const
   th->font_.setStrike(textProp_.decoration().type() ==
                        CBrowserTextDecoration::Type::LINE_THROUGH);
 
-  th->font_.setSuperscript(textProp_.verticalAlign().type() ==
-                            CBrowserTextVerticalAlign::Type::SUPER);
-  th->font_.setSubscript(textProp_.verticalAlign().type() ==
-                           CBrowserTextVerticalAlign::Type::SUB);
+  th->font_.setSuperscript(textProp_.verticalAlign().type() == CBrowserTextVAlign::Type::SUPER);
+  th->font_.setSubscript(textProp_.verticalAlign().type() == CBrowserTextVAlign::Type::SUB);
 
   return font().font(this);
 }

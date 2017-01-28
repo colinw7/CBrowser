@@ -11,7 +11,9 @@ class CBrowserDomTreeDlg : public QWidget {
   Q_OBJECT
 
  public:
-  CBrowserDomTreeDlg(CBrowserWindow *window);
+  explicit CBrowserDomTreeDlg(CBrowserWindow *window);
+
+  CBrowserWindow *window() const;
 
   CBrowserDomTree *domTree() const { return domTree_; }
   CBrowserObjProp *prop   () const { return prop_; }

@@ -41,8 +41,8 @@ stringToSymbol(const std::string &value)
 }
 
 CBrowserList::
-CBrowserList(CBrowserWindow *window, CHtmlTagId id, const CBrowserOutputListData &data) :
- CBrowserObject(window, id, data), data_(data)
+CBrowserList(CBrowserWindow *window, CHtmlTagId id) :
+ CBrowserObject(window, id)
 {
   marginRef().setTop   (CBrowserUnitValue("1.00em"));
   marginRef().setBottom(CBrowserUnitValue("1.00em"));
@@ -62,9 +62,6 @@ setNameValue(const std::string &name, const std::string &value)
 
     if (lvalue != "")
       window_->displayError("No value needed for 'compact'\n");
-  }
-  else if (lname == "id") {
-    data_.id = value;
   }
   else if (lname == "start") {
     if (CStrUtil::isInteger(lvalue)) {

@@ -59,6 +59,7 @@ CBrowserRenderer.cpp \
 CBrowserRule.cpp \
 CBrowserSamp.cpp \
 CBrowserScript.cpp \
+CBrowserScrolledWindow.cpp \
 CBrowserStyle.cpp \
 CBrowserStyleData.cpp \
 CBrowserTable.cpp \
@@ -97,6 +98,7 @@ CQJInput.cpp \
 CQJIntervalFunction.cpp \
 CQJLineEdit.cpp \
 CQJObject.cpp \
+CQJRequestAnimationFrame.cpp \
 CQJSlider.cpp \
 CQJWindow.cpp \
 CQJWindowTimer.cpp \
@@ -166,6 +168,7 @@ CBrowserRenderer.h \
 CBrowserRule.h \
 CBrowserSamp.h \
 CBrowserScript.h \
+CBrowserScrolledWindow.h \
 CBrowserStyleData.h \
 CBrowserStyle.h \
 CBrowserTable.h \
@@ -207,6 +210,7 @@ CQJInput.h \
 CQJIntervalFunction.h \
 CQJLineEdit.h \
 CQJObject.h \
+CQJRequestAnimationFrame.h \
 CQJSlider.h \
 CQJUtil.h \
 CQJWindow.h \

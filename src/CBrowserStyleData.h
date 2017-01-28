@@ -8,7 +8,7 @@ class CBrowserStyleData {
   typedef std::map<std::string, std::string> NameValues;
 
  public:
-  CBrowserStyleData(const std::string &id) :
+  explicit CBrowserStyleData(const std::string &id) :
    id_(id) {
   }
 

@@ -1,5 +1,4 @@
 #include <CQJWindowTimer.h>
-#include <CBrowserJS.h>
 #include <CJavaScript.h>
 
 int CQJWindowTimer::lastId_ = 0;
@@ -15,7 +14,7 @@ void
 CQJWindowTimer::
 timerSlot()
 {
-  CJavaScript *js = CBrowserJSInst->js();
+  CJavaScript *js = window_->js();
 
   CJObjType::Values fnValues;
 

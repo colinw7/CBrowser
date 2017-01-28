@@ -80,6 +80,7 @@ class CBrowserObject : public CBrowserBox {
   void setParent(CBrowserObject *p) { parent_ = p; }
 
   std::string typeName() const override;
+  std::string hierTypeName() const;
 
   void addChild(CBrowserObject *child);
 
@@ -108,6 +109,9 @@ class CBrowserObject : public CBrowserBox {
 
   const CBrowserPosition &position() const override { return position_; }
   void setPosition(const CBrowserPosition &v) { position_ = v; }
+
+  const std::string &title() const { return title_; }
+  void setTitle(const std::string &v) { title_ = v; }
 
   const CBrowserFont &font() const { return font_; }
 
@@ -156,6 +160,8 @@ class CBrowserObject : public CBrowserBox {
 
   bool layoutChildren() const override { return true; }
 
+  bool renderChildren() const override { return true; }
+
   //---
 
   virtual CBrowserRegion calcRegion() const { return CBrowserRegion(); }
@@ -192,6 +198,7 @@ class CBrowserObject : public CBrowserBox {
  protected:
   CBrowserWindow*    window_ { nullptr };
   CHtmlTagId         type_;
+  CBrowserBaseData   data_;
   std::string        id_;
   std::string        name_;
   std::string        class_;
@@ -208,6 +215,7 @@ class CBrowserObject : public CBrowserBox {
   CBrowserClear      clear_;
   CBrowserFloat      float_;
   CBrowserPosition   position_;
+  std::string        title_;
   CBrowserFont       font_;
   CBrowserTextProp   textProp_;
   CBrowserUnitValue  width_;

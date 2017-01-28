@@ -13,19 +13,19 @@ CBrowserLinkMgr(CBrowserWindow *window) :
 
 void
 CBrowserLinkMgr::
-startSourceLink(const CBrowserLinkData &data)
+startSourceLink(CBrowserAnchor *anchor)
 {
   if (current_link_) {
     fprintf(stderr, "Invalid Link within a Link\n");
     return;
   }
 
-  std::string href1 = expandDestLink(data.href);
+  std::string href1 = expandDestLink(anchor->href());
 
   if (href1 == "")
     href1 = "????";
 
-  std::string title1 = data.title;
+  std::string title1 = anchor->title();
 
   if (title1 == "")
     title1 = href1;
@@ -40,20 +40,20 @@ startSourceLink(const CBrowserLinkData &data)
 
 void
 CBrowserLinkMgr::
-startDestLink(const CBrowserLinkData &data)
+startDestLink(CBrowserAnchor *anchor)
 {
   if (current_link_) {
     fprintf(stderr, "Invalid Link within a Link\n");
     return;
   }
 
-  std::string title1 = data.title;
+  std::string title1 = anchor->title();
 
   if (title1 == "")
-    title1 = data.id;
+    title1 = anchor->id();
 
   CBrowserAnchorLink *link =
-    new CBrowserAnchorLink(CBrowserAnchorLink::Type::DEST, data.id, "", title1);
+    new CBrowserAnchorLink(CBrowserAnchorLink::Type::DEST, anchor->id(), "", title1);
 
   window_->getDocument()->addAnchor(link);
 
@@ -260,8 +260,8 @@ clearRects()
 //------
 
 CBrowserAnchor::
-CBrowserAnchor(CBrowserWindow *window, const CBrowserLinkData &data) :
- CBrowserObject(window, CHtmlTagId::A, data), data_(data)
+CBrowserAnchor(CBrowserWindow *window) :
+ CBrowserObject(window, CHtmlTagId::A)
 {
   setDisplay(CBrowserObject::Display::INLINE);
 
@@ -283,11 +283,21 @@ setNameValue(const std::string &name, const std::string &value)
 {
   std::string lname = CStrUtil::toLower(name);
 
-  if      (lname == "download") {
+  if      (lname == "charset") {
+  }
+  else if (lname == "coords") {
+  }
+  else if (lname == "download") {
     data_.download = value;
   }
   else if (lname == "href") {
     data_.href = value;
+  }
+  else if (lname == "hreflang") {
+  }
+  else if (lname == "itemprop") {
+  }
+  else if (lname == "media") {
   }
   else if (lname == "methods") {
     data_.methods = value;
@@ -298,19 +308,16 @@ setNameValue(const std::string &name, const std::string &value)
   else if (lname == "rev") {
     data_.rev = value;
   }
+  else if (lname == "shape") {
+  }
   else if (lname == "target") {
     data_.target = value;
   }
   else if (lname == "type") {
     data_.type = value;
   }
-  else if (lname == "title") {
-    data_.title = value;
-  }
   else if (lname == "url") {
     data_.url = value;
-  }
-  else if (lname == "itemprop") {
   }
   else {
     CBrowserObject::setNameValue(name, value);
@@ -328,7 +335,7 @@ init()
 
   //---
 
-  if (data_.href == "" && data_.id == "")
+  if (href() == "" && id() == "")
     window_->displayError("No 'href' or 'name' specified for 'a' Tag'\n");
 }
 
@@ -336,11 +343,11 @@ void
 CBrowserAnchor::
 initProcess()
 {
-  if (data_.href != "") {
-    window_->linkMgr()->startSourceLink(data_);
+  if (href() != "") {
+    window_->linkMgr()->startSourceLink(this);
   }
   else
-    window_->linkMgr()->startDestLink(data_);
+    window_->linkMgr()->startDestLink(this);
 }
 
 void
@@ -362,7 +369,6 @@ propertyValue(int i) const
   else if (name == "rel"     ) return CBrowserProperty::toString(data_.rel);
   else if (name == "rev"     ) return CBrowserProperty::toString(data_.rev);
   else if (name == "target"  ) return CBrowserProperty::toString(data_.target);
-  else if (name == "title"   ) return CBrowserProperty::toString(data_.title);
   else if (name == "url"     ) return CBrowserProperty::toString(data_.url);
 
   return CBrowserObject::propertyValue(i);
@@ -371,8 +377,8 @@ propertyValue(int i) const
 //------
 
 CBrowserLink::
-CBrowserLink(CBrowserWindow *window, const CBrowserLinkData &data) :
- CBrowserObject(window, CHtmlTagId::LINK), data_(data)
+CBrowserLink(CBrowserWindow *window) :
+ CBrowserObject(window, CHtmlTagId::LINK)
 {
 }
 

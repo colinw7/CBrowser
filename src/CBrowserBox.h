@@ -18,7 +18,7 @@ class CBrowserBox {
   typedef std::vector<CBrowserWord> Words;
 
  public:
-  CBrowserBox(CBrowserWindow *window);
+  explicit CBrowserBox(CBrowserWindow *window);
 
   virtual ~CBrowserBox() { }
 
@@ -26,10 +26,10 @@ class CBrowserBox {
   void setParent(CBrowserBox *p) { parent_ = p; }
 
   int x() const { return x_; }
-  void setX(int i) { x_ = i; }
+  void setX(int x) { x_ = x; }
 
   int y() const { return y_; }
-  void setY(int i) { y_ = i; }
+  void setY(int y) { y_ = y; }
 
   int ascent() const { return ascent_; }
   void setAscent(int a) { ascent_ = a; }
@@ -87,6 +87,8 @@ class CBrowserBox {
   int contentHeight() const { return content_.getHeight(); }
   void setContentHeight(int h) { content_.setHeight(h); }
 
+  void setContentSize(int w, int h) { content_.setSize(CISize2D(w, h)); }
+
   CTextBox contentBox() const { return CTextBox(x(), y(), contentWidth(), contentHeight()); }
 
   //---
@@ -119,6 +121,10 @@ class CBrowserBox {
 
   //---
 
+  void hierMove(int dx, int dy);
+
+  //---
+
   const CHAlignType &halign() const { return halign_; }
   void setHAlign(const CHAlignType &v) { halign_ = v; }
 
@@ -141,6 +147,8 @@ class CBrowserBox {
 
   virtual CIBBox2D calcBBox() const = 0;
 
+  virtual void calcHeightForWidth(CTextBox &box);
+
   virtual void heightForWidth(CTextBox &box) const = 0;
 
   //---
@@ -151,9 +159,9 @@ class CBrowserBox {
 
   //---
 
-  virtual void layout();
-
   virtual bool layoutChildren() const = 0;
+
+  virtual void layout();
 
   virtual void getInlineWords(Words &words) const = 0;
 
@@ -168,16 +176,22 @@ class CBrowserBox {
 
   //---
 
+  virtual bool renderChildren() const = 0;
+
   void render(int dx, int dy);
+
+  void renderWords(const Words &words, const CTextBox &box);
+
+  void renderLineWords (const Words &words, const CTextBox &box);
+  void renderFloatWords(const Words &words, const CTextBox &box);
+
+  bool hasFloatWords(const Words &words) const;
 
   virtual void draw(const CTextBox &box) = 0;
 
   //---
 
   void boxAt(const CIPoint2D &p, CBrowserBox* &box, double &area);
-
- private:
-  void calcHeightForWidth(CTextBox &box);
 
  private:
   typedef std::vector<CBrowserBox *> Boxes;

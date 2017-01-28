@@ -2,8 +2,8 @@
 #include <CBrowserWindow.h>
 
 CBrowserBreak::
-CBrowserBreak(CBrowserWindow *window, const CBrowserBreakData &data) :
- CBrowserObject(window, CHtmlTagId::BR), data_(data)
+CBrowserBreak(CBrowserWindow *window) :
+ CBrowserObject(window, CHtmlTagId::BR)
 {
   setDisplay(Display::INLINE);
 }

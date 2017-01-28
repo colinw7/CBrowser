@@ -7,7 +7,8 @@
 
 class CBrowserImage : public CBrowserObject {
  public:
-  CBrowserImage(CBrowserWindow *window, const CBrowserImageData &data);
+  explicit CBrowserImage(CBrowserWindow *window);
+
  ~CBrowserImage();
 
   const CImagePtr &image() const { return image_; }

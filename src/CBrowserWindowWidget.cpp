@@ -1,4 +1,5 @@
 #include <CBrowserWindowWidget.h>
+#include <CBrowserScrolledWindow.h>
 #include <CBrowserGraphics.h>
 #include <CBrowserWindow.h>
 #include <CBrowserIFace.h>
@@ -10,8 +11,8 @@
 #include <QMouseEvent>
 
 CBrowserWindowWidget::
-CBrowserWindowWidget(CBrowserIFace *iface) :
- iface_(iface)
+CBrowserWindowWidget(CBrowserScrolledWindow *window) :
+ window_(window)
 {
   setObjectName("canvas");
 
@@ -26,7 +27,7 @@ void
 CBrowserWindowWidget::
 paintEvent(QPaintEvent *)
 {
-  iface_->draw();
+  window_->draw();
 }
 
 void
@@ -40,11 +41,11 @@ resizeEvent(QResizeEvent *)
 
   ignore_redraw = true;
 
-  /*---------------*/
+  //---
 
-  iface_->resize();
+  window_->resize();
 
-  /*---------------*/
+  //---
 
   ignore_redraw = false;
 }
@@ -56,7 +57,7 @@ mousePressEvent(QMouseEvent *e)
   int x = e->x();
   int y = e->y();
 
-  iface_->mousePress(x, y);
+  window_->mousePress(x, y);
 }
 
 void
@@ -66,7 +67,7 @@ mouseMoveEvent(QMouseEvent *e)
   int x = e->x();
   int y = e->y();
 
-  iface_->mouseMotion(x, y);
+  window_->mouseMotion(x, y);
 }
 
 void
@@ -76,7 +77,14 @@ mouseReleaseEvent(QMouseEvent *e)
   int x = e->x();
   int y = e->y();
 
-  iface_->mouseRelease(x, y);
+  window_->mouseRelease(x, y);
+}
+
+void
+CBrowserWindowWidget::
+wheelEvent(QWheelEvent *event)
+{
+  window_->mouseWheel(event->delta());
 }
 
 void
@@ -240,7 +248,7 @@ void
 CBrowserWindowWidget::
 drawBorder(int x, int y, int width, int height, CBrowserBorderType type)
 {
-  CBrowserWindow *window = iface_->getWindow();
+  CBrowserWindow *window = window_->getWindow();
 
   graphics_->drawBorder(x, y, width, height, CPen(window->getBgColor()), type);
 }
@@ -249,7 +257,7 @@ void
 CBrowserWindowWidget::
 drawHRule(int x1, int x2, int y, int height)
 {
-  CBrowserWindow *window = iface_->getWindow();
+  CBrowserWindow *window = window_->getWindow();
 
   graphics_->drawHRule(x1, x2, y, height, CPen(window->getBgColor()));
 }

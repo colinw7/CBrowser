@@ -33,15 +33,15 @@ getInlineWords(Words &words) const
   bool selected = isHierSelected();
 
   CFontPtr                   font = hierFont();
-  CPen                       pen  = hierFgColor();
+  CPen                       pen  = CPen(hierFgColor());
   CBrowserObject::WhiteSpace ws   = hierWhiteSpace();
 
   // whitespace:
   //  normal  : collapse whitespace, suppress line break (wrapping) and break lines to fix in box
   //  nowrap  : collapse whitespace, break lines at \n or <br>
   //  pre     : keep whitespace, break lines at \n or <br>
-  //  pre-wrap: keep whitespace, break lines at \n or <br>, break lines to fix in box
-  //  pre-line: collapse whitespace, break lines at \n or <br>, break lines to fix in box
+  //  pre-line: collapse whitespace, break lines at \n or <br>, break lines to fit in box
+  //  pre-wrap: keep whitespace, break lines at \n or <br>, break lines to fit in box
   bool keep_newline (ws == CBrowserObject::WhiteSpace::PRE ||
                      ws == CBrowserObject::WhiteSpace::PRE_LINE ||
                      ws == CBrowserObject::WhiteSpace::PRE_WRAP);
@@ -52,35 +52,13 @@ getInlineWords(Words &words) const
   bool text_wrap = (ws != CBrowserObject::WhiteSpace::NOWRAP &&
                     ws != CBrowserObject::WhiteSpace::PRE);
 
-  // split text into words
-  if      (! keep_newline && ! keep_space && text_wrap) {
-    int i = 0;
+  //---
 
-    // skip space at start
-    if (text_[i] != '\0' && isspace(text_[i])) {
-      while (text_[i] != '\0' && isspace(text_[i]))
-        i++;
+  int i = 0;
 
-      words.push_back(CBrowserWord(th, " ", pen, font, /*break*/false, selected));
-    }
-
-    while (text_[i] != '\0') {
-      // get word
-      int j = i;
-
-      while (text_[i] != '\0' && ! isspace(text_[i]))
-        i++;
-
-      if (i - j == 0)
-        break;
-
-      std::string word = text_.substr(j, i - j);
-
-      words.push_back(CBrowserWord(th, word, pen, font, /*break*/false, selected));
-
-      //--
-
-      // skip space after word
+  if      (! keep_space) {
+    if (! keep_newline) {
+      // collapse space and newlines at start
       if (text_[i] != '\0' && isspace(text_[i])) {
         while (text_[i] != '\0' && isspace(text_[i]))
           i++;
@@ -88,38 +66,111 @@ getInlineWords(Words &words) const
         words.push_back(CBrowserWord(th, " ", pen, font, /*break*/false, selected));
       }
     }
-  }
-  // no split
-  else if (keep_newline && ! text_wrap) {
-    words.push_back(CBrowserWord(th, text_, pen, font, /*break*/false, selected));
-  }
-  // split text into lines
-  else {
-    int i = 0;
+    else {
+      // collapse space at start and break line
+      bool has_space = false;
 
-    while (text_[i] != '\0') {
-      while (text_[i] == '\n') {
-        words.push_back(CBrowserWord(th, "", pen, font, /*break*/true, selected));
+      while (text_[i] != '\0' && isspace(text_[i])) {
+        if (text_[i] == '\n') {
+          words.push_back(CBrowserWord(th, "", pen, font, /*break*/true, selected));
+          has_space = false;
+        }
+        else
+          has_space = true;
 
         i++;
       }
 
-      // get line
+      if (has_space)
+        words.push_back(CBrowserWord(th, " ", pen, font, /*break*/false, selected));
+    }
+  }
+  else if (text_wrap) {
+    // allow wrap for space (word) at start
+    if (text_[i] != '\0' && isspace(text_[i])) {
       int j = i;
 
+      while (text_[i] != '\0' && isspace(text_[i]))
+        i++;
+
+      std::string word = text_.substr(j, i - j);
+
+      words.push_back(CBrowserWord(th, word, pen, font, /*break*/false, selected));
+    }
+  }
+
+  while (text_[i] != '\0') {
+    int j = i;
+
+    bool breakup = false;
+
+    // get word
+    if (! keep_space || text_wrap) {
+      // word to next space
+      while (text_[i] != '\0' && ! isspace(text_[i]))
+        i++;
+    }
+    else {
+      // word to new line
       while (text_[i] != '\0' && text_[i] != '\n')
         i++;
 
-      if (i > j) {
-        std::string line = text_.substr(j, i - j);
+      if (text_[i] == '\n') {
+        breakup = true;
 
-        if (text_[i] == '\n') {
-          words.push_back(CBrowserWord(th, line, pen, font, /*break*/true, selected));
+        ++i;
+      }
+    }
 
-          ++i;
+    if (i - j == 0)
+      break;
+
+    std::string word = text_.substr(j, i - j);
+
+    words.push_back(CBrowserWord(th, word, pen, font, breakup, selected));
+
+    //--
+
+    if      (! keep_space) {
+      if (! keep_newline) {
+        // collapse space and newlines after word
+        if (text_[i] != '\0' && isspace(text_[i])) {
+          while (text_[i] != '\0' && isspace(text_[i]))
+            i++;
+
+          words.push_back(CBrowserWord(th, " ", pen, font, /*break*/false, selected));
         }
-        else
-          words.push_back(CBrowserWord(th, line, pen, font, /*break*/false, selected));
+      }
+      else {
+        // collapse space after word and break at newlines
+        bool has_space = false;
+
+        while (text_[i] != '\0' && isspace(text_[i])) {
+          if (text_[i] == '\n') {
+            words.push_back(CBrowserWord(th, "", pen, font, /*break*/true, selected));
+            has_space = false;
+          }
+          else
+            has_space = true;
+
+          i++;
+        }
+
+        if (has_space)
+          words.push_back(CBrowserWord(th, " ", pen, font, /*break*/false, selected));
+      }
+    }
+    else if (text_wrap) {
+      // allow wrap for space (word) in line
+      if (text_[i] != '\0' && isspace(text_[i])) {
+        int j = i;
+
+        while (text_[i] != '\0' && isspace(text_[i]))
+          i++;
+
+        std::string word = text_.substr(j, i - j);
+
+        words.push_back(CBrowserWord(th, word, pen, font, /*break*/false, selected));
       }
     }
   }

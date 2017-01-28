@@ -18,7 +18,7 @@ class CBrowserBackgroundImage {
  public:
   CBrowserBackgroundImage() { }
 
-  CBrowserBackgroundImage(const std::string &str) :
+  explicit CBrowserBackgroundImage(const std::string &str) :
    str_(str) {
     std::string lstr = CStrUtil::toLower(str);
 
@@ -76,7 +76,7 @@ class CBrowserBackground {
  public:
   CBrowserBackground() { }
 
-  CBrowserBackground(const std::string &str) :
+  explicit CBrowserBackground(const std::string &str) :
    str_(str) {
   }
 

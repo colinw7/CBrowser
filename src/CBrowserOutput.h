@@ -13,7 +13,7 @@ class CHtmlToken;
 
 class CBrowserOutput {
  public:
-  CBrowserOutput(CBrowserWindow *window);
+  explicit CBrowserOutput(CBrowserWindow *window);
 
   void processTokens(const CHtmlParserTokens &tokens);
 

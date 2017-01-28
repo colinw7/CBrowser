@@ -9,9 +9,7 @@
 CBrowserDocument::
 CBrowserDocument(CBrowserWindow *window)
 {
-  url_    = "";
   window_ = window;
-  title_  = "";
 
   setBgColor   ("#c0c0c0");
   setFgColor   ("#000000");

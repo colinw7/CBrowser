@@ -23,12 +23,19 @@ main(int argc, char **argv)
   browser->setUseAlt(use_alt);
   browser->setOldLayout(old);
 
-  std::string fileName;
+  if (argc > 1) {
+    for (int i = 1; i < argc; ++i) {
+      std::string fileName = argv[i];
 
-  if (argc > 1)
-    fileName = argv[1];
-
-  browser->openDocument(fileName);
+      if (i == 1)
+        browser->setDocument(fileName);
+      else
+        browser->addDocument(fileName);
+    }
+  }
+  else {
+    browser->setDocument("");
+  }
 
   if (batch) {
     QTimer *timer = new QTimer;

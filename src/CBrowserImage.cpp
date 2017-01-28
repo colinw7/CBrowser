@@ -9,8 +9,8 @@
 #include <cstring>
 
 CBrowserImage::
-CBrowserImage(CBrowserWindow *window, const CBrowserImageData &data) :
- CBrowserObject(window, CHtmlTagId::IMG), data_(data)
+CBrowserImage(CBrowserWindow *window) :
+ CBrowserObject(window, CHtmlTagId::IMG)
 {
   setDisplay(CBrowserObject::Display::INLINE);
 
@@ -51,7 +51,7 @@ init()
   //---
 
   std::vector<std::string> strs = {{
-    "src", "align", "border", "width", "height", "usemap", "hspace", "vspace", "alt" }};
+    "src", "border", "width", "height", "usemap", "hspace", "vspace", "alt" }};
 
   addProperties(strs);
 
@@ -66,15 +66,26 @@ setNameValue(const std::string &name, const std::string &value)
   std::string lvalue = CStrUtil::toLower(value);
 
   if      (lname == "align") {
-    if      (lvalue == "top"      ) data_.align = CBrowserImageAlign::TOP;
-    else if (lvalue == "middle"   ) data_.align = CBrowserImageAlign::MIDDLE;
-    else if (lvalue == "bottom"   ) data_.align = CBrowserImageAlign::BOTTOM;
-    else if (lvalue == "left"     ) data_.align = CBrowserImageAlign::LEFT;
-    else if (lvalue == "right"    ) data_.align = CBrowserImageAlign::RIGHT;
-    else if (lvalue == "texttop"  ) data_.align = CBrowserImageAlign::TEXTTOP;
-    else if (lvalue == "absmiddle") data_.align = CBrowserImageAlign::ABSMIDDLE;
-    else if (lvalue == "absbottom") data_.align = CBrowserImageAlign::ABSBOTTOM;
-    else window_->displayError("Illegal 'img' Align '%s'\n", value.c_str());
+    // left/right is float
+    // middle, top, bottom is vertical-align
+    if      (lvalue == "left" )
+      float_ = CBrowserFloat(CBrowserFloat::Type::LEFT );
+    else if (lvalue == "right")
+      float_ = CBrowserFloat(CBrowserFloat::Type::RIGHT);
+    else if (lvalue == "top")
+      textProp_.setVerticalAlign(CBrowserTextVAlign(CBrowserTextVAlign::TOP));
+    else if (lvalue == "middle")
+      textProp_.setVerticalAlign(CBrowserTextVAlign(CBrowserTextVAlign::MIDDLE));
+    else if (lvalue == "bottom")
+      textProp_.setVerticalAlign(CBrowserTextVAlign(CBrowserTextVAlign::BOTTOM));
+    else if (lvalue == "texttop")
+      textProp_.setVerticalAlign(CBrowserTextVAlign(CBrowserTextVAlign::TEXT_TOP));
+    else if (lvalue == "absmiddle")
+      textProp_.setVerticalAlign(CBrowserTextVAlign(CBrowserTextVAlign::ABS_MIDDLE));
+    else if (lvalue == "absbottom")
+      textProp_.setVerticalAlign(CBrowserTextVAlign(CBrowserTextVAlign::ABS_BOTTOM));
+    else
+      window_->displayError("Illegal 'img' Align '%s'\n", value.c_str());
   }
   else if (lname == "alt") {
     data_.alt = value;
@@ -109,8 +120,6 @@ setNameValue(const std::string &name, const std::string &value)
   }
   else if (lname == "ismap") {
     //ismap = true;
-
-    std::string value = value;
 
     if (value != "")
       window_->displayError("No Value needed for IsMap\n");
@@ -154,7 +163,14 @@ getInlineWords(Words &words) const
 {
   CBrowserImage *th = const_cast<CBrowserImage *>(this);
 
-  words.push_back(CBrowserWord(th, image_, isHierSelected()));
+  CBrowserWord word(th, image_, isHierSelected());
+
+  if      (float_.type() == CBrowserFloat::Type::LEFT)
+    word.setFloat(CBrowserWord::Float::LEFT);
+  else if (float_.type() == CBrowserFloat::Type::RIGHT)
+    word.setFloat(CBrowserWord::Float::RIGHT);
+
+  words.push_back(word);
 }
 
 std::string
@@ -164,7 +180,6 @@ propertyValue(int i) const
   const std::string &name = propertyName(i);
 
   if      (name == "src"   ) return CBrowserProperty::toString(data_.src);
-  else if (name == "align" ) return CBrowserProperty::toString(data_.align);
   else if (name == "border") return CBrowserProperty::toString(data_.border);
   else if (name == "width" ) return CBrowserProperty::toString(data_.width);
   else if (name == "height") return CBrowserProperty::toString(data_.height);
@@ -188,10 +203,13 @@ calcRegion() const
   int width  = image_->getWidth () + 2*hspace;
   int height = image_->getHeight() + 2*vspace;
 
-  if      (data_.align == CBrowserImageAlign::TOP || data_.align == CBrowserImageAlign::TEXTTOP)
+  CBrowserTextVAlign::Type valign = textProp_.verticalAlign().type();
+
+  if      (valign == CBrowserTextVAlign::Type::TOP ||
+           valign == CBrowserTextVAlign::Type::TEXT_TOP)
     return CBrowserRegion(width, vspace, height - vspace);
-  else if (data_.align == CBrowserImageAlign::MIDDLE ||
-           data_.align == CBrowserImageAlign::ABSMIDDLE)
+  else if (valign == CBrowserTextVAlign::Type::MIDDLE ||
+           valign == CBrowserTextVAlign::Type::ABS_MIDDLE)
     return CBrowserRegion(width, (height + 1)/2, height/2);
   else
     return CBrowserRegion(width, height - vspace, vspace);
@@ -213,13 +231,15 @@ draw(const CTextBox &region)
   int x1 = region.x() + hspace;
   int y1 = region.y() + vspace;
 
-  if      (data_.align == CBrowserImageAlign::TOP   )
+  CBrowserTextVAlign::Type valign = textProp_.verticalAlign().type();
+
+  if      (valign == CBrowserTextVAlign::Type::TOP)
     y1 += region.ascent();
-  else if (data_.align == CBrowserImageAlign::MIDDLE)
+  else if (valign == CBrowserTextVAlign::Type::MIDDLE)
     y1 += region.ascent() - image_->getHeight()/2;
-  else if (data_.align == CBrowserImageAlign::ABSMIDDLE)
+  else if (valign == CBrowserTextVAlign::Type::ABS_MIDDLE)
     y1 += (region.height() - image_->getHeight())/2;
-  else if (data_.align == CBrowserImageAlign::ABSBOTTOM)
+  else if (valign == CBrowserTextVAlign::Type::ABS_BOTTOM)
     y1 += region.descent();
   else
     y1 += 0;

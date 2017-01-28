@@ -9,14 +9,14 @@ class CBrowserBox;
 
 class CBrowserLayout {
  public:
-  CBrowserLayout(CBrowserWindow *window);
+  explicit CBrowserLayout(CBrowserWindow *window);
 
   void startBox(CBrowserBox *box);
   void endBox  (CBrowserBox *box);
 
   CBrowserBox *currentBox() const;
 
-  void layout(const CIBBox2D &bbox);
+  void layout(CBrowserBox *root, const CIBBox2D &bbox);
 
   void render(int dx=0, int dy=0);
 

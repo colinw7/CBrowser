@@ -5,7 +5,7 @@
 
 class CBrowserCenter : public CBrowserObject {
  public:
-  CBrowserCenter(CBrowserWindow *window);
+  explicit CBrowserCenter(CBrowserWindow *window);
 };
 
 #endif

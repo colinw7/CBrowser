@@ -6,7 +6,7 @@
 
 class CBrowserTitle : public CBrowserObject {
  public:
-  CBrowserTitle(CBrowserWindow *window);
+  explicit CBrowserTitle(CBrowserWindow *window);
 };
 
 #endif

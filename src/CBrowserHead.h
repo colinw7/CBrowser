@@ -5,7 +5,7 @@
 
 class CBrowserHead : public CBrowserObject {
  public:
-  CBrowserHead(CBrowserWindow *window);
+  explicit CBrowserHead(CBrowserWindow *window);
 
   void init();
 

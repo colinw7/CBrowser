@@ -6,7 +6,7 @@
 
 class CBrowserHtml : public CBrowserObject {
  public:
-  CBrowserHtml(CBrowserWindow *window);
+  explicit CBrowserHtml(CBrowserWindow *window);
 
   void init();
 

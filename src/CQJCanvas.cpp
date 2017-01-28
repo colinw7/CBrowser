@@ -50,7 +50,7 @@ CQJCanvas(CJavaScript *js, CBrowserCanvas *canvas) :
 {
   objType_->addObjFunction(js, "getContext", objType_);
 
-  context2D_ = CJValueP(new CQJCanvasContext2D(js, this));
+  context2D_ = CJValueP(new CQJCanvasContext2D(js_, this));
 }
 
 CJValueP

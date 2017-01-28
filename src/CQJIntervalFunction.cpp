@@ -1,11 +1,10 @@
 #include <CQJIntervalFunction.h>
 #include <CQJWindow.h>
-#include <CBrowserJS.h>
 #include <CJavaScript.h>
 
 CQJSetInterval::
-CQJSetInterval(CJavaScript *js) :
- CJFunctionBase(js, "setInterval")
+CQJSetInterval(CJavaScript *js, CQJWindowP window) :
+ CJFunctionBase(js, "setInterval"), window_(window)
 {
 }
 
@@ -25,9 +24,7 @@ exec(CJavaScript *js, const Values &values)
   if (fnValue->type() == CJToken::Type::Function) {
     CJFunctionBaseP timerFn = CJValue::cast<CJFunctionBase>(fnValue);
 
-    CQJWindow *window = CBrowserJSInst->jsWindow()->castP<CQJWindow>();
-
-    timer = window->addTimer(timerFn, t);
+    timer = window_->addTimer(timerFn, t);
   }
 
 #if 0
@@ -43,8 +40,8 @@ exec(CJavaScript *js, const Values &values)
 //------
 
 CQJClearInterval::
-CQJClearInterval(CJavaScript *js) :
- CJFunctionBase(js, "clearInterval")
+CQJClearInterval(CJavaScript *js, CQJWindowP window) :
+ CJFunctionBase(js, "clearInterval"), window_(window)
 {
 }
 
@@ -57,9 +54,7 @@ exec(CJavaScript *, const Values &values)
 
   long timer = values[0]->toInteger().getValue(0);
 
-  CQJWindow *window = CBrowserJSInst->jsWindow()->castP<CQJWindow>();
-
-  window->removeTimer(timer);
+  window_->removeTimer(timer);
 
   //js->clearInterval(timer);
 

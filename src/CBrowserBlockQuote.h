@@ -5,7 +5,7 @@
 
 class CBrowserBlockQuote : public CBrowserObject {
  public:
-  CBrowserBlockQuote(CBrowserWindow *window);
+  explicit CBrowserBlockQuote(CBrowserWindow *window);
 };
 
 #endif

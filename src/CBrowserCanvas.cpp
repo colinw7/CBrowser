@@ -9,8 +9,8 @@
 #include <cstring>
 
 CBrowserCanvas::
-CBrowserCanvas(CBrowserWindow *window, const CBrowserCanvasData &data) :
- CBrowserObject(window, CHtmlTagId::CANVAS, data), data_(data)
+CBrowserCanvas(CBrowserWindow *window) :
+ CBrowserObject(window, CHtmlTagId::CANVAS)
 {
 }
 

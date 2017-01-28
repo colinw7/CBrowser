@@ -6,7 +6,7 @@
 
 class CBrowserBStyle : public CBrowserObject {
  public:
-  CBrowserBStyle(CBrowserWindow *window);
+  explicit CBrowserBStyle(CBrowserWindow *window);
  ~CBrowserBStyle();
 };
 
@@ -14,7 +14,7 @@ class CBrowserBStyle : public CBrowserObject {
 
 class CBrowserBigStyle : public CBrowserObject {
  public:
-  CBrowserBigStyle(CBrowserWindow *window);
+  explicit CBrowserBigStyle(CBrowserWindow *window);
  ~CBrowserBigStyle();
 };
 
@@ -22,7 +22,7 @@ class CBrowserBigStyle : public CBrowserObject {
 
 class CBrowserBlinkStyle : public CBrowserObject {
  public:
-  CBrowserBlinkStyle(CBrowserWindow *window);
+  explicit CBrowserBlinkStyle(CBrowserWindow *window);
  ~CBrowserBlinkStyle();
 };
 
@@ -30,7 +30,7 @@ class CBrowserBlinkStyle : public CBrowserObject {
 
 class CBrowserDfnStyle : public CBrowserObject {
  public:
-  CBrowserDfnStyle(CBrowserWindow *window);
+  explicit CBrowserDfnStyle(CBrowserWindow *window);
  ~CBrowserDfnStyle();
 };
 
@@ -38,7 +38,7 @@ class CBrowserDfnStyle : public CBrowserObject {
 
 class CBrowserCiteStyle : public CBrowserObject {
  public:
-  CBrowserCiteStyle(CBrowserWindow *window);
+  explicit CBrowserCiteStyle(CBrowserWindow *window);
  ~CBrowserCiteStyle();
 };
 
@@ -46,7 +46,7 @@ class CBrowserCiteStyle : public CBrowserObject {
 
 class CBrowserEmStyle : public CBrowserObject {
  public:
-  CBrowserEmStyle(CBrowserWindow *window);
+  explicit CBrowserEmStyle(CBrowserWindow *window);
  ~CBrowserEmStyle();
 };
 
@@ -54,7 +54,7 @@ class CBrowserEmStyle : public CBrowserObject {
 
 class CBrowserFontStyleObj : public CBrowserObject {
  public:
-  CBrowserFontStyleObj(CBrowserWindow *window, const CBrowserFontData &data);
+  explicit CBrowserFontStyleObj(CBrowserWindow *window);
  ~CBrowserFontStyleObj();
 
   void init();
@@ -70,7 +70,7 @@ class CBrowserFontStyleObj : public CBrowserObject {
 
 class CBrowserIStyle : public CBrowserObject {
  public:
-  CBrowserIStyle(CBrowserWindow *window);
+  explicit CBrowserIStyle(CBrowserWindow *window);
  ~CBrowserIStyle();
 };
 
@@ -78,7 +78,7 @@ class CBrowserIStyle : public CBrowserObject {
 
 class CBrowserSmallStyle : public CBrowserObject {
  public:
-  CBrowserSmallStyle(CBrowserWindow *window);
+  explicit CBrowserSmallStyle(CBrowserWindow *window);
  ~CBrowserSmallStyle();
 };
 
@@ -86,7 +86,7 @@ class CBrowserSmallStyle : public CBrowserObject {
 
 class CBrowserStrikeStyle : public CBrowserObject {
  public:
-  CBrowserStrikeStyle(CBrowserWindow *window);
+  explicit CBrowserStrikeStyle(CBrowserWindow *window);
  ~CBrowserStrikeStyle();
 };
 
@@ -94,7 +94,7 @@ class CBrowserStrikeStyle : public CBrowserObject {
 
 class CBrowserStrongStyle : public CBrowserObject {
  public:
-  CBrowserStrongStyle(CBrowserWindow *window);
+  explicit CBrowserStrongStyle(CBrowserWindow *window);
  ~CBrowserStrongStyle();
 };
 
@@ -102,7 +102,7 @@ class CBrowserStrongStyle : public CBrowserObject {
 
 class CBrowserSubStyle : public CBrowserObject {
  public:
-  CBrowserSubStyle(CBrowserWindow *window);
+  explicit CBrowserSubStyle(CBrowserWindow *window);
  ~CBrowserSubStyle();
 };
 
@@ -110,7 +110,7 @@ class CBrowserSubStyle : public CBrowserObject {
 
 class CBrowserSupStyle : public CBrowserObject {
  public:
-  CBrowserSupStyle(CBrowserWindow *window);
+  explicit CBrowserSupStyle(CBrowserWindow *window);
  ~CBrowserSupStyle();
 };
 
@@ -118,7 +118,7 @@ class CBrowserSupStyle : public CBrowserObject {
 
 class CBrowserUStyle : public CBrowserObject {
  public:
-  CBrowserUStyle(CBrowserWindow *window);
+  explicit CBrowserUStyle(CBrowserWindow *window);
  ~CBrowserUStyle();
 };
 
@@ -126,7 +126,7 @@ class CBrowserUStyle : public CBrowserObject {
 
 class CBrowserVarStyle : public CBrowserObject {
  public:
-  CBrowserVarStyle(CBrowserWindow *window);
+  explicit CBrowserVarStyle(CBrowserWindow *window);
  ~CBrowserVarStyle();
 };
 

@@ -82,10 +82,11 @@ enum class CBrowserCSSType {
 
 class CBrowserCanvas;
 class CQJCanvasWidget;
+
+class CBrowserAnchor;
 class CBrowserAnchorLink;
 class CBrowserDocument;
 class CBrowserFileMgr;
-class CBrowserFontFace;
 class CBrowserForm;
 class CBrowserFormInput;
 class CBrowserFormSelect;

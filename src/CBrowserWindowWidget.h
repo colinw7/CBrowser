@@ -8,9 +8,11 @@
 #include <CRGBA.h>
 #include <QWidget>
 
+class CBrowserScrolledWindow;
+
 class CBrowserWindowWidget : public QWidget {
  public:
-  CBrowserWindowWidget(CBrowserIFace *iface);
+  explicit CBrowserWindowWidget(CBrowserScrolledWindow *window);
 
   void paintEvent(QPaintEvent *) override;
   void resizeEvent(QResizeEvent *) override;
@@ -18,6 +20,8 @@ class CBrowserWindowWidget : public QWidget {
   void mousePressEvent(QMouseEvent *e) override;
   void mouseMoveEvent(QMouseEvent *e) override;
   void mouseReleaseEvent(QMouseEvent *e) override;
+
+  void wheelEvent(QWheelEvent *event);
 
   void keyPressEvent(QKeyEvent *e) override;
   void keyReleaseEvent(QKeyEvent *e) override;
@@ -56,8 +60,8 @@ class CBrowserWindowWidget : public QWidget {
   void drawHRule(int x1, int x2, int y, int height);
 
  private:
-  CBrowserIFace    *iface_ { nullptr };
-  CBrowserGraphics *graphics_ { nullptr };
+  CBrowserScrolledWindow *window_ { nullptr };
+  CBrowserGraphics       *graphics_ { nullptr };
 };
 
 #endif

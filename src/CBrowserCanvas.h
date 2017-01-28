@@ -13,7 +13,8 @@
 
 class CBrowserCanvas : public CBrowserObject {
  public:
-  CBrowserCanvas(CBrowserWindow *window, const CBrowserCanvasData &data);
+  explicit CBrowserCanvas(CBrowserWindow *window);
+
  ~CBrowserCanvas();
 
   CQJCanvasWidget *canvas() const { return canvas_; }
@@ -24,6 +25,7 @@ class CBrowserCanvas : public CBrowserObject {
   void init() override;
 
   bool layoutChildren() const override { return false; }
+  bool renderChildren() const override { return false; }
 
   void setNameValue(const std::string &name, const std::string &value) override;
 

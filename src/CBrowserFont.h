@@ -5,31 +5,6 @@
 #include <CBrowserUnitValue.h>
 #include <CFont.h>
 
-class CBrowserFontFace {
- public:
-  CBrowserFontFace(CBrowserWindow *window, const std::string &face);
- ~CBrowserFontFace();
-
-  std::string getFace() const { return face_; }
-
-  CFontPtr getNormalFont    (int i) { return normal_fonts_[i]; }
-  CFontPtr getBoldFont      (int i) { return bold_fonts_  [i]; }
-  CFontPtr getItalicFont    (int i) { return italic_fonts_[i]; }
-  CFontPtr getBoldItalicFont(int i) { return boldi_fonts_ [i]; }
-
- private:
-  void loadFonts(CBrowserWindow *window);
-
- private:
-  std::string face_;
-  CFontPtr    normal_fonts_[7];
-  CFontPtr    bold_fonts_  [7];
-  CFontPtr    italic_fonts_[7];
-  CFontPtr    boldi_fonts_ [7];
-};
-
-//---
-
 class CBrowserFontFamily {
  public:
   enum class Type {
@@ -42,7 +17,7 @@ class CBrowserFontFamily {
  public:
   CBrowserFontFamily() { }
 
-  CBrowserFontFamily(const std::string &str) :
+  explicit CBrowserFontFamily(const std::string &str) :
    str_(str) {
     std::string lstr = CStrUtil::toLower(str);
 
@@ -99,7 +74,7 @@ class CBrowserFontSize {
  public:
   CBrowserFontSize() { }
 
-  CBrowserFontSize(const std::string &str) :
+  explicit CBrowserFontSize(const std::string &str) :
    str_(str) {
     std::string lstr = CStrUtil::toLower(str);
 
@@ -144,9 +119,8 @@ class CBrowserFontSize {
     }
   }
 
-  CBrowserFontSize(const CBrowserUnitValue &size) {
-    type_  = Type::VALUE;
-    value_ = size;
+  explicit CBrowserFontSize(const CBrowserUnitValue &value) :
+    type_(Type::VALUE), value_(value) {
   }
 
   CBrowserFontSize(const Type &type, int n=1) :
@@ -228,7 +202,7 @@ class CBrowserFontSizeAdjust {
  public:
   CBrowserFontSizeAdjust() { }
 
-  CBrowserFontSizeAdjust(const std::string &str) :
+  explicit CBrowserFontSizeAdjust(const std::string &str) :
    str_(str) {
     std::string lstr = CStrUtil::toLower(str);
 
@@ -280,12 +254,12 @@ class CBrowserFontStretch {
  public:
   CBrowserFontStretch() { }
 
-  CBrowserFontStretch(const std::string &str) :
+  explicit CBrowserFontStretch(const std::string &str) :
    str_(str) {
     fromString(str_, type_);
   }
 
-  CBrowserFontStretch(Type type) :
+  explicit CBrowserFontStretch(Type type) :
    type_(type) {
     toString(type_, str_);
   }
@@ -347,12 +321,12 @@ class CBrowserFontStyle {
  public:
   CBrowserFontStyle() { }
 
-  CBrowserFontStyle(const std::string &str) :
+  explicit CBrowserFontStyle(const std::string &str) :
    str_(str) {
     fromString(str_, type_);
   }
 
-  CBrowserFontStyle(Type type) :
+  explicit CBrowserFontStyle(Type type) :
    type_(type) {
     toString(type_, str_);
   }
@@ -401,7 +375,7 @@ class CBrowserFontVariant {
  public:
   CBrowserFontVariant() { }
 
-  CBrowserFontVariant(const std::string &str) :
+  explicit CBrowserFontVariant(const std::string &str) :
    str_(str) {
     std::string lstr = CStrUtil::toLower(str);
 
@@ -447,7 +421,7 @@ class CBrowserFontWeight {
  public:
   CBrowserFontWeight() { }
 
-  CBrowserFontWeight(const std::string &str) :
+  explicit CBrowserFontWeight(const std::string &str) :
    str_(str) {
     std::string lstr = CStrUtil::toLower(str);
 

@@ -27,11 +27,13 @@ class CQJHtmlObj : public CQJObject {
   CQJHtmlObj(CJavaScript *js, CBrowserObject *htmlObj);
   CQJHtmlObj(CJavaScript *js, CBrowserObject *htmlObj, const CJObjTypeP &type);
 
+  virtual ~CQJHtmlObj() { }
+
   CJValue *dup(CJavaScript *js) const override { return new CQJHtmlObj(js, htmlObj_); }
 
   CBrowserObject *htmlObj() const { return htmlObj_; }
 
-  void init();
+  void init() override;
 
   CJValueP getProperty(CJavaScript *js, const std::string &name) const;
 

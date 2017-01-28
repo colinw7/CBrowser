@@ -18,7 +18,7 @@ class CBrowserPosition {
  public:
   CBrowserPosition() { }
 
-  CBrowserPosition(const std::string &str) :
+  explicit CBrowserPosition(const std::string &str) :
    type_(stringToType(str)) {
   }
 
@@ -37,12 +37,12 @@ class CBrowserPosition {
   static Type stringToType(const std::string &str) {
     std::string lstr = CStrUtil::toLower(str);
 
-    if (str == "static"  ) return Type::STATIC;
-    if (str == "absolute") return Type::ABSOLUTE;
-    if (str == "fixed"   ) return Type::FIXED;
-    if (str == "relative") return Type::RELATIVE;
-    if (str == "initial" ) return Type::INITIAL;
-    if (str == "inherit" ) return Type::INHERIT;
+    if (lstr == "static"  ) return Type::STATIC;
+    if (lstr == "absolute") return Type::ABSOLUTE;
+    if (lstr == "fixed"   ) return Type::FIXED;
+    if (lstr == "relative") return Type::RELATIVE;
+    if (lstr == "initial" ) return Type::INITIAL;
+    if (lstr == "inherit" ) return Type::INHERIT;
 
     return Type::INVALID;
   }

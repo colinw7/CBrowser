@@ -18,7 +18,7 @@ class CBrowserClear {
  public:
   CBrowserClear() { }
 
-  CBrowserClear(const std::string &str) :
+  explicit CBrowserClear(const std::string &str) :
    type_(stringToType(str)) {
   }
 
@@ -29,12 +29,12 @@ class CBrowserClear {
   static Type stringToType(const std::string &str) {
     std::string lstr = CStrUtil::toLower(str);
 
-    if (str == "none"   ) return Type::NONE;
-    if (str == "left"   ) return Type::LEFT;
-    if (str == "right"  ) return Type::RIGHT;
-    if (str == "both"   ) return Type::BOTH;
-    if (str == "initial") return Type::INITIAL;
-    if (str == "inherit") return Type::INHERIT;
+    if (lstr == "none"   ) return Type::NONE;
+    if (lstr == "left"   ) return Type::LEFT;
+    if (lstr == "right"  ) return Type::RIGHT;
+    if (lstr == "both"   ) return Type::BOTH;
+    if (lstr == "initial") return Type::INITIAL;
+    if (lstr == "inherit") return Type::INHERIT;
 
     return Type::INVALID;
   }

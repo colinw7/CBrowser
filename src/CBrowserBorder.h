@@ -55,15 +55,15 @@ class CBrowserBorder {
   static Style stringToStyle(const std::string &str) {
     std::string lstr = CStrUtil::toLower(str);
 
-    if (str == "dotted") return Style::DOTTED;
-    if (str == "dashed") return Style::DASHED;
-    if (str == "solid" ) return Style::SOLID;
-    if (str == "double") return Style::DOUBLE;
-    if (str == "groove") return Style::GROOVE;
-    if (str == "ridge" ) return Style::RIDGE;
-    if (str == "inset" ) return Style::INSET;
-    if (str == "outset") return Style::OUTSET;
-    if (str == "hidden") return Style::HIDDEN;
+    if (lstr == "dotted") return Style::DOTTED;
+    if (lstr == "dashed") return Style::DASHED;
+    if (lstr == "solid" ) return Style::SOLID;
+    if (lstr == "double") return Style::DOUBLE;
+    if (lstr == "groove") return Style::GROOVE;
+    if (lstr == "ridge" ) return Style::RIDGE;
+    if (lstr == "inset" ) return Style::INSET;
+    if (lstr == "outset") return Style::OUTSET;
+    if (lstr == "hidden") return Style::HIDDEN;
 
     return Style::NONE;
   }

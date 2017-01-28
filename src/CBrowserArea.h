@@ -5,7 +5,7 @@
 
 class CBrowserArea : public CBrowserObject {
  public:
-  CBrowserArea(CBrowserWindow *window);
+  explicit CBrowserArea(CBrowserWindow *window);
 
   void init();
 

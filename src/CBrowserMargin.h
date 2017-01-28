@@ -7,7 +7,7 @@ class CBrowserMargin {
  public:
   CBrowserMargin() { }
 
-  CBrowserMargin(const CBrowserUnitValue &v) :
+  explicit CBrowserMargin(const CBrowserUnitValue &v) :
    left_(v), bottom_(v), right_(v), top_(v) {
   }
 

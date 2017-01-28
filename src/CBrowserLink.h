@@ -20,10 +20,10 @@ struct CBrowserLinkRect {
 
 class CBrowserLinkMgr {
  public:
-  CBrowserLinkMgr(CBrowserWindow *window);
+  explicit CBrowserLinkMgr(CBrowserWindow *window);
 
-  void startSourceLink(const CBrowserLinkData &data);
-  void startDestLink  (const CBrowserLinkData &data);
+  void startSourceLink(CBrowserAnchor *anchor);
+  void startDestLink  (CBrowserAnchor *anchor);
   void endLink();
 
   CBrowserAnchorLink *getCurrentLink();
@@ -84,7 +84,8 @@ class CBrowserAnchorLink {
 
 class CBrowserAnchor : public CBrowserObject {
  public:
-  CBrowserAnchor(CBrowserWindow *window, const CBrowserLinkData &data);
+  explicit CBrowserAnchor(CBrowserWindow *window);
+
  ~CBrowserAnchor();
 
   void init() override;
@@ -92,6 +93,8 @@ class CBrowserAnchor : public CBrowserObject {
   void setNameValue(const std::string &name, const std::string &value) override;
 
   std::string propertyValue(int i) const override;
+
+  const std::string &href() const { return data_.href; }
 
   void initProcess() override;
   void termProcess() override;
@@ -104,7 +107,8 @@ class CBrowserAnchor : public CBrowserObject {
 
 class CBrowserLink : public CBrowserObject {
  public:
-  CBrowserLink(CBrowserWindow *window, const CBrowserLinkData &data);
+  explicit CBrowserLink(CBrowserWindow *window);
+
  ~CBrowserLink();
 
   void init() override;

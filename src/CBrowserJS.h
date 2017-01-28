@@ -38,6 +38,9 @@ class CBrowserJS {
  private:
   CBrowserJS();
 
+  CBrowserJS(const CBrowserJS &);
+  CBrowserJS &operator=(const CBrowserJS &);
+
   void init();
 
  private:

@@ -114,6 +114,18 @@ std::cerr << "Flush Tag '" << currentObj->typeName() << "' for '" <<
   window->endObject();
 }
 
+bool
+CBrowserIsTagOpen(CBrowserWindow *window, CHtmlTag *tag)
+{
+  CBrowserObject *obj = window->currentObj();
+
+  while (obj && obj->type() != tag->getTagId()) {
+    obj = obj->parent();
+  }
+
+  return (obj && obj->type() == tag->getTagId());
+}
+
 CBrowserObject *
 CBrowserFlushTags(CBrowserWindow *window, CHtmlTag *tag, CHtmlTagId id, bool flushFound=false)
 {
@@ -172,6 +184,10 @@ CBrowserFlushParagraph(CBrowserWindow *window, CHtmlTag *tag)
   CBrowserFlushText(window, tag);
 
   CBrowserObject *currentObj = window->currentObj();
+
+  // can't flush out of paragraph or table cell
+  if (currentObj->type() == CHtmlTagId::BODY || currentObj->type() == CHtmlTagId::TD)
+    return;
 
   if (isParagraphObj(currentObj))
     CBrowserFlushTags(window, tag, currentObj->type(), true);
@@ -445,10 +461,17 @@ processEndTag(CHtmlTag *tag, CBrowserOutputTagBase *output_data)
   //---
 
   // flush open tags
-  CBrowserObject *obj = CBrowserFlushTags(window_, tag, output_data->id());
+  CBrowserObject *obj = nullptr;
 
-  if (! obj)
-    window_->displayError("End Tag '%s' with no Start Tag.\n", tag->getName().c_str());
+  if (CBrowserIsTagOpen(window_, tag)) {
+    obj = CBrowserFlushTags(window_, tag, output_data->id());
+
+    if (! obj)
+      window_->displayError("End Tag '%s' with no Start Tag.\n", tag->getName().c_str());
+  }
+  else {
+    window_->displayError("No open '%s' Tag.\n", tag->getName().c_str());
+  }
 
   //---
 
@@ -481,9 +504,7 @@ CBrowserOutputATag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserLinkData linkData;
-
-  CBrowserAnchor *link = new CBrowserAnchor(window, linkData);
+  CBrowserAnchor *link = new CBrowserAnchor(window);
 
   //---
 
@@ -695,9 +716,7 @@ CBrowserOutputBasefontTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserBaseFontData data;
-
-  CBrowserBaseFont *baseFont = new CBrowserBaseFont(window, data);
+  CBrowserBaseFont *baseFont = new CBrowserBaseFont(window);
 
   //---
 
@@ -817,9 +836,7 @@ CBrowserOutputBlockquoteTag::start(CBrowserWindow *window, CHtmlTag *tag)
 CBrowserObject *
 CBrowserOutputBodyTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
-  CBrowserBodyData bodyData;
-
-  CBrowserBody *body = new CBrowserBody(window, bodyData);
+  CBrowserBody *body = new CBrowserBody(window);
 
   //---
 
@@ -841,9 +858,7 @@ CBrowserOutputBrTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserBreakData breakData;
-
-  CBrowserBreak *breaker = new CBrowserBreak(window, breakData);
+  CBrowserBreak *breaker = new CBrowserBreak(window);
 
   //---
 
@@ -861,9 +876,7 @@ CBrowserOutputBrTag::start(CBrowserWindow *window, CHtmlTag *tag)
 CBrowserObject *
 CBrowserOutputButtonTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
-  CBrowserFormButtonData data;
-
-  CBrowserObject *obj = new CBrowserFormButton(window, data);
+  CBrowserObject *obj = new CBrowserFormButton(window);
 
   //---
 
@@ -881,9 +894,7 @@ CBrowserOutputButtonTag::start(CBrowserWindow *window, CHtmlTag *tag)
 CBrowserObject *
 CBrowserOutputCanvasTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
-  CBrowserCanvasData data;
-
-  CBrowserCanvas *canvas = new CBrowserCanvas(window, data);
+  CBrowserCanvas *canvas = new CBrowserCanvas(window);
 
   //---
 
@@ -901,9 +912,7 @@ CBrowserOutputCanvasTag::start(CBrowserWindow *window, CHtmlTag *tag)
 CBrowserObject *
 CBrowserOutputCaptionTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
-  CBrowserTableCaptionData captionData;
-
-  CBrowserTableCaption *caption = new CBrowserTableCaption(window, captionData);
+  CBrowserTableCaption *caption = new CBrowserTableCaption(window);
 
   //---
 
@@ -1089,9 +1098,7 @@ CBrowserOutputDirTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserOutputListData listData;
-
-  CBrowserList *list = new CBrowserList(window, CHtmlTagId::DIR, listData);
+  CBrowserList *list = new CBrowserList(window, CHtmlTagId::DIR);
 
   //---
 
@@ -1138,9 +1145,7 @@ CBrowserOutputDlTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserOutputListData listData;
-
-  CBrowserList *list = new CBrowserList(window, CHtmlTagId::DL, listData);
+  CBrowserList *list = new CBrowserList(window, CHtmlTagId::DL);
 
   //---
 
@@ -1248,9 +1253,7 @@ CBrowserOutputFontTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserFontData fontData;
-
-  CBrowserFontStyleObj *font = new CBrowserFontStyleObj(window, fontData);
+  CBrowserFontStyleObj *font = new CBrowserFontStyleObj(window);
 
   //---
 
@@ -1286,9 +1289,7 @@ CBrowserOutputFooterTag::start(CBrowserWindow *window, CHtmlTag *tag)
 CBrowserObject *
 CBrowserOutputFormTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
-  CBrowserFormData formData;
-
-  CBrowserForm *form = new CBrowserForm(window, formData);
+  CBrowserForm *form = new CBrowserForm(window);
 
   //---
 
@@ -1306,9 +1307,7 @@ CBrowserOutputFormTag::start(CBrowserWindow *window, CHtmlTag *tag)
 CBrowserObject *
 CBrowserOutputH1Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
-  CBrowserHeaderData headerData;
-
-  CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H1, headerData);
+  CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H1);
 
   //---
 
@@ -1326,9 +1325,7 @@ CBrowserOutputH1Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 CBrowserObject *
 CBrowserOutputH2Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
-  CBrowserHeaderData headerData;
-
-  CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H2, headerData);
+  CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H2);
 
   //---
 
@@ -1346,9 +1343,7 @@ CBrowserOutputH2Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 CBrowserObject *
 CBrowserOutputH3Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
-  CBrowserHeaderData headerData;
-
-  CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H3, headerData);
+  CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H3);
 
   //---
 
@@ -1366,9 +1361,7 @@ CBrowserOutputH3Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 CBrowserObject *
 CBrowserOutputH4Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
-  CBrowserHeaderData headerData;
-
-  CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H4, headerData);
+  CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H4);
 
   for (const auto &option: tag->getOptions()) {
     header->setNameValue(option->getName(), option->getValue());
@@ -1384,9 +1377,7 @@ CBrowserOutputH4Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 CBrowserObject *
 CBrowserOutputH5Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
-  CBrowserHeaderData headerData;
-
-  CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H5, headerData);
+  CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H5);
 
   //---
 
@@ -1402,9 +1393,7 @@ CBrowserOutputH5Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 CBrowserObject *
 CBrowserOutputH6Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
-  CBrowserHeaderData headerData;
-
-  CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H6, headerData);
+  CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H6);
 
   //---
 
@@ -1480,9 +1469,7 @@ CBrowserOutputHrTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserRuleData ruleData;
-
-  CBrowserRule *rule = new CBrowserRule(window, ruleData);
+  CBrowserRule *rule = new CBrowserRule(window);
 
   //---
 
@@ -1588,9 +1575,7 @@ CBrowserOutputImgTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserImageData imageData;
-
-  CBrowserImage *image = new CBrowserImage(window, imageData);
+  CBrowserImage *image = new CBrowserImage(window);
 
   //---
 
@@ -1616,121 +1601,14 @@ CBrowserOutputInputTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
+  // get type
   CBrowserFormInputData inputData;
 
   for (const auto &option: tag->getOptions()) {
-    inputData.nameValues[option->getName()] = option->getValue();
-
-    //---
-
     std::string option_name = CStrUtil::toLower(option->getName());
 
-    if      (option_name == "accept") {
-    }
-    else if (option_name == "align") {
-      inputData.align = option->getValue();
-    }
-    else if (option_name == "autocomplete") {
-    }
-    else if (option_name == "autofocus") {
-    }
-    else if (option_name == "capture") {
-    }
-    else if (option_name == "checked") {
-      inputData.checked = true;
-    }
-    else if (option_name == "class") {
-      inputData.cclass = option->getValue();
-    }
-    else if (option_name == "disabled") {
-    }
-    else if (option_name == "form") {
-    }
-    else if (option_name == "formaction") {
-    }
-    else if (option_name == "formenctype") {
-    }
-    else if (option_name == "formmethod") {
-    }
-    else if (option_name == "formnovalidate") {
-    }
-    else if (option_name == "formtarget") {
-    }
-    else if (option_name == "height") {
-    }
-    else if (option_name == "id") {
-      inputData.id = option->getValue();
-    }
-    else if (option_name == "inputmode") {
-    }
-    else if (option_name == "list") {
-    }
-    else if (option_name == "max") {
-      inputData.max = option->getValue();
-    }
-    else if (option_name == "maxlength") {
-      if (CStrUtil::isInteger(option->getValue()))
-        inputData.maxlength = CStrUtil::toInteger(option->getValue());
-      else {
-        window->displayError("Illegal 'input' Value '%s' for '%s'\n",
-                             option->getValue().c_str(), option_name.c_str());
-        inputData.maxlength = -1;
-      }
-    }
-    else if (option_name == "min") {
-      inputData.min = option->getValue();
-    }
-    else if (option_name == "minlength") {
-    }
-    else if (option_name == "multiple") {
-    }
-    else if (option_name == "name") {
-      inputData.name = option->getValue();
-    }
-    else if (option_name == "pattern") {
-    }
-    else if (option_name == "placeholder") {
-      inputData.placeholder = option->getValue();
-    }
-    else if (option_name == "readonly") {
-    }
-    else if (option_name == "required") {
-      inputData.required = option->getValue();
-    }
-    else if (option_name == "selectionDirection") {
-    }
-    else if (option_name == "selectionStart") {
-    }
-    else if (option_name == "size") {
-      if (CStrUtil::isInteger(option->getValue()))
-        inputData.size = CStrUtil::toInteger(option->getValue());
-      else {
-        window->displayError("Illegal 'input' Value '%s' for '%s'\n",
-                             option->getValue().c_str(), option_name.c_str());
-        inputData.size = -1;
-      }
-    }
-    else if (option_name == "spellcheck") {
-    }
-    else if (option_name == "src") {
-      inputData.src = option->getValue();
-    }
-    else if (option_name == "step") {
-      inputData.step = option->getValue();
-    }
-    else if (option_name == "type") {
+    if (option_name == "type") {
       inputData.type = CStrUtil::toLower(option->getValue());
-    }
-    else if (option_name == "value") {
-      inputData.value = option->getValue();
-    }
-    else if (option_name == "width") {
-    }
-    else if (option_name == "onchange") {
-      inputData.onchange = option->getValue();
-    }
-    else if (option_name == "onclick") {
-      inputData.onclick = option->getValue();
     }
   }
 
@@ -1741,19 +1619,19 @@ CBrowserOutputInputTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   CBrowserObject *obj = nullptr;
 
-  if      (inputData.type == "button"  )
+  if      (inputData.type == "button")
     obj = new CBrowserFormButton(window, inputData);
   else if (inputData.type == "checkbox")
     obj = new CBrowserFormCheckBox(window, inputData);
   else if (inputData.type == "date")
     obj = new CBrowserFormDate(window, inputData);
-  else if (inputData.type == "email"   )
+  else if (inputData.type == "email")
     obj = new CBrowserFormEmail(window, inputData);
-  else if (inputData.type == "file"    )
+  else if (inputData.type == "file")
     obj = new CBrowserFormFileUpload(window, inputData);
-  else if (inputData.type == "hidden"  )
+  else if (inputData.type == "hidden")
     obj = new CBrowserFormHidden(window, inputData);
-  else if (inputData.type == "image"   )
+  else if (inputData.type == "image")
     obj = new CBrowserFormImage(window, inputData);
   else if (inputData.type == "month")
     obj = new CBrowserFormMonth(window, inputData);
@@ -1761,24 +1639,32 @@ CBrowserOutputInputTag::start(CBrowserWindow *window, CHtmlTag *tag)
     obj = new CBrowserFormNumber(window, inputData);
   else if (inputData.type == "password")
     obj = new CBrowserFormPassword(window, inputData);
-  else if (inputData.type == "radio"   )
+  else if (inputData.type == "radio")
     obj = new CBrowserFormRadio(window, inputData);
-  else if (inputData.type == "range"   )
+  else if (inputData.type == "range")
     obj = new CBrowserFormRange(window, inputData);
-  else if (inputData.type == "reset"   )
+  else if (inputData.type == "reset")
     obj = new CBrowserFormReset(window, inputData);
   else if (inputData.type == "search")
     obj = new CBrowserFormSearch(window, inputData);
-  else if (inputData.type == "submit"  )
+  else if (inputData.type == "submit")
     obj = new CBrowserFormSubmit(window, inputData);
-  else if (inputData.type == "tel"  )
+  else if (inputData.type == "tel")
     obj = new CBrowserFormTel(window, inputData);
-  else if (inputData.type == "text"    )
+  else if (inputData.type == "text")
     obj = new CBrowserFormText(window, inputData);
   else {
     window->displayError("Invalid input type '%s'\n", inputData.type.c_str());
     return nullptr;
   }
+
+  //---
+
+  for (const auto &option: tag->getOptions()) {
+    obj->setNameValue(option->getName(), option->getValue());
+  }
+
+  //---
 
   obj->init();
 
@@ -1859,9 +1745,7 @@ CBrowserOutputLiTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserOutputListItemData listItemData;
-
-  CBrowserListItem *listItem = new CBrowserListItem(window, listItemData);
+  CBrowserListItem *listItem = new CBrowserListItem(window);
 
   //---
 
@@ -1879,9 +1763,7 @@ CBrowserOutputLiTag::start(CBrowserWindow *window, CHtmlTag *tag)
 CBrowserObject *
 CBrowserOutputLinkTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
-  CBrowserLinkData linkData;
-
-  CBrowserLink *link = new CBrowserLink(window, linkData);
+  CBrowserLink *link = new CBrowserLink(window);
 
   //---
 
@@ -1930,9 +1812,7 @@ CBrowserOutputMenuTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserOutputListData listData;
-
-  CBrowserList *list = new CBrowserList(window, CHtmlTagId::MENU, listData);
+  CBrowserList *list = new CBrowserList(window, CHtmlTagId::MENU);
 
   //---
 
@@ -2019,9 +1899,7 @@ CBrowserOutputOlTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserOutputListData listData;
-
-  CBrowserList *list = new CBrowserList(window, CHtmlTagId::OL, listData);
+  CBrowserList *list = new CBrowserList(window, CHtmlTagId::OL);
 
   //---
 
@@ -2074,9 +1952,7 @@ CBrowserOutputOptionTag::start(CBrowserWindow *window, CHtmlTag *tag)
 CBrowserObject *
 CBrowserOutputOutputTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
-  CBrowserBaseData data;
-
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::OUTPUT, data);
+  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::OUTPUT);
 
   //---
 
@@ -2200,9 +2076,7 @@ CBrowserOutputSelectTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserFormSelectData selectData;
-
-  CBrowserFormSelect *select = new CBrowserFormSelect(window, selectData);
+  CBrowserFormSelect *select = new CBrowserFormSelect(window);
 
   //---
 
@@ -2433,9 +2307,7 @@ CBrowserOutputTdTag::start(CBrowserWindow *window, CHtmlTag *tag)
 CBrowserObject *
 CBrowserOutputTextareaTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
-  CBrowserFormTextareaData textareaData;
-
-  CBrowserFormTextarea *textArea = new CBrowserFormTextarea(window, textareaData);
+  CBrowserFormTextarea *textArea = new CBrowserFormTextarea(window);
 
   //---
 
@@ -2567,9 +2439,7 @@ CBrowserOutputTitleTag::start(CBrowserWindow *window, CHtmlTag *tag)
 CBrowserObject *
 CBrowserOutputTrTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
-  CBrowserTableRowData rowData;
-
-  CBrowserTableRow *row = new CBrowserTableRow(window, rowData);
+  CBrowserTableRow *row = new CBrowserTableRow(window);
 
   //---
 
@@ -2642,9 +2512,7 @@ CBrowserOutputUlTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserOutputListData listData;
-
-  CBrowserList *list = new CBrowserList(window, CHtmlTagId::UL, listData);
+  CBrowserList *list = new CBrowserList(window, CHtmlTagId::UL);
 
   //---
 

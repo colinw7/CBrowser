@@ -6,7 +6,8 @@
 
 class CBrowserBreak : public CBrowserObject {
  public:
-  CBrowserBreak(CBrowserWindow *window, const CBrowserBreakData &data);
+  explicit CBrowserBreak(CBrowserWindow *window);
+
  ~CBrowserBreak();
 
   CBrowserClear::Type getClear() const { return data_.clear; }
@@ -29,7 +30,7 @@ class CBrowserBreak : public CBrowserObject {
 
 class CBrowserWbr : public CBrowserObject {
  public:
-  CBrowserWbr(CBrowserWindow *window);
+  explicit CBrowserWbr(CBrowserWindow *window);
  ~CBrowserWbr();
 };
 

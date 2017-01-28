@@ -21,6 +21,12 @@ class CBrowserWord {
     INPUT
   };
 
+  enum class Float {
+    NONE,
+    LEFT,
+    RIGHT
+  };
+
  public:
   CBrowserWord(CBrowserText *text, const std::string &str, const CPen &pen,
                const CFontPtr &font, bool breakup=false, bool selected=false);
@@ -53,7 +59,11 @@ class CBrowserWord {
 
   const CFontPtr &font() const { assert(type_ == Type::TEXT); return font_; }
 
+  void setBreakup(bool b) { breakup_ = b; }
   bool isBreakup() const { return breakup_; }
+
+  void setFloat(Float f) { float_ = f; }
+  Float getFloat() const { return float_; }
 
   bool isSelected() const { return selected_; }
 
@@ -75,6 +85,7 @@ class CBrowserWord {
   CFontPtr        font_;
   bool            breakup_ { false };
   bool            selected_ { false };
+  Float           float_ { Float::NONE };
 };
 
 #endif

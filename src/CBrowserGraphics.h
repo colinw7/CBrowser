@@ -12,7 +12,8 @@ class CPrint;
 
 class CBrowserGraphics {
  public:
-  CBrowserGraphics(CBrowserWindowWidget *w);
+  explicit CBrowserGraphics(CBrowserWindowWidget *w);
+
  ~CBrowserGraphics();
 
   CBrowserWindowWidget *widget() const { return w_; }
@@ -55,6 +56,10 @@ class CBrowserGraphics {
 
  private:
   bool readFontMetrics();
+
+ private:
+  CBrowserGraphics(const CBrowserGraphics &);
+  CBrowserGraphics &operator=(const CBrowserGraphics &);
 
  private:
   CBrowserWindowWidget* w_ { nullptr };

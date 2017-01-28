@@ -1,6 +1,7 @@
 #include <CBrowserIFace.h>
 #include <CBrowserWindowWidget.h>
 #include <CBrowserWindow.h>
+#include <CBrowserScrolledWindow.h>
 #include <CBrowserMain.h>
 #include <CBrowserGraphics.h>
 #include <CBrowserJS.h>
@@ -8,34 +9,36 @@
 #include <CBrowserObject.h>
 #include <CBrowserLayout.h>
 #include <CBrowserBox.h>
+
 #include <CQJDocument.h>
 #include <CQJWindow.h>
 #include <CQJEvent.h>
 #include <CQJDialog.h>
 #include <CQMenu.h>
+#include <CQToolBar.h>
 #include <CDir.h>
 #include <CEnv.h>
 
 #include <QVBoxLayout>
-#include <QScrollArea>
-#include <QScrollBar>
+#include <QLineEdit>
 #include <QLabel>
 #include <QFileDialog>
 #include <QMessageBox>
-#include <QMouseEvent>
 #include <QStatusBar>
+
+#include <svg/dom_svg.h>
+#include <svg/javascript_svg.h>
 
 CBrowserIFace::
 CBrowserIFace() :
  CQMainWindow("CBrowser")
 {
-  QWidget::resize(640, 800);
+  QWidget::resize(1000, 1200);
 }
 
 CBrowserIFace::
 ~CBrowserIFace()
 {
-  delete window_;
 }
 
 void
@@ -43,58 +46,70 @@ CBrowserIFace::
 init()
 {
   CQMainWindow::init();
-
-  window_ = new CBrowserWindow();
-
-  window_->setIFace(this);
 }
 
 QWidget *
 CBrowserIFace::
 createCentralWidget()
 {
-  QWidget *frame = new QWidget;
+  QWidget *widget = new QWidget;
 
-  frame->setObjectName("frame");
+  widget->setObjectName("iface");
 
-  //------
+  QVBoxLayout *layout = new QVBoxLayout(widget);
 
-  w_ = new CBrowserWindowWidget(this);
+  input_ = new QLineEdit;
 
-#ifdef SCROLL_AREA
-  QVBoxLayout *vlayout = new QVBoxLayout(frame);
-  vlayout->setMargin(0); vlayout->setSpacing(0);
+  input_->setObjectName("input");
+  input_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-  list_ = new QScrollArea;
-  list_->setObjectName("list");
+  layout->addWidget(input_);
 
-  list_vbar_ = list_->verticalScrollBar  ();
-  list_hbar_ = list_->horizontalScrollBar();
+  connect(input_, SIGNAL(returnPressed()), this, SLOT(inputSlot()));
 
-  list_->setWidget(w_);
+  //---
 
-  vlayout->addWidget(list_);
-#else
-  QGridLayout *grid = new QGridLayout(frame);
-  grid->setMargin(0); grid->setSpacing(0);
+  tab_ = new QTabWidget;
 
-  list_vbar_ = new QScrollBar(Qt::Vertical);
-  list_vbar_->setObjectName("vbar");
+  tab_->setObjectName("tab");
+  tab_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-  list_hbar_ = new QScrollBar(Qt::Horizontal);
-  list_hbar_->setObjectName("hbar");
+  connect(tab_, SIGNAL(currentChanged(int)), this, SLOT(updateTitles()));
 
-  grid->addWidget(w_        , 0, 0);
-  grid->addWidget(list_vbar_, 0, 1);
-  grid->addWidget(list_hbar_, 1, 0);
+  layout->addWidget(tab_);
 
-  connect(list_vbar_, SIGNAL(valueChanged(int)), this, SLOT(vscrollProc()));
-  connect(list_hbar_, SIGNAL(valueChanged(int)), this, SLOT(hscrollProc()));
-#endif
+  //---
 
-  //------
+  addWindow();
 
-  return frame;
+  return widget;
+}
+
+CBrowserScrolledWindow *
+CBrowserIFace::
+addWindow()
+{
+  CBrowserScrolledWindow *window = new CBrowserScrolledWindow(this);
+
+  tab_->addTab(window, "");
+
+  tab_->setCurrentIndex(tab_->count() - 1);
+
+  windows_.push_back(window);
+
+  return window;
+}
+
+CBrowserScrolledWindow *
+CBrowserIFace::
+currentWindow() const
+{
+  int i = tab_->currentIndex();
+
+  if (i >= 0 && i < int(windows_.size()))
+    return windows_[i];
+
+  return nullptr;
 }
 
 void
@@ -117,11 +132,13 @@ createMenus()
   CQMenuItem *saveImageMenuItem = new CQMenuItem(fileMenu, "Save &Image");
   saveImageMenuItem->connect(this, SLOT(saveImageProc()));
 
-  CQMenuItem *jsMenuItem = new CQMenuItem(fileMenu, "&JavaScript");
-  jsMenuItem->connect(this, SLOT(jsProc()));
+  jsMenuItem_ = new CQMenuItem(fileMenu, "&JavaScript");
+  jsMenuItem_->setIcon(CQPixmapCacheInst->getIcon("JAVASCRIPT"));
+  jsMenuItem_->connect(this, SLOT(jsProc()));
 
-  CQMenuItem *domMenuItem = new CQMenuItem(fileMenu, "&DOM");
-  domMenuItem->connect(this, SLOT(domProc()));
+  domMenuItem_ = new CQMenuItem(fileMenu, "&DOM");
+  domMenuItem_->setIcon(CQPixmapCacheInst->getIcon("DOM"));
+  domMenuItem_->connect(this, SLOT(domProc()));
 
   CQMenuItem *quitMenuItem = new CQMenuItem(fileMenu, "&Quit");
   quitMenuItem->setShortcut("Ctrl+Q");
@@ -144,7 +161,12 @@ createMenus()
   CQMenu *viewMenu = new CQMenu(this, "&View");
 
   CQMenuItem *viewBoxes = new CQMenuItem(viewMenu, "&Boxes");
+  viewBoxes->setCheckable(true);
   viewBoxes->connect(this, SLOT(viewBoxesProc()));
+
+  CQMenuItem *mouseOver = new CQMenuItem(viewMenu, "&Mouse Over");
+  mouseOver->setCheckable(true);
+  mouseOver->connect(this, SLOT(mouseOverProc()));
 
   //---
 
@@ -161,6 +183,10 @@ void
 CBrowserIFace::
 createToolBars()
 {
+  toolbar_ = new CQToolBar(this, "Tools");
+
+  toolbar_->addItem(jsMenuItem_);
+  toolbar_->addItem(domMenuItem_);
 }
 
 void
@@ -186,6 +212,16 @@ createStatusBar()
 
 void
 CBrowserIFace::
+inputSlot()
+{
+  QString url = input_->text();
+
+  if (url != "")
+    setDocument(url.toStdString());
+}
+
+void
+CBrowserIFace::
 addHistoryItem(const std::string &item)
 {
   CQMenuItem *menuItem = new CQMenuItem(historyMenu_, "button");
@@ -195,113 +231,12 @@ addHistoryItem(const std::string &item)
 
 void
 CBrowserIFace::
-setBusy()
-{
-}
-
-void
-CBrowserIFace::
-setReady()
-{
-}
-
-void
-CBrowserIFace::
-expose()
-{
-  w_->update();
-}
-
-void
-CBrowserIFace::
-print(double xmin, double ymin, double xmax, double ymax)
-{
-  w_->setPSDevice(xmin, ymin, xmax, ymax);
-
-  expose();
-
-  w_->setXDevice();
-}
-
-void
-CBrowserIFace::
 saveImage(const std::string &filename)
 {
-  w_->saveImage(filename);
-}
+  CBrowserScrolledWindow *w = currentWindow();
+  if (! w) return;
 
-void
-CBrowserIFace::
-setSize(int width, int height)
-{
-  bool hbar_displayed = false;
-  bool vbar_displayed = false;
-
-  if (width > canvas_width_)
-    hbar_displayed = true;
-
-  if (height > canvas_height_)
-    vbar_displayed = true;
-
-  if (hbar_displayed) {
-    int vbar_width = 0;
-
-    if (vbar_displayed)
-      vbar_width = list_vbar_->width();
-
-    //int width1 = canvas_width_ - vbar_width;
-    int width1 = width - vbar_width;
-
-    int maximum = list_hbar_->maximum();
-
-    if (maximum != width1 - 1)
-      list_hbar_->setRange(0, width1 - canvas_width_ - 1);
-
-    list_hbar_->setValue(canvas_x_offset_);
-
-    list_hbar_->setSingleStep(canvas_width_/10);
-    list_hbar_->setPageStep(canvas_width_);
-  }
-
-  //---
-
-  if (vbar_displayed) {
-    int hbar_height = 0;
-
-    if (hbar_displayed)
-      hbar_height = list_hbar_->height();
-
-    //int height1 = canvas_height_ - hbar_height;
-    int height1 = height - hbar_height;
-
-    int maximum = list_vbar_->maximum();
-
-    if (maximum != height1 - 1)
-      list_vbar_->setRange(0, height1 - canvas_height_ - 1);
-
-    list_vbar_->setValue(canvas_y_offset_);
-
-    list_vbar_->setSingleStep(canvas_height_/10);
-    list_vbar_->setPageStep(canvas_height_);
-  }
-
-  //w_->resize(width, height);
-}
-
-void
-CBrowserIFace::
-scrollTo(int, int y)
-{
-  int minimum     = list_vbar_->minimum();
-  int maximum     = list_vbar_->maximum();
-  int slider_size = list_vbar_->pageStep();
-
-  if      (y < minimum)
-    y = minimum;
-  else if (y > maximum - slider_size)
-    y = maximum - slider_size;
-
-  list_vbar_->setValue(y);
+  w->saveImage(filename);
 }
 
 void
@@ -309,6 +244,27 @@ CBrowserIFace::
 setTitle(const std::string &title)
 {
   setWindowTitle(title.c_str());
+}
+
+void
+CBrowserIFace::
+updateTitles()
+{
+  setWindowTitle("CBrowser");
+
+  int ind = tab_->currentIndex();
+
+  for (int i = 0; i < tab_->count(); ++i) {
+    CBrowserScrolledWindow *w = qobject_cast<CBrowserScrolledWindow *>(tab_->widget(i));
+    if (! w) continue;
+
+    CBrowserWindow *window = w->getWindow();
+
+    tab_->setTabText(i, window->filename().c_str());
+
+    if (i == ind)
+      setWindowTitle(w->title().c_str());
+  }
 }
 
 void
@@ -325,7 +281,19 @@ void
 CBrowserIFace::
 errorDialog(const std::string &msg)
 {
-  QMessageBox::warning(w_, "Error", msg.c_str());
+  QMessageBox::warning(this, "Error", msg.c_str());
+}
+
+void
+CBrowserIFace::
+setBusy()
+{
+}
+
+void
+CBrowserIFace::
+setReady()
+{
 }
 
 void
@@ -346,9 +314,7 @@ newProc()
 
   //---
 
-  CBrowserIFace *iface = new CBrowserIFace;
-
-  iface->window_->setDocument(file.toStdString());
+  addDocument(file.toStdString());
 }
 
 void
@@ -369,14 +335,36 @@ readProc()
 
   //---
 
-  window_->setDocument(file.toStdString());
+  setDocument(file.toStdString());
+}
+
+void
+CBrowserIFace::
+addDocument(const std::string &filename)
+{
+  CBrowserScrolledWindow *window = addWindow();
+
+  window->setDocument(filename);
+}
+
+void
+CBrowserIFace::
+setDocument(const std::string &filename)
+{
+  CBrowserScrolledWindow *window = currentWindow();
+  if (! window) return;
+
+  window->setDocument(filename);
 }
 
 void
 CBrowserIFace::
 printProc()
 {
-  window_->print();
+  CBrowserScrolledWindow *window = currentWindow();
+  if (! window) return;
+
+  window->print();
 }
 
 void
@@ -388,7 +376,7 @@ saveImageProc()
                                  "Image Files (*.png *.xpm *.jpg)");
 
   if (fileName.length())
-    window_->saveImage(fileName.toStdString());
+    saveImage(fileName.toStdString());
 }
 
 void
@@ -405,8 +393,19 @@ void
 CBrowserIFace::
 domProc()
 {
+  CBrowserScrolledWindow *swindow = currentWindow();
+  if (! swindow) return;
+
+  CBrowserWindow *window = swindow->getWindow();
+
+  if (domDlg_ && domDlg_->window() != window) {
+    delete domDlg_;
+
+    domDlg_ = nullptr;
+  }
+
   if (! domDlg_)
-    domDlg_ = new CBrowserDomTreeDlg(window_);
+    domDlg_ = new CBrowserDomTreeDlg(window);
 
   domDlg_->show();
 }
@@ -415,14 +414,20 @@ void
 CBrowserIFace::
 goBackProc()
 {
-  window_->goBack();
+  CBrowserScrolledWindow *window = currentWindow();
+  if (! window) return;
+
+  window->goBack();
 }
 
 void
 CBrowserIFace::
 goForwardProc()
 {
-  window_->goForward();
+  CBrowserScrolledWindow *window = currentWindow();
+  if (! window) return;
+
+  window->goForward();
 }
 
 void
@@ -434,20 +439,9 @@ viewBoxesProc()
 
 void
 CBrowserIFace::
-hscrollProc()
+mouseOverProc()
 {
-  canvas_x_offset_ = list_hbar_->value();
-
-  window_->redraw();
-}
-
-void
-CBrowserIFace::
-vscrollProc()
-{
-  canvas_y_offset_ = list_vbar_->value();
-
-  window_->redraw();
+  CBrowserMainInst->setMouseOver(! CBrowserMainInst->getMouseOver());
 }
 
 void
@@ -455,95 +449,4 @@ CBrowserIFace::
 quitProc()
 {
   close();
-}
-
-void
-CBrowserIFace::
-resize()
-{
-  canvas_x_offset_ = 0;
-  canvas_y_offset_ = 0;
-
-  list_hbar_->setValue(canvas_x_offset_);
-  list_vbar_->setValue(canvas_y_offset_);
-
-  canvas_width_  = w_->width ();
-  canvas_height_ = w_->height();
-
-  //---
-
-  window_->resize();
-}
-
-void
-CBrowserIFace::
-draw()
-{
-  setBusy();
-
-  w_->startDoubleBuffer();
-
-  //---
-
-  w_->clear(window_->getBgColor());
-
-  CImagePtr bg_image = window_->getBgImage();
-
-  if (bg_image.isValid())
-    w_->drawTiledImage(0, 0, w_->width(), w_->height(), bg_image);
-
-  //---
-
-  window_->drawDocument();
-
-  //---
-
-  w_->endDoubleBuffer();
-
-  setReady();
-}
-
-void
-CBrowserIFace::
-mousePress(int, int)
-{
-}
-
-void
-CBrowserIFace::
-mouseMotion(int x, int y)
-{
-  int x1 = x + canvas_x_offset_;
-  int y1 = y + canvas_y_offset_;
-
-  CBrowserBox *box = window_->getLayout()->boxAt(CIPoint2D(x1, y1));
-
-  CBrowserObject *obj = dynamic_cast<CBrowserObject *>(box);
-
-  window_->selectSingleObject(obj);
-
-  if (obj)
-    objLabel_->setText(obj->typeName().c_str());
-  else
-    objLabel_->setText("");
-
-  //---
-
-  std::string link_name;
-
-  if (window_->hoverLink(x1, y1, link_name)) {
-    w_->setCursor(Qt::PointingHandCursor);
-  }
-  else {
-    w_->setCursor(Qt::ArrowCursor);
-  }
-
-  posLabel_->setText(QString("%1,%2").arg(x1).arg(y1));
-}
-
-void
-CBrowserIFace::
-mouseRelease(int x, int y)
-{
-  window_->activateLink(x + canvas_x_offset_, y + canvas_y_offset_);
 }

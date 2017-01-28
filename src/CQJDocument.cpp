@@ -6,6 +6,7 @@
 #include <CBrowserDocument.h>
 #include <CBrowserForm.h>
 #include <CBrowserIFace.h>
+#include <CBrowserScrolledWindow.h>
 #include <CBrowserJS.h>
 #include <CJavaScript.h>
 
@@ -50,18 +51,20 @@ getProperty(CJavaScript *js, const std::string &name) const
   if      (name == "forms") {
     CQJHtmlCollection *col = new CQJHtmlCollection(js);
 
-    const CBrowserMain::IFaceList ifaceList = CBrowserMainInst->ifaceList();
+    CBrowserIFace *iface = CBrowserMainInst->iface();
+    if (! iface) return CJValueP();
 
-    for (const auto &i : ifaceList) {
-      CBrowserWindow *window = i->getWindow();
+    CBrowserScrolledWindow *swindow = iface->currentWindow();
+    if (! swindow) return CJValueP();
 
-      CBrowserDocument *document = window->getDocument();
+    CBrowserWindow *window = swindow->getWindow();
 
-      for (auto &form : document->forms()) {
-        CBrowserForm *form1 = const_cast<CBrowserForm *>(form);
+    CBrowserDocument *document = window->getDocument();
 
-        col->addObject(form1);
-      }
+    for (auto &form : document->forms()) {
+      CBrowserForm *form1 = const_cast<CBrowserForm *>(form);
+
+      col->addObject(form1);
     }
 
     return CJValueP(col);
@@ -82,20 +85,20 @@ execNameFn(CJavaScript *js, const std::string &name, const Values &values)
     if (values.size() == 2) {
       std::string id = values[1]->toString();
 
-      const CBrowserMain::IFaceList ifaceList = CBrowserMainInst->ifaceList();
+      CBrowserIFace *iface = CBrowserMainInst->iface();
+      if (! iface) return CJValueP();
 
-      for (const auto &i : ifaceList) {
-        CBrowserWindow *window = i->getWindow();
+      CBrowserScrolledWindow *swindow = iface->currentWindow();
+      if (! swindow) return CJValueP();
 
-        CBrowserObject *obj = window->getObject(id);
+      CBrowserWindow *window = swindow->getWindow();
 
-        if (! obj)
-          return CJValueP();
+      CBrowserObject *obj = window->getObject(id);
+      if (! obj) return CJValueP();
 
-        CJValueP htmlObj = CBrowserJSInst->lookupHtmlObject(obj);
+      CJValueP htmlObj = CBrowserJSInst->lookupHtmlObject(obj);
 
-        return htmlObj;
-      }
+      return htmlObj;
     }
 
     return CJValueP();
@@ -121,20 +124,20 @@ execNameFn(CJavaScript *js, const std::string &name, const Values &values)
     if (values.size() == 2) {
       std::string id = values[1]->toString();
 
-      const CBrowserMain::IFaceList ifaceList = CBrowserMainInst->ifaceList();
+      CBrowserIFace *iface = CBrowserMainInst->iface();
+      if (! iface) return CJValueP();
 
-      for (const auto &i : ifaceList) {
-        CBrowserWindow *window = i->getWindow();
+      CBrowserScrolledWindow *swindow = iface->currentWindow();
+      if (! swindow) return CJValueP();
 
-        CBrowserObject *obj = window->getObject(id);
+      CBrowserWindow *window = swindow->getWindow();
 
-        if (! obj)
-          return CJValueP();
+      CBrowserObject *obj = window->getObject(id);
+      if (! obj) return CJValueP();
 
-        CJValueP htmlObj = CBrowserJSInst->lookupHtmlObject(obj);
+      CJValueP htmlObj = CBrowserJSInst->lookupHtmlObject(obj);
 
-        return htmlObj;
-      }
+      return htmlObj;
     }
 
     return CJValueP();

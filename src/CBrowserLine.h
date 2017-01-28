@@ -37,6 +37,7 @@ class CBrowserLine {
   typedef std::vector<PosWord> Words;
 
   Words words_;
+  bool  empty_ { true };
   int   width_  { 0 };
   int   ascent_ { 0 };
   int   descent_ { 0 };

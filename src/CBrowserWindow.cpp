@@ -1,8 +1,9 @@
 #include <CBrowserWindow.h>
 #include <CBrowserDocument.h>
+#include <CBrowserWindowWidget.h>
+#include <CBrowserScrolledWindow.h>
 #include <CBrowserHistory.h>
 #include <CBrowserIFace.h>
-#include <CBrowserWindowWidget.h>
 #include <CBrowserFont.h>
 #include <CBrowserMain.h>
 #include <CBrowserBreak.h>
@@ -22,9 +23,8 @@
 #include <CEnv.h>
 
 std::list<CBrowserWindow *> CBrowserWindow::window_list_;
-std::string                 CBrowserWindow::default_font_face_ = "";
-std::string                 CBrowserWindow::window_target_     = "";
-CBrowserAnchorLink*         CBrowserWindow::mouse_link_        = nullptr;
+std::string                 CBrowserWindow::window_target_ = "";
+CBrowserAnchorLink*         CBrowserWindow::mouse_link_    = nullptr;
 
 CBrowserWindow::
 CBrowserWindow(const std::string &filename) :
@@ -56,7 +56,26 @@ void
 CBrowserWindow::
 init()
 {
-  //default_font_face_ = "";
+  iface_   = nullptr;
+  swindow_ = nullptr;
+  w_       = nullptr;
+
+  reset();
+}
+
+void
+CBrowserWindow::
+reset()
+{
+  delete document_;
+  delete layout_;
+
+  delete linkMgr_;
+  delete fileMgr_;
+
+  delete history_;
+
+  //---
 
   window_target_ = "";
 
@@ -64,9 +83,6 @@ init()
 
   name_     = "";
   document_ = nullptr;
-
-  iface_ = nullptr;
-  w_     = nullptr;
 
   leftMargin_ = CBrowserDataConstants::LEFT_MARGIN;
   topMargin_  = CBrowserDataConstants::TOP_MARGIN;
@@ -78,62 +94,55 @@ init()
   linkMgr_ = new CBrowserLinkMgr(this);
   fileMgr_ = new CBrowserFileMgr(this);
 
+  rootObject_ = 0;
+
+  idObjects_   .clear();
+  objStack_   .clear();
+  objects_    .clear();
+  scripts_    .clear();
+  scriptFiles_.clear();
+
+  css_.clear();
+
+  cssData_.clear();
+
   baseFontSize_ = 3;
 
   history_ = new CBrowserHistory(this);
 
   //---
 
-  loadResources();
-
-  //---
-
-  //startFontFace(default_font_face_);
+  setBaseFontStyle();
 }
 
 void
 CBrowserWindow::
-setIFace(CBrowserIFace *iface)
+setIFace(CBrowserScrolledWindow *swindow)
 {
-  iface_ = iface;
-  w_     = iface_->widget();
-}
-
-void
-CBrowserWindow::
-loadResources()
-{
-  //default_font_face_ = "helvetica";
+  swindow_ = swindow;
+  iface_   = swindow_->iface();
+  w_       = swindow_->widget();
 }
 
 void
 CBrowserWindow::
 processTokens(const CHtmlParserTokens &tokens)
 {
-  outputState_ = OutputState::PROCESS_TOKENS;
-
   output_.processTokens(tokens);
-
-  outputState_ = OutputState::NONE;
 }
 
 void
 CBrowserWindow::
 layoutObjects()
 {
-  outputState_ = OutputState::LAYOUT_OBJECTS;
-
   output_.layoutObjects();
-
-  outputState_ = OutputState::NONE;
 }
 
 void
 CBrowserWindow::
 setBaseFontSize(int size)
 {
-assert(outputState_ != OutputState::LAYOUT_OBJECTS);
-  baseFontSize_ = size - 1;
+  baseFontSize_ = size;
 
   setBaseFontStyle();
 }
@@ -142,14 +151,13 @@ int
 CBrowserWindow::
 getBaseFontSize()
 {
-  return (baseFontSize_ + 1);
+  return baseFontSize_;
 }
 
 void
 CBrowserWindow::
 resetBaseFontSize()
 {
-assert(outputState_ != OutputState::LAYOUT_OBJECTS);
   baseFontSize_ = 3;
 
   setBaseFontStyle();
@@ -159,7 +167,6 @@ void
 CBrowserWindow::
 increaseBaseFontSize(int d)
 {
-assert(outputState_ != OutputState::LAYOUT_OBJECTS);
   baseFontSize_ += d;
 
   setBaseFontStyle();
@@ -169,7 +176,6 @@ void
 CBrowserWindow::
 decreaseBaseFontSize(int d)
 {
-assert(outputState_ != OutputState::LAYOUT_OBJECTS);
   baseFontSize_ -= d;
 
   setBaseFontStyle();
@@ -231,8 +237,6 @@ startObject(CBrowserObject *obj, bool add)
 
 //std::cerr << "start obj: "; obj->print(std::cerr); std::cerr << std::endl;
   if (add) {
-    assert(outputState_ != OutputState::LAYOUT_OBJECTS);
-
     CBrowserObject *currentObj = this->currentObj();
 
     if (currentObj)
@@ -338,11 +342,22 @@ void
 CBrowserWindow::
 setDocument(const std::string &filename)
 {
-  delete document_;
+  reset();
+
+  //---
+
+  filename_ = CFile::getTail(filename);
 
   document_ = new CBrowserDocument(this);
 
-  document_->read(filename);
+  auto p = filename.find("file://");
+
+  std::string url = filename;
+
+  if (p == std::string::npos)
+    url = "file://" + url;
+
+  document_->read(url);
 
   outputDocument();
 
@@ -382,6 +397,9 @@ void
 CBrowserWindow::
 recalc()
 {
+  if (! w_)
+    return;
+
   iface_->setBusy();
 
   //---
@@ -392,7 +410,7 @@ recalc()
 
   //------
 
-  layout_->layout(bbox_);
+  layout_->layout(rootObject(), bbox_);
 
   //------
 
@@ -404,7 +422,7 @@ recalc()
     h = rootObject()->contentHeight();
   }
 
-  iface_->setSize(w, h);
+  swindow_->setSize(w, h);
 
   //---
 
@@ -427,7 +445,7 @@ resize()
     int x, y;
 
     if (linkMgr()->getDestLinkPos(window_target_, &x, &y))
-      iface_->scrollTo(x, y);
+      swindow_->scrollTo(x, y);
   }
 
   //---
@@ -439,6 +457,9 @@ void
 CBrowserWindow::
 redraw()
 {
+  if (! w_)
+    return;
+
   w_->update();
 
   const QObjectList &objs = w_->children();
@@ -455,28 +476,28 @@ int
 CBrowserWindow::
 getCanvasXOffset() const
 {
-  return iface_->getCanvasXOffset();
+  return swindow_->getCanvasXOffset();
 }
 
 int
 CBrowserWindow::
 getCanvasYOffset() const
 {
-  return iface_->getCanvasYOffset();
+  return swindow_->getCanvasYOffset();
 }
 
 int
 CBrowserWindow::
 getCanvasWidth() const
 {
-  return iface_->getCanvasWidth();
+  return swindow_->getCanvasWidth();
 }
 
 int
 CBrowserWindow::
 getCanvasHeight() const
 {
-  return iface_->getCanvasHeight();
+  return swindow_->getCanvasHeight();
 }
 
 void
@@ -500,7 +521,7 @@ void
 CBrowserWindow::
 setTitle(const std::string &title)
 {
-  iface_->setTitle(title);
+  swindow_->setTitle(title);
 }
 
 void
@@ -765,14 +786,14 @@ print()
   double xmax = region.width () + 2*getLeftMargin();
   double ymax = region.height() + 2*getTopMargin();
 
-  iface_->print(xmin, ymin, xmax, ymax);
+  swindow_->print(xmin, ymin, xmax, ymax);
 }
 
 void
 CBrowserWindow::
 saveImage(const std::string &filename)
 {
-  iface_->saveImage(filename);
+  swindow_->saveImage(filename);
 }
 
 void
@@ -846,8 +867,8 @@ getBgColor()
 {
   if (document_)
     return document_->getBgColor();
-  else
-    return CRGBA();
+
+  return CRGBName::toRGBA("#c0c0c0");
 }
 
 CRGBA
@@ -1028,7 +1049,7 @@ CBrowserFontSize
 CBrowserWindow::
 sizeToFontSize(int size) const
 {
-  if      (size <= 1) return CBrowserFontSize("0.67em");
+  if      (size <= 1) return CBrowserFontSize("0.75em");
   else if (size == 2) return CBrowserFontSize("0.83em");
   else if (size == 3) return CBrowserFontSize("1.00em");
   else if (size == 4) return CBrowserFontSize("1.17em");

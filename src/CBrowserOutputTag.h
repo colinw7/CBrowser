@@ -9,7 +9,7 @@ class CBrowserObject;
 
 class CBrowserOutputTagBase {
  public:
-  CBrowserOutputTagBase(CHtmlTagId id) :
+  explicit CBrowserOutputTagBase(CHtmlTagId id) :
    id_(id) {
   }
 

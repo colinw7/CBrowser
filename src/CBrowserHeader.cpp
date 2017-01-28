@@ -18,8 +18,8 @@ namespace {
 }
 
 CBrowserHeader::
-CBrowserHeader(CBrowserWindow *window, CHtmlTagId id, const CBrowserHeaderData &data) :
- CBrowserObject(window, id), data_(data), ind_(-1)
+CBrowserHeader(CBrowserWindow *window, CHtmlTagId id) :
+ CBrowserObject(window, id), ind_(-1)
 {
   ind_ = idToInd(id);
 
@@ -31,18 +31,18 @@ CBrowserHeader(CBrowserWindow *window, CHtmlTagId id, const CBrowserHeaderData &
   else if (id == CHtmlTagId::H6) font_.setSize(window_->sizeToFontSize(1));
 
   if      (id == CHtmlTagId::H1) marginRef().setTop(CBrowserUnitValue("0.67em"));
-  else if (id == CHtmlTagId::H2) marginRef().setTop(CBrowserUnitValue("0.83em"));
-  else if (id == CHtmlTagId::H3) marginRef().setTop(CBrowserUnitValue("1.00em"));
-  else if (id == CHtmlTagId::H4) marginRef().setTop(CBrowserUnitValue("1.33em"));
-  else if (id == CHtmlTagId::H5) marginRef().setTop(CBrowserUnitValue("1.67em"));
-  else if (id == CHtmlTagId::H6) marginRef().setTop(CBrowserUnitValue("2.33em"));
+  else if (id == CHtmlTagId::H2) marginRef().setTop(CBrowserUnitValue("0.75em"));
+  else if (id == CHtmlTagId::H3) marginRef().setTop(CBrowserUnitValue("0.83em"));
+  else if (id == CHtmlTagId::H4) marginRef().setTop(CBrowserUnitValue("1.12em"));
+  else if (id == CHtmlTagId::H5) marginRef().setTop(CBrowserUnitValue("1.12em"));
+  else if (id == CHtmlTagId::H6) marginRef().setTop(CBrowserUnitValue("1.12em"));
 
   if      (id == CHtmlTagId::H1) marginRef().setBottom(CBrowserUnitValue("0.67em"));
-  else if (id == CHtmlTagId::H2) marginRef().setBottom(CBrowserUnitValue("0.83em"));
-  else if (id == CHtmlTagId::H3) marginRef().setBottom(CBrowserUnitValue("1.00em"));
-  else if (id == CHtmlTagId::H4) marginRef().setBottom(CBrowserUnitValue("1.33em"));
-  else if (id == CHtmlTagId::H5) marginRef().setBottom(CBrowserUnitValue("1.67em"));
-  else if (id == CHtmlTagId::H6) marginRef().setBottom(CBrowserUnitValue("2.33em"));
+  else if (id == CHtmlTagId::H2) marginRef().setBottom(CBrowserUnitValue("0.75em"));
+  else if (id == CHtmlTagId::H3) marginRef().setBottom(CBrowserUnitValue("0.83em"));
+  else if (id == CHtmlTagId::H4) marginRef().setBottom(CBrowserUnitValue("1.12em"));
+  else if (id == CHtmlTagId::H5) marginRef().setBottom(CBrowserUnitValue("1.12em"));
+  else if (id == CHtmlTagId::H6) marginRef().setBottom(CBrowserUnitValue("1.12em"));
 
   font_.setBold();
 }

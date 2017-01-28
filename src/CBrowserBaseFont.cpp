@@ -2,8 +2,8 @@
 #include <CBrowserWindow.h>
 
 CBrowserBaseFont::
-CBrowserBaseFont(CBrowserWindow *window, const CBrowserBaseFontData &data) :
- CBrowserObject(window, CHtmlTagId::BASEFONT), data_(data)
+CBrowserBaseFont(CBrowserWindow *window) :
+ CBrowserObject(window, CHtmlTagId::BASEFONT)
 {
   setDisplay(CBrowserObject::Display::INLINE);
 }

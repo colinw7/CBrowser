@@ -7,7 +7,8 @@ class QMenu;
 
 class CBrowserHistory {
  public:
-  CBrowserHistory(CBrowserWindow *window);
+  explicit CBrowserHistory(CBrowserWindow *window);
+
  ~CBrowserHistory();
 
   void setMenu(QMenu *menu);

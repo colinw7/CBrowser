@@ -99,8 +99,8 @@ CBrowserEmStyle::
 //---
 
 CBrowserFontStyleObj::
-CBrowserFontStyleObj(CBrowserWindow *window, const CBrowserFontData &data) :
- CBrowserObject(window, CHtmlTagId::FONT), data_(data)
+CBrowserFontStyleObj(CBrowserWindow *window) :
+ CBrowserObject(window, CHtmlTagId::FONT)
 {
   setDisplay(CBrowserObject::Display::INLINE);
 }
@@ -247,7 +247,7 @@ CBrowserSubStyle(CBrowserWindow *window) :
 {
   setDisplay(CBrowserObject::Display::INLINE);
 
-  textProp_.setVerticalAlign(CBrowserTextVerticalAlign("sub"));
+  textProp_.setVerticalAlign(CBrowserTextVAlign("sub"));
 
   font_.setSmall();
 }
@@ -265,7 +265,7 @@ CBrowserSupStyle(CBrowserWindow *window) :
 {
   setDisplay(CBrowserObject::Display::INLINE);
 
-  textProp_.setVerticalAlign(CBrowserTextVerticalAlign("super"));
+  textProp_.setVerticalAlign(CBrowserTextVAlign("super"));
 
   font_.setSmall();
 }

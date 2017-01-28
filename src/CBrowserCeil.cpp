@@ -6,6 +6,7 @@
 #include <CBrowserWindowWidget.h>
 #include <CBrowserCeil.h>
 #include <CBrowserJS.h>
+#include <CBrowserMain.h>
 
 #include <CTempFile.h>
 #include <CCeilL.h>
@@ -440,13 +441,9 @@ HtmlScriptWindowOpen()
 
   if (ClParserInst->getUserFnArgList(CL_ARG_TYPE_STRING, &url ,
                                      CL_ARG_TYPE_STRING, &name, -1)) {
-    CBrowserIFace *iface = new CBrowserIFace;
+    CBrowserMainInst->setDocument(url);
 
-    CBrowserWindow *window = iface->getWindow();
-
-    window->setName(name);
-
-    window->setDocument(url);
+    //window->setName(name);
   }
 
   ClParserValuePtr value = ClParserValueMgrInst->createValue((long) window);

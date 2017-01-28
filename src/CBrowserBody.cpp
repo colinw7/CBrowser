@@ -3,8 +3,8 @@
 #include <CBrowserDocument.h>
 
 CBrowserBody::
-CBrowserBody(CBrowserWindow *window, const CBrowserBodyData &data) :
- CBrowserObject(window, CHtmlTagId::BODY, data), data_(data)
+CBrowserBody(CBrowserWindow *window) :
+ CBrowserObject(window, CHtmlTagId::BODY)
 {
   setDisplay(Display::BLOCK);
 
@@ -37,9 +37,6 @@ setNameValue(const std::string &name, const std::string &value)
     }
     else
       window_->displayError("Illegal 'body' bgproperties value '%s'\n", value.c_str());
-  }
-  else if (lname == "class") {
-    data_.cclass = value;
   }
   else if (lname == "leftmargin") {
     CBrowserUnitValue unit(value);

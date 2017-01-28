@@ -6,7 +6,7 @@
 
 class CBrowserBaseFont : public CBrowserObject {
  public:
-  CBrowserBaseFont(CBrowserWindow *window, const CBrowserBaseFontData &data);
+  explicit CBrowserBaseFont(CBrowserWindow *window);
 
   void init();
 

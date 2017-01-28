@@ -29,7 +29,7 @@ class CBrowserList : public CBrowserObject {
  public:
   static SymbolType stringToSymbol(const std::string &value);
 
-  CBrowserList(CBrowserWindow *window, CHtmlTagId id, const CBrowserOutputListData &data);
+  CBrowserList(CBrowserWindow *window, CHtmlTagId id);
 
   const std::string &getSymbol() const { return data_.symbol; }
   void setSymbol(const std::string &symbol) { data_.symbol = symbol; }

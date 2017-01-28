@@ -8,10 +8,7 @@
 struct CBrowserBaseData {
   typedef std::map<std::string,std::string> NameValues;
 
-  std::string id;
-  std::string name;
-  std::string cclass;
-  NameValues  nameValues;
+  NameValues nameValues;
 };
 
 //---
@@ -145,15 +142,14 @@ struct CBrowserHeaderData {
 //---
 
 struct CBrowserImageData {
-  std::string        src;
-  CBrowserImageAlign align  { CBrowserImageAlign::BOTTOM };
-  int                border { 2 };
-  int                width  { -1 };
-  int                height { -1 };
-  std::string        usemap;
-  int                hspace { 2 };
-  int                vspace { 2 };
-  std::string        alt    { "" };
+  std::string src;
+  int         border { 2 };
+  int         width  { -1 };
+  int         height { -1 };
+  std::string usemap;
+  int         hspace { 2 };
+  int         vspace { 2 };
+  std::string alt    { "" };
 };
 
 //---
@@ -166,7 +162,6 @@ struct CBrowserLinkData : public CBrowserBaseData {
   std::string rev;
   std::string target;
   std::string type;
-  std::string title;
   std::string url;
 };
 

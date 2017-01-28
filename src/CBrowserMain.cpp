@@ -1,6 +1,7 @@
 #include <CBrowserMain.h>
 #include <CBrowserIFace.h>
 #include <CBrowserWindow.h>
+#include <CBrowserScrolledWindow.h>
 
 #include <CQApp.h>
 
@@ -24,8 +25,7 @@ CBrowserMain()
 CBrowserMain::
 ~CBrowserMain()
 {
-  for (auto &i : ifaces_)
-    delete i;
+  delete iface_;
 }
 
 void
@@ -58,18 +58,41 @@ setShowBoxes(bool b)
 
 void
 CBrowserMain::
-openDocument(const std::string &fileName)
+setDocument(const std::string &fileName)
 {
-  CBrowserIFace *iface = new CBrowserIFace;
-
-  iface->init();
-
-  ifaces_.push_back(iface);
+  CBrowserIFace *iface = this->iface();
 
   if (fileName != "")
-    iface->getWindow()->setDocument(fileName);
+    iface->setDocument(fileName);
 
-  iface->show();
+  iface_->show();
+}
+
+void
+CBrowserMain::
+addDocument(const std::string &fileName)
+{
+  CBrowserIFace *iface = this->iface();
+
+  if (fileName != "")
+    iface->addDocument(fileName);
+
+  iface_->show();
+}
+
+CBrowserIFace *
+CBrowserMain::
+iface() const
+{
+  if (! iface_) {
+    CBrowserMain *th = const_cast<CBrowserMain *>(this);
+
+    th->iface_ = new CBrowserIFace;
+
+    th->iface_->init();
+  }
+
+  return iface_;
 }
 
 void

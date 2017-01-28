@@ -6,7 +6,8 @@
 
 class CBrowserRule : public CBrowserObject {
  public:
-  CBrowserRule(CBrowserWindow *window, const CBrowserRuleData &data);
+  explicit CBrowserRule(CBrowserWindow *window);
+
  ~CBrowserRule();
 
   void init() override;
