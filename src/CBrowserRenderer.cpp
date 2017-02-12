@@ -59,6 +59,7 @@ CBrowserRenderer::
 drawRectangle(const CIBBox2D &bbox, const CPen &pen)
 {
   painter_->setPen(CQUtil::toQPen(pen));
+  painter_->setBrush(Qt::NoBrush);
 
   painter_->drawRect(CQUtil::toQRect(bbox));
 }
@@ -68,6 +69,23 @@ CBrowserRenderer::
 fillRectangle(const CIBBox2D &bbox, const CBrush &brush)
 {
   painter_->fillRect(CQUtil::toQRect(bbox), CQUtil::toQBrush(brush));
+}
+
+void
+CBrowserRenderer::
+fillPolygon(const std::vector<CIPoint2D> &points, const CBrush &brush)
+{
+  std::vector<QPoint> qpoints;
+
+  qpoints.resize(points.size());
+
+  for (std::size_t i = 0; i < points.size(); ++i)
+    qpoints[i] = QPoint(points[i].x, points[i].y);
+
+  painter_->setPen(QPen(Qt::NoPen));
+  painter_->setBrush(CQUtil::toQBrush(brush));
+
+  painter_->drawPolygon(&qpoints[0], qpoints.size());
 }
 
 void
@@ -85,7 +103,6 @@ CBrowserRenderer::
 fillCircle(const CIPoint2D &c, int r, const CBrush &brush)
 {
   painter_->setPen(Qt::NoPen);
-
   painter_->setBrush(CQUtil::toQBrush(brush));
 
   painter_->drawEllipse(QRect(c.x - r, c.y - r, 2*r, 2*r));

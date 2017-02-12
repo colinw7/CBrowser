@@ -1,11 +1,10 @@
+#include <CBrowserCeil.h>
 #include <CBrowserWindow.h>
 #include <CBrowserDocument.h>
 #include <CBrowserFile.h>
 #include <CBrowserOutput.h>
 #include <CBrowserIFace.h>
 #include <CBrowserWindowWidget.h>
-#include <CBrowserCeil.h>
-#include <CBrowserJS.h>
 #include <CBrowserMain.h>
 
 #include <CTempFile.h>
@@ -434,13 +433,15 @@ HtmlScriptDocumentClose()
 static ClParserValuePtr
 HtmlScriptWindowOpen()
 {
-  char *url;
+  char *text;
   char *name;
 
   CBrowserWindow *window = nullptr;
 
-  if (ClParserInst->getUserFnArgList(CL_ARG_TYPE_STRING, &url ,
+  if (ClParserInst->getUserFnArgList(CL_ARG_TYPE_STRING, &text,
                                      CL_ARG_TYPE_STRING, &name, -1)) {
+    CUrl url(text);
+
     CBrowserMainInst->setDocument(url);
 
     //window->setName(name);

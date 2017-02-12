@@ -51,7 +51,17 @@ CJValueP
 CQJHtmlObj::
 getProperty(CJavaScript *js, const std::string &name) const
 {
-  return CJObj::getProperty(js, name);
+  if      (name == "parentNode") {
+    CBrowserObject *parent = htmlObj_->parent();
+    if (! parent) return CJValueP();
+
+    CQJHtmlObj *parentObj = htmlObj_->getJObj();
+    if (! parentObj) return CJValueP();
+
+    return CJValueP(parentObj);
+  }
+  else
+    return CJObj::getProperty(js, name);
 }
 
 void
@@ -65,7 +75,13 @@ CJValueP
 CQJHtmlObj::
 execNameFn(CJavaScript *js, const std::string &name, const Values &values)
 {
-  if      (name == "getAttribute") {
+  if      (name == "appendChild") {
+    return CJValueP();
+  }
+  else if (name == "insertBefore") {
+    return CJValueP();
+  }
+  else if (name == "getAttribute") {
     return CJValueP();
   }
   else

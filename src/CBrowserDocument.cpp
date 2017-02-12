@@ -11,7 +11,8 @@ CBrowserDocument(CBrowserWindow *window)
 {
   window_ = window;
 
-  setBgColor   ("#c0c0c0");
+//setBgColor   ("#c0c0c0");
+  setBgColor   ("#ffffff");
   setFgColor   ("#000000");
   setLinkColor ("blue"   );
   setALinkColor("blue"   );
@@ -25,7 +26,7 @@ CBrowserDocument::
 
 void
 CBrowserDocument::
-setUrl(const std::string &url)
+setUrl(const CUrl &url)
 {
   url_ = url;
 }
@@ -87,15 +88,49 @@ freeLinks()
   anchors_.clear();
 }
 
-void
+bool
 CBrowserDocument::
-read(const std::string &url)
+read(const CUrl &url)
 {
   tokens_.clear();
 
   url_ = url;
 
-  window_->fileMgr()->readURL(url_, tokens_);
+  if      (url_.isFile()) {
+    std::string filename = url_.getFile();
+
+    if (! CFile::exists(filename)) {
+      window_->displayError("File '%s' does not exist", filename.c_str());
+      return false;
+    }
+
+    if (! window_->fileMgr()->readFile(filename, tokens_))
+      return false;
+  }
+  else if (url.isHttp()) {
+    std::string filename;
+
+    if (! window_->downloadFile(url, filename)) {
+      window_->displayError("Failed to download '%s'", url.getUrl().c_str());
+      return false;
+    }
+
+    if (! CFile::exists(filename)) {
+      window_->displayError("File '%s' does not exist", filename.c_str());
+      return false;
+    }
+
+    if (! window_->fileMgr()->readFile(filename, tokens_)) {
+      window_->displayError("Failed to read file '%s'", filename.c_str());
+      return false;
+    }
+  }
+  else {
+    window_->displayError("Invalid url '%s'", url.getUrl().c_str());
+    return false;
+  }
+
+  return true;
 }
 
 void
@@ -112,7 +147,7 @@ CBrowserDocument::
 setBgColor(const std::string &color)
 {
   if (color != "")
-    bgColor_ = CRGBName::toRGBA(color);
+    CRGBName::toHtmlRGBA(color, bgColor_);
 }
 
 void
@@ -127,7 +162,7 @@ CBrowserDocument::
 setFgColor(const std::string &color)
 {
   if (color != "")
-    fgColor_ = CRGBName::toRGBA(color);
+    CRGBName::toHtmlRGBA(color, fgColor_);
 }
 
 void
@@ -143,7 +178,7 @@ CBrowserDocument::
 setLinkColor(const std::string &color)
 {
   if (color != "")
-    link_color_ = CRGBName::toRGBA(color);
+    CRGBName::toHtmlRGBA(color, linkColor_);
 }
 
 void
@@ -151,7 +186,7 @@ CBrowserDocument::
 setALinkColor(const std::string &color)
 {
   if (color != "")
-    alink_color_ = CRGBName::toRGBA(color);
+    CRGBName::toHtmlRGBA(color, alinkColor_);
 }
 
 void
@@ -159,7 +194,7 @@ CBrowserDocument::
 setVLinkColor(const std::string &color)
 {
   if (color != "")
-    vlink_color_ = CRGBName::toRGBA(color);
+    CRGBName::toHtmlRGBA(color, vlinkColor_);
 }
 
 void

@@ -46,6 +46,8 @@ class CBrowserWindowWidget : public QWidget {
   void drawRectangle(int x, int y, int w, int h, const CPen &pen);
   void fillRectangle(int x, int y, int w, int h, const CBrush &brush);
 
+  void fillPolygon(const std::vector<CIPoint2D> &points, const CBrush &brush);
+
   void drawCircle(int x, int y, int r, const CPen &pen);
   void fillCircle(int x, int y, int r, const CBrush &brush);
 

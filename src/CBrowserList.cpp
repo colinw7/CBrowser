@@ -16,30 +16,6 @@ std::string listIdName(CHtmlTagId id) {
 
 //---
 
-CBrowserList::SymbolType
-CBrowserList::
-stringToSymbol(const std::string &value)
-{
-  std::string lvalue = CStrUtil::toLower(value);
-
-  if      (lvalue == "none"                ) return SymbolType::NONE;
-  else if (lvalue == "circle"              ) return SymbolType::CIRCLE;
-  else if (lvalue == "decimal"             ) return SymbolType::DECIMAL;
-  else if (lvalue == "decimal-leading-zero") return SymbolType::DECIMAL_ZERO;
-  else if (lvalue == "disc"                ) return SymbolType::DISC;
-  else if (lvalue == "lower-alpha"         ) return SymbolType::LOWER_ALPHA;
-  else if (lvalue == "lower-latin"         ) return SymbolType::LOWER_LATIN;
-  else if (lvalue == "lower-roman"         ) return SymbolType::LOWER_ROMAN;
-  else if (lvalue == "square"              ) return SymbolType::SQUARE;
-  else if (lvalue == "upper-alpha"         ) return SymbolType::UPPER_ALPHA;
-  else if (lvalue == "upper-latin"         ) return SymbolType::UPPER_LATIN;
-  else if (lvalue == "upper-roman"         ) return SymbolType::UPPER_ROMAN;
-  else if (lvalue == "initial"             ) return SymbolType::INITIAL;
-  else if (lvalue == "inherit"             ) return SymbolType::INHERIT;
-
-  return SymbolType::NONE;
-}
-
 CBrowserList::
 CBrowserList(CBrowserWindow *window, CHtmlTagId id) :
  CBrowserObject(window, id)
@@ -85,7 +61,7 @@ setNameValue(const std::string &name, const std::string &value)
     CStrUtil::toWords(lvalue, words);
 
     if (words.size() > 0)
-      symbolType_ = stringToSymbol(words[0]);
+      styleType_ = CBrowserListStyleType(words[0]);
 
 #if 0
     if (words.size() > 1)
@@ -96,7 +72,7 @@ setNameValue(const std::string &name, const std::string &value)
 #endif
   }
   else if (lname == "list-style-type") {
-    symbolType_ = stringToSymbol(lvalue);
+    styleType_ = CBrowserListStyleType(lvalue);
   }
   else if (lname == "list-style-image") {
   }

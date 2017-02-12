@@ -2,7 +2,7 @@
 #define CBrowserScrolledWindow_H
 
 #include <CBrowserTypes.h>
-
+#include <CUrl.h>
 #include <QFrame>
 
 class QScrollBar;
@@ -11,7 +11,7 @@ class CBrowserScrolledWindow : public QFrame {
   Q_OBJECT
 
  public:
-  CBrowserScrolledWindow(CBrowserIFace *iface);
+  explicit CBrowserScrolledWindow(CBrowserIFace *iface);
 
  ~CBrowserScrolledWindow();
 
@@ -24,6 +24,8 @@ class CBrowserScrolledWindow : public QFrame {
   const std::string &title() const { return title_; }
   void setTitle(const std::string &v);
 
+  const std::string &filename() const;
+
   int getCanvasWidth () const { return canvas_width_ ; }
   int getCanvasHeight() const { return canvas_height_; }
 
@@ -32,7 +34,7 @@ class CBrowserScrolledWindow : public QFrame {
 
   void setSize(int width, int height);
 
-  void setDocument(const std::string &filename);
+  void setDocument(const CUrl &url);
 
   void print();
 

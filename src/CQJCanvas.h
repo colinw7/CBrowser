@@ -7,7 +7,7 @@ class CQJCanvasType : public CJObjType {
  public:
   static CJObjTypeP instance(CJavaScript *js);
 
-  CQJCanvasType(CJavaScript *js);
+  explicit CQJCanvasType(CJavaScript *js);
 
   CJValueP exec(CJavaScript *, const std::string &, const Values &) override;
 

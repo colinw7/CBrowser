@@ -3,6 +3,8 @@
 
 #include <CQJObject.h>
 
+class CBrowserWindow;
+
 class CQJDocumentType : public CJObjType {
  public:
   static CJObjTypeP instance(CJavaScript *js);
@@ -32,6 +34,9 @@ class CQJDocument : public CQJObject {
   CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values);
 
   void print(std::ostream &os) const override { os << "document"; }
+
+ private:
+  CBrowserWindow *getWindow() const;
 };
 
 #endif

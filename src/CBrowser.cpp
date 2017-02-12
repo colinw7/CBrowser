@@ -27,14 +27,18 @@ main(int argc, char **argv)
     for (int i = 1; i < argc; ++i) {
       std::string fileName = argv[i];
 
+      CUrl url(fileName);
+
       if (i == 1)
-        browser->setDocument(fileName);
+        browser->setDocument(url);
       else
-        browser->addDocument(fileName);
+        browser->addDocument(url);
     }
   }
   else {
-    browser->setDocument("");
+    CUrl url;
+
+    browser->setDocument(url);
   }
 
   if (batch) {

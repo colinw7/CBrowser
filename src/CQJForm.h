@@ -8,7 +8,7 @@ class CQJFormType : public CJObjType {
  public:
   static CJObjTypeP instance(CJavaScript *js);
 
-  CQJFormType(CJavaScript *js);
+  explicit CQJFormType(CJavaScript *js);
 
   CJValueP exec(CJavaScript *, const std::string &, const Values &) override {
     return CJValueP();

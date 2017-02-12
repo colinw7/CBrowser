@@ -5,14 +5,14 @@
 #include <CBrowserData.h>
 #include <CJavaScript.h>
 #include <CQJObject.h>
-#include <QWidget>
+#include <QFrame>
 #include <QGradient>
 #include <QImage>
 #include <QFont>
 #include <QColor>
 #include <QPen>
 
-class CQJCanvasWidget : public QWidget {
+class CQJCanvasWidget : public QFrame {
   Q_OBJECT
 
  public:

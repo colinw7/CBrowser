@@ -12,8 +12,8 @@ CBrowserRule(CBrowserWindow *window) :
   marginRef().setLeft  (CBrowserUnitValue("auto"));
   marginRef().setRight (CBrowserUnitValue("auto"));
 
-  borderRef().setLineWidth(CBrowserUnitValue("1px"));
-  borderRef().setLineStyle(CBrowserBorder::stringToStyle("inset"));
+  borderRef().setWidth(CBrowserBorderWidth("1px"));
+  borderRef().setStyle(CBrowserBorder::stringToStyle("inset"));
 
   data_.size = std::max(data_.size, 2);
 }
@@ -27,6 +27,7 @@ void
 CBrowserRule::
 init()
 {
+  CBrowserObject::init();
 }
 
 void
@@ -76,7 +77,7 @@ calcRegion() const
   if      (! this->width().isValid())
     width = 0;
   else if (this->width().units() != CScreenUnits::Units::PERCENT)
-    width = this->width().value();
+    width = this->width().pxValue();
   else
     width = 0;
 
@@ -87,18 +88,14 @@ void
 CBrowserRule::
 draw(const CTextBox &region)
 {
-  fillBackground(region);
-
-  //---
-
   int width;
 
   if      (! this->width().isValid())
     width = region.width();
   else if (this->width().units() == CScreenUnits::Units::PERCENT)
-    width = (int) (this->width().value()*region.width()/100.0);
+    width = (int) (this->width().pxValue()*region.width()/100.0);
   else
-    width = this->width().value();
+    width = this->width().pxValue();
 
   int x1 = region.x();
 

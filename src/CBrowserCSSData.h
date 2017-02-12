@@ -2,6 +2,7 @@
 #define CBrowserCSSData_H
 
 #include <CBrowserStyleData.h>
+#include <CUrl.h>
 
 class CBrowserCSSData {
  public:
@@ -10,6 +11,9 @@ class CBrowserCSSData {
 
  public:
   CBrowserCSSData() { }
+
+  const CUrl &url() const { return url_; }
+  void setUrl(const CUrl &v) { url_ = v; }
 
   const StyleDataMap     &globalStyle() const { return globalStyle_; }
   const StyleDataMap     &nameStyle() const { return nameStyle_; }
@@ -25,8 +29,17 @@ class CBrowserCSSData {
     typeClassStyle_.clear();
   }
 
+  // global
   bool hasGlobalStyleData() const {
     return (globalStyle_.find("*") != globalStyle_.end());
+  }
+
+  const CBrowserStyleData &getGlobalStyleData() const {
+    auto p = globalStyle_.find("*");
+
+    assert(p != globalStyle_.end());
+
+    return (*p).second;
   }
 
   CBrowserStyleData &getGlobalStyleData() {
@@ -39,8 +52,17 @@ class CBrowserCSSData {
     return (*p).second;
   }
 
+  // name
   bool hasNameStyleData(const std::string &objName) const {
     return (nameStyle_.find(objName) != nameStyle_.end());
+  }
+
+  const CBrowserStyleData &getNameStyleData(const std::string &objName) const {
+    auto p = nameStyle_.find(objName);
+
+    assert(p != nameStyle_.end());
+
+    return (*p).second;
   }
 
   CBrowserStyleData &getNameStyleData(const std::string &objName) {
@@ -53,8 +75,17 @@ class CBrowserCSSData {
     return (*p).second;
   }
 
+  // type
   bool hasTypeStyleData(const std::string &objType) const {
     return (typeStyle_.find(objType) != typeStyle_.end());
+  }
+
+  const CBrowserStyleData &getTypeStyleData(const std::string &objType) const {
+    auto p = typeStyle_.find(objType);
+
+    assert(p != typeStyle_.end());
+
+    return (*p).second;
   }
 
   CBrowserStyleData &getTypeStyleData(const std::string &objType) {
@@ -67,8 +98,17 @@ class CBrowserCSSData {
     return (*p).second;
   }
 
+  // class
   bool hasClassStyleData(const std::string &objClass) const {
     return (classStyle_.find(objClass) != classStyle_.end());
+  }
+
+  const CBrowserStyleData &getClassStyleData(const std::string &objClass) const {
+    auto p = classStyle_.find(objClass);
+
+    assert(p != classStyle_.end());
+
+    return (*p).second;
   }
 
   CBrowserStyleData &getClassStyleData(const std::string &objClass) {
@@ -81,6 +121,7 @@ class CBrowserCSSData {
     return (*p).second;
   }
 
+  // type/class
   bool hasTypeClassStyleData(const std::string &objType, const std::string &objClass) const {
     auto p1 = typeClassStyle_.find(objType);
 
@@ -90,6 +131,21 @@ class CBrowserCSSData {
     const StyleDataMap &typeStyleDataMap = (*p1).second;
 
     return (typeStyleDataMap.find(objClass) != typeStyleDataMap.end());
+  }
+
+  const CBrowserStyleData &getTypeClassStyleData(const std::string &objType,
+                                                 const std::string &objClass) const {
+    auto p1 = typeClassStyle_.find(objType);
+
+    assert(p1 != typeClassStyle_.end());
+
+    const StyleDataMap &typeStyleDataMap = (*p1).second;
+
+    auto p2 = typeStyleDataMap.find(objClass);
+
+    assert(p2 != typeStyleDataMap.end());
+
+    return (*p2).second;
   }
 
   CBrowserStyleData &getTypeClassStyleData(const std::string &objType,
@@ -111,7 +167,42 @@ class CBrowserCSSData {
     return (*p2).second;
   }
 
+  static const CBrowserStyleData &indexStyleData(const StyleDataMap &map, int ind) {
+    static CBrowserStyleData s_styleData;
+
+    int ind1 = 0;
+
+    for (const auto &styleData : map) {
+      if (ind == ind1)
+        return styleData.second;
+
+      ++ind1;
+    }
+
+    assert(false);
+
+    return s_styleData;
+  }
+
+  static const StyleDataMap &indexTypeStyleData(const TypeStyleDataMap &map, int ind) {
+    static StyleDataMap s_styleDataMap;
+
+    int ind1 = 0;
+
+    for (const auto &styleDataMap : map) {
+      if (ind == ind1)
+        return styleDataMap.second;
+
+      ++ind1;
+    }
+
+    assert(false);
+
+    return s_styleDataMap;
+  }
+
  private:
+  CUrl             url_;
   StyleDataMap     globalStyle_;
   StyleDataMap     nameStyle_;
   StyleDataMap     typeStyle_;

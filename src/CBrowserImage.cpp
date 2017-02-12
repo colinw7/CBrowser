@@ -35,7 +35,32 @@ init()
 
   CImagePtr image;
 
-  if (data_.src.substr(0, 6) == "_html_") {
+  CBrowserImageData data = data_;
+
+  CUrl url = window_->getDocument()->getUrl();
+
+  if      (url.isHttp()) {
+    CUrl url1 = url;
+
+    CUrl url2(data.src);
+
+    if (url2.isHttp())
+      url1 = url2;
+    else
+      url1.setFile(data.src);
+
+    std::string filename;
+
+    if (! window_->downloadFile(url1, filename)) {
+      std::cerr << "Failed to download '" << url1 << "'" << std::endl;
+      return;
+    }
+
+    data.src = filename;
+
+    image = window_->lookupImage(data);
+  }
+  else if (data_.src.substr(0, 6) == "_html_") {
     std::string name = data_.src.substr(6);
 
     image = CBrowserNamedImage::lookup(name);
@@ -51,7 +76,7 @@ init()
   //---
 
   std::vector<std::string> strs = {{
-    "src", "border", "width", "height", "usemap", "hspace", "vspace", "alt" }};
+    "src", "align", "border", "width", "height", "usemap", "hspace", "vspace", "alt" }};
 
   addProperties(strs);
 
@@ -180,6 +205,13 @@ propertyValue(int i) const
   const std::string &name = propertyName(i);
 
   if      (name == "src"   ) return CBrowserProperty::toString(data_.src);
+  else if (name == "align" ) {
+    if (float_.type() != CBrowserFloat::Type::INVALID)
+      return CBrowserProperty::toString(float_);
+
+    //return CBrowserProperty::toString(textProp_);
+    return "";
+  }
   else if (name == "border") return CBrowserProperty::toString(data_.border);
   else if (name == "width" ) return CBrowserProperty::toString(data_.width);
   else if (name == "height") return CBrowserProperty::toString(data_.height);
@@ -219,10 +251,6 @@ void
 CBrowserImage::
 draw(const CTextBox &region)
 {
-  fillBackground(region);
-
-  //---
-
   int hspace = std::max(data_.hspace, data_.border);
   int vspace = std::max(data_.vspace, data_.border);
 

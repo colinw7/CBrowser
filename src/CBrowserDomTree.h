@@ -6,6 +6,7 @@
 class CBrowserDomTree;
 class CBrowserObjProp;
 class CBrowserWindow;
+class QTextEdit;
 
 class CBrowserDomTreeDlg : public QWidget {
   Q_OBJECT
@@ -15,12 +16,14 @@ class CBrowserDomTreeDlg : public QWidget {
 
   CBrowserWindow *window() const;
 
-  CBrowserDomTree *domTree() const { return domTree_; }
-  CBrowserObjProp *prop   () const { return prop_; }
+  CBrowserDomTree* domTree() const { return domTree_; }
+  CBrowserObjProp* prop   () const { return prop_; }
+  QTextEdit*       text   () const { return text_; }
 
  private:
-  CBrowserDomTree *domTree_ { nullptr };
-  CBrowserObjProp *prop_    { nullptr };
+  CBrowserDomTree* domTree_ { nullptr };
+  CBrowserObjProp* prop_    { nullptr };
+  QTextEdit*       text_    { nullptr };
 };
 
 //---

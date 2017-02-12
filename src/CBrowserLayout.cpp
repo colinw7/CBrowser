@@ -80,11 +80,13 @@ CBrowserBox *
 CBrowserLayout::
 boxAt(const CIPoint2D &p)
 {
+  if (! root_)
+    return nullptr;
+
   CBrowserBox *box  = nullptr;
   double       area = 0.0;
 
-  if (root_)
-    root_->boxAt(p, box, area);
+  root_->boxAt(p, box, area);
 
   return box;
 }

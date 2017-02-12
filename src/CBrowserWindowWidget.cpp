@@ -211,6 +211,13 @@ fillRectangle(int x, int y, int w, int h, const CBrush &brush)
 
 void
 CBrowserWindowWidget::
+fillPolygon(const std::vector<CIPoint2D> &points, const CBrush &brush)
+{
+  graphics_->fillPolygon(points, brush);
+}
+
+void
+CBrowserWindowWidget::
 drawCircle(int x, int y, int r, const CPen &pen)
 {
   graphics_->drawCircle(x, y, r, pen);

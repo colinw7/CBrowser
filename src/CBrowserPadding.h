@@ -19,8 +19,8 @@ class CBrowserPadding {
   const CBrowserUnitValue &top() const { return top_; }
   void setTop(const CBrowserUnitValue &v) { top_ = v; }
 
-  int width () const { return left().value() + right ().value(); }
-  int height() const { return top ().value() + bottom().value(); }
+  double width () const { return left().pxValue() + right ().pxValue(); }
+  double height() const { return top ().pxValue() + bottom().pxValue(); }
 
  private:
   CBrowserUnitValue left_;

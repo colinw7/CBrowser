@@ -10,7 +10,7 @@ CBrowserTable(CBrowserWindow *window, const CBrowserTableData &data) :
 
 //borderRef().setCollapse("separate");
 //borderRef().setSpacing("2px");
-  borderRef().setLineColor(CBrowserColor("gray"));
+  borderRef().setColor(CBrowserColor("gray"));
 }
 
 CBrowserTable::
@@ -50,15 +50,15 @@ setNameValue(const std::string &name, const std::string &value)
   }
   else if (lname == "bordercolor") {
     if (value != "")
-      data_.border_color = CRGBName::toRGBA(value);
+      CRGBName::toHtmlRGBA(value, data_.border_color);
   }
   else if (lname == "bordercolorlight") {
     if (value != "")
-      data_.border_color_light = CRGBName::toRGBA(value);
+      CRGBName::toHtmlRGBA(value, data_.border_color_light);
   }
   else if (lname == "bordercolordark") {
     if (value != "")
-      data_.border_color_dark = CRGBName::toRGBA(value);
+      CRGBName::toHtmlRGBA(value, data_.border_color_dark);
   }
   else if (lname == "cellpadding") {
     if (CStrUtil::isInteger(value))
@@ -194,7 +194,7 @@ layout()
 
       if (getWidthUnit() != CScreenUnits::Units::NONE &&
           getWidthUnit() != CScreenUnits::Units::PERCENT)
-        fixedWidth = std::min(fixedWidth, getWidth());
+        fixedWidth = std::min(fixedWidth, int(getWidth()));
 
       fixedWidth = std::min(fixedWidth, box.getWidth());
 
@@ -452,10 +452,6 @@ draw(const CTextBox &box)
 
   //---
 
-  fillBackground(box);
-
-  //---
-
   int x1 = box.x();
   int y1 = box.y();
 
@@ -662,7 +658,7 @@ draw(const CTextBox &box)
 
     caption_->draw(caption_->contentBox());
 
-    y1 += caption_->contentHeight();
+    //y1 += caption_->contentHeight();
   }
 
   //---
@@ -684,7 +680,7 @@ CBrowserTableRow(CBrowserWindow *window) :
   setDisplay(Display::TABLE_ROW);
 
 //setNameValue("vertical-align", "inherit");
-  borderRef().setLineColor(CBrowserColor("inherit"));
+  borderRef().setColor(CBrowserColor("inherit"));
 }
 
 void
@@ -705,15 +701,15 @@ setNameValue(const std::string &name, const std::string &value)
   }
   else if (lname == "bordercolor") {
     if (value != "")
-      data_.border_color = CRGBName::toRGBA(value);
+      CRGBName::toHtmlRGBA(value, data_.border_color);
   }
   else if (lname == "bordercolorlight") {
     if (value != "")
-      data_.border_color_light = CRGBName::toRGBA(value);
+      CRGBName::toHtmlRGBA(value, data_.border_color_light);
   }
   else if (lname == "bordercolordark") {
     if (value != "")
-      data_.border_color_dark = CRGBName::toRGBA(value);
+      CRGBName::toHtmlRGBA(value, data_.border_color_dark);
   }
   else if (lname == "valign") {
     window_->parseVAlignOption(value, data_.valign);
@@ -772,6 +768,7 @@ void
 CBrowserTableCell::
 init()
 {
+  CBrowserObject::init();
 }
 
 void
@@ -790,15 +787,15 @@ setNameValue(const std::string &name, const std::string &value)
   }
   else if (lname == "bordercolor") {
     if (lvalue != "")
-      data_.border_color = CRGBName::toRGBA(lvalue);
+      CRGBName::toHtmlRGBA(lvalue, data_.border_color);
   }
   else if (lname == "bordercolorlight") {
     if (lvalue != "")
-      data_.border_color_light = CRGBName::toRGBA(lvalue);
+      CRGBName::toHtmlRGBA(lvalue, data_.border_color_light);
   }
   else if (lname == "bordercolordark") {
     if (lvalue != "")
-      data_.border_color_dark = CRGBName::toRGBA(lvalue);
+      CRGBName::toHtmlRGBA(lvalue, data_.border_color_dark);
   }
   else if (lname == "colspan") {
     if (CStrUtil::isInteger(lvalue))
@@ -988,6 +985,7 @@ void
 CBrowserTableCaption::
 init()
 {
+  CBrowserObject::init();
 }
 
 void

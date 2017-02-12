@@ -18,9 +18,13 @@
 #include <CBrowserText.h>
 #include <CBrowserForm.h>
 #include <CBrowserJS.h>
+#include <CWebGet.h>
+#include <CThrow.h>
 #include <CRGBName.h>
 #include <CFontMgr.h>
 #include <CEnv.h>
+
+//------
 
 std::list<CBrowserWindow *> CBrowserWindow::window_list_;
 std::string                 CBrowserWindow::window_target_ = "";
@@ -32,8 +36,11 @@ CBrowserWindow(const std::string &filename) :
 {
   init();
 
-  if (filename != "")
-    setDocument(filename);
+  if (filename != "") {
+    CUrl url(filename);
+
+    setDocument(url);
+  }
 
   window_list_.push_back(this);
 }
@@ -102,9 +109,7 @@ reset()
   scripts_    .clear();
   scriptFiles_.clear();
 
-  css_.clear();
-
-  cssData_.clear();
+  cssList_.clear();
 
   baseFontSize_ = 3;
 
@@ -189,7 +194,7 @@ setBaseFontStyle()
 
   CBrowserFontSize fontSize = sizeToFontSize(size);
 
-  int isize = fontSize.value(12);
+  int isize = fontSize.value(CScreenUnits(12));
 
   std::string family = "helvetica";
 
@@ -340,22 +345,15 @@ setName(const std::string &name)
 
 void
 CBrowserWindow::
-setDocument(const std::string &filename)
+setDocument(const CUrl &url)
 {
   reset();
 
   //---
 
-  filename_ = CFile::getTail(filename);
+  filename_ = url.getLocalFile();
 
   document_ = new CBrowserDocument(this);
-
-  auto p = filename.find("file://");
-
-  std::string url = filename;
-
-  if (p == std::string::npos)
-    url = "file://" + url;
 
   document_->read(url);
 
@@ -512,8 +510,10 @@ drawDocument()
 
 void
 CBrowserWindow::
-gotoDocument(const std::string &url)
+gotoDocument(const std::string &text)
 {
+  CUrl url(text);
+
   setDocument(url);
 }
 
@@ -539,12 +539,17 @@ setBackgroundImage(const std::string &filename, bool fixed)
   if (filename == "")
     return;
 
+  if (! CFile::exists(filename)) {
+    displayError("Invalid image file '%s'\n", filename.c_str());
+    return;
+  }
+
   CImageFileSrc file(filename);
 
   CImagePtr image = CImageMgrInst->createImage(file);
 
   if (! image)
-    fprintf(stderr, "Illegal Backgound Image Type %s\n", filename.c_str());
+    displayError("Illegal Background Image Type %s\n", filename.c_str());
 
   document_->setBgImage(image, fixed);
 }
@@ -558,180 +563,131 @@ setTarget(const std::string &target)
 
 bool
 CBrowserWindow::
-loadCSSFile(const std::string &filename)
+loadCSSFile(const CUrl &url)
 {
-  if (! css_.processFile(filename))
+  std::string filename;
+
+  if      (url.isHttp()) {
+    if (! downloadFile(url, filename)) {
+      displayError("Failed to download '%s'\n", url.getUrl().c_str());
+      return false;
+    }
+  }
+  else {
+    filename = url.getFile();
+  }
+
+  CCSS css;
+
+  if (! css.processFile(filename))
     return false;
 
-  return processCSSSelectors();
+  cssList_.push_back(CSSData(css, url));
+
+  return true;
 }
 
 bool
 CBrowserWindow::
 loadCSSText(const std::string &text)
 {
-  if (! css_.processLine(text))
+  CCSS css;
+
+  if (! css.processLine(text))
     return false;
 
-  return processCSSSelectors();
-}
-
-bool
-CBrowserWindow::
-processCSSSelectors()
-{
-  std::vector<CCSS::Selector> selectors;
-
-  css_.getSelectors(selectors);
-
-  for (const auto &selector : selectors) {
-    CCSS::SelectName::Type type = selector.type();
-
-    std::string objName, objType, objClass;
-
-    if      (type == CCSS::SelectName::Type::TYPE) {
-      objType = selector.name();
-    }
-    else if (type == CCSS::SelectName::Type::CLASS) {
-      objType  = selector.name();
-      objClass = selector.className();
-    }
-    else if (type == CCSS::SelectName::Type::ID) {
-      objName = selector.name();
-    }
-
-    if (objName == "" && objType == "" && objClass == "")
-      continue;
-
-    //----
-
-    CCSS::SelectName::SubType subType = selector.subType();
-
-    if      (subType == CCSS::SelectName::SubType::CHILD) {
-    }
-    else if (subType == CCSS::SelectName::SubType::SIBLING) {
-    }
-    else if (subType == CCSS::SelectName::SubType::PRECEDER) {
-    }
-
-    std::string objSel = selector.expr();
-    std::string objFn  = selector.function();
-
-    std::string objFnArgs;
-
-    //---
-
-    if (objFn != "") {
-      auto p = objFn.find("(");
-
-      if (p != std::string::npos) {
-        objFnArgs = objFn.substr(p + 1);
-        objFn     = objFn.substr(0, p);
-
-        auto p1 = objFnArgs.find(")");
-
-        if (p1 != std::string::npos)
-          objFnArgs = objFnArgs.substr(0, p1);
-      }
-    }
-
-    //---
-
-    const CCSS::StyleData &cssStyleData = css_.getStyleData(selector);
-
-    //---
-
-    if (objType  == "*") objType  = "";
-    if (objClass == "*") objClass = "";
-
-    if      (objName != "")
-      addStyleValues(cssData_.getNameStyleData(objName), cssStyleData);
-    else if (objType != "" && objClass == "")
-      addStyleValues(cssData_.getTypeStyleData(objType), cssStyleData);
-    else if (objType == "" && objClass != "")
-      addStyleValues(cssData_.getClassStyleData(objClass), cssStyleData);
-    else if (objType != "" && objClass  != "")
-      addStyleValues(cssData_.getTypeClassStyleData(objType, objClass), cssStyleData);
-    else
-      addStyleValues(cssData_.getGlobalStyleData(), cssStyleData);
-  }
+  cssList_.push_back(CSSData(css));
 
   return true;
 }
 
-void
-CBrowserWindow::
-addStyleValues(CBrowserStyleData &styleData, const CCSS::StyleData &cssStyleData)
-{
-  for (const auto &option : cssStyleData.getOptions())
-    styleData.setValue(option.getName(), option.getValue());
-}
-
 //------
-
-namespace {
-
-template<typename VISITOR>
-bool
-visitStyleData(CBrowserCSSData &cssData, const CBrowserObject *obj, VISITOR &visitor)
-{
-  if (cssData.hasNameStyleData(obj->id())) {
-    CBrowserStyleData &nameStyleData = cssData.getNameStyleData(obj->id());
-
-   if (visitor(CBrowserCSSType::NAME, nameStyleData))
-     return true;
-  }
-
-  for (const auto &c : obj->getClasses()) {
-    if (cssData.hasTypeClassStyleData(obj->typeName(), c)) {
-      CBrowserStyleData &typeClassStyleData = cssData.getTypeClassStyleData(obj->typeName(), c);
-
-      if (visitor(CBrowserCSSType::TYPE_CLASS, typeClassStyleData))
-        return true;
-    }
-  }
-
-  if (cssData.hasTypeStyleData(obj->typeName())) {
-    CBrowserStyleData &typeStyleData = cssData.getTypeStyleData(obj->typeName());
-
-    if (visitor(CBrowserCSSType::TYPE, typeStyleData))
-      return true;
-  }
-
-  for (const auto &c : obj->getClasses()) {
-    if (cssData.hasClassStyleData(c)) {
-      CBrowserStyleData &classStyleData = cssData.getClassStyleData(c);
-
-      if (visitor(CBrowserCSSType::CLASS, classStyleData))
-        return true;
-    }
-  }
-
-  if (cssData.hasGlobalStyleData()) {
-    CBrowserStyleData &globalStyleData = cssData.getGlobalStyleData();
-
-    if (visitor(CBrowserCSSType::GLOBAL, globalStyleData))
-      return true;
-  }
-
-  return false;
-}
-
-}
 
 bool
 CBrowserWindow::
 applyStyle(CBrowserObject *obj)
 {
-  auto visitor = [&](CBrowserCSSType, CBrowserStyleData &styleData) -> bool {
-    for (const auto &nv : styleData.nameValues()) {
-      obj->setNameValue(nv.first, nv.second);
+  CCSSTagDataP tagData(new CBrowserObjectCSSTagData(obj));
+
+  bool rc = true;
+
+  for (const auto &css : cssList_) {
+    if (! visitStyleData(css.css, tagData))
+      rc = false;
+  }
+
+  return rc;
+}
+
+bool
+CBrowserWindow::
+visitStyleData(const CCSS &css, const CCSSTagDataP &tagData)
+{
+  bool match = false;
+
+  std::vector<CCSS::SelectorList> selectorListArray;
+
+  css.getSelectors(selectorListArray);
+
+  for (const auto &selectorList : selectorListArray) {
+    const CCSS::StyleData &styleData = css.getStyleData(selectorList);
+
+    if (! styleData.checkMatch(tagData))
+      continue;
+
+    CBrowserObject *obj = dynamic_cast<CBrowserObjectCSSTagData *>(tagData.get())->obj();
+
+    for (const auto &opt : styleData.getOptions()) {
+      obj->setStyleValue(opt.getName(), opt.getValue());
     }
 
-    return false;
-  };
+    match = true;
+  }
 
-  return visitStyleData(cssData_, obj, visitor);
+  return match;
+}
+
+//------
+
+void
+CBrowserWindow::
+selectCSSPattern(const CCSS::StyleData &styleData)
+{
+  deselectAllObjects();
+
+  for (auto &obj : objects_) {
+    CCSSTagDataP tagData(new CBrowserObjectCSSTagData(obj));
+
+    if (! styleData.checkMatch(tagData))
+      continue;
+
+    obj->setSelected(true);
+  }
+
+  redraw();
+}
+
+//------
+
+bool
+CBrowserWindow::
+setShortcutIcon(const CUrl &url)
+{
+  std::string filename;
+
+  if      (url.isHttp()) {
+    if (! downloadFile(url, filename)) {
+      displayError("Failed to download '%s'\n", url.getUrl().c_str());
+      return false;
+    }
+  }
+  else {
+    filename = url.getFile();
+  }
+
+  displayError("Shortcut icon '%s'\n", filename.c_str());
+
+  return true;
 }
 
 //------
@@ -800,10 +756,8 @@ void
 CBrowserWindow::
 goBack()
 {
-  std::string url = history_->goBack();
-
-  if (url == "")
-    return;
+  const CUrl &url = history_->goBack();
+  if (! url.isValid()) return;
 
   setDocument(url);
 }
@@ -812,10 +766,8 @@ void
 CBrowserWindow::
 goForward()
 {
-  std::string url = history_->goForward();
-
-  if (url == "")
-    return;
+  const CUrl &url = history_->goForward();
+  if (! url.isValid()) return;
 
   setDocument(url);
 }
@@ -856,7 +808,7 @@ activateLink(int x, int y)
 
 void
 CBrowserWindow::
-addHistoryItem(const std::string &item)
+addHistoryItem(const CUrl &item)
 {
   iface_->addHistoryItem(item);
 }
@@ -868,7 +820,11 @@ getBgColor()
   if (document_)
     return document_->getBgColor();
 
-  return CRGBName::toRGBA("#c0c0c0");
+  CRGBA bg;
+
+  CRGBName::toHtmlRGBA("#c0c0c0", bg);
+
+  return bg;
 }
 
 CRGBA
@@ -917,6 +873,13 @@ CBrowserWindow::
 fillRectangle(int x, int y, int w, int h, const CBrush &brush)
 {
   w_->fillRectangle(x, y, w, h, brush);
+}
+
+void
+CBrowserWindow::
+fillPolygon(const std::vector<CIPoint2D> &points, const CBrush &brush)
+{
+  w_->fillPolygon(points, brush);
 }
 
 void
@@ -1062,6 +1025,13 @@ sizeToFontSize(int size) const
 
 void
 CBrowserWindow::
+deselectAllObjects()
+{
+  selectSingleObject(nullptr);
+}
+
+void
+CBrowserWindow::
 selectSingleObject(CBrowserObject *obj)
 {
   bool changed = false;
@@ -1087,4 +1057,40 @@ selectSingleObject(CBrowserObject *obj)
 
   if (changed)
     redraw();
+}
+
+bool
+CBrowserWindow::
+downloadFile(const CUrl &url, std::string &filename)
+{
+  CWebGet webget(url);
+
+  webget.setOverwrite(true);
+  webget.setDebug    (true);
+//webget.setHttpDebug(true);
+//webget.setTcpDebug (true);
+//webget.setListRefs (false);
+
+  bool follow_links = false;
+
+  try {
+    CWebGetUrl web_url(&webget, url);
+
+    if (webget.loadPage(web_url)) {
+      if (follow_links && web_url.getProcess())
+        webget.processFile(web_url);
+    }
+
+    filename = web_url.getFilename();
+
+    return true;
+  }
+  catch (const char *message) {
+    displayError("Download of '%s' failed : '%s'\n", filename.c_str(), message);
+  }
+  catch (CThrow *error) {
+    displayError("Download of '%s' failed : '%s'\n", filename.c_str(), error->message.c_str());
+  }
+
+  return false;
 }

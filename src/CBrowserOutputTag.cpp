@@ -1,5 +1,55 @@
 #include <CBrowserOutputTag.h>
 
+CBrowserOutputTagMgr *
+CBrowserOutputTagMgr::
+instance()
+{
+  static CBrowserOutputTagMgr *inst;
+
+  if (! inst)
+    inst = new CBrowserOutputTagMgr;
+
+  return inst;
+}
+
+bool
+CBrowserOutputTagMgr::
+initialized() const
+{
+  return ! tagOutputData_.empty();
+}
+
+CBrowserOutputTagBase *
+CBrowserOutputTagMgr::
+getTag(CHtmlTagId id) const
+{
+  if (! initialized()) {
+    CBrowserOutputTagMgr* th = const_cast<CBrowserOutputTagMgr *>(this);
+
+    th->init();
+  }
+
+  //---
+
+  auto p = tagOutputData_.find(id);
+
+  if (p == tagOutputData_.end())
+    return nullptr;
+
+  return (*p).second;
+}
+
+CBrowserOutputTagBase *
+CBrowserOutputTagMgr::
+getTag(CHtmlTag *tag)
+{
+  const CHtmlTagDef &data = tag->getTagDef();
+
+  CHtmlTagId id = data.getId();
+
+  return getTag(id);
+}
+
 void
 CBrowserOutputTagMgr::
 init()
@@ -68,6 +118,7 @@ init()
   addTag<CBrowserOutputMenuTag      >();
   addTag<CBrowserOutputMetaTag      >();
   addTag<CBrowserOutputNobrTag      >();
+  addTag<CBrowserOutputNoScriptTag  >();
   addTag<CBrowserOutputOlTag        >();
   addTag<CBrowserOutputOptionTag    >();
   addTag<CBrowserOutputOutputTag    >();

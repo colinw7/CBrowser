@@ -8,7 +8,7 @@ class CQJHtmlObjType : public CJObjType {
  public:
   static CJObjTypeP instance(CJavaScript *js);
 
-  CQJHtmlObjType(CJavaScript *js);
+  explicit CQJHtmlObjType(CJavaScript *js);
 
   CJValueP exec(CJavaScript *, const std::string &, const Values &) override {
     return CJValueP();

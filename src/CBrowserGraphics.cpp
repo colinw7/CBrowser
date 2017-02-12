@@ -160,6 +160,29 @@ fillRectangle(int x, int y, int width, int height, const CBrush &brush)
 
 void
 CBrowserGraphics::
+fillPolygon(const std::vector<CIPoint2D> &points, const CBrush &brush)
+{
+  if      (current_device_ == CBrowserDeviceType::X)
+    renderer_->fillPolygon(points, brush);
+  else if (current_device_ == CBrowserDeviceType::PS) {
+    print_device_->setForeground(brush.getColor());
+
+    std::vector<double> x, y;
+
+    x.resize(points.size());
+    y.resize(points.size());
+
+    for (std::size_t i = 0; i < points.size(); ++i) {
+      x[i] = points[i].x;
+      y[i] = points[i].y;
+    }
+
+    print_device_->fillPolygon(&x[0], &y[0], x.size());
+  }
+}
+
+void
+CBrowserGraphics::
 drawCircle(int x, int y, int radius, const CPen &pen)
 {
   if      (current_device_ == CBrowserDeviceType::X)

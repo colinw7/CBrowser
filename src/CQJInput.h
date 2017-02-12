@@ -8,7 +8,7 @@ class CQJInputType : public CJObjType {
  public:
   static CJObjTypeP instance(CJavaScript *js);
 
-  CQJInputType(CJavaScript *js);
+  explicit CQJInputType(CJavaScript *js);
 
   CJValueP exec(CJavaScript *, const std::string &, const Values &) override {
     return CJValueP();

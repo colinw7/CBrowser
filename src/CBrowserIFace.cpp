@@ -6,6 +6,8 @@
 #include <CBrowserGraphics.h>
 #include <CBrowserJS.h>
 #include <CBrowserDomTree.h>
+#include <CBrowserCSSTree.h>
+#include <CBrowserWebView.h>
 #include <CBrowserObject.h>
 #include <CBrowserLayout.h>
 #include <CBrowserBox.h>
@@ -27,6 +29,7 @@
 #include <QStatusBar>
 
 #include <svg/dom_svg.h>
+#include <svg/css_svg.h>
 #include <svg/javascript_svg.h>
 
 CBrowserIFace::
@@ -140,6 +143,13 @@ createMenus()
   domMenuItem_->setIcon(CQPixmapCacheInst->getIcon("DOM"));
   domMenuItem_->connect(this, SLOT(domProc()));
 
+  cssMenuItem_ = new CQMenuItem(fileMenu, "&CSS");
+  cssMenuItem_->setIcon(CQPixmapCacheInst->getIcon("CSS"));
+  cssMenuItem_->connect(this, SLOT(cssProc()));
+
+  webMenuItem_ = new CQMenuItem(fileMenu, "&Web");
+  webMenuItem_->connect(this, SLOT(webProc()));
+
   CQMenuItem *quitMenuItem = new CQMenuItem(fileMenu, "&Quit");
   quitMenuItem->setShortcut("Ctrl+Q");
   quitMenuItem->connect(this, SLOT(quitProc()));
@@ -187,6 +197,7 @@ createToolBars()
 
   toolbar_->addItem(jsMenuItem_);
   toolbar_->addItem(domMenuItem_);
+  toolbar_->addItem(cssMenuItem_);
 }
 
 void
@@ -214,19 +225,21 @@ void
 CBrowserIFace::
 inputSlot()
 {
-  QString url = input_->text();
+  QString text = input_->text();
+  if (text == "") return;
 
-  if (url != "")
-    setDocument(url.toStdString());
+  CUrl url(text.toStdString());
+
+  setDocument(url);
 }
 
 void
 CBrowserIFace::
-addHistoryItem(const std::string &item)
+addHistoryItem(const CUrl &url)
 {
   CQMenuItem *menuItem = new CQMenuItem(historyMenu_, "button");
 
-  menuItem->setName(item);
+  menuItem->setName(url.getUrl());
 }
 
 void
@@ -314,7 +327,9 @@ newProc()
 
   //---
 
-  addDocument(file.toStdString());
+  CUrl url("file:://" + file.toStdString());
+
+  addDocument(url);
 }
 
 void
@@ -335,26 +350,32 @@ readProc()
 
   //---
 
-  setDocument(file.toStdString());
+  CUrl url("file://" + file.toStdString());
+
+  setDocument(url);
 }
 
 void
 CBrowserIFace::
-addDocument(const std::string &filename)
+addDocument(const CUrl &url)
 {
   CBrowserScrolledWindow *window = addWindow();
 
-  window->setDocument(filename);
+  window->setDocument(url);
+
+  updateTitles();
 }
 
 void
 CBrowserIFace::
-setDocument(const std::string &filename)
+setDocument(const CUrl &url)
 {
   CBrowserScrolledWindow *window = currentWindow();
   if (! window) return;
 
-  window->setDocument(filename);
+  window->setDocument(url);
+
+  updateTitles();
 }
 
 void
@@ -408,6 +429,42 @@ domProc()
     domDlg_ = new CBrowserDomTreeDlg(window);
 
   domDlg_->show();
+}
+
+void
+CBrowserIFace::
+cssProc()
+{
+  CBrowserScrolledWindow *swindow = currentWindow();
+  if (! swindow) return;
+
+  CBrowserWindow *window = swindow->getWindow();
+
+  if (cssDlg_ && cssDlg_->window() != window) {
+    delete cssDlg_;
+
+    cssDlg_ = nullptr;
+  }
+
+  if (! cssDlg_)
+    cssDlg_ = new CBrowserCSSTreeDlg(window);
+
+  cssDlg_->show();
+}
+
+void
+CBrowserIFace::
+webProc()
+{
+  if (! webView_)
+    webView_ = new CBrowserWebView;
+
+  CBrowserScrolledWindow *swindow = currentWindow();
+  if (! swindow) return;
+
+  webView_->setFilename(swindow->filename());
+
+  webView_->show();
 }
 
 void

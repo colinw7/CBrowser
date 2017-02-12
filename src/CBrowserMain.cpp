@@ -58,24 +58,22 @@ setShowBoxes(bool b)
 
 void
 CBrowserMain::
-setDocument(const std::string &fileName)
+setDocument(const CUrl &url)
 {
   CBrowserIFace *iface = this->iface();
 
-  if (fileName != "")
-    iface->setDocument(fileName);
+  iface->setDocument(url);
 
   iface_->show();
 }
 
 void
 CBrowserMain::
-addDocument(const std::string &fileName)
+addDocument(const CUrl &url)
 {
   CBrowserIFace *iface = this->iface();
 
-  if (fileName != "")
-    iface->addDocument(fileName);
+  iface->addDocument(url);
 
   iface_->show();
 }

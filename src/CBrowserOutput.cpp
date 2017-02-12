@@ -193,6 +193,34 @@ CBrowserFlushParagraph(CBrowserWindow *window, CHtmlTag *tag)
     CBrowserFlushTags(window, tag, currentObj->type(), true);
 }
 
+CBrowserObject *
+CBrowserAutoStartParagraph(CBrowserWindow *window)
+{
+  CBrowserObject *currentObj = window->currentObj();
+
+  if (currentObj->type() == CHtmlTagId::BODY ||
+      currentObj->type() == CHtmlTagId::FORM ||
+      currentObj->type() == CHtmlTagId::DIV  ||
+      currentObj->type() == CHtmlTagId::SPAN) {
+    // auto start paragraph
+    currentObj = createParagraph(window);
+  }
+
+  return currentObj;
+}
+
+void
+CBrowserInitTag(CBrowserObject *obj, CHtmlTag *tag)
+{
+  if (! tag) return;
+
+  obj->setTag(tag);
+
+  for (const auto &option : tag->getOptions()) {
+    obj->setNameValue(option->getName(), option->getValue());
+  }
+}
+
 //------
 
 CBrowserOutput::
@@ -506,13 +534,7 @@ CBrowserOutputATag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   CBrowserAnchor *link = new CBrowserAnchor(window);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    link->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(link, tag);
 
   link->init();
 
@@ -524,11 +546,7 @@ CBrowserOutputAbbrTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::ABBR);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
+  CBrowserInitTag(obj, tag);
 
   //---
 
@@ -542,13 +560,7 @@ CBrowserOutputAcronymTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::ACRONYM);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -564,13 +576,7 @@ CBrowserOutputAddressTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   CBrowserAddress *address = new CBrowserAddress(window);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    address->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(address, tag);
 
   address->init();
 
@@ -584,13 +590,7 @@ CBrowserOutputAppletTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   obj->setDisplay(CBrowserObject::Display::INLINE);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -602,13 +602,7 @@ CBrowserOutputAreaTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserArea *area = new CBrowserArea(window);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    area->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(area, tag);
 
   area->init();
 
@@ -620,13 +614,7 @@ CBrowserOutputArticleTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::ARTICLE);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -638,13 +626,7 @@ CBrowserOutputASideTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::ASIDE);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -656,13 +638,7 @@ CBrowserOutputAudioTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::AUDIO);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -674,17 +650,13 @@ CBrowserOutputBTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
+  CBrowserAutoStartParagraph(window);
+
   //---
 
   CBrowserBStyle *style = new CBrowserBStyle(window);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    style->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(style, tag);
 
   style->init();
 
@@ -696,13 +668,7 @@ CBrowserOutputBaseTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::BASE);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -720,11 +686,7 @@ CBrowserOutputBasefontTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    baseFont->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(baseFont, tag);
 
   baseFont->init();
 
@@ -736,13 +698,7 @@ CBrowserOutputBdiTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::BDI);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -754,13 +710,7 @@ CBrowserOutputBdoTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::BDO);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -776,13 +726,7 @@ CBrowserOutputBigTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   CBrowserBigStyle *style = new CBrowserBigStyle(window);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    style->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(style, tag);
 
   style->init();
 
@@ -798,13 +742,7 @@ CBrowserOutputBlinkTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   CBrowserBlinkStyle *style = new CBrowserBlinkStyle(window);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    style->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(style, tag);
 
   style->init();
 
@@ -822,11 +760,7 @@ CBrowserOutputBlockquoteTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    blockQuote->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(blockQuote, tag);
 
   blockQuote->init();
 
@@ -840,11 +774,7 @@ CBrowserOutputBodyTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    body->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(body, tag);
 
   body->init();
 
@@ -862,11 +792,7 @@ CBrowserOutputBrTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    breaker->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(breaker, tag);
 
   breaker->init();
 
@@ -878,13 +804,7 @@ CBrowserOutputButtonTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserObject *obj = new CBrowserFormButton(window);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -898,11 +818,7 @@ CBrowserOutputCanvasTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    canvas->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(canvas, tag);
 
   canvas->init();
 
@@ -916,11 +832,7 @@ CBrowserOutputCaptionTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    caption->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(caption, tag);
 
   caption->init();
 
@@ -938,11 +850,7 @@ CBrowserOutputCenterTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    center->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(center, tag);
 
   center->init();
 
@@ -958,13 +866,7 @@ CBrowserOutputCiteTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   CBrowserCiteStyle *style = new CBrowserCiteStyle(window);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    style->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(style, tag);
 
   style->init();
 
@@ -982,11 +884,7 @@ CBrowserOutputCodeTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    code->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(code, tag);
 
   code->init();
 
@@ -1013,13 +911,7 @@ CBrowserOutputDdTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   CBrowserDataListData *dd = new CBrowserDataListData(window);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    dd->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(dd, tag);
 
   dd->init();
 
@@ -1031,13 +923,7 @@ CBrowserOutputDelTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::DEL);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -1049,13 +935,7 @@ CBrowserOutputDetailsTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::DETAILS);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -1073,11 +953,7 @@ CBrowserOutputDfnTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    dfn->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(dfn, tag);
 
   dfn->init();
 
@@ -1102,11 +978,7 @@ CBrowserOutputDirTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    list->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(list, tag);
 
   list->init();
 
@@ -1116,15 +988,15 @@ CBrowserOutputDirTag::start(CBrowserWindow *window, CHtmlTag *tag)
 CBrowserObject *
 CBrowserOutputDivTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
+  CBrowserFlushParagraph(window, tag);
+
+  //---
+
   CBrowserDiv *div = new CBrowserDiv(window);
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    div->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(div, tag);
 
   div->init();
 
@@ -1149,11 +1021,7 @@ CBrowserOutputDlTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    list->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(list, tag);
 
   list->init();
 
@@ -1195,11 +1063,7 @@ CBrowserOutputDtTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    dt->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(dt, tag);
 
   dt->init();
 
@@ -1215,13 +1079,7 @@ CBrowserOutputEmTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   CBrowserEmStyle *style = new CBrowserEmStyle(window);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    style->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(style, tag);
 
   style->init();
 
@@ -1233,13 +1091,7 @@ CBrowserOutputFieldSetTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::FIELDSET);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -1257,11 +1109,7 @@ CBrowserOutputFontTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    font->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(font, tag);
 
   font->init();
 
@@ -1273,13 +1121,7 @@ CBrowserOutputFooterTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::FOOTER);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -1293,11 +1135,7 @@ CBrowserOutputFormTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    form->setNameValue(option->getName(), option->getValue());
-  }
-
-  //----
+  CBrowserInitTag(form, tag);
 
   form->init();
 
@@ -1307,15 +1145,15 @@ CBrowserOutputFormTag::start(CBrowserWindow *window, CHtmlTag *tag)
 CBrowserObject *
 CBrowserOutputH1Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
+  CBrowserFlushParagraph(window, tag);
+
+  //---
+
   CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H1);
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    header->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(header, tag);
 
   header->init();
 
@@ -1325,15 +1163,15 @@ CBrowserOutputH1Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 CBrowserObject *
 CBrowserOutputH2Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
+  CBrowserFlushParagraph(window, tag);
+
+  //---
+
   CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H2);
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    header->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(header, tag);
 
   header->init();
 
@@ -1343,15 +1181,15 @@ CBrowserOutputH2Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 CBrowserObject *
 CBrowserOutputH3Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
+  CBrowserFlushParagraph(window, tag);
+
+  //---
+
   CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H3);
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    header->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(header, tag);
 
   header->init();
 
@@ -1361,13 +1199,15 @@ CBrowserOutputH3Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 CBrowserObject *
 CBrowserOutputH4Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
-  CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H4);
-
-  for (const auto &option: tag->getOptions()) {
-    header->setNameValue(option->getName(), option->getValue());
-  }
+  CBrowserFlushParagraph(window, tag);
 
   //---
+
+  CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H4);
+
+  //---
+
+  CBrowserInitTag(header, tag);
 
   header->init();
 
@@ -1377,15 +1217,17 @@ CBrowserOutputH4Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 CBrowserObject *
 CBrowserOutputH5Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
+  CBrowserFlushParagraph(window, tag);
+
+  //---
+
   CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H5);
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    header->setNameValue(option->getName(), option->getValue());
-  }
+  CBrowserInitTag(header, tag);
 
-  //---
+  header->init();
 
   return header;
 }
@@ -1393,15 +1235,15 @@ CBrowserOutputH5Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 CBrowserObject *
 CBrowserOutputH6Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
+  CBrowserFlushParagraph(window, tag);
+
+  //---
+
   CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H6);
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    header->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(header, tag);
 
   header->init();
 
@@ -1415,11 +1257,7 @@ CBrowserOutputHeadTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    head->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(head, tag);
 
   head->init();
 
@@ -1431,13 +1269,7 @@ CBrowserOutputHeaderTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::HEADER);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -1449,13 +1281,7 @@ CBrowserOutputHGroupTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::HGROUP);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -1473,11 +1299,7 @@ CBrowserOutputHrTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    rule->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(rule, tag);
 
   rule->init();
 
@@ -1491,11 +1313,7 @@ CBrowserOutputHtmlTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    html->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(html, tag);
 
   html->init();
 
@@ -1515,13 +1333,7 @@ CBrowserOutputITag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   CBrowserIStyle *style = new CBrowserIStyle(window);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    style->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(style, tag);
 
   style->init();
 
@@ -1533,13 +1345,7 @@ CBrowserOutputIFrameTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::IFRAME);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -1551,13 +1357,7 @@ CBrowserOutputInsTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::INS);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -1579,11 +1379,7 @@ CBrowserOutputImgTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    image->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(image, tag);
 
   image->init();
 
@@ -1604,7 +1400,7 @@ CBrowserOutputInputTag::start(CBrowserWindow *window, CHtmlTag *tag)
   // get type
   CBrowserFormInputData inputData;
 
-  for (const auto &option: tag->getOptions()) {
+  for (const auto &option : tag->getOptions()) {
     std::string option_name = CStrUtil::toLower(option->getName());
 
     if (option_name == "type") {
@@ -1660,11 +1456,7 @@ CBrowserOutputInputTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -1682,11 +1474,7 @@ CBrowserOutputKbdTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    kbd->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(kbd, tag);
 
   kbd->init();
 
@@ -1702,11 +1490,7 @@ CBrowserOutputLabelTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -1720,11 +1504,7 @@ CBrowserOutputLegendTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -1749,11 +1529,7 @@ CBrowserOutputLiTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    listItem->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(listItem, tag);
 
   listItem->init();
 
@@ -1767,11 +1543,7 @@ CBrowserOutputLinkTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    link->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(link, tag);
 
   link->init();
 
@@ -1787,11 +1559,7 @@ CBrowserOutputMapTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -1816,11 +1584,7 @@ CBrowserOutputMenuTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    list->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(list, tag);
 
   list->init();
 
@@ -1834,11 +1598,7 @@ CBrowserOutputMetaTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    meta->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(meta, tag);
 
   meta->init();
 
@@ -1852,11 +1612,7 @@ CBrowserOutputNavTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -1874,15 +1630,25 @@ CBrowserOutputNobrTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    nobr->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(nobr, tag);
 
   nobr->init();
 
   return nobr;
+}
+
+CBrowserObject *
+CBrowserOutputNoScriptTag::start(CBrowserWindow *window, CHtmlTag *tag)
+{
+  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::NOSCRIPT);
+
+  //---
+
+  CBrowserInitTag(obj, tag);
+
+  obj->init();
+
+  return obj;
 }
 
 CBrowserObject *
@@ -1903,11 +1669,7 @@ CBrowserOutputOlTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    list->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(list, tag);
 
   list->init();
 
@@ -1926,7 +1688,7 @@ CBrowserOutputOptionTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   CBrowserFormOptionData optionData;
 
-  for (const auto &option: tag->getOptions()) {
+  for (const auto &option : tag->getOptions()) {
     std::string option_name = CStrUtil::toLower(option->getName());
 
     if      (option_name == "selected") {
@@ -1956,11 +1718,7 @@ CBrowserOutputOutputTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -1978,11 +1736,7 @@ CBrowserOutputPTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    paragraph->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(paragraph, tag);
 
   paragraph->init();
 
@@ -2000,11 +1754,7 @@ CBrowserOutputPreTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    pre->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(pre, tag);
 
   pre->init();
 
@@ -2018,11 +1768,7 @@ CBrowserOutputSampTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    samp->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(samp, tag);
 
   samp->init();
 
@@ -2040,11 +1786,7 @@ CBrowserOutputScriptTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    script->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(script, tag);
 
   script->init();
 
@@ -2058,11 +1800,7 @@ CBrowserOutputSectionTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -2080,11 +1818,7 @@ CBrowserOutputSelectTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    select->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(select, tag);
 
   select->init();
 
@@ -2100,13 +1834,7 @@ CBrowserOutputSmallTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   CBrowserSmallStyle *style = new CBrowserSmallStyle(window);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    style->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(style, tag);
 
   style->init();
 
@@ -2122,11 +1850,7 @@ CBrowserOutputSpanTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -2142,13 +1866,7 @@ CBrowserOutputStrikeTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   CBrowserStrikeStyle *style = new CBrowserStrikeStyle(window);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    style->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(style, tag);
 
   style->init();
 
@@ -2164,13 +1882,7 @@ CBrowserOutputStrongTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   CBrowserStrongStyle *style = new CBrowserStrongStyle(window);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    style->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(style, tag);
 
   style->init();
 
@@ -2182,13 +1894,7 @@ CBrowserOutputStyleTag::start(CBrowserWindow *window, CHtmlTag *tag)
 {
   CBrowserCSSStyle *style = new CBrowserCSSStyle(window);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    style->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(style, tag);
 
   style->init();
 
@@ -2204,13 +1910,7 @@ CBrowserOutputSubTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   CBrowserSubStyle *style = new CBrowserSubStyle(window);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    style->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(style, tag);
 
   style->init();
 
@@ -2224,11 +1924,7 @@ CBrowserOutputSummaryTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -2244,13 +1940,7 @@ CBrowserOutputSupTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   CBrowserSupStyle *style = new CBrowserSupStyle(window);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    style->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(style, tag);
 
   style->init();
 
@@ -2269,11 +1959,9 @@ CBrowserOutputTableTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   CBrowserTable *table = new CBrowserTable(window, tableData);
 
-  for (const auto &option: tag->getOptions()) {
-    table->setNameValue(option->getName(), option->getValue());
-  }
-
   //---
+
+  CBrowserInitTag(table, tag);
 
   table->init();
 
@@ -2293,11 +1981,7 @@ CBrowserOutputTdTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    cell->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(cell, tag);
 
   cell->init();
 
@@ -2311,11 +1995,7 @@ CBrowserOutputTextareaTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    textArea->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(textArea, tag);
 
   textArea->init();
 
@@ -2329,11 +2009,7 @@ CBrowserOutputTBodyTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -2347,11 +2023,7 @@ CBrowserOutputTFootTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -2365,11 +2037,7 @@ CBrowserOutputTHeadTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -2389,11 +2057,7 @@ CBrowserOutputThTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    cell->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(cell, tag);
 
   cell->init();
 
@@ -2407,11 +2071,7 @@ CBrowserOutputTimeTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -2425,11 +2085,7 @@ CBrowserOutputTitleTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    title->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(title, tag);
 
   title->init();
 
@@ -2443,11 +2099,7 @@ CBrowserOutputTrTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    row->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(row, tag);
 
   row->init();
 
@@ -2465,11 +2117,7 @@ CBrowserOutputTtTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    tt->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(tt, tag);
 
   tt->init();
 
@@ -2485,13 +2133,7 @@ CBrowserOutputUTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   CBrowserUStyle *style = new CBrowserUStyle(window);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    style->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(style, tag);
 
   style->init();
 
@@ -2516,11 +2158,7 @@ CBrowserOutputUlTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    list->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(list, tag);
 
   list->init();
 
@@ -2536,13 +2174,7 @@ CBrowserOutputVarTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   CBrowserVarStyle *style = new CBrowserVarStyle(window);
 
-  //---
-
-  for (const auto &option: tag->getOptions()) {
-    style->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(style, tag);
 
   style->init();
 
@@ -2556,11 +2188,7 @@ CBrowserOutputVideoTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    obj->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(obj, tag);
 
   obj->init();
 
@@ -2574,11 +2202,7 @@ CBrowserOutputWbrTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    wbr->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(wbr, tag);
 
   wbr->init();
 
@@ -2592,11 +2216,7 @@ CBrowserOutputXmpTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  for (const auto &option: tag->getOptions()) {
-    xmp->setNameValue(option->getName(), option->getValue());
-  }
-
-  //---
+  CBrowserInitTag(xmp, tag);
 
   xmp->init();
 

@@ -195,10 +195,6 @@ void
 CBrowserText::
 draw(const CTextBox &region)
 {
-  fillBackground(region);
-
-  //---
-
   CFontPtr font = hierFont();
 
   int width, ascent, descent;

@@ -20,6 +20,8 @@ class CBrowserScript : public CBrowserObject {
   void initProcess() override;
   void termProcess() override;
 
+  std::string propertyValue(int i) const;
+
  private:
   std::string        text_;
   CBrowserScriptData data_;

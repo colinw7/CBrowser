@@ -21,6 +21,12 @@ init()
       window_->addScriptFile(data_.src);
     }
   }
+
+  std::vector<std::string> strs = {{ "language", "src", "type" }};
+
+  addProperties(strs);
+
+  CBrowserObject::init();
 }
 
 void
@@ -28,7 +34,7 @@ CBrowserScript::
 setNameValue(const std::string &name, const std::string &value)
 {
   std::string lname  = CStrUtil::toLower(name);
-  std::string lvalue = CStrUtil::toLower(value);
+//std::string lvalue = CStrUtil::toLower(value);
 
   if      (lname == "language") {
     data_.language = value;
@@ -64,4 +70,17 @@ termProcess()
       window_->addScript(text_);
     }
   }
+}
+
+std::string
+CBrowserScript::
+propertyValue(int i) const
+{
+  const std::string &name = propertyName(i);
+
+  if      (name == "language") return CBrowserProperty::toString(data_.language);
+  else if (name == "src"     ) return CBrowserProperty::toString(data_.src);
+  else if (name == "type"    ) return CBrowserProperty::toString(data_.type);
+
+  return "";
 }

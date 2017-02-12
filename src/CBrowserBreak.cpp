@@ -17,6 +17,7 @@ void
 CBrowserBreak::
 init()
 {
+  CBrowserObject::init();
 }
 
 void

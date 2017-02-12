@@ -39,7 +39,7 @@ class CQJEvent : public CQJObject {
 
  private:
   CJValueP value_;
-  QEvent*  e_ { 0 };
+  QEvent*  e_ { nullptr };
 };
 
 #endif

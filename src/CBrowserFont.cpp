@@ -80,7 +80,7 @@ fontSize(const CBrowserObject *obj) const
   //---
 
   if (size.isValid())
-    return size.value(relSize);
+    return size.value(CScreenUnits(relSize));
 
   //---
 

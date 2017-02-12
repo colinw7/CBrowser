@@ -4,10 +4,10 @@
 #include <CBrowserTypes.h>
 #include <CBrowserOutput.h>
 #include <CBrowserData.h>
-#include <CBrowserCSSData.h>
 #include <CBrowserFont.h>
+#include <CBrowserObjectCSSTagData.h>
 #include <CHtmlParser.h>
-#include <CCSS.h>
+#include <CUrl.h>
 #include <CFont.h>
 #include <QImage>
 
@@ -20,6 +20,18 @@ class CBrowserWindow {
     PROCESS_TOKENS,
     LAYOUT_OBJECTS
   };
+
+ public:
+  struct CSSData {
+    CCSS css;
+    CUrl url;
+
+    CSSData(const CCSS &css1, const CUrl &url1=CUrl()) :
+     css(css1), url(url1) {
+    }
+  };
+
+  typedef std::vector<CSSData> CSSList;
 
  public:
   explicit CBrowserWindow(const std::string &filename="");
@@ -62,6 +74,11 @@ class CBrowserWindow {
 
   //---
 
+  const CSSList &cssList() const { return cssList_; }
+  void setCssList(const CSSList &v) { cssList_ = v; }
+
+  //---
+
   CFontPtr getFont() const { return font_; }
 
   //---
@@ -97,7 +114,7 @@ class CBrowserWindow {
 
   void setName(const std::string &name);
 
-  void setDocument(const std::string &filename);
+  void setDocument(const CUrl &url);
 
   void outputDocument();
 
@@ -123,14 +140,18 @@ class CBrowserWindow {
 
   //---
 
-  bool loadCSSFile(const std::string &filename);
+  bool loadCSSFile(const CUrl &url);
   bool loadCSSText(const std::string &filename);
 
-  bool processCSSSelectors();
-
-  void addStyleValues(CBrowserStyleData &styleData, const CCSS::StyleData &cssStyleData);
-
   bool applyStyle(CBrowserObject *obj);
+
+  bool visitStyleData(const CCSS &css, const CCSSTagDataP &tagData);
+
+  void selectCSSPattern(const CCSS::StyleData &styleData);
+
+  //---
+
+  bool setShortcutIcon(const CUrl &url);
 
   //---
 
@@ -150,7 +171,7 @@ class CBrowserWindow {
 
   bool activateLink(int x, int y);
 
-  void addHistoryItem(const std::string &item);
+  void addHistoryItem(const CUrl &item);
 
   CRGBA getBgColor();
   CRGBA getFgColor();
@@ -162,6 +183,8 @@ class CBrowserWindow {
 
   void drawRectangle(int x, int y, int w, int h, const CPen &pen);
   void fillRectangle(int x, int y, int w, int h, const CBrush &brush);
+
+  void fillPolygon(const std::vector<CIPoint2D> &points, const CBrush &brush);
 
   void drawCircle(int x, int y, int r, const CPen &pen);
   void fillCircle(int x, int y, int r, const CBrush &brush);
@@ -197,7 +220,13 @@ class CBrowserWindow {
 
   //---
 
+  void deselectAllObjects();
+
   void selectSingleObject(CBrowserObject *obj);
+
+  //---
+
+  bool downloadFile(const CUrl &url, std::string &filename);
 
  private:
   void init();
@@ -248,8 +277,7 @@ class CBrowserWindow {
 
   CBrowserOutput        output_;
 
-  CCSS                  css_;
-  CBrowserCSSData       cssData_;
+  CSSList               cssList_;
 
   CFontPtr              font_;
   int                   baseFontSize_ { 0 };

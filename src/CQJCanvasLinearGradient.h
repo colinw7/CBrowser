@@ -8,7 +8,7 @@ class CQJCanvasLinearGradientType : public CJObjType {
  public:
   static CJObjTypeP instance(CJavaScript *js);
 
-  CQJCanvasLinearGradientType(CJavaScript *js);
+  explicit CQJCanvasLinearGradientType(CJavaScript *js);
 
   CJValueP exec(CJavaScript *, const std::string &, const Values &) override {
     return CJValueP();

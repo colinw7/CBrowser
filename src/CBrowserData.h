@@ -163,6 +163,7 @@ struct CBrowserLinkData : public CBrowserBaseData {
   std::string target;
   std::string type;
   std::string url;
+  std::string media;
 };
 
 //---
@@ -178,6 +179,15 @@ struct CBrowserOutputListData : public CBrowserBaseData {
 struct CBrowserOutputListItemData {
   std::string symbol;
   int         item_num { 0 };
+};
+
+//---
+
+struct CBrowserMetaData : public CBrowserBaseData {
+  std::string charset;
+  std::string content;
+  std::string http_equiv;
+  std::string scheme;
 };
 
 //---
@@ -198,7 +208,6 @@ struct CBrowserScriptData {
   std::string language { "" };
   std::string src      { "" };
   std::string type     { "" };
-  std::string text     { "" };
 };
 
 #endif

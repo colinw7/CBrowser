@@ -86,6 +86,7 @@ createWidget() const
 
     QPushButton *button = new QPushButton("button");
 
+    button->setObjectName(getName() != "" ? getName().c_str() : "button");
     button->setText("Browse ...");
 
     initWidget(this, button);
@@ -163,7 +164,7 @@ createWidget() const
   if (! widget_) {
     QRadioButton *radio = new QRadioButton(window_->widget());
 
-    radio->setObjectName(getName().c_str());
+    radio->setObjectName(getName() != "" ? getName().c_str() : "radio");
 
     radio->setText("");
 
@@ -370,20 +371,20 @@ void
 CBrowserForm::
 submitProc()
 {
-  std::string url = getAction();
+  std::string text = getAction();
+  if (text == "") return;
 
-  if (url == "")
-    return;
-
-  url += "?";
+  text += "?";
 
   int num = getNumInputs();
 
   for (int i = 0; i < num; i++) {
     CBrowserFormInput *input = getInput(i);
 
-    input->submit(url);
+    input->submit(text);
   }
+
+  CUrl url(text);
 
   window_->setDocument(url);
 }
@@ -598,8 +599,6 @@ draw(const CTextBox &region)
 
   //---
 
-  fillBackground(region);
-
   drawWidget(window_, region);
 
   //---
@@ -670,7 +669,7 @@ createWidget() const
   if (! widget_) {
     QPushButton *button = new QPushButton(window_->widget());
 
-    button->setObjectName(getName().c_str());
+    button->setObjectName(getName() != "" ? getName().c_str() : "button");
 
     if (data_.onclick != "")
       QObject::connect(button, SIGNAL(clicked()), this, SLOT(onClickProc()));
@@ -956,15 +955,16 @@ reset()
 
 void
 CBrowserFormTel::
-submit(std::string &url)
+submit(std::string &text)
 {
+  // add submit value to url
   QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
 
   QString value = edit->text();
 
-  url += getName();
-  url += "=";
-  url += value.toStdString();
+  text += getName();
+  text += "=";
+  text += value.toStdString();
 }
 
 //---
@@ -1036,15 +1036,16 @@ reset()
 
 void
 CBrowserFormMonth::
-submit(std::string &url)
+submit(std::string &text)
 {
+  // add submit value to url
   QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
 
   QString value = edit->text();
 
-  url += getName();
-  url += "=";
-  url += value.toStdString();
+  text += getName();
+  text += "=";
+  text += value.toStdString();
 }
 
 //---
@@ -1118,6 +1119,7 @@ void
 CBrowserFormDate::
 submit(std::string &url)
 {
+  // add submit value to url
   QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
 
   QString value = edit->text();
@@ -1196,15 +1198,16 @@ reset()
 
 void
 CBrowserFormSearch::
-submit(std::string &url)
+submit(std::string &text)
 {
+  // add submit value to url
   QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
 
   QString value = edit->text();
 
-  url += getName();
-  url += "=";
-  url += value.toStdString();
+  text += getName();
+  text += "=";
+  text += value.toStdString();
 }
 
 //---
@@ -1282,15 +1285,16 @@ reset()
 
 void
 CBrowserFormNumber::
-submit(std::string &url)
+submit(std::string &text)
 {
+  // add submit value to url
   QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
 
   QString value = edit->text();
 
-  url += getName();
-  url += "=";
-  url += value.toStdString();
+  text += getName();
+  text += "=";
+  text += value.toStdString();
 }
 
 //---
@@ -1371,15 +1375,16 @@ reset()
 
 void
 CBrowserFormEmail::
-submit(std::string &url)
+submit(std::string &text)
 {
+  // add submit value to url
   QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
 
   QString value = edit->text();
 
-  url += getName();
-  url += "=";
-  url += value.toStdString();
+  text += getName();
+  text += "=";
+  text += value.toStdString();
 }
 
 //---
@@ -1453,15 +1458,16 @@ reset()
 
 void
 CBrowserFormPassword::
-submit(std::string &url)
+submit(std::string &text)
 {
+  // add submit value to url
   QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
 
   QString value = edit->text();
 
-  url += getName();
-  url += "=";
-  url += value.toStdString();
+  text += getName();
+  text += "=";
+  text += value.toStdString();
 }
 
 //---
@@ -1498,11 +1504,12 @@ drawWidget(CBrowserWindow *, const CTextBox &)
 
 void
 CBrowserFormHidden::
-submit(std::string &url)
+submit(std::string &text)
 {
-  url += getName();
-  url += "=";
-  url += data_.value;
+  // add submit value to url
+  text += getName();
+  text += "=";
+  text += data_.value;
 }
 
 //---
@@ -1595,15 +1602,16 @@ calcRegion() const
 
 void
 CBrowserFormText::
-submit(std::string &url)
+submit(std::string &text)
 {
+  // add submit value to url
   QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
 
   QString value = edit->text();
 
-  url += getName();
-  url += "=";
-  url += value.toStdString();
+  text += getName();
+  text += "=";
+  text += value.toStdString();
 }
 
 void
@@ -1648,7 +1656,7 @@ CBrowserFormTextarea::
 setNameValue(const std::string &name, const std::string &value)
 {
   std::string lname  = CStrUtil::toLower(name);
-  std::string lvalue = CStrUtil::toLower(value);
+//std::string lvalue = CStrUtil::toLower(value);
 
   if      (lname == "cols") {
     if (CStrUtil::isInteger(value))
@@ -1733,15 +1741,16 @@ calcRegion() const
 
 void
 CBrowserFormTextarea::
-submit(std::string &url)
+submit(std::string &text)
 {
+  // add submit value to url
   QTextEdit *edit = qobject_cast<QTextEdit *>(widget_);
 
   QString value = edit->toPlainText();
 
-  url += getName();
-  url += "=";
-  url += value.toStdString();
+  text += getName();
+  text += "=";
+  text += value.toStdString();
 }
 
 void
@@ -1785,7 +1794,7 @@ createWidget() const
   if (! widget_) {
     QPushButton *button = new QPushButton(window_->widget());
 
-    button->setObjectName(getName().c_str());
+    button->setObjectName(getName() != "" ? getName().c_str() : "button");
 
     widget_ = button;
 
@@ -2000,7 +2009,7 @@ createWidget() const
   if (! widget_) {
     QPushButton *button = new QPushButton(window_->widget());
 
-    button->setObjectName(getName().c_str());
+    button->setObjectName(getName() != "" ? getName().c_str() : "button");
 
     widget_ = button;
 

@@ -9,7 +9,7 @@ class CQJCanvasImageDataArrayType : public CJObjType {
  public:
   static CJObjTypeP instance(CJavaScript *js);
 
-  CQJCanvasImageDataArrayType(CJavaScript *js);
+  explicit CQJCanvasImageDataArrayType(CJavaScript *js);
 
   CJValueP exec(CJavaScript *, const std::string &, const Values &) override {
     return CJValueP();

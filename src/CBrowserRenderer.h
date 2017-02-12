@@ -27,6 +27,8 @@ class CBrowserRenderer {
   virtual void drawRectangle(const CIBBox2D &bbox, const CPen &pen);
   virtual void fillRectangle(const CIBBox2D &bbox, const CBrush &brush);
 
+  virtual void fillPolygon(const std::vector<CIPoint2D> &points, const CBrush &brush);
+
   virtual void drawCircle(const CIPoint2D &c, int r, const CPen &pen);
   virtual void fillCircle(const CIPoint2D &c, int r, const CBrush &brush);
 

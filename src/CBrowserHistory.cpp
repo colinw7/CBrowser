@@ -23,7 +23,7 @@ setMenu(QMenu *menu)
 
 void
 CBrowserHistory::
-addUrl(const std::string &url)
+addUrl(const CUrl &url)
 {
   urls_.resize(url_num_);
 
@@ -32,26 +32,26 @@ addUrl(const std::string &url)
   window_->addHistoryItem(url);
 }
 
-std::string
+CUrl
 CBrowserHistory::
 goBack()
 {
   if (url_num_ <= 1)
-    return "";
+    return CUrl();
 
   url_num_--;
 
   return urls_[url_num_ - 1];
 }
 
-std::string
+CUrl
 CBrowserHistory::
 goForward()
 {
   int num_urls = urls_.size();
 
   if (url_num_ >= num_urls)
-    return "";
+    return CUrl();
 
   url_num_++;
 
@@ -60,7 +60,7 @@ goForward()
 
 int
 CBrowserHistory::
-goTo(const std::string &url)
+goTo(const CUrl &url)
 {
   int num_urls = urls_.size();
 

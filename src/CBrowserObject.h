@@ -12,8 +12,13 @@
 #include <CBrowserClear.h>
 #include <CBrowserFloat.h>
 #include <CBrowserPosition.h>
+#include <CBrowserSize.h>
 #include <CHtmlTypes.h>
 #include <CJavaScript.h>
+
+class CHtmlTag;
+
+//---
 
 class CBrowserObject : public CBrowserBox {
  public:
@@ -25,7 +30,8 @@ class CBrowserObject : public CBrowserBox {
     TABLE,
     TABLE_ROW,
     TABLE_CELL,
-    TABLE_CAPTION
+    TABLE_CAPTION,
+    LIST_ITEM
   };
 
   enum class WhiteSpace {
@@ -54,6 +60,9 @@ class CBrowserObject : public CBrowserBox {
   CBrowserWindow *getWindow() const { return window_; }
 
   virtual CHtmlTagId type() const override { return type_; }
+
+  CHtmlTag *tag() const { return tag_; }
+  void setTag(CHtmlTag *v) { tag_ = v; }
 
   const std::string &id() const { return id_; }
   void setId(const std::string &s) { id_ = s; }
@@ -123,28 +132,49 @@ class CBrowserObject : public CBrowserBox {
 
   virtual CRGBA hierFgColor() const;
 
-  const CBrowserUnitValue &width () const { return width_; }
-  void setWidth(const CBrowserUnitValue &w) { width_ = w; }
+  //--
 
-  const CBrowserUnitValue &height() const { return height_; }
-  void setHeight(const CBrowserUnitValue &h) { height_ = h; }
+  const CBrowserSize &size() const { return size_; }
+  void setSize(const CBrowserSize &v) { size_ = v; }
+
+  const CBrowserUnitValue &width () const { return size_.width; }
+  void setWidth(const CBrowserUnitValue &w) { size_.width = w; }
+
+  const CBrowserUnitValue &height() const { return size_.height; }
+  void setHeight(const CBrowserUnitValue &h) { size_.height = h; }
+
+  //--
 
   virtual void setNameValue(const std::string &name, const std::string &value);
+
+  virtual void setStyleValue(const std::string &name, const std::string &value);
+
+  void styleValueToWords(const std::string &value, std::vector<std::string> &words);
+
+  //---
 
   void addProperties(const Properties &properties);
   virtual int numProperties() const { return properties_.size(); }
   virtual std::string propertyName(int i) const { return properties_[i]; }
   virtual std::string propertyValue(int i) const;
 
+  //---
+
   void processStyleAttribute(const std::string &value);
 
+  //---
+
   virtual bool isHierSelected() const;
+
+  //---
 
   virtual void initProcess() { }
   virtual void termProcess() { }
 
   virtual void initLayout() { }
   virtual void termLayout() { }
+
+  //---
 
   template<typename T>
   T *parentType() const {
@@ -187,11 +217,18 @@ class CBrowserObject : public CBrowserBox {
   void show() override { }
   void hide() override { }
 
+  //---
+
+  void fillBackground(const CTextBox &region) override;
+
   void draw(const CTextBox &) override;
 
-  void fillBackground(const CTextBox &region);
+  void drawBorder(const CTextBox &region) override;
 
-  void drawBorder(const CTextBox &region);
+  void drawBorderLine(double x1, double y1, double x2, double y2,
+                      CBrowserBorderStyle style, const CPen &pen, CBrowserBorderSide side);
+
+  //---
 
   virtual void print(std::ostream &os) const { os << typeName(); }
 
@@ -199,6 +236,7 @@ class CBrowserObject : public CBrowserBox {
   CBrowserWindow*    window_ { nullptr };
   CHtmlTagId         type_;
   CBrowserBaseData   data_;
+  CHtmlTag*          tag_ { nullptr };
   std::string        id_;
   std::string        name_;
   std::string        class_;
@@ -215,11 +253,15 @@ class CBrowserObject : public CBrowserBox {
   CBrowserClear      clear_;
   CBrowserFloat      float_;
   CBrowserPosition   position_;
+  CBrowserUnitValue  maxWidth_;
+  CBrowserUnitValue  maxHeight_;
+  CBrowserUnitValue  minWidth_;
+  CBrowserUnitValue  minHeight_;
+  int                zIndex_ { -1 };
   std::string        title_;
   CBrowserFont       font_;
   CBrowserTextProp   textProp_;
-  CBrowserUnitValue  width_;
-  CBrowserUnitValue  height_;
+  CBrowserSize       size_;
   Properties         properties_;
 };
 

@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QT += widgets
+QT += widgets webkitwidgets
 
 TARGET = CBrowser
 
@@ -24,8 +24,10 @@ CBrowserBreak.cpp \
 CBrowserCanvas.cpp \
 CBrowserCenter.cpp \
 CBrowserCode.cpp \
+CBrowserColor.cpp \
 CBrowser.cpp \
 CBrowserCSSStyle.cpp \
+CBrowserCSSTree.cpp \
 CBrowserDiv.cpp \
 CBrowserDocument.cpp \
 CBrowserFile.cpp \
@@ -66,6 +68,7 @@ CBrowserTable.cpp \
 CBrowserText.cpp \
 CBrowserTitle.cpp \
 CBrowserTT.cpp \
+CBrowserWebView.cpp \
 CBrowserWindow.cpp \
 CBrowserWindowWidget.cpp \
 CBrowserWord.cpp \
@@ -97,6 +100,7 @@ CQJImage.cpp \
 CQJInput.cpp \
 CQJIntervalFunction.cpp \
 CQJLineEdit.cpp \
+CQJLocation.cpp \
 CQJObject.cpp \
 CQJRequestAnimationFrame.cpp \
 CQJSlider.cpp \
@@ -108,8 +112,6 @@ CQHistoryLineEdit.cpp \
 CRomanNumber.cpp \
 \
 CPrint.cpp \
-\
-CUrl.cpp \
 
 HEADERS += \
 CBrowserAddress.h \
@@ -128,6 +130,7 @@ CBrowserCode.h \
 CBrowserColor.h \
 CBrowserCSSData.h \
 CBrowserCSSStyle.h \
+CBrowserCSSTree.h \
 CBrowserData.h \
 CBrowserDiv.h \
 CBrowserDocument.h \
@@ -178,6 +181,7 @@ CBrowserTitle.h \
 CBrowserTT.h \
 CBrowserTypes.h \
 CBrowserUnitValue.h \
+CBrowserWebView.h \
 CBrowserWindow.h \
 CBrowserWindowWidget.h \
 CBrowserWord.h \
@@ -209,6 +213,7 @@ CQJImage.h \
 CQJInput.h \
 CQJIntervalFunction.h \
 CQJLineEdit.h \
+CQJLocation.h \
 CQJObject.h \
 CQJRequestAnimationFrame.h \
 CQJSlider.h \
@@ -221,8 +226,6 @@ CQHistoryLineEdit.h \
 CRomanNumber.h \
 \
 CPrint.h \
-\
-CUrl.h \
 
 DESTDIR     = ../bin
 OBJECTS_DIR = ../obj
@@ -235,6 +238,7 @@ INCLUDEPATH += \
 ../../CJson/include \
 ../../CHtml/include \
 ../../CCSS/include \
+../../CWebGet/include \
 ../../CQUtil/include \
 ../../CImageLib/include \
 ../../CFont/include \
@@ -257,6 +261,8 @@ unix:LIBS += \
 -L../../CJson/lib \
 -L../../CHtml/lib \
 -L../../CCSS/lib \
+-L../../CWebGet/lib \
+-L../../CHtml/lib \
 -L../../CXML/lib \
 -L../../CQUtil/lib \
 -L../../CImageLib/lib \
@@ -270,10 +276,11 @@ unix:LIBS += \
 -L../../CStrUtil/lib \
 -L../../CRegExp/lib \
 -L../../CGlob/lib \
+-L../../CThread/lib \
 -L../../CUtil/lib \
 -L../../COS/lib \
 -L../../CRGBName/lib \
--lCJavaScript -lCJson -lCHtml -lCCSS -lCXML \
+-lCJavaScript -lCJson -lCHtml -lCCSS -lCXML -lCWebGet \
 -lCQUtil -lCImageLib -lCFont -lCCeil -lCArgs -lCConfig -lCReadLine \
 -lCFile -lCFileUtil -lCStrUtil -lCGlob -lCRegExp -lCRGBName -lCUtil -lCOS \
--ljpeg -lpng -lcurses -ltre
+-lCThread -ljpeg -lpng -lcurses -ltre

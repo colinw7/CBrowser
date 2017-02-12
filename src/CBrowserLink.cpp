@@ -172,6 +172,7 @@ expandDestLink(const std::string &dest) const
 
   CStrUtil::skipSpace(dest, &i);
 
+  // get prefix
   int j = i;
 
   while (i < len && dest[i] != ':')
@@ -192,11 +193,15 @@ expandDestLink(const std::string &dest) const
     i = 0;
   }
 
+  //---
+
   CStrUtil::skipSpace(dest, &i);
 
-  std::string dest1;
+  std::string dest2;
 
-  if     (prefix.substr(0, 4) == "file") {
+  if     (prefix == "file") {
+    std::string dest1;
+
     if (dest[i] != '/') {
       std::string current_dir = CDir::getCurrent();
 
@@ -204,13 +209,13 @@ expandDestLink(const std::string &dest) const
     }
     else
       dest1 = dest.substr(i);
+
+    dest2 = prefix + "://" + dest1;
   }
   else
-    dest1 = dest[i];
+    dest2 = dest;
 
-  dest1 = CStrUtil::stripSpaces(dest1);
-
-  std::string dest2 = prefix + "://" + dest1;
+  dest2 = CStrUtil::stripSpaces(dest2);
 
   return dest2;
 }
@@ -337,6 +342,8 @@ init()
 
   if (href() == "" && id() == "")
     window_->displayError("No 'href' or 'name' specified for 'a' Tag'\n");
+
+  CBrowserObject::init();
 }
 
 void
@@ -391,6 +398,26 @@ void
 CBrowserLink::
 init()
 {
+  std::vector<std::string> strs = {{
+    "rel", "href", "type", "media" }};
+
+  addProperties(strs);
+
+  CBrowserObject::init();
+}
+
+std::string
+CBrowserLink::
+propertyValue(int i) const
+{
+  const std::string &name = propertyName(i);
+
+  if      (name == "rel"  ) return CBrowserProperty::toString(data_.rel);
+  else if (name == "href" ) return CBrowserProperty::toString(data_.href);
+  else if (name == "type" ) return CBrowserProperty::toString(data_.type);
+  else if (name == "media") return CBrowserProperty::toString(data_.media);
+
+  return "";
 }
 
 void
@@ -406,6 +433,12 @@ setNameValue(const std::string &name, const std::string &value)
   else if (lname == "href") {
     data_.href = value;
   }
+  else if (lname == "type") {
+    data_.type = value;
+  }
+  else if (lname == "media") {
+    data_.media = value;
+  }
   else {
     CBrowserObject::setNameValue(name, value);
   }
@@ -415,7 +448,7 @@ void
 CBrowserLink::
 initProcess()
 {
-  if (data_.rel == "stylesheet") {
+  if      (data_.rel == "stylesheet") {
     std::string href = window_->linkMgr()->expandDestLink(data_.href);
 
     if (href == "")
@@ -423,12 +456,22 @@ initProcess()
 
     CUrl url(href);
 
-  //std::string prefix = url.getPrefix();
-    std::string file   = url.getFile();
-  //std::string target = url.getTarget();
-
-    if (! window_->loadCSSFile(file))
+    if (! window_->loadCSSFile(url))
       return;
+  }
+  else if (data_.rel == "shortcut icon") {
+     std::string href = window_->linkMgr()->expandDestLink(data_.href);
+
+    if (href == "")
+      return;
+
+    CUrl url(href);
+
+    if (! window_->setShortcutIcon(url))
+      return;
+  }
+  else {
+    window_->displayError("Invalid link rel '%s'", data_.rel.c_str());
   }
 }
 

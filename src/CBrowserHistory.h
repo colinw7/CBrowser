@@ -2,6 +2,7 @@
 #define CBrowserHistory_H
 
 #include <CBrowserTypes.h>
+#include <CUrl.h>
 
 class QMenu;
 
@@ -13,15 +14,15 @@ class CBrowserHistory {
 
   void setMenu(QMenu *menu);
 
-  void addUrl(const std::string &url);
+  void addUrl(const CUrl &url);
 
-  std::string goBack();
-  std::string goForward();
+  CUrl goBack();
+  CUrl goForward();
 
-  int goTo(const std::string &url);
+  int goTo(const CUrl &url);
 
  private:
-  typedef std::vector<std::string> Urls;
+  typedef std::vector<CUrl> Urls;
 
   CBrowserWindow* window_ { nullptr };
   Urls            urls_;

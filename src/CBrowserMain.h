@@ -2,6 +2,7 @@
 #define CBROWSER_MAIN_H
 
 #include <CBrowserTypes.h>
+#include <CUrl.h>
 #include <QObject>
 #include <string>
 #include <list>
@@ -41,8 +42,8 @@ class CBrowserMain : public QObject {
   bool getMouseOver() const { return mouseOver_; }
   void setMouseOver(bool b) { mouseOver_ = b; }
 
-  void setDocument(const std::string &fileName);
-  void addDocument(const std::string &fileName);
+  void setDocument(const CUrl &url);
+  void addDocument(const CUrl &url);
 
  private:
   CBrowserMain();

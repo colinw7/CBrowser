@@ -29,4 +29,5 @@ void
 CBrowserDiv::
 init()
 {
+  CBrowserObject::init();
 }

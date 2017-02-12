@@ -127,8 +127,8 @@ class CBrowserFontSize {
    type_(type), value_(CBrowserUnitValue(n)) {
   }
 
-  int value(int ivalue=defSize()) const {
-    if      (type_ == Type::VALUE   ) return value_.value();
+  double value(const CScreenUnits &ivalue=CScreenUnits(defSize())) const {
+    if      (type_ == Type::VALUE   ) return value_.pxValue(ivalue);
     else if (type_ == Type::XX_SMALL) return emSize(0.67);
     else if (type_ == Type::X_SMALL ) return emSize(0.83);
     else if (type_ == Type::SMALL   ) return emSize(1.00);
@@ -136,15 +136,21 @@ class CBrowserFontSize {
     else if (type_ == Type::LARGE   ) return emSize(1.50);
     else if (type_ == Type::X_LARGE ) return emSize(2.00);
     else if (type_ == Type::XX_LARGE) return emSize(3.00);
-    else if (type_ == Type::SMALLER ) return smaller(value_.value(), ivalue);
-    else if (type_ == Type::LARGER  ) return larger (value_.value(), ivalue);
-    else if (type_ == Type::INHERIT ) return ivalue;
+    else if (type_ == Type::SMALLER ) return smaller(value_.pxValue(ivalue), ivalue.pxValue());
+    else if (type_ == Type::LARGER  ) return larger (value_.pxValue(ivalue), ivalue.pxValue());
+    else if (type_ == Type::INHERIT ) return ivalue.pxValue();
     else if (type_ == Type::INITIAL ) return defSize();
     else                              return defSize();
   }
 
   bool isRelative() const {
-    return (type_ == Type::SMALLER || type_ == Type::LARGER || type_ == Type::INHERIT);
+    if (type_ == Type::SMALLER || type_ == Type::LARGER || type_ == Type::INHERIT)
+      return true;
+
+    if (type_ == Type::VALUE)
+      return value_.isRelative();
+
+    return false;
   }
 
   bool isValid() const { return type_ != Type::NONE; }
@@ -158,7 +164,7 @@ class CBrowserFontSize {
       value_ = CBrowserUnitValue(1);
   }
 
-  static int defSize() {
+  static double defSize() {
     return emSize(1.00);
   }
 
@@ -177,8 +183,8 @@ class CBrowserFontSize {
     return ivalue;
   }
 
-  static int emSize(double s) {
-    return CScreenUnits(s, CScreenUnits::Units::EM).pxValue(0);
+  static double emSize(double s) {
+    return CScreenUnits(s, CScreenUnits::Units::EM).pxValue();
   }
 
  private:

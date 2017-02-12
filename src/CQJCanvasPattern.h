@@ -8,7 +8,7 @@ class CQJCanvasPatternType : public CJObjType {
  public:
   static CJObjTypeP instance(CJavaScript *js);
 
-  CQJCanvasPatternType(CJavaScript *js);
+  explicit CQJCanvasPatternType(CJavaScript *js);
 
   CJValueP exec(CJavaScript *, const std::string &, const Values &) override {
     return CJValueP();

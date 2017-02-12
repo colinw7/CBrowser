@@ -14,8 +14,10 @@
 
 CQJCanvasWidget::
 CQJCanvasWidget(CBrowserCanvas *canvas, CBrowserWindowWidget *widget) :
- QWidget(widget), canvas_(canvas), widget_(widget)
+ QFrame(widget), canvas_(canvas), widget_(widget)
 {
+  //setFocusPolicy(Qt::StrongFocus);
+
   setMouseTracking(true);
 }
 

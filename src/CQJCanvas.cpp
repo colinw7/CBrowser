@@ -64,10 +64,10 @@ getProperty(CJavaScript *js, const std::string &name) const
     return js->createNumberValue(0L);
   }
   else if (name == "width") {
-    return js->createNumberValue(long(canvas_->width().value()));
+    return js->createNumberValue(long(canvas_->width().pxValue()));
   }
   else if (name == "height") {
-    return js->createNumberValue(long(canvas_->height().value()));
+    return js->createNumberValue(long(canvas_->height().pxValue()));
   }
   else
     return CQJHtmlObj::getProperty(js, name);

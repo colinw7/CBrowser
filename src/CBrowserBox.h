@@ -6,6 +6,7 @@
 #include <CBrowserBorder.h>
 #include <CBrowserPadding.h>
 #include <CBrowserPosition.h>
+#include <CBrowserSize.h>
 #include <CHtmlTypes.h>
 #include <CIBBox2D.h>
 #include <CTextBox.h>
@@ -44,10 +45,10 @@ class CBrowserBox {
 
   CBrowserMargin &marginRef() { return margin_; }
 
-  int marginLeft  () const { return margin().left  ().value(); }
-  int marginRight () const { return margin().right ().value(); }
-  int marginTop   () const { return margin().top   ().value(); }
-  int marginBottom() const { return margin().bottom().value(); }
+  double marginLeft  () const { return margin().left  ().pxValue(); }
+  double marginRight () const { return margin().right ().pxValue(); }
+  double marginTop   () const { return margin().top   ().pxValue(); }
+  double marginBottom() const { return margin().bottom().pxValue(); }
 
   //---
 
@@ -56,10 +57,10 @@ class CBrowserBox {
 
   CBrowserBorder &borderRef() { return border_; }
 
-  int borderLeft  () const { return border().left  ().value(); }
-  int borderRight () const { return border().right ().value(); }
-  int borderTop   () const { return border().top   ().value(); }
-  int borderBottom() const { return border().bottom().value(); }
+  double borderLeft  () const { return border().left  ().width.value().pxValue(); }
+  double borderRight () const { return border().right ().width.value().pxValue(); }
+  double borderTop   () const { return border().top   ().width.value().pxValue(); }
+  double borderBottom() const { return border().bottom().width.value().pxValue(); }
 
   //---
 
@@ -68,10 +69,10 @@ class CBrowserBox {
 
   CBrowserPadding &paddingRef() { return padding_; }
 
-  int paddingLeft  () const { return padding().left  ().value(); }
-  int paddingRight () const { return padding().right ().value(); }
-  int paddingTop   () const { return padding().top   ().value(); }
-  int paddingBottom() const { return padding().bottom().value(); }
+  double paddingLeft  () const { return padding().left  ().pxValue(); }
+  double paddingRight () const { return padding().right ().pxValue(); }
+  double paddingTop   () const { return padding().top   ().pxValue(); }
+  double paddingBottom() const { return padding().bottom().pxValue(); }
 
   //---
 
@@ -104,15 +105,15 @@ class CBrowserBox {
   void setHeight(int h) { content_.setHeight(h - nonContentHeight()); }
 
   int nonContentWidth() const {
-    return padding_.width() + border_.width() + marginLeft() + marginRight();
+    return padding().width() + border().width() + marginLeft() + marginRight();
   }
   int nonContentHeight() const {
-    return padding_.height() + border_.height() + marginTop() + marginBottom();
+    return padding().height() + border().height() + marginTop() + marginBottom();
   }
 
   void setSize(int w, int h) {
-    int w1 = w - padding_.width () - border_.width () - marginLeft() - marginRight ();
-    int h1 = h - padding_.height() - border_.height() - marginTop () - marginBottom();
+    int w1 = w - padding().width () - border().width () - marginLeft() - marginRight ();
+    int h1 = h - padding().height() - border().height() - marginTop () - marginBottom();
 
     content_.setSize(CISize2D(w1, h1));
   }
@@ -133,6 +134,14 @@ class CBrowserBox {
 
   //---
 
+  bool isFixedWidth() const { return fixedWidth_; }
+  void setFixedWidth(bool b) { fixedWidth_ = b; }
+
+  bool isFixedHeight() const { return fixedHeight_; }
+  void setFixedHeight(bool b) { fixedHeight_ = b; }
+
+  //---
+
   virtual bool isVisible() const = 0;
 
   virtual bool isInline() const = 0;
@@ -142,6 +151,8 @@ class CBrowserBox {
   //---
 
   virtual const CBrowserPosition &position() const = 0;
+
+  virtual const CBrowserSize &size() const = 0;
 
   //---
 
@@ -169,6 +180,10 @@ class CBrowserBox {
 
   bool allChildrenInline() const;
 
+  CIPoint2D parentPosition() const;
+
+  CISize2D parentSize() const;
+
   void setHierVisible(bool visible);
 
   virtual void show() = 0;
@@ -187,7 +202,13 @@ class CBrowserBox {
 
   bool hasFloatWords(const Words &words) const;
 
+  //---
+
+  virtual void fillBackground(const CTextBox &box) = 0;
+
   virtual void draw(const CTextBox &box) = 0;
+
+  virtual void drawBorder(const CTextBox &box) = 0;
 
   //---
 
@@ -208,6 +229,8 @@ class CBrowserBox {
   CIBBox2D        content_;
   CHAlignType     halign_ { CHALIGN_TYPE_LEFT };
   CVAlignType     valign_ { CVALIGN_TYPE_TOP };
+  bool            fixedWidth_ { false };
+  bool            fixedHeight_ { false };
   Boxes           children_;
 };
 

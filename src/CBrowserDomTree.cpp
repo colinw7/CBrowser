@@ -2,12 +2,14 @@
 #include <CBrowserObjProp.h>
 #include <CBrowserWindow.h>
 #include <CBrowserText.h>
+#include <CBrowserScript.h>
 #include <CBrowserObject.h>
 
 #include <QSplitter>
 #include <QHeaderView>
 #include <QAbstractItemModel>
 #include <QStyledItemDelegate>
+#include <QTextEdit>
 #include <QVBoxLayout>
 
 class CBrowserDomTreeModel : public QAbstractItemModel {
@@ -73,6 +75,16 @@ CBrowserDomTreeDlg(CBrowserWindow *window) :
   //---
 
   tab->addTab(splitter, "DOM");
+
+  //---
+
+  text_ = new QTextEdit;
+
+  tab->addTab(text_, "Text");
+
+  //---
+
+  resize(800, 800);
 }
 
 CBrowserWindow *
@@ -122,6 +134,15 @@ selectionChanged(const QItemSelection &selected, const QItemSelection &deselecte
     obj->setSelected(true);
 
     dlg_->prop()->setObject(obj);
+
+    std::string text;
+
+    if (obj->type() == CHtmlTagId::SCRIPT)
+      text = dynamic_cast<CBrowserScript *>(obj)->text();
+    else
+      text = obj->text();
+
+    dlg_->text()->setPlainText(text.c_str());
   }
 
   for (int i = 0; i < deselected.indexes().length(); ++i) {

@@ -24,25 +24,24 @@ CBrowserFileMgr(CBrowserWindow *window) :
 
 bool
 CBrowserFileMgr::
-readURL(const std::string &url_name, CHtmlParserTokens &tokens)
+readURL(const CUrl &url, CHtmlParserTokens &tokens)
 {
-  CUrl url(url_name);
-
   std::string prefix = url.getPrefix();
-  std::string site   = url.getSite();
   std::string file   = url.getFile();
   std::string target = url.getTarget();
 
   if      (prefix == "ceil") {
     readScript(file, tokens);
   }
-  else if (prefix == "file") {
-    std::string filename;
+  else if (url.isFile()) {
+    std::string filename = file;
 
+#if 0
     if (site == "")
       filename = file;
     else
       filename = site + "/" + file;
+#endif
 
     if (! CFile::exists(filename)) {
       window_->errorDialog("File '" + filename + "' does not exist");
@@ -52,7 +51,7 @@ readURL(const std::string &url_name, CHtmlParserTokens &tokens)
     if (! readFile(filename, tokens))
       return false;
   }
-  else if (prefix == "http") {
+  else if (url.isHttp()) {
     std::string      site     = url.getSite    ();
     CUrl::SearchList searches = url.getSearches();
 
@@ -86,11 +85,13 @@ readHttp(const std::string &site, const std::string &file,
   if (dir == NULL)
     return false;
 
-  std::string url = "file://";
+  std::string urlName = "file://";
 
-  url += dir;
-  url += "/";
-  url += file;
+  urlName += dir;
+  urlName += "/";
+  urlName += file;
+
+  CUrl url(urlName);
 
   CEnvInst.set("HTTP_USER_AGENT"  , "html");
   CEnvInst.set("DOCUMENT_ROOT"    , "/var/lib/httpd/htdocs");
@@ -166,7 +167,7 @@ readDirectory(const std::string &directory, CHtmlParserTokens &tokens)
 
   CFile *file = temp_file.getFile();
 
-  file->open(CFile::READ);
+  file->open(CFile::Mode::READ);
 
   CHtmlUtil::listDirectory(dir, *file, mgr);
 
@@ -195,7 +196,7 @@ readImageFile(const std::string &filename, CHtmlParserTokens &tokens)
 
   CFile *file = temp_file.getFile();
 
-  file->open(CFile::READ);
+  file->open(CFile::Mode::READ);
 
   CHtmlUtil::listImage(filename, *file);
 
@@ -225,7 +226,7 @@ readTextFile(const std::string &filename, CHtmlParserTokens &tokens)
 
   CFile *file = temp_file.getFile();
 
-  file->open(CFile::READ);
+  file->open(CFile::Mode::READ);
 
   CHtmlUtil::listTextFile(filename, *file);
 
@@ -252,7 +253,7 @@ readBinaryFile(const std::string &filename, CHtmlParserTokens &tokens)
 
   CFile *file = temp_file.getFile();
 
-  file->open(CFile::READ);
+  file->open(CFile::Mode::READ);
 
   CHtmlUtil::listBinaryFile(filename, *file);
 
@@ -281,7 +282,7 @@ readScriptFile(const std::string &filename, CHtmlParserTokens &tokens)
 
   CFile *file = temp_file.getFile();
 
-  file->open(CFile::READ);
+  file->open(CFile::Mode::READ);
 
   CHtmlUtil::listScriptFile(filename, *file);
 

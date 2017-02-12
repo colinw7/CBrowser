@@ -79,26 +79,26 @@ orderedListText(const std::string &symbol, int item_num) const
   return text;
 }
 
-CBrowserList::SymbolType
+CBrowserListStyleType
 CBrowserListItem::
 unorderedListType(const std::string &symbol, int depth) const
 {
-  CBrowserList::SymbolType type = CBrowserList::SymbolType::NONE;
+  CBrowserListStyleType type;
 
   if      (symbol == "") {
     int num = std::max(depth - 1, 0);
 
     num %= 4;
 
-    type = CBrowserList::SymbolType::DISC;
+    type = CBrowserListStyleType(CBrowserListStyleType::Type::DISC);
 
-    if      (num == 0) type = CBrowserList::SymbolType::DISC;
-    else if (num == 1) type = CBrowserList::SymbolType::CIRCLE;
-    else if (num == 2) type = CBrowserList::SymbolType::BLOCK;
-    else               type = CBrowserList::SymbolType::SQUARE;
+    if      (num == 0) type = CBrowserListStyleType(CBrowserListStyleType::Type::DISC);
+    else if (num == 1) type = CBrowserListStyleType(CBrowserListStyleType::Type::CIRCLE);
+    else if (num == 2) type = CBrowserListStyleType(CBrowserListStyleType::Type::BLOCK);
+    else               type = CBrowserListStyleType(CBrowserListStyleType::Type::SQUARE);
   }
   else {
-    type = CBrowserList::stringToSymbol(symbol);
+    type = CBrowserListStyleType(symbol);
   }
 
   return type;
@@ -132,12 +132,6 @@ void
 CBrowserListItem::
 draw(const CTextBox &region)
 {
-  fillBackground(region);
-
-  drawBorder(region);
-
-  //---
-
   CBrowserList *currentList = parentType<CBrowserList>();
 
   //---
@@ -171,23 +165,28 @@ draw(const CTextBox &region)
 
     int depth = currentList->listDepth();
 
-    CBrowserList::SymbolType type = unorderedListType(symbol_, depth);
+    CBrowserListStyleType type = calcStyleStype();
 
-    switch (type) {
-      case CBrowserList::SymbolType::DISC:
+    if (! type.isValid())
+      type = unorderedListType(symbol_, depth);
+
+    switch (type.type()) {
+      case CBrowserListStyleType::Type::DISC:
         window_->fillCircle(cx, cy, size/2, brush); // x, y, r
         break;
-      case CBrowserList::SymbolType::CIRCLE:
+      case CBrowserListStyleType::Type::CIRCLE:
         window_->drawCircle(cx, cy, size/2, pen); // x, y, r
         break;
-      case CBrowserList::SymbolType::BLOCK:
+      case CBrowserListStyleType::Type::BLOCK:
         window_->fillRectangle(cx - size/2, cy - size/2, size, size, brush); // x, y, w, h
         break;
-      case CBrowserList::SymbolType::SQUARE:
+      case CBrowserListStyleType::Type::SQUARE:
         window_->drawRectangle(cx - size/2, cy - size/2, size, size, pen); // x, y, w, h
         break;
+      case CBrowserListStyleType::Type::NONE:
+        break;
       default:
-        window_->displayError("Illegal type for list item symbol");
+        window_->displayError("Illegal type for list item symbol\n");
         break;
     }
   }
@@ -210,6 +209,21 @@ currentList() const
   const CBrowserList *currentList = dynamic_cast<const CBrowserList *>(obj);
 
   return currentList;
+}
+
+CBrowserListStyleType
+CBrowserListItem::
+calcStyleStype() const
+{
+  if (styleType().isValid())
+    return styleType();
+
+  CBrowserList *currentList = parentType<CBrowserList>();
+
+  if (currentList->styleType().isValid())
+    return currentList->styleType();
+
+  return CBrowserListStyleType();
 }
 
 //---

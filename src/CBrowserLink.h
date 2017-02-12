@@ -115,6 +115,8 @@ class CBrowserLink : public CBrowserObject {
 
   void setNameValue(const std::string &name, const std::string &value) override;
 
+  std::string propertyValue(int i) const;
+
   void initProcess() override;
   void termProcess() override;
 

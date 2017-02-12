@@ -15,6 +15,8 @@ CBrowserScrolledWindow::
 CBrowserScrolledWindow(CBrowserIFace *iface) :
  QFrame(iface), iface_(iface)
 {
+  setObjectName("swindow");
+
   window_ = new CBrowserWindow();
 
   //---
@@ -57,6 +59,13 @@ setTitle(const std::string &title)
   iface_->updateTitles();
 }
 
+const std::string &
+CBrowserScrolledWindow::
+filename() const
+{
+  return window_->filename();
+}
+
 void
 CBrowserScrolledWindow::
 setSize(int width, int height)
@@ -88,6 +97,11 @@ setSize(int width, int height)
 
     list_hbar_->setSingleStep(canvas_width_/10);
     list_hbar_->setPageStep(canvas_width_);
+
+    list_hbar_->setVisible(true);
+  }
+  else {
+    list_hbar_->setVisible(false);
   }
 
   //---
@@ -110,6 +124,11 @@ setSize(int width, int height)
 
     list_vbar_->setSingleStep(canvas_height_/10);
     list_vbar_->setPageStep(canvas_height_);
+
+    list_vbar_->setVisible(true);
+  }
+  else {
+    list_vbar_->setVisible(false);
   }
 
   //w_->resize(width, height);
@@ -117,9 +136,9 @@ setSize(int width, int height)
 
 void
 CBrowserScrolledWindow::
-setDocument(const std::string &filename)
+setDocument(const CUrl &url)
 {
-  window_->setDocument(filename);
+  window_->setDocument(url);
 }
 
 void

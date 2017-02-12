@@ -23,6 +23,7 @@ void
 CBrowserCanvas::
 init()
 {
+  CBrowserObject::init();
 }
 
 void
@@ -58,8 +59,8 @@ calcRegion() const
 {
   int hspace = 0, vspace = 0;
 
-  int width   = this->width ().value() + 2*hspace;
-  int ascent  = this->height().value() + vspace;
+  int width   = this->width ().pxValue() + 2*hspace;
+  int ascent  = this->height().pxValue() + vspace;
   int descent = vspace;
 
   return CBrowserRegion(width, ascent, descent);
@@ -69,15 +70,11 @@ void
 CBrowserCanvas::
 draw(const CTextBox &region)
 {
-  fillBackground(region);
-
-  //---
-
   region_ = region;
 
   if (canvas_) {
     canvas_->move  (region_.x(), region_.y());
-    canvas_->resize(width().value(), height().value());
+    canvas_->resize(width().pxValue(), height().pxValue());
   }
 
   //---
@@ -95,9 +92,12 @@ createWidget()
 
     canvas_->setObjectName("canvas");
 
-    canvas_->resize(width().value(), height().value());
+    double w = width ().pxValue();
+    double h = height().pxValue();
 
-    canvas_->updateSize(width().value(), height().value());
+    canvas_->resize(w, h);
+
+    canvas_->updateSize(w, h);
   }
 }
 

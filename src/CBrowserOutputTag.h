@@ -2,7 +2,6 @@
 #define CBrowserOutputTag_H
 
 #include <CHtmlLib.h>
-#include <CRGBA.h>
 
 class CBrowserWindow;
 class CBrowserObject;
@@ -498,7 +497,12 @@ class CBrowserOutputNobrTag : public CBrowserOutputTagBase {
 
 // CHtmlTagId::NOFRAMES
 
-// CHtmlTagId::NOSCRIPT
+class CBrowserOutputNoScriptTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputNoScriptTag() : CBrowserOutputTagBase(CHtmlTagId::NOSCRIPT) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
 
 // CHtmlTagId::OBJECT
 
@@ -766,18 +770,9 @@ class CBrowserOutputXmpTag : public CBrowserOutputTagBase {
 
 class CBrowserOutputTagMgr {
  public:
-  static CBrowserOutputTagMgr *instance() {
-    static CBrowserOutputTagMgr *inst;
+  static CBrowserOutputTagMgr *instance();
 
-    if (! inst)
-      inst = new CBrowserOutputTagMgr;
-
-    return inst;
-  }
-
-  bool initialized() const {
-    return ! tagOutputData_.empty();
-  }
+  bool initialized() const;
 
   template<typename T>
   void addTag() {
@@ -786,30 +781,9 @@ class CBrowserOutputTagMgr {
     tagOutputData_[tag->id()] = tag;
   }
 
-  CBrowserOutputTagBase *getTag(CHtmlTagId id) const {
-    if (! initialized()) {
-      CBrowserOutputTagMgr* th = const_cast<CBrowserOutputTagMgr *>(this);
+  CBrowserOutputTagBase *getTag(CHtmlTagId id) const;
 
-      th->init();
-    }
-
-    //---
-
-    auto p = tagOutputData_.find(id);
-
-    if (p == tagOutputData_.end())
-      return nullptr;
-
-    return (*p).second;
-  }
-
-  CBrowserOutputTagBase *getTag(CHtmlTag *tag) {
-    const CHtmlTagDef &data = tag->getTagDef();
-
-    CHtmlTagId id = data.getId();
-
-    return getTag(id);
-  }
+  CBrowserOutputTagBase *getTag(CHtmlTag *tag);
 
  private:
   void init();

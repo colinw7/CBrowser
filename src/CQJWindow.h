@@ -7,7 +7,7 @@ class CQJWindowType : public CJObjType {
  public:
   static CJObjTypeP instance(CJavaScript *js);
 
-  CQJWindowType(CJavaScript *js);
+  explicit CQJWindowType(CJavaScript *js);
 
   CJValueP exec(CJavaScript *, const std::string &, const Values &) override {
     return CJValueP();
@@ -21,6 +21,7 @@ class CQJWindowType : public CJObjType {
 
 class CQJWindow;
 class CQJWindowTimer;
+class CBrowserWindow;
 
 typedef std::shared_ptr<CQJWindow> CQJWindowP;
 
@@ -30,7 +31,7 @@ class CQJWindow : public CQJObject {
   Q_OBJECT
 
  public:
-  CQJWindow(CJavaScript *js);
+  explicit CQJWindow(CJavaScript *js);
 
   void init() override;
 
@@ -49,6 +50,8 @@ class CQJWindow : public CQJObject {
   CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values);
 
   void print(std::ostream &os) const override { os << "window"; }
+
+  CBrowserWindow *getWindow() const;
 
  private:
   typedef std::vector<CQJWindowTimer *> Timers;

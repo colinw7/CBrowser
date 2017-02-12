@@ -12,6 +12,14 @@ enum class CBrowserBorderType {
   OUT
 };
 
+enum class CBrowserBorderSide {
+  NONE,
+  LEFT,
+  RIGHT,
+  TOP,
+  BOTTOM
+};
+
 enum class CBrowserImageAlign {
   NONE,
   TOP,
@@ -129,5 +137,44 @@ class CQJHtmlObj;
 class CQJObject;
 
 class CJavaScript;
+
+//------
+
+#include <CBrowserProperty.h>
+
+template<>
+class CBrowserPropertyTraits<CBrowserImageAlign> {
+ public:
+  CBrowserPropertyTraits() { }
+
+  std::string toString(const CBrowserImageAlign &align) {
+    switch (align) {
+      case CBrowserImageAlign::TOP      : return "top";
+      case CBrowserImageAlign::MIDDLE   : return "middle";
+      case CBrowserImageAlign::BOTTOM   : return "bottom";
+      case CBrowserImageAlign::LEFT     : return "left";
+      case CBrowserImageAlign::RIGHT    : return "right";
+      case CBrowserImageAlign::TEXTTOP  : return "texttop";
+      case CBrowserImageAlign::ABSMIDDLE: return "absmiddle";
+      case CBrowserImageAlign::ABSBOTTOM: return "absbottom";
+      default                           : return "";
+    }
+
+    return "";
+  }
+
+  bool fromString(const std::string &str, CBrowserImageAlign &align) {
+    if (str == "top"      ) { align = CBrowserImageAlign::TOP      ; return true; }
+    if (str == "middle"   ) { align = CBrowserImageAlign::MIDDLE   ; return true; }
+    if (str == "bottom"   ) { align = CBrowserImageAlign::BOTTOM   ; return true; }
+    if (str == "left"     ) { align = CBrowserImageAlign::LEFT     ; return true; }
+    if (str == "right"    ) { align = CBrowserImageAlign::RIGHT    ; return true; }
+    if (str == "texttop"  ) { align = CBrowserImageAlign::TEXTTOP  ; return true; }
+    if (str == "absmiddle") { align = CBrowserImageAlign::ABSMIDDLE; return true; }
+    if (str == "absbottom") { align = CBrowserImageAlign::ABSBOTTOM; return true; }
+
+    return false;
+  }
+};
 
 #endif

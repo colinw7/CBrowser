@@ -10,7 +10,7 @@ class CQJCanvasFontMetricsType : public CJObjType {
  public:
   static CJObjTypeP instance(CJavaScript *js);
 
-  CQJCanvasFontMetricsType(CJavaScript *js);
+  explicit CQJCanvasFontMetricsType(CJavaScript *js);
 
   CJValueP exec(CJavaScript *, const std::string &, const Values &) override {
     return CJValueP();

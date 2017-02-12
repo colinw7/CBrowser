@@ -43,7 +43,7 @@ class CQJColorEdit : public QLineEdit {
 
 class CQJColorWidget : public QFrame {
  public:
-  CQJColorWidget(CQJColorEdit *edit);
+  explicit CQJColorWidget(CQJColorEdit *edit);
 
   void paintEvent(QPaintEvent *);
 

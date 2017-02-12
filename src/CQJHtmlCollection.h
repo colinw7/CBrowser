@@ -8,7 +8,7 @@ class CQJHtmlCollectionType : public CJObjType {
  public:
   static CJObjTypeP instance(CJavaScript *js);
 
-  CQJHtmlCollectionType(CJavaScript *js);
+  explicit CQJHtmlCollectionType(CJavaScript *js);
 
   CJValueP exec(CJavaScript *, const std::string &, const Values &) override {
     return CJValueP();
@@ -26,7 +26,7 @@ class CQJHtmlCollection : public CQJObject {
   Q_OBJECT
 
  public:
-  CQJHtmlCollection(CJavaScript *js);
+  explicit CQJHtmlCollection(CJavaScript *js);
 
   CJValue *dup(CJavaScript *js) const override { return new CQJHtmlCollection(js); }
 

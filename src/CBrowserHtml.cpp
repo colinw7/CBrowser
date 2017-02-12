@@ -15,6 +15,7 @@ void
 CBrowserHtml::
 init()
 {
+  CBrowserObject::init();
 }
 
 void

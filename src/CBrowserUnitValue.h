@@ -74,16 +74,33 @@ class CBrowserUnitValue {
   }
 
   explicit CBrowserUnitValue(double value, CScreenUnits::Units units=CScreenUnits::Units::PX) :
-    value_(value, units) {
+    value_(value, units), type_(Type::VALUE) {
   }
 
-  CBrowserUnitValue(CScreenUnits::Units units, double value) :
-    value_(value, units) {
+  explicit CBrowserUnitValue(CScreenUnits::Units units, double value=1.0) :
+    value_(value, units), type_(Type::VALUE) {
+  }
+
+  explicit CBrowserUnitValue(const CScreenUnits &value) :
+    value_(value), type_(Type::VALUE) {
   }
 
   CScreenUnits::Units units() const { return value_.units(); }
 
-  double value(int rvalue=400) const { return (isValid() ? value_.pxValue(rvalue) : 0); }
+  bool isRelative() const {
+    return (units() == CScreenUnits::Units::PERCENT);
+  }
+
+  CScreenUnits value() const {
+    return (isValid() ? value_ : CScreenUnits());
+  }
+
+  double pxValue(const CScreenUnits &refValue=CScreenUnits()) const {
+    if (isValid())
+      return value().pxValue(refValue);
+   else
+      return 0;
+  }
 
   bool isValid() const { return value_.isValid(); }
 

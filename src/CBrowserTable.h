@@ -69,7 +69,7 @@ class CBrowserTable : public CBrowserObject {
   CHAlignType getHAlign() const { return data_.halign; }
   CVAlignType getVAlign() const { return data_.valign; }
 
-  int getWidth() const { return data_.width.value(); }
+  double getWidth() const { return data_.width.pxValue(); }
 
   CScreenUnits::Units getWidthUnit() const { return data_.width.units(); }
 
@@ -190,7 +190,7 @@ class CBrowserTableCell : public CBrowserObject {
 
   bool isPad() const { return pad_; }
 
-  int getWidth() const { return data_.width.value(); }
+  double getWidth() const { return data_.width.pxValue(); }
 
   CScreenUnits::Units getWidthUnit() const { return data_.width.units(); }
 

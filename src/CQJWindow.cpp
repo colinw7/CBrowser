@@ -1,6 +1,10 @@
 #include <CQJWindow.h>
 #include <CQJWindowTimer.h>
 #include <CQJRequestAnimationFrame.h>
+#include <CQJLocation.h>
+#include <CBrowserMain.h>
+#include <CBrowserIFace.h>
+#include <CBrowserScrolledWindow.h>
 #include <CJavaScript.h>
 
 CJObjTypeP CQJWindowType::type_;
@@ -45,7 +49,7 @@ init()
 
   CJValueP requestAnimationFrame = CJValueP(new CQJRequestAnimationFrame(js_, window));
 
-  setProperty(js_, "requestAnimationFrame", window);
+  setProperty(js_, "requestAnimationFrame", requestAnimationFrame);
 
   CQJObject::init();
 }
@@ -98,13 +102,18 @@ CJValueP
 CQJWindow::
 getProperty(CJavaScript *js, const std::string &name) const
 {
-  if       (name == "innerWidth") {
+  if      (name == "innerWidth") {
     //return js_->createNumberValue(long(CBrowserJSInst->canvas()->width()));
     return js_->createNumberValue(100L);
   }
-  else if  (name == "innerHeight") {
+  else if (name == "innerHeight") {
     //return js_->createNumberValue(long(CBrowserJSInst->canvas()->height()));
     return js_->createNumberValue(100L);
+  }
+  else if (name == "location") {
+    CQJLocation *loc = new CQJLocation(js, const_cast<CQJWindow *>(this));
+
+    return CJValueP(loc);
   }
   else
     return CJObj::getProperty(js, name);
@@ -145,4 +154,17 @@ execNameFn(CJavaScript *js, const std::string &name, const Values &values)
   }
   else
     return CQJObject::execNameFn(js, name, values);
+}
+
+CBrowserWindow *
+CQJWindow::
+getWindow() const
+{
+  CBrowserIFace *iface = CBrowserMainInst->iface();
+  if (! iface) return nullptr;
+
+  CBrowserScrolledWindow *swindow = iface->currentWindow();
+  if (! swindow) return nullptr;
+
+  return swindow->getWindow();
 }

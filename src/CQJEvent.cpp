@@ -1,4 +1,5 @@
 #include <CQJEvent.h>
+#include <CQJWindow.h>
 #include <CJavaScript.h>
 #include <iostream>
 

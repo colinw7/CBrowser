@@ -3,9 +3,12 @@
 
 #include <CBrowserTypes.h>
 #include <CQMainWindow.h>
+#include <CUrl.h>
 
 class CBrowserScrolledWindow;
 class CBrowserDomTreeDlg;
+class CBrowserCSSTreeDlg;
+class CBrowserWebView;
 class QLineEdit;
 class QScrollArea;
 class QScrollBar;
@@ -30,10 +33,10 @@ class CBrowserIFace : public CQMainWindow {
   QLabel* objLabel() const { return objLabel_; }
   QLabel* posLabel() const { return posLabel_; }
 
-  void addHistoryItem(const std::string &item);
+  void addHistoryItem(const CUrl &url);
 
-  void addDocument(const std::string &filename);
-  void setDocument(const std::string &filename);
+  void addDocument(const CUrl &url);
+  void setDocument(const CUrl &url);
 
   void saveImage(const std::string &filename);
 
@@ -64,6 +67,8 @@ class CBrowserIFace : public CQMainWindow {
   void saveImageProc();
   void jsProc();
   void domProc();
+  void cssProc();
+  void webProc();
 
   void goBackProc();
   void goForwardProc();
@@ -85,9 +90,13 @@ class CBrowserIFace : public CQMainWindow {
   QLabel*             posLabel_ { nullptr };
   CQJDialog*          jsDlg_ { nullptr };
   CBrowserDomTreeDlg* domDlg_ { nullptr };
+  CBrowserCSSTreeDlg* cssDlg_ { nullptr };
+  CBrowserWebView*    webView_ { nullptr };
   CQToolBar*          toolbar_ { nullptr };
   CQMenuItem*         jsMenuItem_ { nullptr };
   CQMenuItem*         domMenuItem_ { nullptr };
+  CQMenuItem*         cssMenuItem_ { nullptr };
+  CQMenuItem*         webMenuItem_ { nullptr };
 };
 
 #endif
