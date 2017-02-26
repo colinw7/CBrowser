@@ -664,11 +664,6 @@ draw(const CTextBox &box)
   //---
 
   //box.setY(y2);
-
-  //---
-
-  if (isSelected())
-    window_->drawSelected(box.x(), box.y(), box.width(), box.height());
 }
 
 //------

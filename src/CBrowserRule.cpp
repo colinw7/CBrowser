@@ -114,9 +114,4 @@ draw(const CTextBox &region)
     window_->drawHRule(x1, x2, y1, data_.size);
   else
     window_->fillRectangle(x1, y1, x2 - x1 + 1, data_.size, CBrush(window_->getFgColor()));
-
-  //---
-
-  if (isSelected())
-    window_->drawSelected(region.x(), region.y(), region.width(), region.height());
 }

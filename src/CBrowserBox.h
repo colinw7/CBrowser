@@ -210,6 +210,8 @@ class CBrowserBox {
 
   virtual void drawBorder(const CTextBox &box) = 0;
 
+  virtual void drawSelected(const CTextBox &box) = 0;
+
   //---
 
   void boxAt(const CIPoint2D &p, CBrowserBox* &box, double &area);

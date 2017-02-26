@@ -7,7 +7,8 @@
 #include <CRGBName.h>
 
 CBrowserDocument::
-CBrowserDocument(CBrowserWindow *window)
+CBrowserDocument(CBrowserWindow *window) :
+ iface_(this)
 {
   window_ = window;
 
@@ -29,6 +30,8 @@ CBrowserDocument::
 setUrl(const CUrl &url)
 {
   url_ = url;
+
+  document_->setUrl(url);
 }
 
 void
@@ -202,4 +205,16 @@ CBrowserDocument::
 addForm(CBrowserForm *form)
 {
   forms_.push_back(form);
+}
+
+//------
+
+CJValueP
+CBrowserDocument::IFace::
+createElement(const std::string &id) const
+{
+  CBrowserObject *obj = document_->getWindow()->createElement(id);
+  if (! obj) return CJValueP();
+
+  return obj->getJObjValue();
 }

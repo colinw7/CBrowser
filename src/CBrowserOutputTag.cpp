@@ -136,6 +136,7 @@ init()
   addTag<CBrowserOutputSubTag       >();
   addTag<CBrowserOutputSummaryTag   >();
   addTag<CBrowserOutputSupTag       >();
+  addTag<CBrowserOutputSVGTag       >();
   addTag<CBrowserOutputTableTag     >();
   addTag<CBrowserOutputTBodyTag     >();
   addTag<CBrowserOutputTdTag        >();

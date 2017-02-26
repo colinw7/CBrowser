@@ -6,11 +6,12 @@
 #include <CBrowserWindow.h>
 #include <CBrowserDocument.h>
 #include <CBrowserProperty.h>
+#include <CQJImageObj.h>
 #include <cstring>
 
 CBrowserImage::
 CBrowserImage(CBrowserWindow *window) :
- CBrowserObject(window, CHtmlTagId::IMG)
+ CBrowserObject(window, CHtmlTagId::IMG), iface_(this)
 {
   setDisplay(CBrowserObject::Display::INLINE);
 
@@ -58,15 +59,22 @@ init()
 
     data.src = filename;
 
-    image = window_->lookupImage(data);
+    int iwidth  = CBrowserObject::width ().pxValue();
+    int iheight = CBrowserObject::height().pxValue();
+
+    image = window_->lookupImage(data, iwidth, iheight);
   }
   else if (data_.src.substr(0, 6) == "_html_") {
     std::string name = data_.src.substr(6);
 
     image = CBrowserNamedImage::lookup(name);
   }
-  else
-    image = window_->lookupImage(data_);
+  else {
+    int iwidth  = CBrowserObject::width ().pxValue();
+    int iheight = CBrowserObject::height().pxValue();
+
+    image = window_->lookupImage(data_, iwidth, iheight);
+  }
 
   if (! image.isValid())
     image = CBrowserNamedImage::genNoImage();
@@ -128,12 +136,7 @@ setNameValue(const std::string &name, const std::string &value)
   else if (lname == "dynsrc") {
   }
   else if (lname == "height") {
-    if (CStrUtil::isInteger(value))
-      data_.height = CStrUtil::toInteger(value);
-    else {
-      window_->displayError("Illegal 'img' Value for Height '%s'\n", value.c_str());
-      data_.height = -1;
-    }
+    CBrowserObject::setHeight(CBrowserUnitValue(value));
   }
   else if (lname == "hspace") {
     if (CStrUtil::isInteger(value))
@@ -170,12 +173,7 @@ setNameValue(const std::string &name, const std::string &value)
     }
   }
   else if (lname == "width") {
-    if (CStrUtil::isInteger(value))
-      data_.width = CStrUtil::toInteger(value);
-    else {
-      window_->displayError("Illegal 'img' Value for Width '%s'\n", value.c_str());
-      data_.width = -1;
-    }
+    CBrowserObject::setWidth(CBrowserUnitValue(value));
   }
   else {
     CBrowserObject::setNameValue(name, value);
@@ -213,8 +211,8 @@ propertyValue(int i) const
     return "";
   }
   else if (name == "border") return CBrowserProperty::toString(data_.border);
-  else if (name == "width" ) return CBrowserProperty::toString(data_.width);
-  else if (name == "height") return CBrowserProperty::toString(data_.height);
+  else if (name == "width" ) return CBrowserProperty::toString(CBrowserObject::width());
+  else if (name == "height") return CBrowserProperty::toString(CBrowserObject::height());
   else if (name == "usemap") return CBrowserProperty::toString(data_.usemap);
   else if (name == "hspace") return CBrowserProperty::toString(data_.hspace);
   else if (name == "vspace") return CBrowserProperty::toString(data_.vspace);
@@ -294,9 +292,11 @@ draw(const CTextBox &region)
   }
 
   //region.setX(region.x() + image_->getWidth() + 2*hspace);
+}
 
-  //---
-
-  if (isSelected())
-    window_->drawSelected(region.x(), region.y(), region.width(), region.height());
+CQJHtmlObj *
+CBrowserImage::
+createJObj(CJavaScript *js)
+{
+  return new CQJImageObj(js, iface(), CBrowserObject::iface());
 }

@@ -188,13 +188,17 @@ layout()
     const CBrowserSize &size = child->size();
 
     if (size.width.isValid()) {
-      child->setWidth(size.width.pxValue());
+      CScreenUnits refValue(window_->getCanvasWidth());
+
+      child->setWidth(size.width.pxValue(refValue));
 
       child->setFixedWidth(true);
     }
 
     if (size.height.isValid()) {
-      child->setHeight(size.height.pxValue());
+      CScreenUnits refValue(window_->getCanvasHeight());
+
+      child->setHeight(size.height.pxValue(refValue));
 
       child->setFixedHeight(true);
     }
@@ -343,6 +347,8 @@ render(int dx, int dy)
   draw(contentBox);
 
   drawBorder(borderBox);
+
+  drawSelected(contentBox);
 
   //---
 

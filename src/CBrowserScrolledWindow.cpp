@@ -1,23 +1,30 @@
 #include <CBrowserScrolledWindow.h>
-#include <CBrowserIFace.h>
+#include <CBrowserMainWindow.h>
 #include <CBrowserWindowWidget.h>
 #include <CBrowserWindow.h>
 #include <CBrowserMain.h>
 #include <CBrowserLayout.h>
 #include <CBrowserBox.h>
 #include <CBrowserObject.h>
+#include <CQJavaScript.h>
 
 #include <QGridLayout>
 #include <QScrollBar>
 #include <QLabel>
 
 CBrowserScrolledWindow::
-CBrowserScrolledWindow(CBrowserIFace *iface) :
+CBrowserScrolledWindow(CBrowserMainWindow *iface) :
  QFrame(iface), iface_(iface)
 {
   setObjectName("swindow");
 
+  //---
+
   window_ = new CBrowserWindow();
+
+  CQJavaScriptInst->setWindowIFace(window_->iface());
+
+  CQJavaScriptInst->init();
 
   //---
 
@@ -41,7 +48,7 @@ CBrowserScrolledWindow(CBrowserIFace *iface) :
 
   //---
 
-  window_->setIFace(this);
+  window_->setScrolledWindow(this);
 }
 
 CBrowserScrolledWindow::

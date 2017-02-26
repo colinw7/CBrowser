@@ -114,7 +114,6 @@ class CBrowserFormSubmit;
 class CBrowserFormText;
 class CBrowserGraphics;
 class CBrowserHistory;
-class CBrowserIFace;
 class CBrowserImage;
 class CBrowserLayout;
 class CBrowserLinkMgr;

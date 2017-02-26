@@ -1,5 +1,6 @@
 #include <CBrowserCanvas.h>
 #include <CQJCanvasWidget.h>
+#include <CQJCanvas.h>
 #include <CBrowserWindowWidget.h>
 #include <CBrowserMain.h>
 #include <CBrowserText.h>
@@ -10,7 +11,7 @@
 
 CBrowserCanvas::
 CBrowserCanvas(CBrowserWindow *window) :
- CBrowserObject(window, CHtmlTagId::CANVAS)
+ CBrowserObject(window, CHtmlTagId::CANVAS), iface_(this)
 {
 }
 
@@ -30,9 +31,14 @@ void
 CBrowserCanvas::
 setNameValue(const std::string &name, const std::string &value)
 {
-  //std::string lname  = CStrUtil::toLower(name);
+  std::string lname  = CStrUtil::toLower(name);
 
-  CBrowserObject::setNameValue(name, value);
+  if      (lname == "width")
+    CBrowserObject::setWidth(CBrowserUnitValue(value));
+  else if (lname == "height")
+    CBrowserObject::setHeight(CBrowserUnitValue(value));
+  else
+    CBrowserObject::setNameValue(name, value);
 }
 
 void
@@ -68,43 +74,76 @@ calcRegion() const
 
 void
 CBrowserCanvas::
+show()
+{
+  if (canvasWidget_)
+    canvasWidget_->show();
+}
+
+void
+CBrowserCanvas::
+hide()
+{
+  if (canvasWidget_)
+    canvasWidget_->hide();
+}
+
+void
+CBrowserCanvas::
 draw(const CTextBox &region)
 {
   region_ = region;
 
-  if (canvas_) {
-    canvas_->move  (region_.x(), region_.y());
-    canvas_->resize(width().pxValue(), height().pxValue());
+  if (canvasWidget_) {
+    canvasWidget_->move  (region_.x(), region_.y());
+    canvasWidget_->resize(width().pxValue(), height().pxValue());
+  }
+}
+
+CQJCanvasWidget *
+CBrowserCanvas::
+canvasWidget() const
+{
+  if (! canvasWidget_) {
+    const_cast<CBrowserCanvas *>(this)->createWidget();
   }
 
-  //---
-
-  if (isSelected())
-    window_->drawSelected(region.x(), region.y(), region.width(), region.height());
+  return canvasWidget_;
 }
 
 void
 CBrowserCanvas::
 createWidget()
 {
-  if (! canvas_) {
-    canvas_ = new CQJCanvasWidget(this, window_->widget());
+  assert(! canvasWidget_);
 
-    canvas_->setObjectName("canvas");
+  canvasWidget_ = new CQJCanvasWidget(canvas_);
 
-    double w = width ().pxValue();
-    double h = height().pxValue();
+  canvasWidget_->setParent(window_->widget());
 
-    canvas_->resize(w, h);
+  canvasWidget_->setObjectName("canvas");
 
-    canvas_->updateSize(w, h);
-  }
+  double w = width ().pxValue();
+  double h = height().pxValue();
+
+  canvasWidget_->resize(w, h);
+
+  canvasWidget_->updateSize(w, h);
 }
 
 void
 CBrowserCanvas::
 update()
 {
-  if (canvas_)
-    canvas_->update();
+  if (canvasWidget_)
+    canvasWidget_->update();
+}
+
+CQJHtmlObj *
+CBrowserCanvas::
+createJObj(CJavaScript *js)
+{
+  canvas_ = new CQJCanvas(js, iface(), CBrowserObject::iface());
+
+  return canvas_;
 }

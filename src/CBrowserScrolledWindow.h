@@ -5,17 +5,18 @@
 #include <CUrl.h>
 #include <QFrame>
 
+class CBrowserMainWindow;
 class QScrollBar;
 
 class CBrowserScrolledWindow : public QFrame {
   Q_OBJECT
 
  public:
-  explicit CBrowserScrolledWindow(CBrowserIFace *iface);
+  explicit CBrowserScrolledWindow(CBrowserMainWindow *iface);
 
  ~CBrowserScrolledWindow();
 
-  CBrowserIFace *iface() const { return iface_; }
+  CBrowserMainWindow *iface() const { return iface_; }
 
   CBrowserWindow *getWindow() const { return window_; }
 
@@ -63,7 +64,7 @@ class CBrowserScrolledWindow : public QFrame {
   void vscrollProc();
 
  private:
-  CBrowserIFace*        iface_ { nullptr };
+  CBrowserMainWindow*   iface_ { nullptr };
   CBrowserWindow*       window_ { nullptr };
   CBrowserWindowWidget* w_ { nullptr };
   QScrollBar*           list_hbar_ { nullptr };

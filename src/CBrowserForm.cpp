@@ -2,10 +2,12 @@
 #include <CBrowserImage.h>
 #include <CBrowserDocument.h>
 #include <CBrowserWindow.h>
-#include <CBrowserIFace.h>
 #include <CBrowserWindowWidget.h>
 #include <CBrowserCeil.h>
-#include <CBrowserJS.h>
+#include <CQJavaScript.h>
+#include <CQJForm.h>
+#include <CQJInput.h>
+#include <CQJHtmlObj.h>
 #include <CQJLineEdit.h>
 #include <CQJColorEdit.h>
 #include <CQJComboBox.h>
@@ -208,10 +210,10 @@ buttonProc()
     return;
   }
 
-  int num = form_->getNumInputs();
+  int num = getForm()->getNumInputs();
 
   for (int i = 0; i < num; i++) {
-    CBrowserFormInput *input1 = form_->getInput(i);
+    CBrowserFormInput *input1 = getForm()->getInput(i);
 
     if (input1            == this      ||
         input1->getType() != getType() ||
@@ -267,8 +269,9 @@ createWidget() const
   if (! widget_) {
     CBrowserFormRange *th = const_cast<CBrowserFormRange *>(this);
 
-    CQJSlider *slider = new CQJSlider(window_->widget(), th);
+    CQJSlider *slider = new CQJSlider(getJObj(), th->iface());
 
+    slider->setParent(window_->widget());
     slider->blockSignals(true);
 
     slider->setRange(min_, max_);
@@ -307,7 +310,7 @@ calcRegion() const
 
 CBrowserForm::
 CBrowserForm(CBrowserWindow *window) :
- CBrowserObject(window, CHtmlTagId::FORM)
+ CBrowserObject(window, CHtmlTagId::FORM), iface_(this)
 {
   CBrowserDocument *document = window_->getDocument();
 
@@ -389,6 +392,31 @@ submitProc()
   window_->setDocument(url);
 }
 
+CQJHtmlObj *
+CBrowserForm::
+createJObj(CJavaScript *js)
+{
+  CQJForm *form = new CQJForm(js, iface(), CBrowserObject::iface());
+
+  return form;
+}
+
+//---
+
+CQJFormIFace::Inputs
+CBrowserForm::IFace::
+inputs() const
+{
+  Inputs inputs;
+
+  const CBrowserForm::FormInputs &formInputs = form_->inputs();
+
+  for (const auto &input : formInputs)
+    inputs.push_back(input->getJObj());
+
+  return inputs;
+}
+
 //---
 
 CBrowserFormOption::
@@ -421,7 +449,7 @@ termProcess()
 CBrowserFormInput::
 CBrowserFormInput(CBrowserWindow *window, CHtmlTagId id, CBrowserFormInputType type,
                   const CBrowserFormInputData &data) :
- CBrowserObject(window, id, data), type_(type), data_(data)
+ CBrowserObject(window, id, data), type_(type), data_(data), iface_(this)
 {
   widget_ = nullptr;
   width_  = 0;
@@ -438,6 +466,16 @@ CBrowserFormInput::
 init()
 {
   CBrowserObject::init();
+}
+
+CBrowserForm *
+CBrowserFormInput::
+getForm() const
+{
+  if (! form_)
+    const_cast<CBrowserFormInput *>(this)->form_ = parentType<CBrowserForm>();
+
+  return form_;
 }
 
 void
@@ -549,14 +587,24 @@ setNameValue(const std::string &name, const std::string &value)
   }
 }
 
+bool
+CBrowserFormInput::
+getNameValue(const std::string &name, std::string &value) const
+{
+  auto p = data_.nameValues.find(name);
+  if (p == data_.nameValues.end()) return false;
+
+  value = (*p).second;
+
+  return true;
+}
+
 void
 CBrowserFormInput::
 initProcess()
 {
-  form_ = parentType<CBrowserForm>();
-
-  if (form_)
-    form_->addInput(this);
+  if (getForm())
+    getForm()->addInput(this);
 }
 
 void
@@ -607,11 +655,6 @@ draw(const CTextBox &region)
                        CPen(CRGBA(1,0,0)));
 
   //region.setX(region.x() + getWidth());
-
-  //---
-
-  if (isSelected())
-    window_->drawSelected(region.x(), region.y(), region.width(), region.height());
 }
 
 void
@@ -626,14 +669,21 @@ void
 CBrowserFormInput::
 onClickProc()
 {
-  CBrowserCeilInst->runScript(getForm()->getWindow(), getOnClick());
+  js()->interpString(getOnClick());
 }
 
 void
 CBrowserFormInput::
 onChangeProc()
 {
-  CBrowserCeilInst->runScript(getForm()->getWindow(), getOnChange());
+  js()->interpString(getOnChange());
+}
+
+CQJHtmlObj *
+CBrowserFormInput::
+createJObj(CJavaScript *js)
+{
+  return new CQJInput(js, iface(), CBrowserObject::iface());
 }
 
 //---
@@ -683,6 +733,15 @@ createWidget() const
 
     initWidget(this, widget_);
   }
+}
+
+void
+CBrowserFormButton::
+setLabel(const std::string &text)
+{
+  createWidget();
+
+  qobject_cast<QPushButton *>(widget_)->setText(text.c_str());
 }
 
 CBrowserRegion
@@ -1237,8 +1296,9 @@ createWidget() const
   if (! widget_) {
     CBrowserFormNumber *th = const_cast<CBrowserFormNumber *>(this);
 
-    CQJLineEdit *edit = new CQJLineEdit(window_->widget(), th);
+    CQJLineEdit *edit = new CQJLineEdit(getJObj(), th->iface());
 
+    edit->setParent(window_->widget());
     edit->setText(data_.value.c_str());
 
     edit->setPlaceholderText(data_.placeholder.c_str());
@@ -1549,8 +1609,9 @@ createWidget() const
     CBrowserFormText *th = const_cast<CBrowserFormText *>(this);
 
     if (classStr_ == "color") {
-      CQJColorEdit *colorEdit = new CQJColorEdit(window_->widget(), th);
+      CQJColorEdit *colorEdit = new CQJColorEdit(getJObj(), th->iface());
 
+      colorEdit->setParent(window_->widget());
       colorEdit->setText(data_.value.c_str());
 
       if (maxlength_ > 0)
@@ -1562,8 +1623,9 @@ createWidget() const
       widget_ = colorEdit;
     }
     else {
-      CQJLineEdit *lineEdit = new CQJLineEdit(window_->widget(), th);
+      CQJLineEdit *lineEdit = new CQJLineEdit(getJObj(), th->iface());
 
+      lineEdit->setParent(window_->widget());
       lineEdit->setText(data_.value.c_str());
 
       lineEdit->setPlaceholderText(data_.placeholder.c_str());
@@ -1885,8 +1947,22 @@ std::string
 CBrowserFormSelect::
 value() const
 {
-  if (data_.multiple || data_.size != 1) {
-    return "";
+  if (data_.multiple || data_.size > 1) {
+    QListWidget *list = dynamic_cast<QListWidget *>(widget_);
+    if (! list) return "";
+
+    QList<QListWidgetItem *> items = list->selectedItems();
+
+    std::string str;
+
+    for (int i = 0; i < items.length(); ++i) {
+      if (i > 0)
+        str += " ";
+
+      str += items[i]->text().toStdString();
+    }
+
+    return str;
   }
   else {
     CQJComboBox *combo = dynamic_cast<CQJComboBox *>(widget_);
@@ -1920,7 +1996,7 @@ createWidget() const
   if (! widget_) {
     CBrowserFormSelect *th = const_cast<CBrowserFormSelect *>(this);
 
-    if (data_.multiple || data_.size != 1) {
+    if (data_.multiple || data_.size > 1) {
       QListWidget *list = new QListWidget(window_->widget());
 
       list->setObjectName(getName().c_str());
@@ -1944,8 +2020,9 @@ createWidget() const
       }
     }
     else {
-      CQJComboBox *combo = new CQJComboBox(window_->widget(), th);
+      CQJComboBox *combo = new CQJComboBox(getJObj(), th->iface());
 
+      combo->setParent(window_->widget());
       combo->setObjectName(getName().c_str());
 
       widget_ = combo;
@@ -2013,7 +2090,7 @@ createWidget() const
 
     widget_ = button;
 
-    QObject::connect(button, SIGNAL(clicked()), form_, SLOT(submitProc()));
+    QObject::connect(button, SIGNAL(clicked()), getForm(), SLOT(submitProc()));
 
     if (data_.onclick != "")
       QObject::connect(button, SIGNAL(clicked()), this, SLOT(onClickProc()));
@@ -2044,4 +2121,39 @@ calcRegion() const
   height_ = size.height() + 4;
 
   return CBrowserRegion(width_, height_/2, height_/2);
+}
+
+//------
+
+CJValueP
+CBrowserFormInput::IFace::
+value(CJavaScript *js) const
+{
+  CBrowserFormInputType type = input_->getType();
+
+  if      (type == CBrowserFormInputType::EMAIL)
+    return js->createStringValue(dynamic_cast<CBrowserFormEmail *>(input_)->text());
+  else if (type == CBrowserFormInputType::NUMBER)
+    return js->createStringValue(dynamic_cast<CBrowserFormNumber *>(input_)->text());
+  else if (type == CBrowserFormInputType::RANGE)
+    return js->createNumberValue(long(dynamic_cast<CBrowserFormRange *>(input_)->value()));
+  else if (type == CBrowserFormInputType::SELECT)
+    return js->createStringValue(dynamic_cast<CBrowserFormSelect *>(input_)->value());
+  else if (type == CBrowserFormInputType::TEXT)
+    return js->createStringValue(dynamic_cast<CBrowserFormText *>(input_)->text());
+  else
+    return CJValueP();
+}
+
+CJValueP
+CBrowserFormInput::IFace::
+numberValue(CJavaScript *js) const
+{
+  CBrowserFormInputType type = input_->getType();
+
+  if (type == CBrowserFormInputType::NUMBER)
+    return js->createNumberValue(
+      long(atoi(dynamic_cast<CBrowserFormNumber *>(input_)->text().c_str())));
+  else
+    return js->createNumberValue(long(0));
 }

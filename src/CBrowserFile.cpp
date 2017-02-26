@@ -1,7 +1,7 @@
 #include <CBrowserFile.h>
 #include <CBrowserWindow.h>
 #include <CBrowserCeil.h>
-#include <CBrowserJS.h>
+#include <CQJavaScript.h>
 #include <CHtmlUtil.h>
 #include <CHtml.h>
 #include <CUrl.h>

@@ -3,6 +3,8 @@
 
 #include <CBrowserObject.h>
 #include <CBrowserData.h>
+#include <CQJFormIFace.h>
+#include <CQJFormInputIFace.h>
 #include <CImageLib.h>
 #include <QWidget>
 
@@ -12,11 +14,26 @@ class CBrowserForm : public QObject, public CBrowserObject {
  public:
   typedef std::vector<CBrowserFormInput *> FormInputs;
 
+ private:
+  class IFace : public CQJFormIFace {
+   public:
+    IFace(CBrowserForm *form) :
+     form_(form) {
+    }
+
+    Inputs inputs() const override;
+
+   private:
+    CBrowserForm *form_ { nullptr };
+  };
+
  public:
   explicit CBrowserForm(CBrowserWindow *window);
  ~CBrowserForm();
 
   void init() override;
+
+  CQJFormIFace *iface() { return &iface_; }
 
   CBrowserFormMethodType getMethod() const { return data_.method; }
   std::string            getAction() const { return data_.action; }
@@ -31,12 +48,15 @@ class CBrowserForm : public QObject, public CBrowserObject {
 
   void setNameValue(const std::string &name, const std::string &value) override;
 
+  CQJHtmlObj *createJObj(CJavaScript *js) override;
+
  public slots:
   void resetProc();
   void submitProc();
 
  private:
   CBrowserFormData data_;
+  IFace            iface_;
   std::string      target_;
   std::string      encoding_;
   FormInputs       inputs_;
@@ -66,7 +86,26 @@ class CBrowserFormOption : public CBrowserObject {
 
 //------
 
-class CBrowserFormInput : public CBrowserObject {
+class CBrowserFormInput : public QObject, public CBrowserObject {
+  Q_OBJECT
+
+ private:
+  class IFace : public CQJFormInputIFace {
+   public:
+    IFace(CBrowserFormInput *input) :
+     input_(input) {
+    }
+
+    std::string getName() const override { return input_->getName(); }
+
+    CJValueP value(CJavaScript *js) const override;
+
+    CJValueP numberValue(CJavaScript *js) const override;
+
+   private:
+    CBrowserFormInput *input_ { nullptr };
+  };
+
  public:
   CBrowserFormInput(CBrowserWindow *window, CHtmlTagId id, CBrowserFormInputType type,
                     const CBrowserFormInputData &data=CBrowserFormInputData());
@@ -77,9 +116,12 @@ class CBrowserFormInput : public CBrowserObject {
 
   CBrowserFormInputType getType() const { return type_; }
 
-  CBrowserForm *getForm() const { return form_; }
+  IFace *iface() { return &iface_; }
+
+  CBrowserForm *getForm() const;
 
   void setNameValue(const std::string &name, const std::string &value);
+  bool getNameValue(const std::string &name, std::string &value) const;
 
   std::string getValue() const { return data_.value; }
   void setValue(const std::string &value) { data_.value = value; }
@@ -112,14 +154,18 @@ class CBrowserFormInput : public CBrowserObject {
 
   void draw(const CTextBox &) override;
 
-  void onClickProc ();
-  void onChangeProc();
+  CQJHtmlObj *createJObj(CJavaScript *js) override;
 
   void print(std::ostream &os) const override { os << "input"; }
+
+ public slots:
+  void onClickProc ();
+  void onChangeProc();
 
  protected:
   CBrowserFormInputType type_ { CBrowserFormInputType::NONE };
   CBrowserFormInputData data_;
+  IFace                 iface_;
   CBrowserForm*         form_ { nullptr };
   std::string           value_;
   mutable QWidget*      widget_ { nullptr };
@@ -129,7 +175,7 @@ class CBrowserFormInput : public CBrowserObject {
 
 //------
 
-class CBrowserFormButton : public QObject, public CBrowserFormInput {
+class CBrowserFormButton : public CBrowserFormInput {
   Q_OBJECT
 
  public:
@@ -141,6 +187,8 @@ class CBrowserFormButton : public QObject, public CBrowserFormInput {
 
   void createWidget() const;
 
+  void setLabel(const std::string &text);
+
   CBrowserRegion calcRegion() const override;
 
  protected:
@@ -149,7 +197,7 @@ class CBrowserFormButton : public QObject, public CBrowserFormInput {
 
 //------
 
-class CBrowserFormCheckBox : public QObject, public CBrowserFormInput {
+class CBrowserFormCheckBox : public CBrowserFormInput {
   Q_OBJECT
 
  public:
@@ -167,7 +215,7 @@ class CBrowserFormCheckBox : public QObject, public CBrowserFormInput {
 
 //------
 
-class CBrowserFormFileUpload : public QObject, public CBrowserFormInput {
+class CBrowserFormFileUpload : public CBrowserFormInput {
   Q_OBJECT
 
  public:
@@ -191,7 +239,7 @@ class CBrowserFormFileUpload : public QObject, public CBrowserFormInput {
 
 //------
 
-class CBrowserFormHidden : public QObject, public CBrowserFormInput {
+class CBrowserFormHidden : public CBrowserFormInput {
   Q_OBJECT
 
  public:
@@ -211,7 +259,7 @@ class CBrowserFormHidden : public QObject, public CBrowserFormInput {
 
 //------
 
-class CBrowserFormImage : public QObject, public CBrowserFormInput {
+class CBrowserFormImage : public CBrowserFormInput {
   Q_OBJECT
 
  public:
@@ -235,7 +283,7 @@ class CBrowserFormImage : public QObject, public CBrowserFormInput {
 
 //------
 
-class CBrowserFormTel : public QObject, public CBrowserFormInput {
+class CBrowserFormTel : public CBrowserFormInput {
   Q_OBJECT
 
  public:
@@ -258,7 +306,7 @@ class CBrowserFormTel : public QObject, public CBrowserFormInput {
 
 //------
 
-class CBrowserFormMonth : public QObject, public CBrowserFormInput {
+class CBrowserFormMonth : public CBrowserFormInput {
   Q_OBJECT
 
  public:
@@ -281,7 +329,7 @@ class CBrowserFormMonth : public QObject, public CBrowserFormInput {
 
 //------
 
-class CBrowserFormDate : public QObject, public CBrowserFormInput {
+class CBrowserFormDate : public CBrowserFormInput {
   Q_OBJECT
 
  public:
@@ -304,7 +352,7 @@ class CBrowserFormDate : public QObject, public CBrowserFormInput {
 
 //------
 
-class CBrowserFormSearch : public QObject, public CBrowserFormInput {
+class CBrowserFormSearch : public CBrowserFormInput {
   Q_OBJECT
 
  public:
@@ -327,7 +375,7 @@ class CBrowserFormSearch : public QObject, public CBrowserFormInput {
 
 //------
 
-class CBrowserFormNumber : public QObject, public CBrowserFormInput {
+class CBrowserFormNumber : public CBrowserFormInput {
   Q_OBJECT
 
  public:
@@ -350,7 +398,7 @@ class CBrowserFormNumber : public QObject, public CBrowserFormInput {
 
 //------
 
-class CBrowserFormEmail : public QObject, public CBrowserFormInput {
+class CBrowserFormEmail : public CBrowserFormInput {
   Q_OBJECT
 
  public:
@@ -375,7 +423,7 @@ class CBrowserFormEmail : public QObject, public CBrowserFormInput {
 
 //------
 
-class CBrowserFormPassword : public QObject, public CBrowserFormInput {
+class CBrowserFormPassword : public CBrowserFormInput {
   Q_OBJECT
 
  public:
@@ -398,7 +446,7 @@ class CBrowserFormPassword : public QObject, public CBrowserFormInput {
 
 //------
 
-class CBrowserFormRadio : public QObject, public CBrowserFormInput {
+class CBrowserFormRadio : public CBrowserFormInput {
   Q_OBJECT
 
  public:
@@ -419,7 +467,7 @@ class CBrowserFormRadio : public QObject, public CBrowserFormInput {
 
 //------
 
-class CBrowserFormRange : public QObject, public CBrowserFormInput {
+class CBrowserFormRange : public CBrowserFormInput {
   Q_OBJECT
 
  public:
@@ -442,7 +490,7 @@ class CBrowserFormRange : public QObject, public CBrowserFormInput {
 
 //------
 
-class CBrowserFormReset : public QObject, public CBrowserFormInput {
+class CBrowserFormReset : public CBrowserFormInput {
   Q_OBJECT
 
  public:
@@ -463,7 +511,7 @@ class CBrowserFormReset : public QObject, public CBrowserFormInput {
 
 //------
 
-class CBrowserFormSelect : public QObject, public CBrowserFormInput {
+class CBrowserFormSelect : public CBrowserFormInput {
   Q_OBJECT
 
  public:
@@ -496,7 +544,7 @@ class CBrowserFormSelect : public QObject, public CBrowserFormInput {
 
 //------
 
-class CBrowserFormSubmit : public QObject, public CBrowserFormInput {
+class CBrowserFormSubmit : public CBrowserFormInput {
   Q_OBJECT
 
  public:
@@ -514,7 +562,7 @@ class CBrowserFormSubmit : public QObject, public CBrowserFormInput {
 
 //------
 
-class CBrowserFormText : public QObject, public CBrowserFormInput {
+class CBrowserFormText : public CBrowserFormInput {
   Q_OBJECT
 
  public:
@@ -542,7 +590,7 @@ class CBrowserFormText : public QObject, public CBrowserFormInput {
 
 //------
 
-class CBrowserFormTextarea : public QObject, public CBrowserFormInput {
+class CBrowserFormTextarea : public CBrowserFormInput {
   Q_OBJECT
 
  public:

@@ -21,6 +21,8 @@ CBrowserHeader::
 CBrowserHeader(CBrowserWindow *window, CHtmlTagId id) :
  CBrowserObject(window, id), ind_(-1)
 {
+  setDisplay(Display::BLOCK);
+
   ind_ = idToInd(id);
 
   if      (id == CHtmlTagId::H1) font_.setSize(window_->sizeToFontSize(6));

@@ -82,7 +82,7 @@ class CBrowserPropertyTraits<CVAlignType> {
   }
 };
 
-//----
+//---
 
 class CBrowserProperty {
  public:

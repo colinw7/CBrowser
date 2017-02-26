@@ -190,38 +190,6 @@ calcRegion() const
   return CBrowserRegion(width, ascent, descent);
 }
 
-#if 0
-void
-CBrowserText::
-draw(const CTextBox &region)
-{
-  CFontPtr font = hierFont();
-
-  int width, ascent, descent;
-
-  getTextBounds(font, text_, &width, &ascent, &descent);
-
-  int y_offset = 0;
-
-  int x1 = region.x();
-  int y1 = region.y() + y_offset + region.ascent();
-
-  CPen pen(hierFgColor());
-
-  window_->drawText(x1, y1, text_, pen, font);
-
-  if (link_)
-    link_->addRect(x1, y1 - region.ascent(), x1 + width, y1 + region.descent());
-
-  //---
-
-  if (isHierSelected())
-    window_->drawSelected(region.x(), region.y(), region.width(), region.height());
-
-  //region.setX(region.x() + width);
-}
-#endif
-
 bool
 CBrowserText::
 isHierSelected() const

@@ -5,7 +5,7 @@ CBrowserBlockQuote::
 CBrowserBlockQuote(CBrowserWindow *window) :
  CBrowserObject(window, CHtmlTagId::BLOCKQUOTE)
 {
-  setDisplay(CBrowserObject::Display::BLOCK);
+  setDisplay(Display::BLOCK);
 
   marginRef().setTop   (CBrowserUnitValue("1.00em"));
   marginRef().setBottom(CBrowserUnitValue("1.00em"));

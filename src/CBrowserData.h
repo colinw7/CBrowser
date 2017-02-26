@@ -46,11 +46,6 @@ struct CBrowserBreakData {
 
 //---
 
-struct CBrowserCanvasData : public CBrowserBaseData {
-};
-
-//---
-
 struct CBrowserFontData {
   std::string color;
   std::string face;
@@ -144,8 +139,6 @@ struct CBrowserHeaderData {
 struct CBrowserImageData {
   std::string src;
   int         border { 2 };
-  int         width  { -1 };
-  int         height { -1 };
   std::string usemap;
   int         hspace { 2 };
   int         vspace { 2 };

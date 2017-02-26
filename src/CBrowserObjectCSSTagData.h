@@ -3,6 +3,7 @@
 
 #include <CCSS.h>
 #include <CBrowserObject.h>
+#include <CBrowserForm.h>
 #include <CHtmlTag.h>
 
 class CBrowserObjectCSSTagData : public CCSSTagData {
@@ -48,6 +49,36 @@ class CBrowserObjectCSSTagData : public CCSSTagData {
       return tag->hasOptionNameStart(name, value);
     else
       return false;
+  }
+
+  bool isNthChild(int n) const override {
+    if (! obj_->parent())
+      return false;
+
+    const CBrowserObject::Children &children = obj_->parent()->children();
+
+    int i = 1;
+
+    for (const auto &child : children) {
+      if (child == obj_)
+        return (i == n);
+
+      ++i;
+    }
+
+    return false;
+  }
+
+  bool isInputValue(const std::string &name) const override {
+    if (obj_->type() != CHtmlTagId::INPUT)
+      return false;
+
+    CBrowserFormInput *input = dynamic_cast<CBrowserFormInput *>(obj_);
+    if (! input) return false;
+
+    std::string value;
+
+    return input->getNameValue(name, value);
   }
 
   CCSSTagDataP getParent() const override {

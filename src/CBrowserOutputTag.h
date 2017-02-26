@@ -643,6 +643,13 @@ class CBrowserOutputSupTag : public CBrowserOutputTagBase {
   CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
 };
 
+class CBrowserOutputSVGTag : public CBrowserOutputTagBase {
+ public:
+  CBrowserOutputSVGTag() : CBrowserOutputTagBase(CHtmlTagId::SVG) { }
+
+  CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
+};
+
 class CBrowserOutputTableTag : public CBrowserOutputTagBase {
  public:
   CBrowserOutputTableTag() : CBrowserOutputTagBase(CHtmlTagId::TABLE) { }

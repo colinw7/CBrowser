@@ -3,7 +3,6 @@
 #include <CBrowserDocument.h>
 #include <CBrowserFile.h>
 #include <CBrowserOutput.h>
-#include <CBrowserIFace.h>
 #include <CBrowserWindowWidget.h>
 #include <CBrowserMain.h>
 

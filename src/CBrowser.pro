@@ -22,6 +22,7 @@ CBrowserBody.cpp \
 CBrowserBox.cpp \
 CBrowserBreak.cpp \
 CBrowserCanvas.cpp \
+CBrowserCeil.cpp \
 CBrowserCenter.cpp \
 CBrowserCode.cpp \
 CBrowserColor.cpp \
@@ -30,6 +31,7 @@ CBrowserCSSStyle.cpp \
 CBrowserCSSTree.cpp \
 CBrowserDiv.cpp \
 CBrowserDocument.cpp \
+CBrowserDomTree.cpp \
 CBrowserFile.cpp \
 CBrowserFont.cpp \
 CBrowserForm.cpp \
@@ -38,7 +40,7 @@ CBrowserHead.cpp \
 CBrowserHeader.cpp \
 CBrowserHistory.cpp \
 CBrowserHtml.cpp \
-CBrowserIFace.cpp \
+CBrowserIFrame.cpp \
 CBrowserImage.cpp \
 CBrowserKbd.cpp \
 CBrowserLayout.cpp \
@@ -47,6 +49,7 @@ CBrowserLink.cpp \
 CBrowserList.cpp \
 CBrowserListItem.cpp \
 CBrowserMain.cpp \
+CBrowserMainWindow.cpp \
 CBrowserMeta.cpp \
 CBrowserMisc.cpp \
 CBrowserNamedImage.cpp \
@@ -64,53 +67,22 @@ CBrowserScript.cpp \
 CBrowserScrolledWindow.cpp \
 CBrowserStyle.cpp \
 CBrowserStyleData.cpp \
+CBrowserSVG.cpp \
 CBrowserTable.cpp \
 CBrowserText.cpp \
 CBrowserTitle.cpp \
 CBrowserTT.cpp \
+CBrowserVideo.cpp \
 CBrowserWebView.cpp \
 CBrowserWindow.cpp \
 CBrowserWindowWidget.cpp \
 CBrowserWord.cpp \
 CBrowserXmp.cpp \
 \
-CBrowserDomTree.cpp \
-\
-CBrowserCeil.cpp \
-CBrowserJS.cpp \
-\
-CQJCanvasContext2D.cpp \
-CQJCanvas.cpp \
-CQJCanvasFontMetrics.cpp \
-CQJCanvasImageDataArray.cpp \
-CQJCanvasImageData.cpp \
-CQJCanvasLinearGradient.cpp \
-CQJCanvasPattern.cpp \
-CQJCanvasRadialGradient.cpp \
-CQJCanvasWidget.cpp \
-CQJColorEdit.cpp \
-CQJComboBox.cpp \
-CQJDialog.cpp \
-CQJDocument.cpp \
-CQJEvent.cpp \
-CQJForm.cpp \
-CQJHtmlCollection.cpp \
-CQJHtmlObj.cpp \
-CQJImage.cpp \
-CQJInput.cpp \
-CQJIntervalFunction.cpp \
-CQJLineEdit.cpp \
-CQJLocation.cpp \
-CQJObject.cpp \
-CQJRequestAnimationFrame.cpp \
-CQJSlider.cpp \
-CQJWindow.cpp \
-CQJWindowTimer.cpp \
-\
-CQHistoryLineEdit.cpp \
+CQSVGRenderer.cpp \
+CQSVGImageData.cpp \
 \
 CRomanNumber.cpp \
-\
 CPrint.cpp \
 
 HEADERS += \
@@ -122,8 +94,10 @@ CBrowserBlockQuote.h \
 CBrowserBody.h \
 CBrowserBorder.h \
 CBrowserBox.h \
+CBrowserBoxSizing.h \
 CBrowserBreak.h \
 CBrowserCanvas.h \
+CBrowserCeil.h \
 CBrowserCenter.h \
 CBrowserClear.h \
 CBrowserCode.h \
@@ -131,9 +105,11 @@ CBrowserColor.h \
 CBrowserCSSData.h \
 CBrowserCSSStyle.h \
 CBrowserCSSTree.h \
+CBrowserCursor.h \
 CBrowserData.h \
 CBrowserDiv.h \
 CBrowserDocument.h \
+CBrowserDomTree.h \
 CBrowserFile.h \
 CBrowserFloat.h \
 CBrowserFont.h \
@@ -143,7 +119,7 @@ CBrowserHeader.h \
 CBrowserHead.h \
 CBrowserHistory.h \
 CBrowserHtml.h \
-CBrowserIFace.h \
+CBrowserIFrame.h \
 CBrowserImage.h \
 CBrowserKbd.h \
 CBrowserLayout.h \
@@ -152,18 +128,23 @@ CBrowserLink.h \
 CBrowserList.h \
 CBrowserListItem.h \
 CBrowserMain.h \
+CBrowserMainWindow.h \
 CBrowserMargin.h \
 CBrowserMeta.h \
 CBrowserMisc.h \
 CBrowserNamedImage.h \
 CBrowserNoBr.h \
+CBrowserObjectCSSTagData.h \
 CBrowserObject.h \
 CBrowserObjProp.h \
+CBrowserOutline.h \
 CBrowserOutput.h \
 CBrowserOutputTag.h \
+CBrowserOverflow.h \
 CBrowserPadding.h \
 CBrowserParagraph.h \
 CBrowserPixmaps.h \
+CBrowserPosition.h \
 CBrowserPre.h \
 CBrowserProperty.h \
 CBrowserRegion.h \
@@ -172,8 +153,11 @@ CBrowserRule.h \
 CBrowserSamp.h \
 CBrowserScript.h \
 CBrowserScrolledWindow.h \
+CBrowserShadow.h \
+CBrowserSize.h \
 CBrowserStyleData.h \
 CBrowserStyle.h \
+CBrowserSVG.h \
 CBrowserTable.h \
 CBrowserText.h \
 CBrowserTextProp.h \
@@ -181,50 +165,19 @@ CBrowserTitle.h \
 CBrowserTT.h \
 CBrowserTypes.h \
 CBrowserUnitValue.h \
+CBrowserVideo.h \
 CBrowserWebView.h \
 CBrowserWindow.h \
 CBrowserWindowWidget.h \
 CBrowserWord.h \
+CBrowserWordSpacing.h \
 CBrowserXmp.h \
 \
-CBrowserDomTree.h \
+CQSVGRenderer.h \
+CQSVGImageData.h \
 \
-CBrowserCeil.h \
-CBrowserJS.h \
-\
-CQJCanvasContext2D.h \
-CQJCanvasFontMetrics.h \
-CQJCanvas.h \
-CQJCanvasImageDataArray.h \
-CQJCanvasImageData.h \
-CQJCanvasLinearGradient.h \
-CQJCanvasPattern.h \
-CQJCanvasRadialGradient.h \
-CQJCanvasWidget.h \
-CQJColorEdit.h \
-CQJComboBox.h \
-CQJDialog.h \
-CQJDocument.h \
-CQJEvent.h \
-CQJForm.h \
-CQJHtmlCollection.h \
-CQJHtmlObj.h \
-CQJImage.h \
-CQJInput.h \
-CQJIntervalFunction.h \
-CQJLineEdit.h \
-CQJLocation.h \
-CQJObject.h \
-CQJRequestAnimationFrame.h \
-CQJSlider.h \
-CQJUtil.h \
-CQJWindow.h \
-CQJWindowTimer.h \
-\
-CQHistoryLineEdit.h \
-\
+CTextBox.h \
 CRomanNumber.h \
-\
 CPrint.h \
 
 DESTDIR     = ../bin
@@ -234,9 +187,11 @@ LIB_DIR     = ../lib
 INCLUDEPATH += \
 . \
 ../include \
+../../CJavaScript/qinclude \
 ../../CJavaScript/include \
 ../../CJson/include \
 ../../CHtml/include \
+../../CSVG/include \
 ../../CCSS/include \
 ../../CWebGet/include \
 ../../CQUtil/include \
@@ -262,6 +217,7 @@ unix:LIBS += \
 -L../../CHtml/lib \
 -L../../CCSS/lib \
 -L../../CWebGet/lib \
+-L../../CSVG/lib \
 -L../../CHtml/lib \
 -L../../CXML/lib \
 -L../../CQUtil/lib \
@@ -280,7 +236,7 @@ unix:LIBS += \
 -L../../CUtil/lib \
 -L../../COS/lib \
 -L../../CRGBName/lib \
--lCJavaScript -lCJson -lCHtml -lCCSS -lCXML -lCWebGet \
+-lCQJavaScript -lCJavaScript -lCJson -lCHtml -lCCSS -lCXML -lCWebGet -lCSVG \
 -lCQUtil -lCImageLib -lCFont -lCCeil -lCArgs -lCConfig -lCReadLine \
 -lCFile -lCFileUtil -lCStrUtil -lCGlob -lCRegExp -lCRGBName -lCUtil -lCOS \
 -lCThread -ljpeg -lpng -lcurses -ltre

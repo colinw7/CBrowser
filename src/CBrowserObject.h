@@ -13,7 +13,14 @@
 #include <CBrowserFloat.h>
 #include <CBrowserPosition.h>
 #include <CBrowserSize.h>
+#include <CBrowserOutline.h>
+#include <CBrowserCursor.h>
+#include <CBrowserOverflow.h>
+#include <CBrowserShadow.h>
+#include <CBrowserWordSpacing.h>
+#include <CBrowserBoxSizing.h>
 #include <CHtmlTypes.h>
+#include <CQJHtmlObjIFace.h>
 #include <CJavaScript.h>
 
 class CHtmlTag;
@@ -45,6 +52,39 @@ class CBrowserObject : public CBrowserBox {
     INHERIT
   };
 
+  //---
+
+ private:
+  class IFace : public CQJHtmlObjIFace {
+   public:
+    IFace(CBrowserObject *obj) : obj_(obj) { }
+
+    std::string getName () const override { return obj_->getName(); }
+    std::string getClass() const override { return obj_->getClass(); }
+    std::string getType () const override { return obj_->typeName(); }
+    std::string getId   () const override { return obj_->id(); }
+
+    CQJHtmlObjIFace *parent() const override { return obj_->parent()->iface(); }
+
+    CQJHtmlObj *obj() const override { return obj_->htmlObj(); }
+
+    Children children() const override {
+      const CBrowserObject::Children &children1 = obj_->children();
+
+      Children children;
+
+      for (const auto &c1 : children1)
+        children.push_back(c1->htmlObj());
+
+      return children;
+    }
+
+   private:
+    CBrowserObject *obj_ { nullptr };
+  };
+
+  //---
+
  public:
   typedef std::vector<CBrowserObject *> Children;
   typedef std::vector<std::string>      Classes;
@@ -58,6 +98,8 @@ class CBrowserObject : public CBrowserBox {
   virtual void init();
 
   CBrowserWindow *getWindow() const { return window_; }
+
+  IFace *iface() { return &iface_; }
 
   virtual CHtmlTagId type() const override { return type_; }
 
@@ -80,13 +122,24 @@ class CBrowserObject : public CBrowserBox {
   bool isSelected() const { return selected_; }
   void setSelected(bool b) { selected_ = b; }
 
+  //---
+
+  // javascript interface
+  virtual CQJHtmlObj *createJObj(CJavaScript *js);
+
   CQJHtmlObj *getJObj() const;
   void setJObj(CQJHtmlObj *obj);
 
-  CJValueP getJObjValue() const { return objValue_; }
+  CJValueP getJObjValue() const;
+
+  CJavaScript *js() const;
+
+  //---
 
   CBrowserObject *parent() const { return parent_; }
   void setParent(CBrowserObject *p) { parent_ = p; }
+
+  CQJHtmlObj *htmlObj() const { return htmlObj_; }
 
   std::string typeName() const override;
   std::string hierTypeName() const;
@@ -142,6 +195,10 @@ class CBrowserObject : public CBrowserBox {
 
   const CBrowserUnitValue &height() const { return size_.height; }
   void setHeight(const CBrowserUnitValue &h) { size_.height = h; }
+
+  //--
+
+  virtual bool processTag(CHtmlTag *) { return false; }
 
   //--
 
@@ -228,41 +285,50 @@ class CBrowserObject : public CBrowserBox {
   void drawBorderLine(double x1, double y1, double x2, double y2,
                       CBrowserBorderStyle style, const CPen &pen, CBrowserBorderSide side);
 
+  void drawSelected(const CTextBox &region) override;
+
   //---
 
   virtual void print(std::ostream &os) const { os << typeName(); }
 
  protected:
-  CBrowserWindow*    window_ { nullptr };
-  CHtmlTagId         type_;
-  CBrowserBaseData   data_;
-  CHtmlTag*          tag_ { nullptr };
-  std::string        id_;
-  std::string        name_;
-  std::string        class_;
-  Classes            classes_;
-  std::string        text_;
-  bool               selected_ { false };
-  CJValueP           objValue_;
-  CBrowserObject*    parent_ { nullptr };
-  Children           children_;
-  Display            display_ { Display::INVALID };
-  WhiteSpace         whiteSpace_ { WhiteSpace::NORMAL };
-  CBrowserBackground background_;
-  CBrowserColor      foreground_;
-  CBrowserClear      clear_;
-  CBrowserFloat      float_;
-  CBrowserPosition   position_;
-  CBrowserUnitValue  maxWidth_;
-  CBrowserUnitValue  maxHeight_;
-  CBrowserUnitValue  minWidth_;
-  CBrowserUnitValue  minHeight_;
-  int                zIndex_ { -1 };
-  std::string        title_;
-  CBrowserFont       font_;
-  CBrowserTextProp   textProp_;
-  CBrowserSize       size_;
-  Properties         properties_;
+  CBrowserWindow*     window_ { nullptr };
+  IFace               iface_;
+  CHtmlTagId          type_;
+  CBrowserBaseData    data_;
+  CHtmlTag*           tag_ { nullptr };
+  std::string         id_;
+  std::string         name_;
+  std::string         class_;
+  Classes             classes_;
+  std::string         text_;
+  bool                selected_ { false };
+  CQJHtmlObj*         htmlObj_;
+  CBrowserObject*     parent_ { nullptr };
+  Children            children_;
+  Display             display_ { Display::INVALID };
+  WhiteSpace          whiteSpace_ { WhiteSpace::NORMAL };
+  CBrowserBackground  background_;
+  CBrowserColor       foreground_;
+  CBrowserClear       clear_;
+  CBrowserFloat       float_;
+  CBrowserPosition    position_;
+  CBrowserUnitValue   maxWidth_;
+  CBrowserUnitValue   maxHeight_;
+  CBrowserUnitValue   minWidth_;
+  CBrowserUnitValue   minHeight_;
+  CBrowserOutline     outline_;
+  CBrowserCursor      cursor_;
+  CBrowserOverflow    overflow_;
+  CBrowserShadow      shadow_;
+  CBrowserWordSpacing wordSpacing_;
+  CBrowserBoxSizing   boxSizing_;
+  int                 zIndex_ { -1 };
+  std::string         title_;
+  CBrowserFont        font_;
+  CBrowserTextProp    textProp_;
+  CBrowserSize        size_;
+  Properties          properties_;
 };
 
 //------

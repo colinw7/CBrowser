@@ -2,8 +2,7 @@
 #include <CBrowserScrolledWindow.h>
 #include <CBrowserGraphics.h>
 #include <CBrowserWindow.h>
-#include <CBrowserIFace.h>
-#include <CBrowserJS.h>
+#include <CQJavaScript.h>
 #include <CQJDocument.h>
 #include <CQJWindow.h>
 #include <CQJEvent.h>
@@ -91,7 +90,7 @@ void
 CBrowserWindowWidget::
 keyPressEvent(QKeyEvent *e)
 {
-  CJValueP event(new CQJEvent(CBrowserJSInst->js(), CBrowserJSInst->jsWindow(), e));
+  CJValueP event(new CQJEvent(CQJavaScriptInst->js(), CQJavaScriptInst->jsWindow(), e));
 
   callEventListener("keydown", "onkeydown", event);
 }
@@ -100,7 +99,7 @@ void
 CBrowserWindowWidget::
 keyReleaseEvent(QKeyEvent *e)
 {
-  CJValueP event(new CQJEvent(CBrowserJSInst->js(), CBrowserJSInst->jsWindow(), e));
+  CJValueP event(new CQJEvent(CQJavaScriptInst->js(), CQJavaScriptInst->jsWindow(), e));
 
   callEventListener("keyup", "onkeyup", event);
 }
@@ -114,17 +113,12 @@ callEventListener(const std::string &name, const std::string &prop, CJValueP eve
 
   args.push_back(event);
 
-  //CQJCanvas *canvas = CBrowserJSInst->jsCanvas()->castP<CQJCanvas>();
-
-  //if (canvas->callEventListener(name, prop, args, nameValues))
-  //  return;
-
-  CQJWindow *window = CBrowserJSInst->jsWindow()->castP<CQJWindow>();
+  CQJWindowP window = CQJavaScriptInst->jsWindow();
 
   if (window->callEventListener(name, prop, args, nameValues))
     return;
 
-  CQJDocument *document = CBrowserJSInst->jsDocument()->castP<CQJDocument>();
+  CQJDocumentP document = CQJavaScriptInst->jsDocument();
 
   if (document->callEventListener(name, prop, args, nameValues))
     return;

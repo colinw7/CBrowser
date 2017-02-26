@@ -7,13 +7,15 @@
 #include <string>
 #include <list>
 
+class CBrowserMainWindow;
+
 #define CBrowserMainInst CBrowserMain::getInstance()
 
 class CBrowserMain : public QObject {
   Q_OBJECT
 
  public:
-  typedef std::list<CBrowserIFace *> IFaceList;
+  typedef std::list<CBrowserMainWindow *> IFaceList;
 
  public:
   static CBrowserMain *getInstance();
@@ -22,7 +24,7 @@ class CBrowserMain : public QObject {
 
   void init(int argc, char **argv);
 
-  CBrowserIFace *iface() const;
+  CBrowserMainWindow *iface() const;
 
   bool getDebug() const { return debug_; }
   void setDebug(bool b);
@@ -52,13 +54,13 @@ class CBrowserMain : public QObject {
   void exitSlot();
 
  private:
-  CBrowserIFace* iface_ { nullptr };
-  bool           debug_ { false };
-  bool           quiet_ { false };
-  bool           useAlt_ { false };
-  bool           oldLayout_ { false };
-  bool           showBoxes_ { false };
-  bool           mouseOver_ { false };
+  CBrowserMainWindow* iface_ { nullptr };
+  bool                debug_ { false };
+  bool                quiet_ { false };
+  bool                useAlt_ { false };
+  bool                oldLayout_ { false };
+  bool                showBoxes_ { false };
+  bool                mouseOver_ { false };
 };
 
 #endif

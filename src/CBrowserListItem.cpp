@@ -190,11 +190,6 @@ draw(const CTextBox &region)
         break;
     }
   }
-
-  //---
-
-  if (isSelected())
-    window_->drawSelected(region.x(), region.y(), region.width(), region.height());
 }
 
 const CBrowserList *

@@ -85,6 +85,8 @@ class CBrowserUnitValue {
     value_(value), type_(Type::VALUE) {
   }
 
+  const std::string &string() const { return str_; }
+
   CScreenUnits::Units units() const { return value_.units(); }
 
   bool isRelative() const {
@@ -108,6 +110,24 @@ class CBrowserUnitValue {
   std::string  str_;
   CScreenUnits value_;
   Type         type_ { Type::VALUE };
+};
+
+//---
+
+#include <CBrowserProperty.h>
+
+template<>
+class CBrowserPropertyTraits<CBrowserUnitValue> {
+ public:
+  std::string toString(const CBrowserUnitValue &c) {
+    return c.string();
+  }
+
+  bool fromString(const std::string &str, CBrowserUnitValue &c) {
+    c = CBrowserUnitValue(str);
+
+    return true;
+  }
 };
 
 #endif

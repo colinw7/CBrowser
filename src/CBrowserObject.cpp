@@ -11,7 +11,7 @@
 
 CBrowserObject::
 CBrowserObject(CBrowserWindow *window, CHtmlTagId type, const CBrowserBaseData &data) :
- CBrowserBox(window), window_(window), type_(type), data_(data)
+ CBrowserBox(window), window_(window), iface_(this), type_(type), data_(data)
 {
 }
 
@@ -45,16 +45,37 @@ setClass(const std::string &s)
 
 CQJHtmlObj *
 CBrowserObject::
+createJObj(CJavaScript *js)
+{
+  return new CQJHtmlObj(js, iface());
+}
+
+CQJHtmlObj *
+CBrowserObject::
 getJObj() const
 {
-  return CJValue::cast<CQJHtmlObj>(objValue_).get();
+  return htmlObj_;
 }
 
 void
 CBrowserObject::
 setJObj(CQJHtmlObj *obj)
 {
-  objValue_ = CJValueP(obj);
+  htmlObj_ = obj;
+}
+
+CJValueP
+CBrowserObject::
+getJObjValue() const
+{
+  return htmlObj_->shared_from_this();
+}
+
+CJavaScript *
+CBrowserObject::
+js() const
+{
+  return getJObj()->js();
 }
 
 std::string
@@ -183,6 +204,10 @@ setNameValue(const std::string &name, const std::string &value)
   else if (lname == "translate") {
   }
   else if (lname.substr(0, 5) == "data-") {
+  }
+  else {
+    window_->displayError("Illegal '%s' name '%s' value '%s'\n", typeName().c_str(),
+                          name.c_str(), value.c_str());
   }
 }
 
@@ -585,12 +610,10 @@ setStyleValue(const std::string &name, const std::string &value)
                             name.c_str(), value.c_str());
   }
   else if (lname == "box-shadow") {
-    window_->displayError("Unsupported style name '%s' value '%s'\n",
-                          name.c_str(), value.c_str());
+    shadow_ = CBrowserShadow(value);
   }
   else if (lname == "box-sizing") {
-    window_->displayError("Unsupported style name '%s' value '%s'\n",
-                          name.c_str(), value.c_str());
+    boxSizing_ = CBrowserBoxSizing(value);
   }
 
   //--- C ---
@@ -661,8 +684,7 @@ setStyleValue(const std::string &name, const std::string &value)
                           name.c_str(), value.c_str());
   }
   else if (lname == "cursor") {
-    window_->displayError("Unsupported style name '%s' value '%s'\n",
-                          name.c_str(), value.c_str());
+    cursor_ = CBrowserCursor(value);
   }
 
   //--- D ---
@@ -929,28 +951,63 @@ setStyleValue(const std::string &name, const std::string &value)
                           name.c_str(), value.c_str());
   }
   else if (lname == "outline") {
-    window_->displayError("Unsupported style name '%s' value '%s'\n",
-                          name.c_str(), value.c_str());
+    std::vector<std::string> words;
+
+    styleValueToWords(value, words);
+
+    if      (words.size() == 3) {
+      CBrowserColor        color(words[0]);
+      CBrowserOutlineStyle style(words[1]);
+      CBrowserOutlineWidth width(words[2]);
+
+      outline_.setColor(color);
+      outline_.setStyle(style);
+      outline_.setWidth(width);
+    }
+    else if (words.size() == 1) {
+      CBrowserColor color(value);
+
+      if (color.isValid())
+        outline_.setColor(color);
+      else {
+        CBrowserOutlineStyle style(value);
+
+        if (style.isValid())
+          outline_.setStyle(style);
+        else {
+          CBrowserOutlineWidth width(value);
+
+          if (width.isValid())
+            outline_.setWidth(width);
+        }
+      }
+    }
+    else {
+      window_->displayError("Unsupported style name '%s' value '%s'\n",
+                            name.c_str(), value.c_str());
+    }
   }
   else if (lname == "outline-color") {
-    window_->displayError("Unsupported style name '%s' value '%s'\n",
-                          name.c_str(), value.c_str());
+    CBrowserColor color(value);
+
+    outline_.setColor(color);
   }
   else if (lname == "outline-offset") {
     window_->displayError("Unsupported style name '%s' value '%s'\n",
                           name.c_str(), value.c_str());
   }
   else if (lname == "outline-style") {
-    window_->displayError("Unsupported style name '%s' value '%s'\n",
-                          name.c_str(), value.c_str());
+    CBrowserOutlineStyle style(value);
+
+    outline_.setStyle(style);
   }
   else if (lname == "outline-width") {
-    window_->displayError("Unsupported style name '%s' value '%s'\n",
-                          name.c_str(), value.c_str());
+    CBrowserOutlineWidth width(value);
+
+    outline_.setWidth(width);
   }
   else if (lname == "overflow") {
-    window_->displayError("Unsupported style name '%s' value '%s'\n",
-                          name.c_str(), value.c_str());
+    overflow_ = CBrowserOverflow(value);
   }
   else if (lname == "overflow-x") {
     window_->displayError("Unsupported style name '%s' value '%s'\n",
@@ -1181,8 +1238,7 @@ setStyleValue(const std::string &name, const std::string &value)
                           name.c_str(), value.c_str());
   }
   else if (lname == "word-spacing") {
-    window_->displayError("Unsupported style name '%s' value '%s'\n",
-                          name.c_str(), value.c_str());
+    wordSpacing_ = CBrowserWordSpacing(value);
   }
   else if (lname == "word-wrap") {
     window_->displayError("Unsupported style name '%s' value '%s'\n",
@@ -1198,9 +1254,15 @@ setStyleValue(const std::string &name, const std::string &value)
                             name.c_str(), value.c_str());
   }
 
+  //--- Misc ---
+  else if (lname.substr(0, 8) == "-webkit-") {
+  }
+  else if (lname.substr(0, 5) == "-moz-") {
+  }
+
   //---
   else {
-    window_->displayError("Illegal '%s' name '%s' value '%s'\n", typeName().c_str(),
+    window_->displayError("Illegal '%s' style name '%s' value '%s'\n", typeName().c_str(),
                           name.c_str(), value.c_str());
   }
 }
@@ -1276,7 +1338,7 @@ processStyleAttribute(const std::string &style)
     std::string name  = CStrUtil::stripSpaces(words1[0]);
     std::string value = CStrUtil::stripSpaces(words1[1]);
 
-    setNameValue(name, value);
+    setStyleValue(name, value);
   }
 }
 
@@ -1411,10 +1473,8 @@ fillBackground(const CTextBox &region)
 
 void
 CBrowserObject::
-draw(const CTextBox &region)
+draw(const CTextBox &)
 {
-  if (isSelected())
-    window_->drawSelected(region.x(), region.y(), region.width(), region.height());
 }
 
 void
@@ -1704,6 +1764,14 @@ drawBorderLine(double x1, double y1, double x2, double y2,
   else {
     window_->drawLine(x1, y1, x2, y2, pen);
   }
+}
+
+void
+CBrowserObject::
+drawSelected(const CTextBox &region)
+{
+  if (isSelected())
+    window_->drawSelected(region.x(), region.y(), region.width(), region.height());
 }
 
 CBrowserObject::Display

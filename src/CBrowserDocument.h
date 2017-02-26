@@ -2,6 +2,8 @@
 #define CBrowserDocument_H
 
 #include <CBrowserTypes.h>
+#include <CQJDocument.h>
+#include <CQJDocumentIFace.h>
 #include <CHtmlParser.h>
 #include <CUrl.h>
 #include <CRGBA.h>
@@ -13,15 +15,33 @@ class CBrowserDocument {
  public:
   typedef std::vector<CBrowserForm *> Forms;
 
+ private:
+  class IFace : public CQJDocumentIFace {
+   public:
+    IFace(CBrowserDocument *document) :
+     document_(document) {
+    }
+
+    CJValueP createElement(const std::string &id) const override;
+
+   private:
+    CBrowserDocument *document_ { nullptr };
+  };
+
  public:
   explicit CBrowserDocument(CBrowserWindow *window);
 
  ~CBrowserDocument();
 
+  CQJDocumentIFace *iface() { return &iface_; }
+
   const CUrl &getUrl() const { return url_; }
   void setUrl(const CUrl &url);
 
   CBrowserWindow *getWindow() const { return window_; }
+
+  CQJDocumentP document() const { return document_; }
+  void setDocument(CQJDocumentP document) { document_ = document; }
 
   std::string getTitle() const { return title_; }
   void setTitle(const std::string &title);
@@ -65,20 +85,22 @@ class CBrowserDocument {
  private:
   typedef std::vector<CBrowserAnchorLink *> Links;
 
-  CUrl              url_;
-  CBrowserWindow*   window_ { nullptr };
-  std::string       title_;
-  CRGBA             bgColor_;
-  CRGBA             fgColor_;
-  CImagePtr         bgImage_;
-  bool              bgFixed_ { false };
-  CRGBA             linkColor_;
-  CRGBA             alinkColor_;
-  CRGBA             vlinkColor_;
-  Links             anchors_;
-  Links             links_;
-  CHtmlParserTokens tokens_;
-  Forms             forms_;
+  IFace             iface_;              // javascript interface
+  CUrl              url_;                // url of document
+  CBrowserWindow*   window_ { nullptr }; // parent window
+  CQJDocumentP      document_;           // javascript document
+  std::string       title_;              // title
+  CRGBA             bgColor_;            // background color
+  CImagePtr         bgImage_;            // background image
+  bool              bgFixed_ { false };  // background fixed
+  CRGBA             fgColor_;            // foreground color
+  CRGBA             linkColor_;          // link color
+  CRGBA             alinkColor_;         // link active color
+  CRGBA             vlinkColor_;         // link visited color
+  Links             anchors_;            // anchors
+  Links             links_;              // links
+  Forms             forms_;              // forms
+  CHtmlParserTokens tokens_;             // html tokens
 };
 
 #endif

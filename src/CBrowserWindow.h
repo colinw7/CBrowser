@@ -6,12 +6,17 @@
 #include <CBrowserData.h>
 #include <CBrowserFont.h>
 #include <CBrowserObjectCSSTagData.h>
+#include <CQJWindow.h>
+#include <CQJWindowIFace.h>
+#include <CQJDocument.h>
 #include <CHtmlParser.h>
 #include <CUrl.h>
 #include <CFont.h>
 #include <QImage>
 
 class CBrowserScrolledWindow;
+
+//---
 
 class CBrowserWindow {
  public:
@@ -22,6 +27,8 @@ class CBrowserWindow {
   };
 
  public:
+  typedef std::map<std::string, std::string> NameValues;
+
   struct CSSData {
     CCSS css;
     CUrl url;
@@ -33,16 +40,31 @@ class CBrowserWindow {
 
   typedef std::vector<CSSData> CSSList;
 
+ private:
+  class IFace : public CQJWindowIFace {
+   public:
+    IFace(CBrowserWindow *window) :
+     window_(window) {
+    }
+
+   private:
+    CBrowserWindow *window_ { nullptr };
+  };
+
  public:
   explicit CBrowserWindow(const std::string &filename="");
 
  ~CBrowserWindow();
 
-  void setIFace(CBrowserScrolledWindow *swindow);
+  CQJWindowIFace *iface() { return &iface_; }
+
+  void setScrolledWindow(CBrowserScrolledWindow *swindow);
 
   CBrowserWindowWidget *widget() const { return w_; }
 
   CBrowserDocument *getDocument() const { return document_; }
+
+  void setWindow(CQJWindowP window) { window_ = window; }
 
   const std::string &filename() const { return filename_; }
   void setFilename(const std::string &s) { filename_ = s; }
@@ -83,15 +105,28 @@ class CBrowserWindow {
 
   //---
 
-  CImagePtr lookupImage(const CBrowserImageData &imageData);
+  CImagePtr lookupImage(const CBrowserImageData &imageData, int iwidth, int iheight);
 
   //---
 
   CBrowserObject *rootObject() const { return rootObject_; }
   void setRootObject(CBrowserObject *p) { rootObject_ = p; }
 
+  //---
+
+  CBrowserObject *createElement(const std::string &id);
+
+  //---
+
   void startObject(CBrowserObject *obj, bool add);
   void endObject();
+
+  //---
+
+  void addHtmlObject(CBrowserObject *obj);
+  CJValueP lookupHtmlObject(CBrowserObject *htmlObj) const;
+
+  //---
 
   CBrowserObject *currentObj() const;
 
@@ -100,6 +135,9 @@ class CBrowserWindow {
   //---
 
   CBrowserObject *getObject(const std::string &id) const;
+
+  CBrowserObject *headObject() const;
+  CBrowserObject *bodyObject() const;
 
   //---
 
@@ -146,6 +184,8 @@ class CBrowserWindow {
   bool applyStyle(CBrowserObject *obj);
 
   bool visitStyleData(const CCSS &css, const CCSSTagDataP &tagData);
+
+  void getTagNameValues(CHtmlTag *tag, NameValues &nameValues);
 
   void selectCSSPattern(const CCSS::StyleData &styleData);
 
@@ -246,43 +286,46 @@ class CBrowserWindow {
   typedef std::vector<CBrowserObject*>            Objects;
   typedef std::vector<std::string>                Scripts;
   typedef std::vector<std::string>                ScriptFiles;
+  typedef std::map<CBrowserObject *, CJValueP>    ObjMap;
 
   static WindowList          window_list_;
   static std::string         window_target_;
   static CBrowserAnchorLink* mouse_link_;
 
-  std::string           name_;
-  std::string           filename_;
-  CBrowserDocument*     document_ { nullptr };
+  IFace                   iface_;
+  std::string             name_;
+  std::string             filename_;
+  CBrowserDocument*       document_ { nullptr };
+  CQJWindowP              window_;
 
-  CBrowserIFace*          iface_ { nullptr };
   CBrowserScrolledWindow* swindow_ { nullptr };
   CBrowserWindowWidget*   w_ { nullptr };
 
-  CIBBox2D              bbox_;
-  int                   leftMargin_ { 0 };
-  int                   topMargin_ { 0 };
+  CIBBox2D                bbox_;
+  int                     leftMargin_ { 0 };
+  int                     topMargin_ { 0 };
 
-  CBrowserLayout*       layout_ { nullptr };
+  CBrowserLayout*         layout_ { nullptr };
 
-  CBrowserLinkMgr*      linkMgr_ { nullptr };
-  CBrowserFileMgr*      fileMgr_ { nullptr };
+  CBrowserLinkMgr*        linkMgr_ { nullptr };
+  CBrowserFileMgr*        fileMgr_ { nullptr };
 
-  CBrowserObject*       rootObject_ { nullptr };
-  IdObjects             idObjects_;
-  ObjStack              objStack_;
-  Objects               objects_;
-  Scripts               scripts_;
-  ScriptFiles           scriptFiles_;
+  CBrowserObject*         rootObject_ { nullptr };
+  IdObjects               idObjects_;
+  ObjStack                objStack_;
+  Objects                 objects_;
+  ObjMap                  objMap_;
+  Scripts                 scripts_;
+  ScriptFiles             scriptFiles_;
 
-  CBrowserOutput        output_;
+  CBrowserOutput          output_;
 
-  CSSList               cssList_;
+  CSSList                 cssList_;
 
-  CFontPtr              font_;
-  int                   baseFontSize_ { 0 };
+  CFontPtr                font_;
+  int                     baseFontSize_ { 0 };
 
-  CBrowserHistory*      history_ { nullptr };
+  CBrowserHistory*        history_ { nullptr };
 };
 
 #endif

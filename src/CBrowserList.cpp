@@ -20,6 +20,8 @@ CBrowserList::
 CBrowserList(CBrowserWindow *window, CHtmlTagId id) :
  CBrowserObject(window, id)
 {
+  setDisplay(Display::BLOCK);
+
   marginRef().setTop   (CBrowserUnitValue("1.00em"));
   marginRef().setBottom(CBrowserUnitValue("1.00em"));
 

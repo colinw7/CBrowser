@@ -1,5 +1,5 @@
 #include <CBrowserMain.h>
-#include <CBrowserIFace.h>
+#include <CBrowserMainWindow.h>
 #include <CBrowserWindow.h>
 #include <CBrowserScrolledWindow.h>
 
@@ -60,7 +60,7 @@ void
 CBrowserMain::
 setDocument(const CUrl &url)
 {
-  CBrowserIFace *iface = this->iface();
+  CBrowserMainWindow *iface = this->iface();
 
   iface->setDocument(url);
 
@@ -71,21 +71,21 @@ void
 CBrowserMain::
 addDocument(const CUrl &url)
 {
-  CBrowserIFace *iface = this->iface();
+  CBrowserMainWindow *iface = this->iface();
 
   iface->addDocument(url);
 
   iface_->show();
 }
 
-CBrowserIFace *
+CBrowserMainWindow *
 CBrowserMain::
 iface() const
 {
   if (! iface_) {
     CBrowserMain *th = const_cast<CBrowserMain *>(this);
 
-    th->iface_ = new CBrowserIFace;
+    th->iface_ = new CBrowserMainWindow;
 
     th->iface_->init();
   }

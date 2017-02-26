@@ -1,5 +1,4 @@
 #include <CBrowserGraphics.h>
-#include <CBrowserIFace.h>
 #include <CBrowserWindowWidget.h>
 #include <CFontMgr.h>
 #include <CPrint.h>

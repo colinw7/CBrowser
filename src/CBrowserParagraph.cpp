@@ -6,6 +6,8 @@ CBrowserParagraph::
 CBrowserParagraph(CBrowserWindow *window, const CBrowserParagraphData &data) :
  CBrowserObject(window, CHtmlTagId::P), data_(data)
 {
+  setDisplay(Display::BLOCK);
+
   marginRef().setTop   (CBrowserUnitValue("1.00em"));
   marginRef().setBottom(CBrowserUnitValue("1.00em"));
 }

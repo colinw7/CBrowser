@@ -3,7 +3,6 @@
 #include <CBrowserWindowWidget.h>
 #include <CBrowserScrolledWindow.h>
 #include <CBrowserHistory.h>
-#include <CBrowserIFace.h>
 #include <CBrowserFont.h>
 #include <CBrowserMain.h>
 #include <CBrowserBreak.h>
@@ -17,7 +16,11 @@
 #include <CBrowserTable.h>
 #include <CBrowserText.h>
 #include <CBrowserForm.h>
-#include <CBrowserJS.h>
+#include <CBrowserOutputTag.h>
+#include <CBrowserMainWindow.h>
+#include <CQJavaScript.h>
+#include <CQJHtmlObj.h>
+#include <CHtmlCSSTagData.h>
 #include <CWebGet.h>
 #include <CThrow.h>
 #include <CRGBName.h>
@@ -32,7 +35,7 @@ CBrowserAnchorLink*         CBrowserWindow::mouse_link_    = nullptr;
 
 CBrowserWindow::
 CBrowserWindow(const std::string &filename) :
- output_(this)
+ iface_(this), output_(this)
 {
   init();
 
@@ -63,7 +66,6 @@ void
 CBrowserWindow::
 init()
 {
-  iface_   = nullptr;
   swindow_ = nullptr;
   w_       = nullptr;
 
@@ -103,7 +105,7 @@ reset()
 
   rootObject_ = 0;
 
-  idObjects_   .clear();
+  idObjects_  .clear();
   objStack_   .clear();
   objects_    .clear();
   scripts_    .clear();
@@ -122,10 +124,9 @@ reset()
 
 void
 CBrowserWindow::
-setIFace(CBrowserScrolledWindow *swindow)
+setScrolledWindow(CBrowserScrolledWindow *swindow)
 {
   swindow_ = swindow;
-  iface_   = swindow_->iface();
   w_       = swindow_->widget();
 }
 
@@ -205,7 +206,7 @@ setBaseFontStyle()
 
 CImagePtr
 CBrowserWindow::
-lookupImage(const CBrowserImageData &imageData)
+lookupImage(const CBrowserImageData &imageData, int iwidth, int iheight)
 {
   CImageFileSrc file(imageData.src);
 
@@ -217,11 +218,11 @@ lookupImage(const CBrowserImageData &imageData)
   int width  = image->getWidth ();
   int height = image->getHeight();
 
-  if (imageData.width != -1)
-    width = imageData.width;
+  if (iwidth != -1)
+    width = iwidth;
 
-  if (imageData.height != -1)
-    height = imageData.height;
+  if (iheight != -1)
+    height = iheight;
 
   if (width != int(image->getWidth()) || height != int(image->getHeight())) {
     CImagePtr image1 = image->resize(width, height);
@@ -230,6 +231,27 @@ lookupImage(const CBrowserImageData &imageData)
   }
 
   return image;
+}
+
+//------
+
+CBrowserObject *
+CBrowserWindow::
+createElement(const std::string &id)
+{
+  const CHtmlTagDef &def = CHtmlTagDefLookupInst->lookup(id);
+
+  if (def.getId() == CHtmlTagId::NONE)
+    return nullptr;
+
+  CBrowserOutputTagBase *tag = CBrowserOutputTagMgrInst->getTag(def.getId());
+
+  CBrowserObject *obj = tag->start(this, nullptr);
+  if (! obj) return nullptr;
+
+  startObject(obj, /*add*/true);
+
+  return obj;
 }
 
 //------
@@ -256,7 +278,9 @@ startObject(CBrowserObject *obj, bool add)
 
     objects_.push_back(obj);
 
-    CBrowserJSInst->addHtmlObject(obj);
+    //---
+
+    addHtmlObject(obj);
   }
 
   //---
@@ -275,6 +299,35 @@ endObject()
 //std::cerr << "end obj: "; obj->print(std::cerr); std::cerr << std::endl;
 
   objStack_.pop_back();
+}
+
+void
+CBrowserWindow::
+addHtmlObject(CBrowserObject *obj)
+{
+  CJavaScript *js = CQJavaScriptInst->js();
+
+  CQJHtmlObj *htmlObj = obj->createJObj(js);
+
+  CJValueP value(htmlObj); // first create of shared pointer
+
+  objMap_[obj] = value;
+
+  CQJavaScriptInst->addHtmlObject(htmlObj);
+
+  obj->setJObj(htmlObj);
+}
+
+CJValueP
+CBrowserWindow::
+lookupHtmlObject(CBrowserObject *obj) const
+{
+  auto p = objMap_.find(obj);
+
+  if (p == objMap_.end())
+    return nullptr;
+
+  return (*p).second;
 }
 
 CBrowserObject *
@@ -299,6 +352,34 @@ getObject(const std::string &id) const
   return (*p).second;
 }
 
+CBrowserObject *
+CBrowserWindow::
+headObject() const
+{
+  CBrowserObject *root = rootObject();
+  if (! root) return nullptr;
+
+  for (const auto &c : root->children())
+    if (c->type() == CHtmlTagId::HEAD)
+      return c;
+
+  return nullptr;
+}
+
+CBrowserObject *
+CBrowserWindow::
+bodyObject() const
+{
+  CBrowserObject *root = rootObject();
+  if (! root) return nullptr;
+
+  for (const auto &c : root->children())
+    if (c->type() == CHtmlTagId::BODY)
+      return c;
+
+  return nullptr;
+}
+
 //------
 
 void
@@ -320,12 +401,12 @@ CBrowserWindow::
 runScripts()
 {
   for (const auto &s : scriptFiles_)
-    CBrowserJSInst->runScriptFile(this, s);
+    CQJavaScriptInst->runScriptFile(s);
 
   for (const auto &s : scripts_)
-    CBrowserJSInst->runScript(this, s);
+    CQJavaScriptInst->runScript(s);
 
-  CBrowserJSInst->onLoad();
+  CQJavaScriptInst->onLoad();
 }
 
 //------
@@ -356,6 +437,14 @@ setDocument(const CUrl &url)
   document_ = new CBrowserDocument(this);
 
   document_->read(url);
+
+  document_->setDocument(CQJavaScriptInst->jsDocument());
+
+  //---
+
+  CQJavaScriptInst->jsDocument()->setIFace(document_->iface());
+
+  //---
 
   outputDocument();
 
@@ -398,7 +487,7 @@ recalc()
   if (! w_)
     return;
 
-  iface_->setBusy();
+  swindow_->iface()->setBusy();
 
   //---
 
@@ -428,7 +517,7 @@ recalc()
 
   //---
 
-  iface_->setReady();
+  swindow_->iface()->setReady();
 }
 
 void
@@ -647,6 +736,30 @@ visitStyleData(const CCSS &css, const CCSSTagDataP &tagData)
   return match;
 }
 
+void
+CBrowserWindow::
+getTagNameValues(CHtmlTag *tag, NameValues &nameValues)
+{
+  CCSSTagDataP cssTagData(new CHtmlCSSTagData(tag));
+
+  for (const auto &css : cssList_) {
+    std::vector<CCSS::SelectorList> selectorListArray;
+
+    css.css.getSelectors(selectorListArray);
+
+    for (const auto &selectorList : selectorListArray) {
+      const CCSS::StyleData &styleData = css.css.getStyleData(selectorList);
+
+      if (! styleData.checkMatch(cssTagData))
+        continue;
+
+      for (const auto &opt : styleData.getOptions()) {
+        nameValues[opt.getName()] = opt.getValue();
+      }
+    }
+  }
+}
+
 //------
 
 void
@@ -696,7 +809,7 @@ void
 CBrowserWindow::
 setStatus(const std::string &status)
 {
-  iface_->setStatus(status);
+  swindow_->iface()->setStatus(status);
 }
 
 void
@@ -810,7 +923,7 @@ void
 CBrowserWindow::
 addHistoryItem(const CUrl &item)
 {
-  iface_->addHistoryItem(item);
+  swindow_->iface()->addHistoryItem(item);
 }
 
 CRGBA
@@ -969,7 +1082,7 @@ void
 CBrowserWindow::
 errorDialog(const std::string &msg)
 {
-  iface_->errorDialog(msg);
+  swindow_->iface()->errorDialog(msg);
 }
 
 //---

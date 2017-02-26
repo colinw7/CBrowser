@@ -65,7 +65,7 @@ termProcess()
       CBrowserCeilInst->runScript(window_, text_);
     }
     else if (CStrUtil::casecmp(data_.type, "text/javascript") == 0) {
-      //CBrowserJSInst->runScript(window, text_);
+      //CQJavaScriptInst->runScript(text_);
 
       window_->addScript(text_);
     }

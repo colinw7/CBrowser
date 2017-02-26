@@ -3,6 +3,7 @@
 
 #include <CBrowserObject.h>
 #include <CBrowserData.h>
+#include <CQJCanvasIFace.h>
 #include <CJavaScript.h>
 #include <QWidget>
 #include <QGradient>
@@ -12,12 +13,45 @@
 #include <QPen>
 
 class CBrowserCanvas : public CBrowserObject {
+ private:
+  class IFace : public CQJCanvasIFace {
+   public:
+    IFace(CBrowserCanvas *canvas) :
+     canvas_(canvas) {
+    }
+
+    CQJCanvasWidget *canvasWidget() const override {
+      return canvas_->canvasWidget();
+    }
+
+    int width() const override {
+      return canvas_->width().pxValue();
+    }
+
+    void setWidth(int w) override {
+      return canvas_->setWidth(w);
+    }
+
+    int height() const override {
+      return canvas_->height().pxValue();
+    }
+
+    void setHeight(int h) override {
+      return canvas_->setHeight(h);
+    }
+
+   private:
+    CBrowserCanvas *canvas_ { nullptr };
+  };
+
  public:
   explicit CBrowserCanvas(CBrowserWindow *window);
 
  ~CBrowserCanvas();
 
-  CQJCanvasWidget *canvas() const { return canvas_; }
+  IFace *iface() { return &iface_; }
+
+  CQJCanvasWidget *canvasWidget() const;
 
   void setWidth(int w);
   void setHeight(int h);
@@ -31,16 +65,23 @@ class CBrowserCanvas : public CBrowserObject {
 
   CBrowserRegion calcRegion() const override;
 
+  void show() override;
+  void hide() override;
+
   void draw(const CTextBox &) override;
 
   void update();
 
+  CQJHtmlObj *createJObj(CJavaScript *js) override;
+
+ private:
   void createWidget();
 
  private:
-  CBrowserCanvasData data_;
-  CQJCanvasWidget*   canvas_ { nullptr };
-  CTextBox           region_;
+  IFace            iface_;
+  CQJCanvas*       canvas_ { nullptr };
+  CQJCanvasWidget* canvasWidget_ { nullptr };
+  CTextBox         region_;
 };
 
 #endif
