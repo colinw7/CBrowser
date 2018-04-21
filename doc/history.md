@@ -23,3 +23,8 @@
  + Add HTTP loading of web pages
  + List Item symbol customization support
  + Add location javascript object
+
+### 2/26/2017
+ + move Qt JavaScript interface to separate library
+ + move drawSelected to virual of box class
+ + Add SVG support

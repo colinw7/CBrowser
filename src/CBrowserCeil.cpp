@@ -253,8 +253,8 @@ HtmlScriptDocumentSetTitle()
   char *title;
   long  idocument;
 
-  if (ClParserInst->getUserFnArgList(CL_ARG_TYPE_INTEGER, &idocument,
-                                     CL_ARG_TYPE_STRING , &title   , -1)) {
+  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &idocument,
+                                     CLArgType::STRING , &title   , -1)) {
     CBrowserDocument *document = (CBrowserDocument *) idocument;
 
     document->setTitle(title);
@@ -271,8 +271,8 @@ HtmlScriptDocumentSetBgColor()
   char *color;
   long  idocument;
 
-  if (ClParserInst->getUserFnArgList(CL_ARG_TYPE_INTEGER, &idocument,
-                                     CL_ARG_TYPE_STRING , &color  , -1)) {
+  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &idocument,
+                                     CLArgType::STRING , &color  , -1)) {
     CBrowserDocument *document = (CBrowserDocument *) idocument;
 
     document->setBgColor(color);
@@ -293,8 +293,8 @@ HtmlScriptDocumentSetFgColor()
   char *color;
   long  idocument;
 
-  if (ClParserInst->getUserFnArgList(CL_ARG_TYPE_INTEGER, &idocument,
-                                     CL_ARG_TYPE_STRING , &color  , -1)) {
+  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &idocument,
+                                     CLArgType::STRING , &color  , -1)) {
     CBrowserDocument *document = (CBrowserDocument *) idocument;
 
     document->setFgColor(color);
@@ -312,8 +312,8 @@ HtmlScriptDocumentSetLinkColor()
   char *color;
   long  idocument;
 
-  if (ClParserInst->getUserFnArgList(CL_ARG_TYPE_INTEGER, &idocument,
-                                     CL_ARG_TYPE_STRING , &color  , -1)) {
+  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &idocument,
+                                     CLArgType::STRING , &color  , -1)) {
     CBrowserDocument *document = (CBrowserDocument *) idocument;
 
     document->setLinkColor(color);
@@ -330,8 +330,8 @@ HtmlScriptDocumentOpen()
   char *type;
   long  idocument;
 
-  if (ClParserInst->getUserFnArgList(CL_ARG_TYPE_INTEGER, &idocument,
-                                     CL_ARG_TYPE_STRING , &type    , -1)) {
+  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &idocument,
+                                     CLArgType::STRING , &type    , -1)) {
     CBrowserDocument *document = (CBrowserDocument *) idocument;
 
     CTempFile *output_document_file = CBrowserCeilInst->outputDocumentFile();
@@ -366,8 +366,8 @@ HtmlScriptDocumentWrite()
   char *text;
   long  idocument;
 
-  if (ClParserInst->getUserFnArgList(CL_ARG_TYPE_INTEGER, &idocument,
-                                     CL_ARG_TYPE_STRING , &text     , -1)) {
+  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &idocument,
+                                     CLArgType::STRING , &text     , -1)) {
     CTempFile *output_document_file = CBrowserCeilInst->initOutputDocumentFile();
 
     output_document_file->getFile()->write(text);
@@ -384,8 +384,8 @@ HtmlScriptDocumentWriteLn()
   char *text;
   long  idocument;
 
-  if (ClParserInst->getUserFnArgList(CL_ARG_TYPE_INTEGER, &idocument,
-                                     CL_ARG_TYPE_STRING , &text    , -1)) {
+  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &idocument,
+                                     CLArgType::STRING , &text    , -1)) {
     CTempFile *output_document_file = CBrowserCeilInst->initOutputDocumentFile();
 
     output_document_file->getFile()->write(text);
@@ -402,7 +402,7 @@ HtmlScriptDocumentClose()
 {
   long idocument;
 
-  if (ClParserInst->getUserFnArgList(CL_ARG_TYPE_INTEGER, &idocument, -1)) {
+  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &idocument, -1)) {
     CTempFile *output_document_file = CBrowserCeilInst->outputDocumentFile();
 
     if (output_document_file) {
@@ -437,8 +437,8 @@ HtmlScriptWindowOpen()
 
   CBrowserWindow *window = nullptr;
 
-  if (ClParserInst->getUserFnArgList(CL_ARG_TYPE_STRING, &text,
-                                     CL_ARG_TYPE_STRING, &name, -1)) {
+  if (ClParserInst->getUserFnArgList(CLArgType::STRING, &text,
+                                     CLArgType::STRING, &name, -1)) {
     CUrl url(text);
 
     CBrowserMainInst->setDocument(url);
@@ -456,7 +456,7 @@ HtmlScriptWindowClose()
 {
   long window;
 
-  if (ClParserInst->getUserFnArgList(CL_ARG_TYPE_INTEGER, &window, -1))
+  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &window, -1))
     ((CBrowserWindow *) window)->close();
 
   ClParserValuePtr value = ClParserValueMgrInst->createValue(0L);
@@ -470,8 +470,8 @@ HtmlScriptWindowSetStatus()
   long  window;
   char *status;
 
-  if (ClParserInst->getUserFnArgList(CL_ARG_TYPE_INTEGER, &window,
-                                     CL_ARG_TYPE_STRING , &status, -1))
+  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &window,
+                                     CLArgType::STRING , &status, -1))
     ((CBrowserWindow *) window)->setStatus(status);
 
   ClParserValuePtr value = ClParserValueMgrInst->createValue(0L);
@@ -489,8 +489,8 @@ HtmlScriptWindowSetTimeout()
 
   QTimer *timer = nullptr;
 
-  if (ClParserInst->getUserFnArgList(CL_ARG_TYPE_INTEGER, &window, CL_ARG_TYPE_STRING, &command,
-                                     CL_ARG_TYPE_INTEGER, &delay , -1)) {
+  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &window, CLArgType::STRING, &command,
+                                     CLArgType::INTEGER, &delay , -1)) {
     timer = new QTimer(command);
 
     timer->setInterval(delay);
@@ -521,7 +521,7 @@ HtmlScriptWindowClearTimeout()
   long id;
   long window;
 
-  if (ClParserInst->getUserFnArgList(CL_ARG_TYPE_INTEGER, &window, CL_ARG_TYPE_INTEGER, &id, -1))
+  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &window, CLArgType::INTEGER, &id, -1))
     delete timer;
 #endif
 
@@ -538,7 +538,7 @@ HtmlScriptWindowConfirm()
 
   bool flag = false;
 
-  if (ClParserInst->getUserFnArgList(CL_ARG_TYPE_INTEGER, &window, CL_ARG_TYPE_STRING , &str, -1))
+  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &window, CLArgType::STRING , &str, -1))
     flag = QMessageBox::question(((CBrowserWindow *) window)->widget(), "Confirm", str);
 
   ClParserValuePtr value = ClParserValueMgrInst->createValue(long(flag));
@@ -552,7 +552,7 @@ HtmlScriptWindowAlert()
   char *str;
   long  window;
 
-  if (ClParserInst->getUserFnArgList(CL_ARG_TYPE_INTEGER, &window, CL_ARG_TYPE_STRING , &str, -1))
+  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &window, CLArgType::STRING , &str, -1))
     QMessageBox::warning(((CBrowserWindow *) window)->widget(), "Alert", str);
 
   ClParserValuePtr value = ClParserValueMgrInst->createValue(0L);
@@ -569,9 +569,9 @@ HtmlScriptWindowPrompt()
 
   std::string reply = "";
 
-  if (ClParserInst->getUserFnArgList(CL_ARG_TYPE_INTEGER, &window,
-                                     CL_ARG_TYPE_STRING , &prompt,
-                                     CL_ARG_TYPE_STRING , &str , -1)) {
+  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &window,
+                                     CLArgType::STRING , &prompt,
+                                     CLArgType::STRING , &str , -1)) {
 #if 0
     XtSetArg(args[0], XmNtitle      , "Prompt");
     XtSetArg(args[1], XmNlabelString, prompt  );
