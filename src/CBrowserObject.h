@@ -64,7 +64,9 @@ class CBrowserObject : public CBrowserBox {
     std::string getType () const override { return obj_->typeName(); }
     std::string getId   () const override { return obj_->id(); }
 
-    CQJHtmlObjIFace *parent() const override { return obj_->parent()->iface(); }
+    CQJHtmlObjIFace *parent() const override {
+      return (obj_->parent() ? obj_->parent()->iface() : nullptr);
+    }
 
     CQJHtmlObj *obj() const override { return obj_->htmlObj(); }
 

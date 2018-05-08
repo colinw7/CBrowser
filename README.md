@@ -1,2 +1,1 @@
-# CBrowser
-Simple Web Browser
+doc/README.md
