@@ -2,4 +2,4 @@
 
 Simple Web Browser
 
-![snapshow](CBrowser.png "Simple Web Browser")
+![snapshot](CBrowser.png "Simple Web Browser")
