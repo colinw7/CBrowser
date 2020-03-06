@@ -1,6 +1,10 @@
 #include <CBrowserRenderer.h>
 #include <CBrowserWindowWidget.h>
 #include <CQUtil.h>
+#include <CQPenUtil.h>
+#include <CQBrushUtil.h>
+#include <CQFontUtil.h>
+#include <CQImageUtil.h>
 #include <QPainter>
 
 CBrowserRenderer::
@@ -58,7 +62,7 @@ void
 CBrowserRenderer::
 drawRectangle(const CIBBox2D &bbox, const CPen &pen)
 {
-  painter_->setPen(CQUtil::toQPen(pen));
+  painter_->setPen(CQPenUtil::toQPen(pen));
   painter_->setBrush(Qt::NoBrush);
 
   painter_->drawRect(CQUtil::toQRect(bbox));
@@ -68,7 +72,7 @@ void
 CBrowserRenderer::
 fillRectangle(const CIBBox2D &bbox, const CBrush &brush)
 {
-  painter_->fillRect(CQUtil::toQRect(bbox), CQUtil::toQBrush(brush));
+  painter_->fillRect(CQUtil::toQRect(bbox), CQBrushUtil::toQBrush(brush));
 }
 
 void
@@ -83,7 +87,7 @@ fillPolygon(const std::vector<CIPoint2D> &points, const CBrush &brush)
     qpoints[i] = QPoint(points[i].x, points[i].y);
 
   painter_->setPen(QPen(Qt::NoPen));
-  painter_->setBrush(CQUtil::toQBrush(brush));
+  painter_->setBrush(CQBrushUtil::toQBrush(brush));
 
   painter_->drawPolygon(&qpoints[0], qpoints.size());
 }
@@ -92,7 +96,7 @@ void
 CBrowserRenderer::
 drawCircle(const CIPoint2D &c, int r, const CPen &pen)
 {
-  painter_->setPen(CQUtil::toQPen(pen));
+  painter_->setPen(CQPenUtil::toQPen(pen));
   painter_->setBrush(Qt::NoBrush);
 
   painter_->drawEllipse(QRect(c.x - r, c.y - r, 2*r, 2*r));
@@ -103,7 +107,7 @@ CBrowserRenderer::
 fillCircle(const CIPoint2D &c, int r, const CBrush &brush)
 {
   painter_->setPen(Qt::NoPen);
-  painter_->setBrush(CQUtil::toQBrush(brush));
+  painter_->setBrush(CQBrushUtil::toQBrush(brush));
 
   painter_->drawEllipse(QRect(c.x - r, c.y - r, 2*r, 2*r));
 }
@@ -112,7 +116,7 @@ void
 CBrowserRenderer::
 drawLine(const CIPoint2D &p1, const CIPoint2D &p2, const CPen &pen)
 {
-  painter_->setPen(CQUtil::toQPen(pen));
+  painter_->setPen(CQPenUtil::toQPen(pen));
 
   painter_->drawLine(CQUtil::toQPoint(p1), CQUtil::toQPoint(p2));
 }
@@ -121,8 +125,8 @@ void
 CBrowserRenderer::
 drawText(const CIPoint2D &p, const std::string &str, const CPen &pen, const CFontPtr &font)
 {
-  painter_->setPen (CQUtil::toQPen(pen));
-  painter_->setFont(CQUtil::toQFont(font));
+  painter_->setPen (CQPenUtil::toQPen(pen));
+  painter_->setFont(CQFontUtil::toQFont(font));
 
   QPoint qp = CQUtil::toQPoint(p);
 
@@ -138,7 +142,7 @@ void
 CBrowserRenderer::
 drawImage(const CIPoint2D &p, const CImagePtr &image)
 {
-  drawImage(p, CQUtil::toQImage(image));
+  drawImage(p, CQImageUtil::toQImage(image));
 }
 
 void

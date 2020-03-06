@@ -13,6 +13,7 @@
 #include <CQJComboBox.h>
 #include <CQJSlider.h>
 #include <CQUtil.h>
+#include <CQFontUtil.h>
 #include <CImageLib.h>
 
 #include <QPushButton>
@@ -32,7 +33,7 @@ void initWidget(const CBrowserObject *obj, QWidget *w) {
   if (obj->background().color().isValid())
     CQUtil::setBackground(w, CQUtil::toQColor(obj->background().color().color()));
 
-  w->setFont(CQUtil::toQFont(obj->getWindow()->getFont()));
+  w->setFont(CQFontUtil::toQFont(obj->getWindow()->getFont()));
 
   //if (obj->width().isValid())
   //  w->setFixedWidth(obj->width().value());

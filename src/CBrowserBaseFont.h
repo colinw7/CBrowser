@@ -8,7 +8,7 @@ class CBrowserBaseFont : public CBrowserObject {
  public:
   explicit CBrowserBaseFont(CBrowserWindow *window);
 
-  void init();
+  void init() override;
 
   void setNameValue(const std::string &name, const std::string &value) override;
 

@@ -7,7 +7,7 @@ class CBrowserHead : public CBrowserObject {
  public:
   explicit CBrowserHead(CBrowserWindow *window);
 
-  void init();
+  void init() override;
 
   void setNameValue(const std::string &name, const std::string &value) override;
 };

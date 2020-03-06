@@ -2,6 +2,7 @@
 #define CBrowserLine_H
 
 #include <CBrowserWord.h>
+#include <CAlignType.h>
 
 class CBrowserWindow;
 

@@ -60,7 +60,7 @@ class CBrowserTable : public CBrowserObject {
   CBrowserTable(CBrowserWindow *window, const CBrowserTableData &data);
  ~CBrowserTable();
 
-  void init();
+  void init() override;
 
   void setNameValue(const std::string &name, const std::string &value) override;
 
@@ -162,7 +162,7 @@ class CBrowserTableRow : public CBrowserObject {
   CHAlignType getHAlign() const { return data_.halign; }
   CVAlignType getVAlign() const { return data_.valign; }
 
-  void init();
+  void init() override;
 
   void setNameValue(const std::string &name, const std::string &value) override;
 

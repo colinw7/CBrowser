@@ -57,7 +57,7 @@ class CBrowserFontStyleObj : public CBrowserObject {
   explicit CBrowserFontStyleObj(CBrowserWindow *window);
  ~CBrowserFontStyleObj();
 
-  void init();
+  void init() override;
 
   void setNameValue(const std::string &name, const std::string &value) override;
 

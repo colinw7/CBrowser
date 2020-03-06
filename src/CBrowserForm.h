@@ -120,7 +120,7 @@ class CBrowserFormInput : public QObject, public CBrowserObject {
 
   CBrowserForm *getForm() const;
 
-  void setNameValue(const std::string &name, const std::string &value);
+  void setNameValue(const std::string &name, const std::string &value) override;
   bool getNameValue(const std::string &name, std::string &value) const;
 
   std::string getValue() const { return data_.value; }
@@ -185,7 +185,7 @@ class CBrowserFormButton : public CBrowserFormInput {
 
   void init() override;
 
-  void createWidget() const;
+  void createWidget() const override;
 
   void setLabel(const std::string &text);
 
@@ -205,7 +205,7 @@ class CBrowserFormCheckBox : public CBrowserFormInput {
 
   void init() override;
 
-  void createWidget() const;
+  void createWidget() const override;
 
   CBrowserRegion calcRegion() const override;
 
@@ -223,7 +223,7 @@ class CBrowserFormFileUpload : public CBrowserFormInput {
 
   void init() override;
 
-  void createWidget() const;
+  void createWidget() const override;
 
   void drawWidget(CBrowserWindow *window, const CTextBox &region) override;
 
@@ -247,11 +247,11 @@ class CBrowserFormHidden : public CBrowserFormInput {
 
   void init() override;
 
-  void createWidget() const;
+  void createWidget() const override;
 
   void drawWidget(CBrowserWindow *window, const CTextBox &region) override;
 
-  void submit(std::string &url);
+  void submit(std::string &url) override;
 
  protected:
   int dummy_ { 0 };
@@ -269,7 +269,7 @@ class CBrowserFormImage : public CBrowserFormInput {
 
   void init() override;
 
-  void createWidget() const;
+  void createWidget() const override;
 
   void drawWidget(CBrowserWindow *window, const CTextBox &region) override;
 
@@ -291,13 +291,13 @@ class CBrowserFormTel : public CBrowserFormInput {
 
   void init() override;
 
-  void createWidget() const;
+  void createWidget() const override;
 
   CBrowserRegion calcRegion() const override;
 
-  void reset();
+  void reset() override;
 
-  void submit(std::string &url);
+  void submit(std::string &url) override;
 
  protected:
   int size_ { 0 };
@@ -314,13 +314,13 @@ class CBrowserFormMonth : public CBrowserFormInput {
 
   void init() override;
 
-  void createWidget() const;
+  void createWidget() const override;
 
   CBrowserRegion calcRegion() const override;
 
-  void reset();
+  void reset() override;
 
-  void submit(std::string &url);
+  void submit(std::string &url) override;
 
  protected:
   int size_ { 0 };
@@ -337,13 +337,13 @@ class CBrowserFormDate : public CBrowserFormInput {
 
   void init() override;
 
-  void createWidget() const;
+  void createWidget() const override;
 
   CBrowserRegion calcRegion() const override;
 
-  void reset();
+  void reset() override;
 
-  void submit(std::string &url);
+  void submit(std::string &url) override;
 
  protected:
   int size_ { 0 };
@@ -360,13 +360,13 @@ class CBrowserFormSearch : public CBrowserFormInput {
 
   void init() override;
 
-  void createWidget() const;
+  void createWidget() const override;
 
   CBrowserRegion calcRegion() const override;
 
-  void reset();
+  void reset() override;
 
-  void submit(std::string &url);
+  void submit(std::string &url) override;
 
  protected:
   int size_ { 0 };
@@ -383,13 +383,13 @@ class CBrowserFormNumber : public CBrowserFormInput {
 
   void init() override;
 
-  void createWidget() const;
+  void createWidget() const override;
 
   CBrowserRegion calcRegion() const override;
 
-  void reset();
+  void reset() override;
 
-  void submit(std::string &url);
+  void submit(std::string &url) override;
 
  protected:
   int size_ { 0 };
@@ -408,13 +408,13 @@ class CBrowserFormEmail : public CBrowserFormInput {
 
   std::string text() const;
 
-  void createWidget() const;
+  void createWidget() const override;
 
   CBrowserRegion calcRegion() const override;
 
-  void reset();
+  void reset() override;
 
-  void submit(std::string &url);
+  void submit(std::string &url) override;
 
  protected:
   int size_ { 0 };
@@ -431,13 +431,13 @@ class CBrowserFormPassword : public CBrowserFormInput {
 
   void init() override;
 
-  void createWidget() const;
+  void createWidget() const override;
 
   CBrowserRegion calcRegion() const override;
 
-  void reset();
+  void reset() override;
 
-  void submit(std::string &url);
+  void submit(std::string &url) override;
 
  protected:
   int size_ { 0 };
@@ -454,7 +454,7 @@ class CBrowserFormRadio : public CBrowserFormInput {
 
   void init() override;
 
-  void createWidget() const;
+  void createWidget() const override;
 
   CBrowserRegion calcRegion() const override;
 
@@ -477,7 +477,7 @@ class CBrowserFormRange : public CBrowserFormInput {
 
   double value() const;
 
-  void createWidget() const;
+  void createWidget() const override;
 
   CBrowserRegion calcRegion() const override;
 
@@ -498,7 +498,7 @@ class CBrowserFormReset : public CBrowserFormInput {
 
   void init() override;
 
-  void createWidget() const;
+  void createWidget() const override;
 
   CBrowserRegion calcRegion() const override;
 
@@ -529,7 +529,7 @@ class CBrowserFormSelect : public CBrowserFormInput {
 
   CBrowserFormOption *getOption(int i) const { return options_[i]; }
 
-  void createWidget() const;
+  void createWidget() const override;
 
   CBrowserRegion calcRegion() const override;
 
@@ -552,7 +552,7 @@ class CBrowserFormSubmit : public CBrowserFormInput {
 
   void init() override;
 
-  void createWidget() const;
+  void createWidget() const override;
 
   CBrowserRegion calcRegion() const override;
 
@@ -572,13 +572,13 @@ class CBrowserFormText : public CBrowserFormInput {
 
   std::string text() const;
 
-  void createWidget() const;
+  void createWidget() const override;
 
   CBrowserRegion calcRegion() const override;
 
-  void reset();
+  void reset() override;
 
-  void submit(std::string &url);
+  void submit(std::string &url) override;
 
   void print(std::ostream &os) const override { os << "input/text"; }
 
@@ -606,13 +606,13 @@ class CBrowserFormTextarea : public CBrowserFormInput {
 
   void setNameValue(const std::string &name, const std::string &value) override;
 
-  void createWidget() const;
+  void createWidget() const override;
 
   CBrowserRegion calcRegion() const override;
 
-  void reset();
+  void reset() override;
 
-  void submit(std::string &url);
+  void submit(std::string &url) override;
 
  protected:
   CBrowserFormTextareaData     data_;

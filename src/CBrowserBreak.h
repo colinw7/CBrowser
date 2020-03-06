@@ -12,11 +12,11 @@ class CBrowserBreak : public CBrowserObject {
 
   CBrowserClear::Type getClear() const { return data_.clear; }
 
-  void init();
+  void init() override;
 
   void setNameValue(const std::string &name, const std::string &value) override;
 
-  void getInlineWords(Words &words) const;
+  void getInlineWords(Words &words) const override;
 
   CBrowserRegion calcRegion() const override;
 

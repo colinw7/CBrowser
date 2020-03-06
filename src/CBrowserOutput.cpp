@@ -422,11 +422,11 @@ processText(CHtmlText *text)
 
   if      (currentObj->type() == CHtmlTagId::HTML) {
     if (sstr != "")
-      window_->displayError("Ignore text '%s' for html tag\n", str);
+      window_->displayError("Ignore text '%s' for html tag\n", str.c_str());
   }
   else if (currentObj->type() == CHtmlTagId::HEAD) {
     if (sstr != "")
-      window_->displayError("Ignore text '%s' for head tag\n", str);
+      window_->displayError("Ignore text '%s' for head tag\n", str.c_str());
   }
   else if (currentObj->type() == CHtmlTagId::TITLE) {
     window_->getDocument()->setTitle(sstr);

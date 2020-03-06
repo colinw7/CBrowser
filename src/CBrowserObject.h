@@ -189,7 +189,7 @@ class CBrowserObject : public CBrowserBox {
 
   //--
 
-  const CBrowserSize &size() const { return size_; }
+  const CBrowserSize &size() const override { return size_; }
   void setSize(const CBrowserSize &v) { size_ = v; }
 
   const CBrowserUnitValue &width () const { return size_.width; }

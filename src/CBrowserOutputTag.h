@@ -253,7 +253,7 @@ class CBrowserOutputDlTag : public CBrowserOutputTagBase {
 
   CBrowserObject *start(CBrowserWindow *, CHtmlTag *) override;
 
-  void term(CBrowserWindow *, CHtmlTag *);
+  void term(CBrowserWindow *, CHtmlTag *) override;
 };
 
 class CBrowserOutputDtTag : public CBrowserOutputTagBase {

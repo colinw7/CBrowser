@@ -14,9 +14,9 @@ class CBrowserSVG : public CBrowserObject {
 
   void setNameValue(const std::string &name, const std::string &value) override;
 
-  CBrowserRegion calcRegion() const;
+  CBrowserRegion calcRegion() const override;
 
-  void draw(const CTextBox &region);
+  void draw(const CTextBox &region) override;
 
  private:
   CSVG           svg_;

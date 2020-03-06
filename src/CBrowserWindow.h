@@ -47,6 +47,8 @@ class CBrowserWindow {
      window_(window) {
     }
 
+    CBrowserWindow *window() const { return window_; }
+
    private:
     CBrowserWindow *window_ { nullptr };
   };
