@@ -8,7 +8,13 @@ DEPENDPATH += .
 
 MOC_DIR = .moc
 
-QMAKE_CXXFLAGS += -std=c++14
+QMAKE_CXXFLAGS += \
+-std=c++14 \
+-DCQUTIL_PEN \
+-DCQUTIL_BRUSH \
+-DCQUTIL_FONT \
+-DCQUTIL_IMAGE \
+-DCBRUSH_IMAGE \
 
 CONFIG += debug
 
@@ -229,6 +235,7 @@ unix:LIBS += \
 -L../../CReadLine/lib \
 -L../../CFile/lib \
 -L../../CFileUtil/lib \
+-L../../CMath/lib \
 -L../../CStrUtil/lib \
 -L../../CRegExp/lib \
 -L../../CGlob/lib \
@@ -238,5 +245,5 @@ unix:LIBS += \
 -L../../CRGBName/lib \
 -lCQJavaScript -lCJavaScript -lCJson -lCHtml -lCCSS -lCXML -lCWebGet -lCSVG \
 -lCQUtil -lCImageLib -lCFont -lCCeil -lCArgs -lCConfig -lCReadLine \
--lCFile -lCFileUtil -lCStrUtil -lCGlob -lCRegExp -lCRGBName -lCUtil -lCOS \
+-lCFile -lCFileUtil -lCMath -lCStrUtil -lCGlob -lCRegExp -lCRGBName -lCUtil -lCOS \
 -lCThread -ljpeg -lpng -lcurses -ltre
