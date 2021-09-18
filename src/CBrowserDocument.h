@@ -5,6 +5,7 @@
 #include <CQJDocument.h>
 #include <CQJDocumentIFace.h>
 #include <CHtmlParser.h>
+#include <CImagePtr.h>
 #include <CUrl.h>
 #include <CRGBA.h>
 

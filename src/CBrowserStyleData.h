@@ -2,6 +2,7 @@
 #define CBrowserStyleData_H
 
 #include <map>
+#include <string>
 
 class CBrowserStyleData {
  public:
