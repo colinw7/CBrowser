@@ -22,7 +22,7 @@ class CBrowserObjProp : public QTreeView {
 
  private:
   CBrowserWindow *window_ { nullptr };
-  CBrowserObject *obj_ { nullptr };
+  CBrowserObject *obj_    { nullptr };
 };
 
 #endif

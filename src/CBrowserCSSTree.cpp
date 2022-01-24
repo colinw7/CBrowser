@@ -138,9 +138,16 @@ void
 CBrowserCSSTree::
 selectionChanged(const QItemSelection &selected, const QItemSelection & /*deselected*/)
 {
-  CBrowserCSSTreeModel *model = dynamic_cast<CBrowserCSSTreeModel *>(this->model());
+  auto isValidInd = [&]() {
+    return (ind_ >= 0 && ind_ < int(window()->cssList().size()));
+  };
 
-  const CBrowserWindow::CSSData &cssData = window()->cssList()[ind_];
+  if (! isValidInd())
+    return;
+
+  auto *model = dynamic_cast<CBrowserCSSTreeModel *>(this->model());
+
+  const auto &cssData = window()->cssData(ind_);
 
   std::vector<CCSS::SelectorList> selectors;
 
@@ -190,7 +197,7 @@ rowCount(const QModelIndex &parent) const
 
   CBrowserWindow *window = tree_->window();
 
-  const CBrowserWindow::CSSData &cssData = window->cssList()[ind_];
+  const auto &cssData = window->cssData(ind_);
 
   std::vector<CCSS::SelectorList> selectors;
 
@@ -317,7 +324,7 @@ data(const QModelIndex &index, int role) const
 
   CBrowserWindow *window = tree_->window();
 
-  const CBrowserWindow::CSSData &cssData = window->cssList()[ind_];
+  const auto &cssData = window->cssData(ind_);
 
   //---
 
@@ -384,7 +391,7 @@ bool
 CBrowserCSSTreeModel::
 isValidInd() const
 {
-  CBrowserWindow *window = tree_->window();
+  auto *window = tree_->window();
 
   return (ind_ >= 0 && ind_ < int(window->cssList().size()));
 }

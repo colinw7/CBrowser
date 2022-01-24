@@ -150,7 +150,12 @@ class CBrowserObject : public CBrowserBox {
 
   const Children &children() const { return children_; }
   int numChildren() const { return children_.size(); }
-  CBrowserObject *child(int i) const { return children_[i]; }
+
+  CBrowserObject *child(int i) const {
+    assert(i >= 0 && i < int(children_.size()));
+    return children_[i];
+  }
+
   int childIndex(const CBrowserObject *child) const;
 
   Display display() const;
@@ -214,7 +219,12 @@ class CBrowserObject : public CBrowserBox {
 
   void addProperties(const Properties &properties);
   virtual int numProperties() const { return properties_.size(); }
-  virtual std::string propertyName(int i) const { return properties_[i]; }
+
+  virtual std::string propertyName(int i) const {
+    assert(i >= 0 && i < int(properties_.size()));
+    return properties_[i];
+  }
+
   virtual std::string propertyValue(int i) const;
 
   //---

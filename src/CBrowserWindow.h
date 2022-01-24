@@ -101,6 +101,11 @@ class CBrowserWindow {
   const CSSList &cssList() const { return cssList_; }
   void setCssList(const CSSList &v) { cssList_ = v; }
 
+  const CSSData &cssData(int i) {
+    assert(i >= 0 && i < int(cssList_.size()));
+    return cssList_[i];
+  }
+
   //---
 
   CFontPtr getFont() const { return font_; }

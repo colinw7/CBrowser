@@ -50,7 +50,7 @@ class CBrowserObjPropDelegate : public QStyledItemDelegate {
 
 CBrowserObjProp::
 CBrowserObjProp(QWidget *parent, CBrowserWindow *window) :
- QTreeView(parent), window_(window), obj_(nullptr)
+ QTreeView(parent), window_(window)
 {
   setObjectName("objProp");
 
@@ -62,10 +62,10 @@ CBrowserObjProp(QWidget *parent, CBrowserWindow *window) :
   setAlternatingRowColors(true);
 
   // create simple model for a tree view
-  CBrowserObjPropModel *model = new CBrowserObjPropModel(this);
+  auto *model = new CBrowserObjPropModel(this);
 
   // create custom delegate
-  CBrowserObjPropDelegate* delegate = new CBrowserObjPropDelegate(this);
+  auto *delegate = new CBrowserObjPropDelegate(this);
 
   // set model and delegate to the treeview object
   setModel(model);
@@ -77,7 +77,7 @@ void
 CBrowserObjProp::
 setObject(CBrowserObject *obj)
 {
-  CBrowserObjPropModel *model = dynamic_cast<CBrowserObjPropModel *>(this->model());
+  auto *model = dynamic_cast<CBrowserObjPropModel *>(this->model());
 
   obj_ = obj;
 
@@ -126,12 +126,9 @@ rowCount(const QModelIndex &parent) const
   if (parent.isValid())
     return 0;
 
-  CBrowserObject *obj = tree_->obj();
+  auto *obj = tree_->obj();
 
-  if (obj)
-    return obj->numProperties();
-  else
-    return 0;
+  return (obj ? obj->numProperties() : 0);
 }
 
 int

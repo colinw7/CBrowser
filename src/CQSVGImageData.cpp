@@ -1,6 +1,11 @@
 #include <CQSVGImageData.h>
+#include <CImageResizeType.h>
+#include <CImageConvolveData.h>
+#include <CImageTileData.h>
 #include <CTurbulenceUtil.h>
 #include <CGaussianBlur.h>
+#include <CRGBACombineDef.h>
+#include <CImageLib.h>
 #include <CRGBUtil.h>
 #include <CMathRound.h>
 #include <QColor>
@@ -18,6 +23,11 @@ CQSVGImageData(const CQSVGImageData &data) :
   qimage_ = data.qimage_;
 }
 
+CQSVGImageData::
+~CQSVGImageData()
+{
+}
+
 CSVGImageData *
 CQSVGImageData::
 dup() const
@@ -31,16 +41,14 @@ image() const
 {
   assert(false);
 
-  return CSVGImageData::image();
+  return CImagePtr();
 }
 
 void
 CQSVGImageData::
-setImage(CImagePtr &image)
+setImage(CImagePtr &)
 {
   assert(false);
-
-  CSVGImageData::setImage(image);
 }
 
 void
@@ -170,7 +178,7 @@ void
 CQSVGImageData::
 subCopyTo(CSVGImageData *dst, int src_x, int src_y, int width, int height, int dst_x, int dst_y)
 {
-  CQSVGImageData *qdst = dynamic_cast<CQSVGImageData *>(dst);
+  auto *qdst = dynamic_cast<CQSVGImageData *>(dst);
   assert(qdst);
 
   int src_width  = getWidth ();
@@ -203,7 +211,7 @@ subCopyTo(CSVGImageData *dst, int src_x, int src_y, int width, int height, int d
       if (validPixel(xs, ys))
         rgba = getPixel(xs, ys);
       else
-        rgba = CRGBA(0,0,0,0);
+        rgba = CRGBA(0, 0, 0, 0);
 
       if (qdst->validPixel(xd, yd))
         qdst->setPixel(xd, yd, rgba);
@@ -234,7 +242,7 @@ void
 CQSVGImageData::
 copyAlpha(CSVGImageData *dst, int x, int y)
 {
-  CQSVGImageData *qdst = dynamic_cast<CQSVGImageData *>(dst);
+  auto *qdst = dynamic_cast<CQSVGImageData *>(dst);
   assert(qdst);
 
   int iwidth  = getWidth ();
@@ -305,7 +313,7 @@ reshape(int width, int height)
 
   assert(! locked_);
 
-  CQSVGImageData *qdata = dynamic_cast<CQSVGImageData *>(image);
+  auto *qdata = dynamic_cast<CQSVGImageData *>(image);
   assert(qdata);
 
   qimage_ = qdata->qimage_;
@@ -555,7 +563,7 @@ void
 CQSVGImageData::
 clipOutside(int x1, int y1, int x2, int y2)
 {
-  CRGBA a(0,0,0,0);
+  CRGBA a(0, 0, 0, 0);
 
   for (int y = 0; y < getHeight(); ++y) {
     for (int x = 0; x < getWidth(); ++x) {
@@ -571,7 +579,7 @@ void
 CQSVGImageData::
 combine(CSVGImageData *in, CRGBABlendMode mode)
 {
-  CQSVGImageData *image = dynamic_cast<CQSVGImageData *>(in);
+  auto *image = dynamic_cast<CQSVGImageData *>(in);
   assert(image);
 
   int w = std::min(getWidth (), image->getWidth ());
@@ -593,7 +601,7 @@ void
 CQSVGImageData::
 combine(CSVGImageData *in, const CRGBACombineDef &def)
 {
-  CQSVGImageData *image = dynamic_cast<CQSVGImageData *>(in);
+  auto *image = dynamic_cast<CQSVGImageData *>(in);
   assert(image);
 
   int w = std::min(getWidth (), image->getWidth ());
@@ -615,7 +623,7 @@ void
 CQSVGImageData::
 combine(int x, int y, CSVGImageData *in)
 {
-  CQSVGImageData *image = dynamic_cast<CQSVGImageData *>(in);
+  auto *image = dynamic_cast<CQSVGImageData *>(in);
   assert(image);
 
   int w = std::min(getWidth (), image->getWidth ());
@@ -641,7 +649,7 @@ void
 CQSVGImageData::
 convolve(CSVGImageData *in, const CImageConvolveData &data)
 {
-  CQSVGImageData *dst = dynamic_cast<CQSVGImageData *>(in);
+  auto *dst = dynamic_cast<CQSVGImageData *>(in);
   assert(dst);
 
   int xsize = data.xsize;
@@ -773,7 +781,7 @@ applyColorMatrix(const std::vector<double> &m)
         setPixel(x, y, rgba1);
       }
       else
-        setPixel(x, y, CRGBA(0,0,0,0));
+        setPixel(x, y, CRGBA(0, 0, 0, 0));
     }
   }
 }
@@ -1003,7 +1011,7 @@ CSVGImageData *
 CQSVGImageData::
 displacementMap(CSVGImageData *in, CRGBAComponent xcolor, CRGBAComponent ycolor, double scale)
 {
-  CQSVGImageData *dispImage = dynamic_cast<CQSVGImageData *>(in);
+  auto *dispImage = dynamic_cast<CQSVGImageData *>(in);
   assert(dispImage);
 
   CSVGImageData *dst = dup();
@@ -1014,7 +1022,7 @@ displacementMap(CSVGImageData *in, CRGBAComponent xcolor, CRGBAComponent ycolor,
 
   for (int y = wy1; y <= wy2; ++y) {
     for (int x = wx1; x <= wx2; ++x) {
-      CRGBA rgba1(0,0,0,0);
+      CRGBA rgba1(0, 0, 0, 0);
 
       // get displacement from dispImage color components
       if (dispImage->validPixel(x, y)) {
@@ -1087,7 +1095,7 @@ gaussianBlur(CSVGImageData *in, double stdDevX, double stdDevY)
 
   //---
 
-  CQSVGImageData *qin = dynamic_cast<CQSVGImageData *>(in);
+  auto *qin = dynamic_cast<CQSVGImageData *>(in);
   assert(qin);
 
   CGaussianBlur<CImageWrapper> blur;
@@ -1253,7 +1261,7 @@ isErodePixel(int x, int y, bool isAlpha, CRGBA &rgba) const
 
 CSVGImageData *
 CQSVGImageData::
-tile(int width, int height, const CImageTile &tile)
+tile(int width, int height, const CImageTileData &tile)
 {
   CSVGImageData *image = dup();
 

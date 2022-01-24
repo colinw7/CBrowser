@@ -126,9 +126,9 @@ CBrowserDomTree::
 selectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
 {
   for (int i = 0; i < selected.indexes().length(); ++i) {
-    const QModelIndex &ind = selected.indexes()[i];
+    QModelIndex ind = selected.indexes().at(i);
 
-    CBrowserObject *obj = static_cast<CBrowserObject *>(ind.internalPointer());
+    auto *obj = static_cast<CBrowserObject *>(ind.internalPointer());
     if (! obj) continue;
 
     obj->setSelected(true);
@@ -148,7 +148,7 @@ selectionChanged(const QItemSelection &selected, const QItemSelection &deselecte
   for (int i = 0; i < deselected.indexes().length(); ++i) {
     const QModelIndex &ind = deselected.indexes()[i];
 
-    CBrowserObject *obj = static_cast<CBrowserObject *>(ind.internalPointer());
+    auto *obj = static_cast<CBrowserObject *>(ind.internalPointer());
     if (! obj) continue;
 
     obj->setSelected(false);
@@ -169,7 +169,7 @@ int
 CBrowserDomTreeModel::
 rowCount(const QModelIndex &parent) const
 {
-  CBrowserWindow *window = tree_->window();
+  auto *window = tree_->window();
 
   const CBrowserObject *obj { nullptr };
 
@@ -195,7 +195,7 @@ QModelIndex
 CBrowserDomTreeModel::
 index(int row, int column, const QModelIndex &parent) const
 {
-  CBrowserWindow *window = tree_->window();
+  auto *window = tree_->window();
 
   const CBrowserObject *obj { nullptr };
 
@@ -207,7 +207,7 @@ index(int row, int column, const QModelIndex &parent) const
   if (! obj)
     return QModelIndex();
 
-  CBrowserObject *child = obj->child(row);
+  auto *child = obj->child(row);
   if (! child) return QModelIndex();
 
   return createIndex(row, column, child);
@@ -220,7 +220,7 @@ parent(const QModelIndex &index) const
   if (! index.isValid())
     return QModelIndex();
 
-  CBrowserWindow *window = tree_->window();
+  auto *window = tree_->window();
 
   CBrowserObject *obj { nullptr };
 
@@ -271,7 +271,7 @@ data(const QModelIndex &index, int role) const
   //CBrowserWindow *window = tree_->window();
 
   if      (role == Qt::DisplayRole) {
-    CBrowserObject *obj = static_cast<CBrowserObject *>(index.internalPointer());
+    auto *obj = static_cast<CBrowserObject *>(index.internalPointer());
     if (! obj) return QVariant();
 
     std::string name;
