@@ -93,7 +93,7 @@ draw(const CTextBox &region)
   if      (! this->width().isValid())
     width = region.width();
   else if (this->width().units() == CScreenUnits::Units::PERCENT)
-    width = (int) (this->width().pxValue()*region.width()/100.0);
+    width = int(this->width().pxValue()*region.width()/100.0);
   else
     width = this->width().pxValue();
 

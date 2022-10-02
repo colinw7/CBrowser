@@ -6,6 +6,7 @@
 #include <CQJDocument.h>
 #include <CQJWindow.h>
 #include <CQJEvent.h>
+#include <CQWidgetUtil.h>
 #include <CEnv.h>
 #include <QMouseEvent>
 
@@ -83,7 +84,7 @@ void
 CBrowserWindowWidget::
 wheelEvent(QWheelEvent *event)
 {
-  window_->mouseWheel(event->delta());
+  window_->mouseWheel(CQWidgetUtil::wheelDelta(event));
 }
 
 void

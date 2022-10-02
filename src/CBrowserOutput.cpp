@@ -250,7 +250,7 @@ processTokens(const CHtmlParserTokens &tokens)
 
   init();
 
-  for (int i = 0; i < tokens.size(); ++i) {
+  for (int i = 0; i < int(tokens.size()); ++i) {
     const CHtmlToken *t = tokens[i];
 
     if      (t->isTag()) {

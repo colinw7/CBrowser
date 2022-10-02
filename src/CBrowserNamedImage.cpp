@@ -47,7 +47,8 @@ lookup(const std::string &name)
 
     named_image->image_ = CImageMgrInst->createImage(src);
 
-    named_image->image_->readXPM((const char **) named_image->data_, named_image->num_lines_);
+    named_image->image_->readXPM(reinterpret_cast<const char **>(named_image->data_),
+                                 named_image->num_lines_);
   }
 
   return named_image->image_;
@@ -61,7 +62,7 @@ genNoImage()
 
   CImagePtr image = CImageMgrInst->createImage(src);
 
-  image->readXPM((const char **) noimage, sizeof(noimage)/sizeof(char *));
+  image->readXPM(reinterpret_cast<const char **>(noimage), sizeof(noimage)/sizeof(char *));
 
   return image;
 }

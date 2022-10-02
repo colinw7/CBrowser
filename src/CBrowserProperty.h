@@ -90,6 +90,8 @@ class CBrowserProperty {
    name_(name) {
   }
 
+  virtual ~CBrowserProperty() { }
+
   virtual std::string value() = 0;
 
   template<typename T>

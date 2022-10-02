@@ -16,7 +16,7 @@ font(const CBrowserObject *obj) const
 
   updateFontStyle(obj, style);
 
-  CFontPtr font = CFontMgrInst->lookupFont(family, (CFontStyle) style, isize);
+  CFontPtr font = CFontMgrInst->lookupFont(family, CFontStyle(style), isize);
 
   return font;
 }
