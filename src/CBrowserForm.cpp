@@ -13,6 +13,7 @@
 #include <CQJComboBox.h>
 #include <CQJSlider.h>
 #include <CQUtil.h>
+#include <CQUtilRGBA.h>
 #include <CQFontUtil.h>
 #include <CImageLib.h>
 

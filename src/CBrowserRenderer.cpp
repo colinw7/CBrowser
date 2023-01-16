@@ -1,6 +1,8 @@
 #include <CBrowserRenderer.h>
 #include <CBrowserWindowWidget.h>
 #include <CQUtil.h>
+#include <CQUtilRGBA.h>
+#include <CQUtilGeom.h>
 #include <CQPenUtil.h>
 #include <CQBrushUtil.h>
 #include <CQFontUtil.h>

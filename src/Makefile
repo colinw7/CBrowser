@@ -2189,7 +2189,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../../CUtil/include/CAngleType.h \
 		../../CCeil/include/CCeilPTypes.h \
 		../../CUtil/include/CRefPtrDbg.h \
-		../../CUtil/include/CAutoPtr.h \
 		../../CCeil/include/CCeilPError.h \
 		../../CCeil/include/CCeilPType.h \
 		../../CCeil/include/CCeilPValue.h \
@@ -3648,6 +3647,7 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../../CMath/include/CSize2D.h \
 		../../CMath/include/CMatrix2D.h \
 		../../CQUtil/include/CQUtilMeta.h \
+		../../CQUtil/include/CQUtilRGBA.h \
 		../../CQUtil/include/CQFontUtil.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CBrowserForm.o CBrowserForm.cpp
 
@@ -6884,6 +6884,8 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../../CMath/include/CSize2D.h \
 		../../CMath/include/CMatrix2D.h \
 		../../CQUtil/include/CQUtilMeta.h \
+		../../CQUtil/include/CQUtilRGBA.h \
+		../../CQUtil/include/CQUtilGeom.h \
 		../../CQUtil/include/CQPenUtil.h \
 		../../CQUtil/include/CQBrushUtil.h \
 		../../CQUtil/include/CQFontUtil.h \
