@@ -12,8 +12,8 @@
 
 class CBrowserHtmlFileMgr : public CHtmlFileMgr {
  public:
-  std::string getTypeName (CFileType file_type);
-  std::string getTypeImage(CFileType file_type);
+  std::string getTypeName (CFileType file_type) override;
+  std::string getTypeImage(CFileType file_type) override;
 };
 
 CBrowserFileMgr::

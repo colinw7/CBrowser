@@ -18,7 +18,7 @@ class CBrowserObjProp : public QTreeView {
   void setObject(CBrowserObject *obj);
 
  private slots:
-  void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+  void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
 
  private:
   CBrowserWindow *window_ { nullptr };

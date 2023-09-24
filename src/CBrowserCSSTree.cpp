@@ -19,17 +19,17 @@ class CBrowserCSSTreeModel : public QAbstractItemModel {
   int ind() const { return ind_; }
   void setInd(int i) { ind_ = i; }
 
-  QModelIndex index(int row, int column, const QModelIndex &) const;
+  QModelIndex index(int row, int column, const QModelIndex &) const override;
 
-  QModelIndex parent(const QModelIndex &index) const;
+  QModelIndex parent(const QModelIndex &index) const override;
 
-  int rowCount(const QModelIndex &parent) const;
+  int rowCount(const QModelIndex &parent) const override;
 
-  int columnCount(const QModelIndex &parent) const;
+  int columnCount(const QModelIndex &parent) const override;
 
-  QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+  QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
-  QVariant data(const QModelIndex &index, int role) const;
+  QVariant data(const QModelIndex &index, int role) const override;
 
   std::vector<int> indexToRows(const QModelIndex &ind) const;
 
@@ -59,9 +59,9 @@ class CBrowserCSSTreeDelegate : public QStyledItemDelegate {
   explicit CBrowserCSSTreeDelegate(CBrowserCSSTree *tree);
 
   void paint(QPainter *painter, const QStyleOptionViewItem &option,
-             const QModelIndex &index) const;
+             const QModelIndex &index) const override;
 
-  QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+  QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
  private:
   CBrowserCSSTree *tree_ { nullptr };
@@ -184,7 +184,7 @@ setInd(int ind)
 
 CBrowserCSSTreeModel::
 CBrowserCSSTreeModel(CBrowserCSSTree *tree) :
- QAbstractItemModel(0), tree_(tree), ind_(0)
+ QAbstractItemModel(nullptr), tree_(tree), ind_(0)
 {
 }
 

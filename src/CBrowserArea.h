@@ -7,9 +7,9 @@ class CBrowserArea : public CBrowserObject {
  public:
   explicit CBrowserArea(CBrowserWindow *window);
 
-  void init();
+  void init() override;
 
-  void setNameValue(const std::string &name, const std::string &value);
+  void setNameValue(const std::string &name, const std::string &value) override;
 };
 
 #endif

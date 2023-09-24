@@ -37,7 +37,7 @@ class CBrowserDomTree : public QTreeView {
   CBrowserWindow *window() const { return window_; }
 
  private slots:
-  void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+  void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
 
  private:
   CBrowserDomTreeDlg *dlg_ { nullptr };

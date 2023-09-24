@@ -16,17 +16,17 @@ class CBrowserDomTreeModel : public QAbstractItemModel {
  public:
   explicit CBrowserDomTreeModel(CBrowserDomTree *tree);
 
-  QModelIndex index(int row, int column, const QModelIndex &) const;
+  QModelIndex index(int row, int column, const QModelIndex &) const override;
 
-  QModelIndex parent(const QModelIndex &index) const;
+  QModelIndex parent(const QModelIndex &index) const override;
 
-  int rowCount(const QModelIndex &parent) const;
+  int rowCount(const QModelIndex &parent) const override;
 
-  int columnCount(const QModelIndex &parent) const;
+  int columnCount(const QModelIndex &parent) const override;
 
-  QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+  QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
-  QVariant data(const QModelIndex &index, int role) const;
+  QVariant data(const QModelIndex &index, int role) const override;
 
  private:
   CBrowserDomTree *tree_ { nullptr };
@@ -39,9 +39,9 @@ class CBrowserDomTreeDelegate : public QStyledItemDelegate {
   explicit CBrowserDomTreeDelegate(CBrowserDomTree *tree);
 
   void paint(QPainter *painter, const QStyleOptionViewItem &option,
-             const QModelIndex &index) const;
+             const QModelIndex &index) const override;
 
-  QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+  QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
  private:
   CBrowserDomTree *tree_ { nullptr };
@@ -161,7 +161,7 @@ selectionChanged(const QItemSelection &selected, const QItemSelection &deselecte
 
 CBrowserDomTreeModel::
 CBrowserDomTreeModel(CBrowserDomTree *tree) :
- QAbstractItemModel(0), tree_(tree)
+ QAbstractItemModel(nullptr), tree_(tree)
 {
 }
 

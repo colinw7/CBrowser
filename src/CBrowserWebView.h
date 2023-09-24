@@ -9,7 +9,7 @@ class CBrowserWebView : public QFrame {
   Q_OBJECT
 
  public:
-  explicit CBrowserWebView(QWidget *parent=0);
+  explicit CBrowserWebView(QWidget *parent=nullptr);
 
   void setFilename(const std::string &filename);
 

@@ -7,11 +7,11 @@ class CBrowserMeta : public CBrowserObject {
  public:
   explicit CBrowserMeta(CBrowserWindow *window);
 
-  void init();
+  void init() override;
 
-  std::string propertyValue(int i) const;
+  std::string propertyValue(int i) const override;
 
-  void setNameValue(const std::string &name, const std::string &value);
+  void setNameValue(const std::string &name, const std::string &value) override;
 
  private:
   CBrowserMetaData data_;

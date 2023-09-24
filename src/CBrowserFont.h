@@ -534,7 +534,7 @@ class CBrowserFont {
     else   fontStyle_ &= ~CFONT_STYLE_SUPERSCRIPT;
   }
 
-  CFontPtr font(const CBrowserObject *obj=0) const;
+  CFontPtr font(const CBrowserObject *obj=nullptr) const;
 
  private:
   std::string fontFamily(const CBrowserObject *pobj) const;

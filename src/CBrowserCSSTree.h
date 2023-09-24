@@ -37,7 +37,7 @@ class CBrowserCSSTree : public QTreeView {
   void setInd(int i);
 
  private slots:
-  void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+  void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
 
  private:
   CBrowserCSSTreeDlg* dlg_    { nullptr };

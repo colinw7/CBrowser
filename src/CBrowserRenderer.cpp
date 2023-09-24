@@ -11,7 +11,7 @@
 
 CBrowserRenderer::
 CBrowserRenderer(CBrowserWindowWidget *w) :
- w_(w), pixmap_(0), painter_(0)
+ w_(w), pixmap_(nullptr), painter_(nullptr)
 {
   pixmap_width_  = 0;
   pixmap_height_ = 0;

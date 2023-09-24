@@ -3,6 +3,9 @@
 #include <CQSVGFontObj.h>
 #include <CSVGFontDef.h>
 #include <CQUtil.h>
+#include <CQUtilRGBA.h>
+#include <CQUtilGeom.h>
+#include <CQUtilGradient.h>
 #include <CLinearGradient.h>
 #include <CRadialGradient.h>
 #include <QPainterPath>
@@ -764,12 +767,12 @@ setFillGradient(CGenGradient *g)
 
   painter_->setBrushOrigin(QPointF(0,0));
 
-  const CLinearGradient *lg = 0;
-  const CRadialGradient *rg = 0;
+  const CLinearGradient *lg = nullptr;
+  const CRadialGradient *rg = nullptr;
 
-  if      ((lg = dynamic_cast<const CLinearGradient *>(g)) != 0)
+  if      ((lg = dynamic_cast<const CLinearGradient *>(g)) != nullptr)
     fillBrush_ = QBrush(CQUtil::toQGradient(lg, QGradient::LogicalMode));
-  else if ((rg = dynamic_cast<const CRadialGradient *>(g)) != 0)
+  else if ((rg = dynamic_cast<const CRadialGradient *>(g)) != nullptr)
     fillBrush_ = QBrush(CQUtil::toQGradient(rg, QGradient::LogicalMode));
 
   painter_->setBrush(fillBrush_);
@@ -824,14 +827,14 @@ setStrokeFillGradient(CGenGradient *g)
 {
   assert(drawing_);
 
-  painter_->setBrushOrigin(QPointF(0,0));
+  painter_->setBrushOrigin(QPointF(0, 0));
 
-  const CLinearGradient *lg = 0;
-  const CRadialGradient *rg = 0;
+  const CLinearGradient *lg = nullptr;
+  const CRadialGradient *rg = nullptr;
 
-  if      ((lg = dynamic_cast<const CLinearGradient *>(g)) != 0)
+  if      ((lg = dynamic_cast<const CLinearGradient *>(g)) != nullptr)
     strokeBrush_ = QBrush(CQUtil::toQGradient(lg, QGradient::LogicalMode));
-  else if ((rg = dynamic_cast<const CRadialGradient *>(g)) != 0)
+  else if ((rg = dynamic_cast<const CRadialGradient *>(g)) != nullptr)
     strokeBrush_ = QBrush(CQUtil::toQGradient(rg, QGradient::LogicalMode));
 
   painter_->setBrush(strokeBrush_);

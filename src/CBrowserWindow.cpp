@@ -103,7 +103,7 @@ reset()
   linkMgr_ = new CBrowserLinkMgr(this);
   fileMgr_ = new CBrowserFileMgr(this);
 
-  rootObject_ = 0;
+  rootObject_ = nullptr;
 
   idObjects_  .clear();
   objStack_   .clear();
@@ -337,7 +337,7 @@ currentObj() const
   if (! objStack_.empty())
     return objStack_.back();
   else
-    return 0;
+    return nullptr;
 }
 
 CBrowserObject *

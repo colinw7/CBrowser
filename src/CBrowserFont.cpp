@@ -61,7 +61,7 @@ fontSize(const CBrowserObject *obj) const
 
   // inherit from parent
   if (size.type() == CBrowserFontSize::Type::INHERIT) {
-    CBrowserObject *parent = (obj ? obj->parent() : 0);
+    CBrowserObject *parent = (obj ? obj->parent() : nullptr);
 
     return fontSize(parent);
   }
@@ -72,7 +72,7 @@ fontSize(const CBrowserObject *obj) const
   int relSize = 0;
 
   if (size.isRelative()) {
-    CBrowserObject *parent = (obj ? obj->parent() : 0);
+    CBrowserObject *parent = (obj ? obj->parent() : nullptr);
 
     relSize = fontSize(parent);
   }

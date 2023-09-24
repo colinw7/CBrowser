@@ -50,11 +50,11 @@ class CBrowserMainWindow : public CQMainWindow {
   void setReady();
 
  private:
-  QWidget *createCentralWidget();
+  QWidget *createCentralWidget() override;
 
-  void createMenus();
-  void createToolBars();
-  void createStatusBar();
+  void createMenus() override;
+  void createToolBars() override;
+  void createStatusBar() override;
 
  public slots:
   void inputSlot();
