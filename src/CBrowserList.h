@@ -71,7 +71,7 @@ class CBrowserListStyleType {
 
 class CBrowserList : public CBrowserObject {
  public:
-  CBrowserList(CBrowserWindow *window, CHtmlTagId id);
+  CBrowserList(CBrowserWindowIFace *window, CHtmlTagId id);
 
   const std::string &getSymbol() const { return data_.symbol; }
   void setSymbol(const std::string &symbol) { data_.symbol = symbol; }

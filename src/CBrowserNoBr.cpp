@@ -2,7 +2,7 @@
 #include <CBrowserWindow.h>
 
 CBrowserNoBr::
-CBrowserNoBr(CBrowserWindow *window) :
+CBrowserNoBr(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::NOBR)
 {
   setDisplay(Display::INLINE);

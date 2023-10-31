@@ -17,7 +17,7 @@ class CBrowserHtmlFileMgr : public CHtmlFileMgr {
 };
 
 CBrowserFileMgr::
-CBrowserFileMgr(CBrowserWindow *window) :
+CBrowserFileMgr(CBrowserWindowIFace *window) :
  window_(window)
 {
 }
@@ -26,9 +26,9 @@ bool
 CBrowserFileMgr::
 readURL(const CUrl &url, CHtmlParserTokens &tokens)
 {
-  std::string prefix = url.getPrefix();
-  std::string file   = url.getFile();
-  std::string target = url.getTarget();
+  auto prefix = url.getPrefix();
+  auto file   = url.getFile();
+  auto target = url.getTarget();
 
   if      (prefix == "ceil") {
     readScript(file, tokens);
@@ -44,7 +44,8 @@ readURL(const CUrl &url, CHtmlParserTokens &tokens)
 #endif
 
     if (! CFile::exists(filename)) {
-      window_->errorDialog("File '" + filename + "' does not exist");
+      window_->errorDialog(QString("File '%1' does not exist").
+        arg(QString::fromStdString(filename)));
       return false;
     }
 
@@ -62,7 +63,7 @@ readURL(const CUrl &url, CHtmlParserTokens &tokens)
     return false;
 
   if (target != "")
-    window_->setTarget(target);
+    window_->setTarget(QString::fromStdString(target));
 
   return true;
 }

@@ -8,7 +8,7 @@ class CHtmlParserTokens;
 
 class CBrowserFileMgr {
  public:
-  explicit CBrowserFileMgr(CBrowserWindow *window);
+  explicit CBrowserFileMgr(CBrowserWindowIFace *window);
 
   bool readURL(const CUrl &url, CHtmlParserTokens &tokens);
 
@@ -35,7 +35,7 @@ class CBrowserFileMgr {
   bool readHTMLFile(const std::string &filename, CHtmlParserTokens &tokens);
 
  private:
-  CBrowserWindow *window_ { nullptr };
+  CBrowserWindowIFace *window_ { nullptr };
 };
 
 #endif

@@ -1,37 +1,21 @@
 #include <CBrowserGraphics.h>
 #include <CBrowserWindowWidget.h>
+#include <CBrowserScrolledWindow.h>
+#include <CBrowserMainWindow.h>
+#include <CBrowserMain.h>
+#include <CBrowserPrintRenderer.h>
+
 #include <CFontMgr.h>
 #include <CPrint.h>
 
 #include <QImage>
 #include <QPainter>
 
-#define COURIER_N    "Courier"
-#define COURIER_B    "Courier-Bold"
-#define COURIER_I    "Courier-Oblique"
-#define COURIER_BI   "Courier-BoldOblique"
-#define HELVETICA_N  "Helvetica"
-#define HELVETICA_B  "Helvetica-Bold"
-#define HELVETICA_I  "Helvetica-Oblique"
-#define HELVETICA_BI "Helvetica-BoldOblique"
-#define TIMES_N      "Times-Roman"
-#define TIMES_B      "Times-Bold"
-#define TIMES_I      "Times-Italic"
-#define TIMES_BI     "Times-BoldItalic"
-
-#define ALPHABET_UPPER_LOWER \
-  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-
 CBrowserGraphics::
-CBrowserGraphics(CBrowserWindowWidget *w) :
+CBrowserGraphics(CBrowserWindowWidgetIFace *w) :
  w_(w)
 {
-  current_device_ = CBrowserDeviceType::X;
-  print_device_   = nullptr;
-
-  //-----
-
-  renderer_ = new CBrowserRenderer(w_);
+  setDeviceType(CBrowserDeviceType::X);
 }
 
 CBrowserGraphics::
@@ -57,67 +41,72 @@ void
 CBrowserGraphics::
 setXDevice()
 {
-  current_device_ = CBrowserDeviceType::X;
-
-  if (print_device_) {
-    print_device_->term();
-
-    delete print_device_;
-
-    print_device_ = nullptr;
-  }
+  setDeviceType(CBrowserDeviceType::X);
 }
 
 void
 CBrowserGraphics::
 setPSDevice(double xmin, double ymin, double xmax, double ymax)
 {
-  current_device_ = CBrowserDeviceType::PS;
-  print_device_   = new CPrint();
+  setDeviceType(CBrowserDeviceType::PS);
 
-  print_device_->setFilename("/tmp/ps.out");
+  auto *printRenderer = dynamic_cast<CBrowserPrintRenderer *>(renderer_);
 
-  print_device_->setSize(xmin, ymin, xmax, ymax);
+  printRenderer->setRange(xmin, ymin, xmax, ymax);
+}
 
-  print_device_->init();
+void
+CBrowserGraphics::
+setDeviceType(const CBrowserDeviceType &deviceType)
+{
+  CBrowserRenderer *renderer;
+
+  if (deviceType == CBrowserDeviceType::X)
+    renderer = new CBrowserRenderer(w_);
+  else
+    renderer = new CBrowserPrintRenderer(w_);
+
+  setRenderer(renderer);
+}
+
+void
+CBrowserGraphics::
+setRenderer(CBrowserRenderer *renderer)
+{
+  if (renderer_)
+    renderer_->term();
+
+  delete renderer_;
+
+  renderer_ = renderer;
+
+  renderer_->init();
 }
 
 void
 CBrowserGraphics::
 clear(const CRGBA &bg)
 {
-  int width  = w_->width ();
-  int height = w_->height();
+  int width  = w_->windowWidth ();
+  int height = w_->windowHeight();
 
-  if      (current_device_ == CBrowserDeviceType::X)
-    renderer_->clear(bg);
-  else if (current_device_ == CBrowserDeviceType::PS) {
-    print_device_->setForeground(bg);
+  renderer_->setSize(width, height);
 
-    print_device_->fillRectangle(0, 0, width, height);
-  }
+  renderer_->clear(bg);
 }
 
 void
 CBrowserGraphics::
 drawImage(int x, int y, const CImagePtr &image)
 {
-  if      (current_device_ == CBrowserDeviceType::X)
-    renderer_->drawImage(CIPoint2D(x, y), image);
-  else if (current_device_ == CBrowserDeviceType::PS)
-    print_device_->drawImage(image, x, y);
+  renderer_->drawImage(CIPoint2D(x, y), image);
 }
 
 void
 CBrowserGraphics::
 drawImage(int x, int y, const QImage &image)
 {
-  if      (current_device_ == CBrowserDeviceType::X)
-    renderer_->drawImage(CIPoint2D(x, y), image);
-#if 0
-  else if (current_device_ == CBrowserDeviceType::PS)
-    print_device_->drawImage(image, x, y);
-#endif
+  renderer_->drawImage(CIPoint2D(x, y), image);
 }
 
 void
@@ -135,102 +124,49 @@ void
 CBrowserGraphics::
 drawRectangle(int x, int y, int width, int height, const CPen &pen)
 {
-  if      (current_device_ == CBrowserDeviceType::X)
-    renderer_->drawRectangle(CIBBox2D(CIPoint2D(x, y), CISize2D(width, height)), pen);
-  else if (current_device_ == CBrowserDeviceType::PS) {
-    print_device_->setForeground(pen.getColor());
-
-    print_device_->drawRectangle(x, y, x + width, y + height);
-  }
+  renderer_->drawRectangle(CIBBox2D(CIPoint2D(x, y), CISize2D(width, height)), pen);
 }
 
 void
 CBrowserGraphics::
 fillRectangle(int x, int y, int width, int height, const CBrush &brush)
 {
-  if      (current_device_ == CBrowserDeviceType::X)
-    renderer_->fillRectangle(CIBBox2D(CIPoint2D(x, y), CISize2D(width, height)), brush);
-  else if (current_device_ == CBrowserDeviceType::PS) {
-    print_device_->setForeground(brush.getColor());
-
-    print_device_->fillRectangle(x, y, x + width, y + height);
-  }
+  renderer_->fillRectangle(CIBBox2D(CIPoint2D(x, y), CISize2D(width, height)), brush);
 }
 
 void
 CBrowserGraphics::
 fillPolygon(const std::vector<CIPoint2D> &points, const CBrush &brush)
 {
-  if      (current_device_ == CBrowserDeviceType::X)
-    renderer_->fillPolygon(points, brush);
-  else if (current_device_ == CBrowserDeviceType::PS) {
-    print_device_->setForeground(brush.getColor());
-
-    std::vector<double> x, y;
-
-    x.resize(points.size());
-    y.resize(points.size());
-
-    for (std::size_t i = 0; i < points.size(); ++i) {
-      x[i] = points[i].x;
-      y[i] = points[i].y;
-    }
-
-    print_device_->fillPolygon(&x[0], &y[0], x.size());
-  }
+  renderer_->fillPolygon(points, brush);
 }
 
 void
 CBrowserGraphics::
 drawCircle(int x, int y, int radius, const CPen &pen)
 {
-  if      (current_device_ == CBrowserDeviceType::X)
-    renderer_->drawCircle(CIPoint2D(x, y), radius, pen);
-  else if (current_device_ == CBrowserDeviceType::PS) {
-    print_device_->setForeground(pen.getColor());
-
-    print_device_->drawCircle(x, y, radius);
-  }
+  renderer_->drawCircle(CIPoint2D(x, y), radius, pen);
 }
 
 void
 CBrowserGraphics::
 fillCircle(int x, int y, int radius, const CBrush &brush)
 {
-  if      (current_device_ == CBrowserDeviceType::X)
-    renderer_->fillCircle(CIPoint2D(x, y), radius, brush);
-  else if (current_device_ == CBrowserDeviceType::PS) {
-    print_device_->setForeground(brush.getColor());
-
-    print_device_->fillCircle(x, y, radius);
-  }
+  renderer_->fillCircle(CIPoint2D(x, y), radius, brush);
 }
 
 void
 CBrowserGraphics::
 drawLine(int x1, int y1, int x2, int y2, const CPen &pen)
 {
-  if      (current_device_ == CBrowserDeviceType::X)
-    renderer_->drawLine(CIPoint2D(x1, y1), CIPoint2D(x2, y2), pen);
-  else if (current_device_ == CBrowserDeviceType::PS) {
-    print_device_->setForeground(pen.getColor());
-
-    print_device_->drawLine(x1, y1, x2, y2);
-  }
+  renderer_->drawLine(CIPoint2D(x1, y1), CIPoint2D(x2, y2), pen);
 }
 
 void
 CBrowserGraphics::
 drawText(int x, int y, const std::string &text, const CPen &pen, const CFontPtr &font)
 {
-  if      (current_device_ == CBrowserDeviceType::X)
-    renderer_->drawText(CIPoint2D(x, y), text, pen, font);
-  else if (current_device_ == CBrowserDeviceType::PS) {
-    print_device_->setForeground(pen.getColor());
-    print_device_->setFont(font);
-
-    print_device_->drawText(x, y, text);
-  }
+  renderer_->drawText(CIPoint2D(x, y), text, pen, font);
 }
 
 void

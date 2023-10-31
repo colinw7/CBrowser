@@ -8,7 +8,7 @@ class CQSVGRenderer;
 
 class CBrowserSVG : public CBrowserObject {
  public:
-  explicit CBrowserSVG(CBrowserWindow *window);
+  explicit CBrowserSVG(CBrowserWindowIFace *window);
 
   bool processTag(CHtmlTag *) override;
 

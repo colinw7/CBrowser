@@ -2,9 +2,10 @@
 #include <CBrowserWindow.h>
 #include <CBrowserMain.h>
 #include <CBrowserLine.h>
+#include <CBrowserGraphics.h>
 
 CBrowserBox::
-CBrowserBox(CBrowserWindow *window) :
+CBrowserBox(CBrowserWindowIFace *window) :
  window_(window)
 {
 }
@@ -71,7 +72,7 @@ layout()
 
   // add our width if inline and not break
   if (isInline() && ! isBreak()) {
-    CIBBox2D bbox = calcBBox();
+    auto bbox = calcBBox();
 
     x += bbox.getWidth();
   }
@@ -321,14 +322,16 @@ render(int dx, int dy)
                       content().getWidth () + padding().width () + border().width (),
                       content().getHeight() + padding().height() + border().height());
 
-  if (CBrowserMainInst->getShowBoxes()) {
-    CPen pen1(CRGBA(1,0,0));
+  auto *graphics = window_->graphics();
 
-    window_->drawRectangle(box.x(), box.y(), box.width(), box.height(), pen1);
+  if (window_->browser()->getShowBoxes()) {
+    CPen pen1(CRGBA(1, 0, 0));
 
-    CPen pen2(CRGBA(0,1,0));
+    graphics->drawRectangle(box.x(), box.y(), box.width(), box.height(), pen1);
 
-    window_->drawRectangle(contentBox.x(), contentBox.y(),
+    CPen pen2(CRGBA(0, 1, 0));
+
+    graphics->drawRectangle(contentBox.x(), contentBox.y(),
                            content().getWidth(), content().getHeight(), pen2);
   }
 
@@ -621,7 +624,7 @@ calcHeightForWidth(CTextBox &box)
     descent = box1.descent();
   }
   else {
-    CIBBox2D bbox = calcBBox();
+    auto bbox = calcBBox();
 
     width   = bbox.getWidth ();
     ascent  = bbox.getHeight();

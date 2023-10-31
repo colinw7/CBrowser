@@ -8,7 +8,7 @@ class QMenu;
 
 class CBrowserHistory {
  public:
-  explicit CBrowserHistory(CBrowserWindow *window);
+  explicit CBrowserHistory(CBrowserWindowIFace *window);
 
  ~CBrowserHistory();
 
@@ -22,12 +22,14 @@ class CBrowserHistory {
   int goTo(const CUrl &url);
 
  private:
-  typedef std::vector<CUrl> Urls;
+  using Urls = std::vector<CUrl>;
 
-  CBrowserWindow* window_ { nullptr };
-  Urls            urls_;
-  int             url_num_ { 0 };
-  QMenu*          menu_ { nullptr };
+  CBrowserWindowIFace* window_ { nullptr };
+
+  Urls urls_;
+  int  url_num_ { 0 };
+
+  QMenu* menu_ { nullptr };
 };
 
 #endif

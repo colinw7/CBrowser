@@ -67,8 +67,8 @@ bool isParagraphObj(CBrowserObject *obj) {
   return false;
 }
 
-CBrowserParagraph *createParagraph(CBrowserWindow *window) {
-  CBrowserParagraph *paragraph = new CBrowserParagraph(window);
+CBrowserParagraph *createParagraph(CBrowserWindowIFace *window) {
+  auto *paragraph = new CBrowserParagraph(window);
 
   paragraph->init();
 
@@ -87,7 +87,7 @@ std::string tagName(const CHtmlTag *tag) {
 //------
 
 void
-CBrowserFlushObj(CBrowserWindow *window, CHtmlTag *tag, bool handleEmpty)
+CBrowserFlushObj(CBrowserWindowIFace *window, CHtmlTag *tag, bool handleEmpty)
 {
   CBrowserObject *currentObj = window->currentObj();
 
@@ -104,8 +104,8 @@ CBrowserFlushObj(CBrowserWindow *window, CHtmlTag *tag, bool handleEmpty)
     }
   }
 
-std::cerr << "Flush Tag '" << currentObj->typeName() << "' for '" <<
-             tag->getName() << "'" << std::endl;
+  //std::cerr << "Flush Tag '" << currentObj->typeName() <<
+  //             "' for '" << tag->getName() << "'" << "\n";
 
   //---
 
@@ -123,7 +123,7 @@ std::cerr << "Flush Tag '" << currentObj->typeName() << "' for '" <<
 }
 
 bool
-CBrowserIsTagOpen(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserIsTagOpen(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserObject *obj = window->currentObj();
 
@@ -135,7 +135,7 @@ CBrowserIsTagOpen(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserFlushTags(CBrowserWindow *window, CHtmlTag *tag, CHtmlTagId id, bool flushFound=false)
+CBrowserFlushTags(CBrowserWindowIFace *window, CHtmlTag *tag, CHtmlTagId id, bool flushFound=false)
 {
   CBrowserObject *currentObj = window->currentObj();
 
@@ -160,7 +160,7 @@ CBrowserFlushTags(CBrowserWindow *window, CHtmlTag *tag, CHtmlTagId id, bool flu
 
 #if 0
 void
-CBrowserFlushBlock(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserFlushBlock(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserObject *currentObj = window->currentObj();
 
@@ -178,7 +178,7 @@ CBrowserFlushBlock(CBrowserWindow *window, CHtmlTag *tag)
 #endif
 
 void
-CBrowserFlushText(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserFlushText(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserObject *currentObj = window->currentObj();
 
@@ -187,7 +187,7 @@ CBrowserFlushText(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 void
-CBrowserFlushParagraph(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserFlushParagraph(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
@@ -205,7 +205,7 @@ CBrowserFlushParagraph(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserAutoStartParagraph(CBrowserWindow *window)
+CBrowserAutoStartParagraph(CBrowserWindowIFace *window)
 {
   CBrowserObject *currentObj = window->currentObj();
 
@@ -235,7 +235,7 @@ CBrowserInitTag(CBrowserObject *obj, CHtmlTag *tag)
 //------
 
 CBrowserOutput::
-CBrowserOutput(CBrowserWindow *window) :
+CBrowserOutput(CBrowserWindowIFace *window) :
  window_(window)
 {
 }
@@ -329,7 +329,7 @@ processTag(CHtmlTag *tag)
     CBrowserObject *root = window_->rootObject();
 
     if (! root) {
-      CBrowserHtml *html = new CBrowserHtml(window_);
+      auto *html = new CBrowserHtml(window_);
 
       html->init();
 
@@ -351,7 +351,7 @@ processTag(CHtmlTag *tag)
   if (tag->isStartTag()) {
     CBrowserObject::Display d = CBrowserObject::Display::INVALID;
 
-    CBrowserWindow::NameValues nameValues;
+    CBrowserWindowIFace::NameValues nameValues;
 
     window_->getTagNameValues(tag, nameValues);
 
@@ -429,31 +429,31 @@ processText(CHtmlText *text)
       window_->displayError("Ignore text '%s' for head tag\n", str.c_str());
   }
   else if (currentObj->type() == CHtmlTagId::TITLE) {
-    window_->getDocument()->setTitle(sstr);
+    window_->getDocument()->setTitle(QString::fromStdString(sstr));
   }
   else if (currentObj->type() == CHtmlTagId::SCRIPT) {
-    CBrowserScript *script = dynamic_cast<CBrowserScript *>(currentObj);
+    auto *script = dynamic_cast<CBrowserScript *>(currentObj);
 
     script->setText(script->text() + str);
   }
   else if (currentObj->type() == CHtmlTagId::STYLE) {
-    CBrowserCSSStyle *style = dynamic_cast<CBrowserCSSStyle *>(currentObj);
+    auto *style = dynamic_cast<CBrowserCSSStyle *>(currentObj);
 
     style->setText(style->text() + str);
   }
   else if (currentObj->type() == CHtmlTagId::OPTION) {
-    CBrowserFormOption *option = dynamic_cast<CBrowserFormOption *>(currentObj);
+    auto *option = dynamic_cast<CBrowserFormOption *>(currentObj);
 
     if (sstr != "")
       option->setText(option->text() + sstr);
   }
   else if (currentObj->type() == CHtmlTagId::TEXTAREA) {
-    CBrowserFormTextarea *textArea = dynamic_cast<CBrowserFormTextarea *>(currentObj);
+    auto *textArea = dynamic_cast<CBrowserFormTextarea *>(currentObj);
 
     textArea->setText(textArea->text() + str);
   }
   else if (currentObj->type() == CHtmlTagId::BUTTON) {
-    CBrowserFormButton *button = dynamic_cast<CBrowserFormButton *>(currentObj);
+    auto *button = dynamic_cast<CBrowserFormButton *>(currentObj);
 
     button->setLabel(str);
   }
@@ -483,7 +483,7 @@ void
 CBrowserOutput::
 processStartTag(CHtmlTag *tag, CBrowserOutputTagBase *output_data)
 {
-//std::cerr << "start '" << tag->getName() << "'" << std::endl;
+//std::cerr << "start '" << tag->getName() << "'\n";
 
   // initialize object from tag options
   CBrowserObject *obj = output_data->start(window_, tag);
@@ -515,7 +515,7 @@ void
 CBrowserOutput::
 processEndTag(CHtmlTag *tag, CBrowserOutputTagBase *output_data)
 {
-//std::cerr << "end '" << tag->getName() << "'" << std::endl;
+//std::cerr << "end '" << tag->getName() << "'\n";
 
   if (tag->isEmpty()) {
     window_->displayError("Unexpected End Tag '%s' for empty tag.\n", tagName(tag).c_str());
@@ -563,7 +563,7 @@ processEndTag(CHtmlTag *tag, CBrowserOutputTagBase *output_data)
 //------
 
 CBrowserObject *
-CBrowserOutputATag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputATag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
@@ -573,7 +573,7 @@ CBrowserOutputATag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserAnchor *link = new CBrowserAnchor(window);
+  auto *link = new CBrowserAnchor(window);
 
   CBrowserInitTag(link, tag);
 
@@ -583,9 +583,9 @@ CBrowserOutputATag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputAbbrTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputAbbrTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::ABBR);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::ABBR);
 
   CBrowserInitTag(obj, tag);
 
@@ -597,9 +597,9 @@ CBrowserOutputAbbrTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputAcronymTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputAcronymTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::ACRONYM);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::ACRONYM);
 
   CBrowserInitTag(obj, tag);
 
@@ -609,9 +609,9 @@ CBrowserOutputAcronymTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputAddressTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputAddressTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserAddress *address = new CBrowserAddress(window);
+  auto *address = new CBrowserAddress(window);
 
   CBrowserInitTag(address, tag);
 
@@ -621,9 +621,9 @@ CBrowserOutputAddressTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputAppletTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputAppletTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::APPLET);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::APPLET);
 
   obj->setDisplay(CBrowserObject::Display::INLINE);
 
@@ -635,9 +635,9 @@ CBrowserOutputAppletTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputAreaTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputAreaTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserArea *area = new CBrowserArea(window);
+  auto *area = new CBrowserArea(window);
 
   CBrowserInitTag(area, tag);
 
@@ -647,9 +647,9 @@ CBrowserOutputAreaTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputArticleTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputArticleTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::ARTICLE);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::ARTICLE);
 
   CBrowserInitTag(obj, tag);
 
@@ -659,9 +659,9 @@ CBrowserOutputArticleTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputASideTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputASideTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::ASIDE);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::ASIDE);
 
   CBrowserInitTag(obj, tag);
 
@@ -671,9 +671,9 @@ CBrowserOutputASideTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputAudioTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputAudioTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::AUDIO);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::AUDIO);
 
   CBrowserInitTag(obj, tag);
 
@@ -683,7 +683,7 @@ CBrowserOutputAudioTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputBTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputBTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
@@ -691,7 +691,7 @@ CBrowserOutputBTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserBStyle *style = new CBrowserBStyle(window);
+  auto *style = new CBrowserBStyle(window);
 
   CBrowserInitTag(style, tag);
 
@@ -701,9 +701,9 @@ CBrowserOutputBTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputBaseTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputBaseTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::BASE);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::BASE);
 
   CBrowserInitTag(obj, tag);
 
@@ -713,13 +713,13 @@ CBrowserOutputBaseTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputBasefontTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputBasefontTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
   //---
 
-  CBrowserBaseFont *baseFont = new CBrowserBaseFont(window);
+  auto *baseFont = new CBrowserBaseFont(window);
 
   //---
 
@@ -731,9 +731,9 @@ CBrowserOutputBasefontTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputBdiTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputBdiTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::BDI);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::BDI);
 
   CBrowserInitTag(obj, tag);
 
@@ -743,9 +743,9 @@ CBrowserOutputBdiTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputBdoTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputBdoTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::BDO);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::BDO);
 
   CBrowserInitTag(obj, tag);
 
@@ -755,13 +755,13 @@ CBrowserOutputBdoTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputBigTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputBigTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
   //---
 
-  CBrowserBigStyle *style = new CBrowserBigStyle(window);
+  auto *style = new CBrowserBigStyle(window);
 
   CBrowserInitTag(style, tag);
 
@@ -771,13 +771,13 @@ CBrowserOutputBigTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputBlinkTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputBlinkTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
   //---
 
-  CBrowserBlinkStyle *style = new CBrowserBlinkStyle(window);
+  auto *style = new CBrowserBlinkStyle(window);
 
   CBrowserInitTag(style, tag);
 
@@ -787,9 +787,9 @@ CBrowserOutputBlinkTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputBlockquoteTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputBlockquoteTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserBlockQuote *blockQuote = new CBrowserBlockQuote(window);
+  auto *blockQuote = new CBrowserBlockQuote(window);
 
   //---
 
@@ -801,9 +801,9 @@ CBrowserOutputBlockquoteTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputBodyTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputBodyTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserBody *body = new CBrowserBody(window);
+  auto *body = new CBrowserBody(window);
 
   //---
 
@@ -815,13 +815,13 @@ CBrowserOutputBodyTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputBrTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputBrTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
   //---
 
-  CBrowserBreak *breaker = new CBrowserBreak(window);
+  auto *breaker = new CBrowserBreak(window);
 
   //---
 
@@ -833,9 +833,9 @@ CBrowserOutputBrTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputButtonTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputButtonTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserFormButton(window);
+  auto *obj = new CBrowserFormButton(window);
 
   CBrowserInitTag(obj, tag);
 
@@ -845,9 +845,9 @@ CBrowserOutputButtonTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputCanvasTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputCanvasTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserCanvas *canvas = new CBrowserCanvas(window);
+  auto *canvas = new CBrowserCanvas(window);
 
   //---
 
@@ -859,9 +859,9 @@ CBrowserOutputCanvasTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputCaptionTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputCaptionTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserTableCaption *caption = new CBrowserTableCaption(window);
+  auto *caption = new CBrowserTableCaption(window);
 
   //---
 
@@ -873,12 +873,12 @@ CBrowserOutputCaptionTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputCenterTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputCenterTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   // TODO
   //CBrowserFlushParagraph(window, tag);
 
-  CBrowserCenter *center = new CBrowserCenter(window);
+  auto *center = new CBrowserCenter(window);
 
   //---
 
@@ -890,13 +890,13 @@ CBrowserOutputCenterTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputCiteTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputCiteTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
   //---
 
-  CBrowserCiteStyle *style = new CBrowserCiteStyle(window);
+  auto *style = new CBrowserCiteStyle(window);
 
   CBrowserInitTag(style, tag);
 
@@ -906,13 +906,13 @@ CBrowserOutputCiteTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputCodeTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputCodeTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
   //---
 
-  CBrowserCode *code = new CBrowserCode(window);
+  auto *code = new CBrowserCode(window);
 
   //---
 
@@ -924,7 +924,7 @@ CBrowserOutputCodeTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputDdTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputDdTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
@@ -941,7 +941,7 @@ CBrowserOutputDdTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserDataListData *dd = new CBrowserDataListData(window);
+  auto *dd = new CBrowserDataListData(window);
 
   CBrowserInitTag(dd, tag);
 
@@ -951,9 +951,9 @@ CBrowserOutputDdTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputDelTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputDelTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::DEL);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::DEL);
 
   CBrowserInitTag(obj, tag);
 
@@ -963,9 +963,9 @@ CBrowserOutputDelTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputDetailsTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputDetailsTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::DETAILS);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::DETAILS);
 
   CBrowserInitTag(obj, tag);
 
@@ -975,13 +975,13 @@ CBrowserOutputDetailsTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputDfnTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputDfnTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
   //---
 
-  CBrowserDfnStyle *dfn = new CBrowserDfnStyle(window);
+  auto *dfn = new CBrowserDfnStyle(window);
 
   //---
 
@@ -993,7 +993,7 @@ CBrowserOutputDfnTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputDirTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputDirTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserObject *currentObj = window->currentObj();
 
@@ -1002,7 +1002,7 @@ CBrowserOutputDirTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserList *list = new CBrowserList(window, CHtmlTagId::DIR);
+  auto *list = new CBrowserList(window, CHtmlTagId::DIR);
 
   //---
 
@@ -1014,9 +1014,9 @@ CBrowserOutputDirTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputDivTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputDivTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserDiv *div = new CBrowserDiv(window);
+  auto *div = new CBrowserDiv(window);
 
   //---
 
@@ -1028,7 +1028,7 @@ CBrowserOutputDivTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputDlTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputDlTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserObject *currentObj = window->currentObj();
 
@@ -1037,7 +1037,7 @@ CBrowserOutputDlTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserList *list = new CBrowserList(window, CHtmlTagId::DL);
+  auto *list = new CBrowserList(window, CHtmlTagId::DL);
 
   //---
 
@@ -1049,7 +1049,7 @@ CBrowserOutputDlTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 void
-CBrowserOutputDlTag::term(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputDlTag::term(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserObject *currentObj = window->currentObj();
 
@@ -1062,7 +1062,7 @@ CBrowserOutputDlTag::term(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputDtTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputDtTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
@@ -1079,7 +1079,7 @@ CBrowserOutputDtTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserDataListTerm *dt = new CBrowserDataListTerm(window);
+  auto *dt = new CBrowserDataListTerm(window);
 
   //---
 
@@ -1091,13 +1091,13 @@ CBrowserOutputDtTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputEmTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputEmTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
   //---
 
-  CBrowserEmStyle *style = new CBrowserEmStyle(window);
+  auto *style = new CBrowserEmStyle(window);
 
   CBrowserInitTag(style, tag);
 
@@ -1107,9 +1107,9 @@ CBrowserOutputEmTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputFieldSetTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputFieldSetTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::FIELDSET);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::FIELDSET);
 
   CBrowserInitTag(obj, tag);
 
@@ -1119,13 +1119,13 @@ CBrowserOutputFieldSetTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputFontTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputFontTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
   //---
 
-  CBrowserFontStyleObj *font = new CBrowserFontStyleObj(window);
+  auto *font = new CBrowserFontStyleObj(window);
 
   //---
 
@@ -1137,9 +1137,9 @@ CBrowserOutputFontTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputFooterTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputFooterTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::FOOTER);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::FOOTER);
 
   CBrowserInitTag(obj, tag);
 
@@ -1149,9 +1149,9 @@ CBrowserOutputFooterTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputFormTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputFormTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserForm *form = new CBrowserForm(window);
+  auto *form = new CBrowserForm(window);
 
   //---
 
@@ -1163,9 +1163,9 @@ CBrowserOutputFormTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputH1Tag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputH1Tag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H1);
+  auto *header = new CBrowserHeader(window, CHtmlTagId::H1);
 
   //---
 
@@ -1177,9 +1177,9 @@ CBrowserOutputH1Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputH2Tag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputH2Tag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H2);
+  auto *header = new CBrowserHeader(window, CHtmlTagId::H2);
 
   //---
 
@@ -1191,9 +1191,9 @@ CBrowserOutputH2Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputH3Tag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputH3Tag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H3);
+  auto *header = new CBrowserHeader(window, CHtmlTagId::H3);
 
   //---
 
@@ -1205,9 +1205,9 @@ CBrowserOutputH3Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputH4Tag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputH4Tag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H4);
+  auto *header = new CBrowserHeader(window, CHtmlTagId::H4);
 
   //---
 
@@ -1219,9 +1219,9 @@ CBrowserOutputH4Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputH5Tag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputH5Tag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H5);
+  auto *header = new CBrowserHeader(window, CHtmlTagId::H5);
 
   //---
 
@@ -1233,9 +1233,9 @@ CBrowserOutputH5Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputH6Tag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputH6Tag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserHeader *header = new CBrowserHeader(window, CHtmlTagId::H6);
+  auto *header = new CBrowserHeader(window, CHtmlTagId::H6);
 
   //---
 
@@ -1247,9 +1247,9 @@ CBrowserOutputH6Tag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputHeadTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputHeadTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserHead *head = new CBrowserHead(window);
+  auto *head = new CBrowserHead(window);
 
   //---
 
@@ -1261,9 +1261,9 @@ CBrowserOutputHeadTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputHeaderTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputHeaderTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::HEADER);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::HEADER);
 
   CBrowserInitTag(obj, tag);
 
@@ -1273,9 +1273,9 @@ CBrowserOutputHeaderTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputHGroupTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputHGroupTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::HGROUP);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::HGROUP);
 
   CBrowserInitTag(obj, tag);
 
@@ -1285,9 +1285,9 @@ CBrowserOutputHGroupTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputHrTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputHrTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserRule *rule = new CBrowserRule(window);
+  auto *rule = new CBrowserRule(window);
 
   //---
 
@@ -1299,9 +1299,9 @@ CBrowserOutputHrTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputHtmlTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputHtmlTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserHtml *html = new CBrowserHtml(window);
+  auto *html = new CBrowserHtml(window);
 
   //---
 
@@ -1313,7 +1313,7 @@ CBrowserOutputHtmlTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputITag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputITag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
@@ -1323,7 +1323,7 @@ CBrowserOutputITag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserIStyle *style = new CBrowserIStyle(window);
+  auto *style = new CBrowserIStyle(window);
 
   CBrowserInitTag(style, tag);
 
@@ -1333,9 +1333,9 @@ CBrowserOutputITag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputIFrameTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputIFrameTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserIFrame *iframe = new CBrowserIFrame(window);
+  auto *iframe = new CBrowserIFrame(window);
 
   CBrowserInitTag(iframe, tag);
 
@@ -1345,9 +1345,9 @@ CBrowserOutputIFrameTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputInsTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputInsTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::INS);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::INS);
 
   CBrowserInitTag(obj, tag);
 
@@ -1357,7 +1357,7 @@ CBrowserOutputInsTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputImgTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputImgTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
@@ -1367,7 +1367,7 @@ CBrowserOutputImgTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserImage *image = new CBrowserImage(window);
+  auto *image = new CBrowserImage(window);
 
   //---
 
@@ -1379,7 +1379,7 @@ CBrowserOutputImgTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputInputTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputInputTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
@@ -1456,13 +1456,13 @@ CBrowserOutputInputTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputKbdTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputKbdTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
   //---
 
-  CBrowserKbd *kbd = new CBrowserKbd(window);
+  auto *kbd = new CBrowserKbd(window);
 
   //---
 
@@ -1474,9 +1474,9 @@ CBrowserOutputKbdTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputLabelTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputLabelTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::LABEL);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::LABEL);
 
   obj->setDisplay(CBrowserObject::Display::INLINE);
 
@@ -1490,9 +1490,9 @@ CBrowserOutputLabelTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputLegendTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputLegendTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::LEGEND);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::LEGEND);
 
   //---
 
@@ -1504,7 +1504,7 @@ CBrowserOutputLegendTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputLiTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputLiTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
@@ -1517,7 +1517,7 @@ CBrowserOutputLiTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserListItem *listItem = new CBrowserListItem(window);
+  auto *listItem = new CBrowserListItem(window);
 
   //---
 
@@ -1529,9 +1529,9 @@ CBrowserOutputLiTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputLinkTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputLinkTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserLink *link = new CBrowserLink(window);
+  auto *link = new CBrowserLink(window);
 
   //---
 
@@ -1543,9 +1543,9 @@ CBrowserOutputLinkTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputMapTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputMapTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::MAP);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::MAP);
 
   obj->setDisplay(CBrowserObject::Display::INLINE);
 
@@ -1559,7 +1559,7 @@ CBrowserOutputMapTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputMenuTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputMenuTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserObject *currentObj = window->currentObj();
 
@@ -1568,7 +1568,7 @@ CBrowserOutputMenuTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserList *list = new CBrowserList(window, CHtmlTagId::MENU);
+  auto *list = new CBrowserList(window, CHtmlTagId::MENU);
 
   //---
 
@@ -1580,9 +1580,9 @@ CBrowserOutputMenuTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputMetaTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputMetaTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserMeta *meta = new CBrowserMeta(window);
+  auto *meta = new CBrowserMeta(window);
 
   //---
 
@@ -1594,9 +1594,9 @@ CBrowserOutputMetaTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputNavTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputNavTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::NAV);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::NAV);
 
   //---
 
@@ -1608,13 +1608,13 @@ CBrowserOutputNavTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputNobrTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputNobrTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
   //---
 
-  CBrowserNoBr *nobr = new CBrowserNoBr(window);
+  auto *nobr = new CBrowserNoBr(window);
 
   //---
 
@@ -1626,9 +1626,9 @@ CBrowserOutputNobrTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputNoScriptTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputNoScriptTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::NOSCRIPT);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::NOSCRIPT);
 
   //---
 
@@ -1640,7 +1640,7 @@ CBrowserOutputNoScriptTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputOlTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputOlTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserObject *currentObj = window->currentObj();
 
@@ -1649,7 +1649,7 @@ CBrowserOutputOlTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserList *list = new CBrowserList(window, CHtmlTagId::OL);
+  auto *list = new CBrowserList(window, CHtmlTagId::OL);
 
   //---
 
@@ -1661,7 +1661,7 @@ CBrowserOutputOlTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputOptionTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputOptionTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserObject *currentObj = window->currentObj();
 
@@ -1688,7 +1688,7 @@ CBrowserOutputOptionTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserFormOption *option = new CBrowserFormOption(window, optionData);
+  auto *option = new CBrowserFormOption(window, optionData);
 
   option->init();
 
@@ -1696,9 +1696,9 @@ CBrowserOutputOptionTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputOutputTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputOutputTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::OUTPUT);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::OUTPUT);
 
   //---
 
@@ -1710,7 +1710,7 @@ CBrowserOutputOutputTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputPTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputPTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserObject *currentObj = window->currentObj();
 
@@ -1719,7 +1719,7 @@ CBrowserOutputPTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserParagraph *paragraph = new CBrowserParagraph(window);
+  auto *paragraph = new CBrowserParagraph(window);
 
   //---
 
@@ -1731,9 +1731,9 @@ CBrowserOutputPTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputPreTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputPreTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserPre *pre = new CBrowserPre(window);
+  auto *pre = new CBrowserPre(window);
 
   //---
 
@@ -1745,9 +1745,9 @@ CBrowserOutputPreTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputSampTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputSampTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserSamp *samp = new CBrowserSamp(window);
+  auto *samp = new CBrowserSamp(window);
 
   //---
 
@@ -1759,13 +1759,13 @@ CBrowserOutputSampTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputScriptTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputScriptTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserScriptData scriptData;
 
   scriptData.type = "text/javascript";
 
-  CBrowserScript *script = new CBrowserScript(window, scriptData);
+  auto *script = new CBrowserScript(window, scriptData);
 
   //---
 
@@ -1777,9 +1777,9 @@ CBrowserOutputScriptTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputSectionTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputSectionTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::SECTION);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::SECTION);
 
   //---
 
@@ -1791,13 +1791,13 @@ CBrowserOutputSectionTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputSelectTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputSelectTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
   //---
 
-  CBrowserFormSelect *select = new CBrowserFormSelect(window);
+  auto *select = new CBrowserFormSelect(window);
 
   //---
 
@@ -1809,13 +1809,13 @@ CBrowserOutputSelectTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputSmallTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputSmallTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
   //---
 
-  CBrowserSmallStyle *style = new CBrowserSmallStyle(window);
+  auto *style = new CBrowserSmallStyle(window);
 
   CBrowserInitTag(style, tag);
 
@@ -1825,9 +1825,9 @@ CBrowserOutputSmallTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputSpanTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputSpanTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::SPAN);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::SPAN);
 
   obj->setDisplay(CBrowserObject::Display::INLINE);
 
@@ -1841,13 +1841,13 @@ CBrowserOutputSpanTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputStrikeTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputStrikeTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
   //---
 
-  CBrowserStrikeStyle *style = new CBrowserStrikeStyle(window);
+  auto *style = new CBrowserStrikeStyle(window);
 
   CBrowserInitTag(style, tag);
 
@@ -1857,13 +1857,13 @@ CBrowserOutputStrikeTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputStrongTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputStrongTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
   //---
 
-  CBrowserStrongStyle *style = new CBrowserStrongStyle(window);
+  auto *style = new CBrowserStrongStyle(window);
 
   CBrowserInitTag(style, tag);
 
@@ -1873,9 +1873,9 @@ CBrowserOutputStrongTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputStyleTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputStyleTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserCSSStyle *style = new CBrowserCSSStyle(window);
+  auto *style = new CBrowserCSSStyle(window);
 
   CBrowserInitTag(style, tag);
 
@@ -1885,13 +1885,13 @@ CBrowserOutputStyleTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputSubTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputSubTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
   //---
 
-  CBrowserSubStyle *style = new CBrowserSubStyle(window);
+  auto *style = new CBrowserSubStyle(window);
 
   CBrowserInitTag(style, tag);
 
@@ -1901,9 +1901,9 @@ CBrowserOutputSubTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputSummaryTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputSummaryTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::SUMMARY);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::SUMMARY);
 
   //---
 
@@ -1915,13 +1915,13 @@ CBrowserOutputSummaryTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputSupTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputSupTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
   //---
 
-  CBrowserSupStyle *style = new CBrowserSupStyle(window);
+  auto *style = new CBrowserSupStyle(window);
 
   CBrowserInitTag(style, tag);
 
@@ -1931,9 +1931,9 @@ CBrowserOutputSupTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputSVGTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputSVGTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserSVG *svg = new CBrowserSVG(window);
+  auto *svg = new CBrowserSVG(window);
 
   //---
 
@@ -1945,7 +1945,7 @@ CBrowserOutputSVGTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputTableTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputTableTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserTableData tableData;
 
@@ -1954,7 +1954,7 @@ CBrowserOutputTableTag::start(CBrowserWindow *window, CHtmlTag *tag)
   tableData.cell_padding = 1;
   tableData.cell_spacing = 2;
 
-  CBrowserTable *table = new CBrowserTable(window, tableData);
+  auto *table = new CBrowserTable(window, tableData);
 
   //---
 
@@ -1966,7 +1966,7 @@ CBrowserOutputTableTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputTdTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputTdTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserTableCellData cellData;
 
@@ -1974,7 +1974,7 @@ CBrowserOutputTdTag::start(CBrowserWindow *window, CHtmlTag *tag)
   cellData.colspan = 1;
   cellData.rowspan = 1;
 
-  CBrowserTableCell *cell = new CBrowserTableCell(window, CHtmlTagId::TD, cellData);
+  auto *cell = new CBrowserTableCell(window, CHtmlTagId::TD, cellData);
 
   //---
 
@@ -1986,9 +1986,9 @@ CBrowserOutputTdTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputTextareaTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputTextareaTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserFormTextarea *textArea = new CBrowserFormTextarea(window);
+  auto *textArea = new CBrowserFormTextarea(window);
 
   //---
 
@@ -2000,9 +2000,9 @@ CBrowserOutputTextareaTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputTBodyTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputTBodyTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::TBODY);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::TBODY);
 
   //---
 
@@ -2014,9 +2014,9 @@ CBrowserOutputTBodyTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputTFootTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputTFootTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::TFOOT);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::TFOOT);
 
   //---
 
@@ -2028,9 +2028,9 @@ CBrowserOutputTFootTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputTHeadTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputTHeadTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::THEAD);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::THEAD);
 
   //---
 
@@ -2042,7 +2042,7 @@ CBrowserOutputTHeadTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputThTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputThTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserTableCellData cellData;
 
@@ -2050,7 +2050,7 @@ CBrowserOutputThTag::start(CBrowserWindow *window, CHtmlTag *tag)
   cellData.colspan = 1;
   cellData.rowspan = 1;
 
-  CBrowserTableCell *cell = new CBrowserTableCell(window, CHtmlTagId::TH, cellData);
+  auto *cell = new CBrowserTableCell(window, CHtmlTagId::TH, cellData);
 
   //---
 
@@ -2062,9 +2062,9 @@ CBrowserOutputThTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputTimeTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputTimeTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserObject *obj = new CBrowserObject(window, CHtmlTagId::TIME);
+  auto *obj = new CBrowserObject(window, CHtmlTagId::TIME);
 
   //---
 
@@ -2076,9 +2076,9 @@ CBrowserOutputTimeTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputTitleTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputTitleTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserTitle *title = new CBrowserTitle(window);
+  auto *title = new CBrowserTitle(window);
 
   //---
 
@@ -2090,9 +2090,9 @@ CBrowserOutputTitleTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputTrTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputTrTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserTableRow *row = new CBrowserTableRow(window);
+  auto *row = new CBrowserTableRow(window);
 
   //---
 
@@ -2104,13 +2104,13 @@ CBrowserOutputTrTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputTtTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputTtTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
   //---
 
-  CBrowserTT *tt = new CBrowserTT(window);
+  auto *tt = new CBrowserTT(window);
 
   //---
 
@@ -2122,13 +2122,13 @@ CBrowserOutputTtTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputUTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputUTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
   //---
 
-  CBrowserUStyle *style = new CBrowserUStyle(window);
+  auto *style = new CBrowserUStyle(window);
 
   CBrowserInitTag(style, tag);
 
@@ -2138,7 +2138,7 @@ CBrowserOutputUTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputUlTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputUlTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserObject *currentObj = window->currentObj();
 
@@ -2147,7 +2147,7 @@ CBrowserOutputUlTag::start(CBrowserWindow *window, CHtmlTag *tag)
 
   //---
 
-  CBrowserList *list = new CBrowserList(window, CHtmlTagId::UL);
+  auto *list = new CBrowserList(window, CHtmlTagId::UL);
 
   //---
 
@@ -2159,13 +2159,13 @@ CBrowserOutputUlTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputVarTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputVarTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
   CBrowserFlushText(window, tag);
 
   //---
 
-  CBrowserVarStyle *style = new CBrowserVarStyle(window);
+  auto *style = new CBrowserVarStyle(window);
 
   CBrowserInitTag(style, tag);
 
@@ -2175,9 +2175,9 @@ CBrowserOutputVarTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputVideoTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputVideoTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserVideo *video = new CBrowserVideo(window);
+  auto *video = new CBrowserVideo(window);
 
   //---
 
@@ -2189,9 +2189,9 @@ CBrowserOutputVideoTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputWbrTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputWbrTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserWbr *wbr = new CBrowserWbr(window);
+  auto *wbr = new CBrowserWbr(window);
 
   //---
 
@@ -2203,9 +2203,9 @@ CBrowserOutputWbrTag::start(CBrowserWindow *window, CHtmlTag *tag)
 }
 
 CBrowserObject *
-CBrowserOutputXmpTag::start(CBrowserWindow *window, CHtmlTag *tag)
+CBrowserOutputXmpTag::start(CBrowserWindowIFace *window, CHtmlTag *tag)
 {
-  CBrowserXmp *xmp = new CBrowserXmp(window);
+  auto *xmp = new CBrowserXmp(window);
 
   //---
 

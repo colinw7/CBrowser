@@ -5,16 +5,16 @@
 
 class CBrowserDomTree;
 class CBrowserObjProp;
-class CBrowserWindow;
+class CBrowserWindowIFace;
 class QTextEdit;
 
 class CBrowserDomTreeDlg : public QWidget {
   Q_OBJECT
 
  public:
-  explicit CBrowserDomTreeDlg(CBrowserWindow *window);
+  explicit CBrowserDomTreeDlg(CBrowserWindowIFace *window);
 
-  CBrowserWindow *window() const;
+  CBrowserWindowIFace *window() const;
 
   CBrowserDomTree* domTree() const { return domTree_; }
   CBrowserObjProp* prop   () const { return prop_; }
@@ -32,16 +32,16 @@ class CBrowserDomTree : public QTreeView {
   Q_OBJECT
 
  public:
-  CBrowserDomTree(CBrowserDomTreeDlg *dlg, CBrowserWindow *window);
+  CBrowserDomTree(CBrowserDomTreeDlg *dlg, CBrowserWindowIFace *window);
 
-  CBrowserWindow *window() const { return window_; }
+  CBrowserWindowIFace *window() const { return window_; }
 
  private slots:
   void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
 
  private:
-  CBrowserDomTreeDlg *dlg_ { nullptr };
-  CBrowserWindow     *window_ { nullptr };
+  CBrowserDomTreeDlg*  dlg_    { nullptr };
+  CBrowserWindowIFace* window_ { nullptr };
 };
 
 #endif

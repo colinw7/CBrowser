@@ -5,7 +5,7 @@
 
 class CBrowserCode : public CBrowserObject {
  public:
-  explicit CBrowserCode(CBrowserWindow *window);
+  explicit CBrowserCode(CBrowserWindowIFace *window);
 };
 
 #endif

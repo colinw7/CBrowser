@@ -3,16 +3,17 @@
 
 #include <QTreeView>
 
-class CBrowserWindow;
+class CBrowserWindowIFace;
 class CBrowserObject;
 
 class CBrowserObjProp : public QTreeView {
   Q_OBJECT
 
  public:
-  CBrowserObjProp(QWidget *parent, CBrowserWindow *window);
+  CBrowserObjProp(QWidget *parent, CBrowserWindowIFace *window);
 
-  CBrowserWindow *window() const { return window_; }
+  CBrowserWindowIFace *window() const { return window_; }
+
   CBrowserObject *obj() const { return obj_; }
 
   void setObject(CBrowserObject *obj);
@@ -21,8 +22,8 @@ class CBrowserObjProp : public QTreeView {
   void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
 
  private:
-  CBrowserWindow *window_ { nullptr };
-  CBrowserObject *obj_    { nullptr };
+  CBrowserWindowIFace* window_ { nullptr };
+  CBrowserObject*      obj_    { nullptr };
 };
 
 #endif

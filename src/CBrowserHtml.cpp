@@ -3,7 +3,7 @@
 #include <CBrowserDocument.h>
 
 CBrowserHtml::
-CBrowserHtml(CBrowserWindow *window) :
+CBrowserHtml(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::HTML)
 {
   setDisplay(Display::BLOCK);

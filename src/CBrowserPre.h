@@ -6,7 +6,7 @@
 
 class CBrowserPre : public CBrowserObject {
  public:
-  explicit CBrowserPre(CBrowserWindow *window);
+  explicit CBrowserPre(CBrowserWindowIFace *window);
 
   void init() override;
 

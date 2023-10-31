@@ -91,6 +91,7 @@ enum class CBrowserCSSType {
 class CBrowserCanvas;
 class CQJCanvasWidget;
 
+class  CBrowser;
 class  CBrowserAnchor;
 class  CBrowserAnchorLink;
 class  CBrowserDocument;
@@ -119,6 +120,7 @@ class  CBrowserLayout;
 class  CBrowserLinkMgr;
 struct CBrowserLinkRect;
 class  CBrowserObject;
+class  CBrowserOutput;
 struct CBrowserRuleData;
 class  CBrowserTable;
 class  CBrowserTableRow;
@@ -127,7 +129,9 @@ class  CBrowserTablePadCell;
 class  CBrowserTableCaption;
 class  CBrowserText;
 class  CBrowserWindow;
+class  CBrowserWindowIFace;
 class  CBrowserWindowWidget;
+class  CBrowserWindowWidgetIFace;
 
 class CQJCanvas;
 class CQJColorWidget;

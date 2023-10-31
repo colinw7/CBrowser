@@ -2,65 +2,54 @@
 #include <CBrowserMainWindow.h>
 #include <CBrowserWindow.h>
 #include <CBrowserScrolledWindow.h>
+#include <CBrowserRenderer.h>
 
 #include <CQApp.h>
 
-CBrowserMain *
-CBrowserMain::
-getInstance()
-{
-  static CBrowserMain *instance;
-
-  if (! instance)
-    instance = new CBrowserMain;
-
-  return instance;
-}
-
-CBrowserMain::
-CBrowserMain()
+CBrowser::
+CBrowser()
 {
 }
 
-CBrowserMain::
-~CBrowserMain()
+CBrowser::
+~CBrowser()
 {
   delete iface_;
 }
 
 void
-CBrowserMain::
+CBrowser::
 setDebug(bool b)
 {
   debug_ = b;
 }
 
 void
-CBrowserMain::
+CBrowser::
 setUseAlt(bool b)
 {
   useAlt_ = b;
 }
 
 void
-CBrowserMain::
+CBrowser::
 setOldLayout(bool b)
 {
   oldLayout_ = b;
 }
 
 void
-CBrowserMain::
+CBrowser::
 setShowBoxes(bool b)
 {
   showBoxes_ = b;
 }
 
 void
-CBrowserMain::
+CBrowser::
 setDocument(const CUrl &url)
 {
-  CBrowserMainWindow *iface = this->iface();
+  auto *iface = this->iface();
 
   iface->setDocument(url);
 
@@ -68,34 +57,72 @@ setDocument(const CUrl &url)
 }
 
 void
-CBrowserMain::
+CBrowser::
 addDocument(const CUrl &url)
 {
-  CBrowserMainWindow *iface = this->iface();
+  auto *iface = this->iface();
 
   iface->addDocument(url);
 
   iface_->show();
 }
 
-CBrowserMainWindow *
-CBrowserMain::
+CBrowserIFace *
+CBrowser::
 iface() const
 {
   if (! iface_) {
-    CBrowserMain *th = const_cast<CBrowserMain *>(this);
+    auto *th = const_cast<CBrowser *>(this);
 
-    th->iface_ = new CBrowserMainWindow;
+    auto *mainWindow = new CBrowserMainWindow(th);
 
-    th->iface_->init();
+    mainWindow->init();
+
+    th->setIFace(mainWindow);
   }
 
   return iface_;
 }
 
 void
-CBrowserMain::
+CBrowser::
+setIFace(CBrowserIFace *iface)
+{
+  iface_ = iface;
+}
+
+void
+CBrowser::
 exitSlot()
 {
   exit(0);
+}
+
+void
+CBrowser::
+displayError(const char *format, ...)
+{
+  va_list args;
+
+  va_start(args, format);
+
+  displayError(format, &args);
+
+  va_end(args);
+}
+
+void
+CBrowser::
+displayError(const char *format, va_list *args)
+{
+  if (! getQuiet())
+    vfprintf(stderr, format, *args);
+}
+
+void
+CBrowser::
+displayError(const QString &str)
+{
+  if (! getQuiet())
+    fprintf(stderr, "%s", str.toLatin1().constData());
 }

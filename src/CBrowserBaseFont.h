@@ -6,7 +6,7 @@
 
 class CBrowserBaseFont : public CBrowserObject {
  public:
-  explicit CBrowserBaseFont(CBrowserWindow *window);
+  explicit CBrowserBaseFont(CBrowserWindowIFace *window);
 
   void init() override;
 

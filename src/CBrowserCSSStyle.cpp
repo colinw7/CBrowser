@@ -2,7 +2,7 @@
 #include <CBrowserWindow.h>
 
 CBrowserCSSStyle::
-CBrowserCSSStyle(CBrowserWindow *window) :
+CBrowserCSSStyle(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::STYLE)
 {
 }

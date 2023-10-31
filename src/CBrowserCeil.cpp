@@ -12,11 +12,11 @@
 #include <QMessageBox>
 
 static void             HtmlRunCeilScriptFile
-                         (CBrowserWindow *window, const std::string &);
+                         (CBrowserWindowIFace *window, const std::string &);
 static void             HtmlRunCeilScript
-                         (CBrowserWindow *window, const std::string &);
+                         (CBrowserWindowIFace *window, const std::string &);
 static std::string      HtmlRunCeilScriptCommand
-                         (CBrowserWindow *window, const std::string &);
+                         (CBrowserWindowIFace *window, const std::string &);
 static ClParserValuePtr HtmlScriptDocumentSetTitle
                          (ClParserValuePtr *, uint, void *, int *);
 static ClParserValuePtr HtmlScriptDocumentSetBgColor
@@ -128,21 +128,21 @@ deleteOutputDocumentFile()
 
 void
 CBrowserCeil::
-runScriptFile(CBrowserWindow *window, const std::string &file)
+runScriptFile(CBrowserWindowIFace *window, const std::string &file)
 {
   HtmlRunCeilScriptFile(window, file);
 }
 
 void
 CBrowserCeil::
-runScript(CBrowserWindow *window, const std::string &text)
+runScript(CBrowserWindowIFace *window, const std::string &text)
 {
   HtmlRunCeilScript(window, text);
 }
 
 std::string
 CBrowserCeil::
-runScriptCommand(CBrowserWindow *window, const std::string &cmd)
+runScriptCommand(CBrowserWindowIFace *window, const std::string &cmd)
 {
   return HtmlRunCeilScriptCommand(window, cmd);
 }
@@ -150,10 +150,10 @@ runScriptCommand(CBrowserWindow *window, const std::string &cmd)
 //------
 
 static void HtmlRunCeilScriptLines
-             (CBrowserWindow *, std::vector<std::string> &lines, int);
+             (CBrowserWindowIFace *, std::vector<std::string> &lines, int);
 
 void
-HtmlRunCeilScriptFile(CBrowserWindow *window, const std::string &filename)
+HtmlRunCeilScriptFile(CBrowserWindowIFace *window, const std::string &filename)
 {
   CFile file(filename);
 
@@ -167,7 +167,7 @@ HtmlRunCeilScriptFile(CBrowserWindow *window, const std::string &filename)
 }
 
 void
-HtmlRunCeilScript(CBrowserWindow *window, const std::string &str)
+HtmlRunCeilScript(CBrowserWindowIFace *window, const std::string &str)
 {
   std::vector<std::string> lines;
 
@@ -179,11 +179,11 @@ HtmlRunCeilScript(CBrowserWindow *window, const std::string &str)
 }
 
 std::string
-HtmlRunCeilScriptCommand(CBrowserWindow *window, const std::string &str)
+HtmlRunCeilScriptCommand(CBrowserWindowIFace *window, const std::string &str)
 {
   HtmlRunCeilScript(window, str);
 
-  ClParserValuePtr value = ClLanguageMgrInst->getLastValue();
+  auto value = ClLanguageMgrInst->getLastValue();
 
   if (! value.isValid())
     return nullptr;
@@ -197,9 +197,9 @@ HtmlRunCeilScriptCommand(CBrowserWindow *window, const std::string &str)
 }
 
 static void
-HtmlRunCeilScriptLines(CBrowserWindow *window, std::vector<std::string> &lines, int num_lines)
+HtmlRunCeilScriptLines(CBrowserWindowIFace *window, std::vector<std::string> &lines, int num_lines)
 {
-  CBrowserDocument *document = window->getDocument();
+  auto *document = window->getDocument();
 
   ClParserInst->createVar("window"  , ClParserValueMgrInst->createValue(long(window  )));
   ClParserInst->createVar("document", ClParserValueMgrInst->createValue(long(document)));
@@ -230,14 +230,14 @@ HtmlRunCeilScriptLines(CBrowserWindow *window, std::vector<std::string> &lines, 
   if (buffer[0] != '\0')
     ClLanguageMgrInst->runCommand(const_cast<char *>(buffer.c_str()));
 
-  CTempFile *output_document_file = CBrowserCeilInst->outputDocumentFile();
+  auto *outputDocumentFile = CBrowserCeilInst->outputDocumentFile();
 
-  if (output_document_file) {
-    output_document_file->getFile()->close();
+  if (outputDocumentFile) {
+    outputDocumentFile->getFile()->close();
 
     CHtmlParserTokens tokens;
 
-    window->fileMgr()->readFile(output_document_file->getFile()->getPath(), tokens);
+    window->readFile(outputDocumentFile->getFile()->getPath(), tokens);
 
     CBrowserOutput output(window);
 
@@ -255,12 +255,12 @@ HtmlScriptDocumentSetTitle(ClParserValuePtr *, uint, void *, int *)
 
   if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &idocument,
                                      CLArgType::STRING , &title   , -1)) {
-    CBrowserDocument *document = reinterpret_cast<CBrowserDocument *>(idocument);
+    auto *document = reinterpret_cast<CBrowserDocument *>(idocument);
 
     document->setTitle(title);
   }
 
-  ClParserValuePtr value = ClParserValueMgrInst->createValue(0L);
+  auto value = ClParserValueMgrInst->createValue(0L);
 
   return value;
 }
@@ -273,16 +273,16 @@ HtmlScriptDocumentSetBgColor(ClParserValuePtr *, uint, void *, int *)
 
   if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &idocument,
                                      CLArgType::STRING , &color  , -1)) {
-    CBrowserDocument *document = reinterpret_cast<CBrowserDocument *>(idocument);
+    auto *document = reinterpret_cast<CBrowserDocument *>(idocument);
 
     document->setBgColor(color);
 
-    CBrowserWindow *window = document->getWindow();
+    auto *window = document->getWindow();
 
     window->resize();
   }
 
-  ClParserValuePtr value = ClParserValueMgrInst->createValue(0L);
+  auto value = ClParserValueMgrInst->createValue(0L);
 
   return value;
 }
@@ -295,15 +295,14 @@ HtmlScriptDocumentSetFgColor(ClParserValuePtr *, uint, void *, int *)
 
   if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &idocument,
                                      CLArgType::STRING , &color  , -1)) {
-    CBrowserDocument *document = reinterpret_cast<CBrowserDocument *>(idocument);
+    auto *document = reinterpret_cast<CBrowserDocument *>(idocument);
 
     document->setFgColor(color);
   }
 
-  ClParserValuePtr value = ClParserValueMgrInst->createValue(0L);
+  auto value = ClParserValueMgrInst->createValue(0L);
 
   return value;
-
 }
 
 static ClParserValuePtr
@@ -314,12 +313,12 @@ HtmlScriptDocumentSetLinkColor(ClParserValuePtr *, uint, void *, int *)
 
   if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &idocument,
                                      CLArgType::STRING , &color  , -1)) {
-    CBrowserDocument *document = reinterpret_cast<CBrowserDocument *>(idocument);
+    auto *document = reinterpret_cast<CBrowserDocument *>(idocument);
 
     document->setLinkColor(color);
   }
 
-  ClParserValuePtr value = ClParserValueMgrInst->createValue(0L);
+  auto value = ClParserValueMgrInst->createValue(0L);
 
   return value;
 }
@@ -332,18 +331,18 @@ HtmlScriptDocumentOpen(ClParserValuePtr *, uint, void *, int *)
 
   if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &idocument,
                                      CLArgType::STRING , &type    , -1)) {
-    CBrowserDocument *document = reinterpret_cast<CBrowserDocument *>(idocument);
+    auto *document = reinterpret_cast<CBrowserDocument *>(idocument);
 
-    CTempFile *output_document_file = CBrowserCeilInst->outputDocumentFile();
+    auto *outputDocumentFile = CBrowserCeilInst->outputDocumentFile();
 
-    if (output_document_file) {
-      output_document_file->getFile()->close();
+    if (outputDocumentFile) {
+      outputDocumentFile->getFile()->close();
 
-      CBrowserWindow *window = document->getWindow();
+      auto *window = document->getWindow();
 
       CHtmlParserTokens tokens;
 
-      window->fileMgr()->readFile(output_document_file->getFile()->getPath(), tokens);
+      window->readFile(outputDocumentFile->getFile()->getPath(), tokens);
 
       CBrowserOutput output(window);
 
@@ -355,7 +354,7 @@ HtmlScriptDocumentOpen(ClParserValuePtr *, uint, void *, int *)
     CBrowserCeilInst->initOutputDocumentFile();
   }
 
-  ClParserValuePtr value = ClParserValueMgrInst->createValue(0L);
+  auto value = ClParserValueMgrInst->createValue(0L);
 
   return value;
 }
@@ -368,12 +367,12 @@ HtmlScriptDocumentWrite(ClParserValuePtr *, uint, void *, int *)
 
   if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &idocument,
                                      CLArgType::STRING , &text     , -1)) {
-    CTempFile *output_document_file = CBrowserCeilInst->initOutputDocumentFile();
+    auto *outputDocumentFile = CBrowserCeilInst->initOutputDocumentFile();
 
-    output_document_file->getFile()->write(text);
+    outputDocumentFile->getFile()->write(text);
   }
 
-  ClParserValuePtr value = ClParserValueMgrInst->createValue(0L);
+  auto value = ClParserValueMgrInst->createValue(0L);
 
   return value;
 }
@@ -386,13 +385,13 @@ HtmlScriptDocumentWriteLn(ClParserValuePtr *, uint, void *, int *)
 
   if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &idocument,
                                      CLArgType::STRING , &text    , -1)) {
-    CTempFile *output_document_file = CBrowserCeilInst->initOutputDocumentFile();
+    auto *outputDocumentFile = CBrowserCeilInst->initOutputDocumentFile();
 
-    output_document_file->getFile()->write(text);
-    output_document_file->getFile()->write("\n");
+    outputDocumentFile->getFile()->write(text);
+    outputDocumentFile->getFile()->write("\n");
   }
 
-  ClParserValuePtr value = ClParserValueMgrInst->createValue(0L);
+  auto value = ClParserValueMgrInst->createValue(0L);
 
   return value;
 }
@@ -403,18 +402,18 @@ HtmlScriptDocumentClose(ClParserValuePtr *, uint, void *, int *)
   long idocument;
 
   if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &idocument, -1)) {
-    CTempFile *output_document_file = CBrowserCeilInst->outputDocumentFile();
+    auto *outputDocumentFile = CBrowserCeilInst->outputDocumentFile();
 
-    if (output_document_file) {
-      output_document_file->getFile()->close();
+    if (outputDocumentFile) {
+      outputDocumentFile->getFile()->close();
 
-      CBrowserDocument *document = reinterpret_cast<CBrowserDocument *>(idocument);
+      auto *document = reinterpret_cast<CBrowserDocument *>(idocument);
 
-      CBrowserWindow *window = document->getWindow();
+      auto *window = document->getWindow();
 
       CHtmlParserTokens tokens;
 
-      window->fileMgr()->readFile(output_document_file->getFile()->getPath(), tokens);
+      window->readFile(outputDocumentFile->getFile()->getPath(), tokens);
 
       CBrowserOutput output(window);
 
@@ -424,7 +423,7 @@ HtmlScriptDocumentClose(ClParserValuePtr *, uint, void *, int *)
     }
   }
 
-  ClParserValuePtr value = ClParserValueMgrInst->createValue(0L);
+  auto value = ClParserValueMgrInst->createValue(0L);
 
   return value;
 }
@@ -435,18 +434,18 @@ HtmlScriptWindowOpen(ClParserValuePtr *, uint, void *, int *)
   char *text;
   char *name;
 
-  CBrowserWindow *window = nullptr;
+  CBrowserWindowIFace *window = nullptr;
 
   if (ClParserInst->getUserFnArgList(CLArgType::STRING, &text,
                                      CLArgType::STRING, &name, -1)) {
     CUrl url(text);
 
-    CBrowserMainInst->setDocument(url);
+    CBrowserCeilInst->browser()->setDocument(url);
 
     //window->setName(name);
   }
 
-  ClParserValuePtr value = ClParserValueMgrInst->createValue(long(window));
+  auto value = ClParserValueMgrInst->createValue(long(window));
 
   return value;
 }
@@ -454,12 +453,15 @@ HtmlScriptWindowOpen(ClParserValuePtr *, uint, void *, int *)
 static ClParserValuePtr
 HtmlScriptWindowClose(ClParserValuePtr *, uint, void *, int *)
 {
-  long window;
+  long iwindow;
 
-  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &window, -1))
-    (reinterpret_cast<CBrowserWindow *>(window))->close();
+  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &iwindow, -1)) {
+    auto *window = reinterpret_cast<CBrowserWindowIFace *>(iwindow);
 
-  ClParserValuePtr value = ClParserValueMgrInst->createValue(0L);
+    window->close();
+  }
+
+  auto value = ClParserValueMgrInst->createValue(0L);
 
   return value;
 }
@@ -467,14 +469,17 @@ HtmlScriptWindowClose(ClParserValuePtr *, uint, void *, int *)
 static ClParserValuePtr
 HtmlScriptWindowSetStatus(ClParserValuePtr *, uint, void *, int *)
 {
-  long  window;
+  long  iwindow;
   char *status;
 
-  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &window,
-                                     CLArgType::STRING , &status, -1))
-    (reinterpret_cast<CBrowserWindow *>(window))->setStatus(status);
+  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &iwindow,
+                                     CLArgType::STRING , &status, -1)) {
+    auto *window = reinterpret_cast<CBrowserWindowIFace *>(iwindow);
 
-  ClParserValuePtr value = ClParserValueMgrInst->createValue(0L);
+    window->setStatus(status);
+  }
+
+  auto value = ClParserValueMgrInst->createValue(0L);
 
   return value;
 }
@@ -484,12 +489,12 @@ HtmlScriptWindowSetTimeout(ClParserValuePtr *, uint, void *, int *)
 {
 #if 0
   int   delay;
-  long  window;
+  long  iwindow;
   char *command;
 
   QTimer *timer = nullptr;
 
-  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &window, CLArgType::STRING, &command,
+  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &iwindow, CLArgType::STRING, &command,
                                      CLArgType::INTEGER, &delay , -1)) {
     timer = new QTimer(command);
 
@@ -501,7 +506,7 @@ HtmlScriptWindowSetTimeout(ClParserValuePtr *, uint, void *, int *)
   int id = 0;
 #endif
 
-  ClParserValuePtr value = ClParserValueMgrInst->createValue(long(id));
+  auto value = ClParserValueMgrInst->createValue(long(id));
 
   return value;
 }
@@ -519,13 +524,13 @@ HtmlScriptWindowClearTimeout(ClParserValuePtr *, uint, void *, int *)
 {
 #if 0
   long id;
-  long window;
+  long iwindow;
 
-  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &window, CLArgType::INTEGER, &id, -1))
+  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &iwindow, CLArgType::INTEGER, &id, -1))
     delete timer;
 #endif
 
-  ClParserValuePtr value = ClParserValueMgrInst->createValue(0L);
+  auto value = ClParserValueMgrInst->createValue(0L);
 
   return value;
 }
@@ -534,15 +539,19 @@ static ClParserValuePtr
 HtmlScriptWindowConfirm(ClParserValuePtr *, uint, void *, int *)
 {
   char *str;
-  long  window;
+  long  iwindow;
 
   bool flag = false;
 
-  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &window, CLArgType::STRING , &str, -1))
-    flag = QMessageBox::question((reinterpret_cast<CBrowserWindow *>(window))->widget(),
-                                 "Confirm", str);
+  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &iwindow, CLArgType::STRING , &str, -1)) {
+    auto *window = reinterpret_cast<CBrowserWindowIFace *>(iwindow);
+    auto *widget = dynamic_cast<CBrowserWindowWidget *>(window->widget());
 
-  ClParserValuePtr value = ClParserValueMgrInst->createValue(long(flag));
+    if (widget)
+      flag = QMessageBox::question(widget, "Confirm", str);
+  }
+
+  auto value = ClParserValueMgrInst->createValue(long(flag));
 
   return value;
 }
@@ -551,12 +560,17 @@ static ClParserValuePtr
 HtmlScriptWindowAlert(ClParserValuePtr *, uint, void *, int *)
 {
   char *str;
-  long  window;
+  long  iwindow;
 
-  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &window, CLArgType::STRING , &str, -1))
-    QMessageBox::warning((reinterpret_cast<CBrowserWindow *>(window))->widget(), "Alert", str);
+  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &iwindow, CLArgType::STRING , &str, -1)) {
+    auto *window = reinterpret_cast<CBrowserWindowIFace *>(iwindow);
+    auto *widget = dynamic_cast<CBrowserWindowWidget *>(window->widget());
 
-  ClParserValuePtr value = ClParserValueMgrInst->createValue(0L);
+    if (widget)
+      QMessageBox::warning(widget, "Alert", str);
+  }
+
+  auto value = ClParserValueMgrInst->createValue(0L);
 
   return value;
 }
@@ -566,11 +580,11 @@ HtmlScriptWindowPrompt(ClParserValuePtr *, uint, void *, int *)
 {
   char *str;
   char *prompt;
-  long  window;
+  long  iwindow;
 
   std::string reply = "";
 
-  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &window,
+  if (ClParserInst->getUserFnArgList(CLArgType::INTEGER, &iwindow,
                                      CLArgType::STRING , &prompt,
                                      CLArgType::STRING , &str , -1)) {
 #if 0
@@ -578,8 +592,11 @@ HtmlScriptWindowPrompt(ClParserValuePtr *, uint, void *, int *)
     XtSetArg(args[1], XmNlabelString, prompt  );
     XtSetArg(args[2], XmNvalue      , str     );
 
-    reply = XAskForString((reinterpret_cast<CBrowserWindow *>(window))->widget(),
-                          "prompt", args, 5);
+    auto *window = reinterpret_cast<CBrowserWindowIFace *>(iwindow);
+    auto *widget = dynamic_cast<CBrowserWindowWidget *>(window->widget());
+
+    if (widget)
+      reply = XAskForString(widget, "prompt", args, 5);
 #endif
   }
 

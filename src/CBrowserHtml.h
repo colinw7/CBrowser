@@ -6,7 +6,7 @@
 
 class CBrowserHtml : public CBrowserObject {
  public:
-  explicit CBrowserHtml(CBrowserWindow *window);
+  explicit CBrowserHtml(CBrowserWindowIFace *window);
 
   void init() override;
 

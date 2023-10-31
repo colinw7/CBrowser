@@ -6,7 +6,7 @@
 
 class CBrowserVideo : public CBrowserObject {
  public:
-  explicit CBrowserVideo(CBrowserWindow *window);
+  explicit CBrowserVideo(CBrowserWindowIFace *window);
 
   void setNameValue(const std::string &name, const std::string &value) override;
 };

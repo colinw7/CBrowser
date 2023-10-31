@@ -3,6 +3,8 @@
 #include <CBrowserList.h>
 #include <CBrowserListItem.h>
 #include <CBrowserProperty.h>
+#include <CBrowserGraphics.h>
+
 #include <CQJHtmlObj.h>
 #include <CHtmlTagDef.h>
 #include <CLinearGradient.h>
@@ -10,7 +12,7 @@
 #include <CStrUtil.h>
 
 CBrowserObject::
-CBrowserObject(CBrowserWindow *window, CHtmlTagId type, const CBrowserBaseData &data) :
+CBrowserObject(CBrowserWindowIFace *window, CHtmlTagId type, const CBrowserBaseData &data) :
  CBrowserBox(window), window_(window), iface_(this), type_(type), data_(data)
 {
 }
@@ -274,7 +276,8 @@ setStyleValue(const std::string &name, const std::string &value)
                           name.c_str(), value.c_str());
   }
   else if (lname == "background") {
-    // bg-color bg-image position/bg-size bg-repeat bg-origin bg-clip bg-attachment initial|inherit
+    // bg-color bg-image position/bg-size bg-repeat bg-origin bg-clip
+    // bg-attachment initial|inherit
 
     CBrowserBackground bg;
 
@@ -822,8 +825,8 @@ setStyleValue(const std::string &name, const std::string &value)
   else if (lname == "list-style-type") {
     CBrowserListStyleType styleType(value);
 
-    CBrowserList     *ol = dynamic_cast<CBrowserList *>(this);
-    CBrowserListItem *li = dynamic_cast<CBrowserListItem *>(this);
+    auto *ol = dynamic_cast<CBrowserList *>(this);
+    auto *li = dynamic_cast<CBrowserListItem *>(this);
 
     if      (ol)
       ol->setStyleType(styleType);
@@ -1361,14 +1364,40 @@ isHierSelected() const
   return false;
 }
 
+CBrowserRegion
+CBrowserObject::
+calcRegion() const
+{
+  CBrowserRegion r;
+
+#if 0
+  for (auto *child : children()) {
+    auto r1 = child->calcRegion();
+
+    r += r1;
+  }
+#endif
+
+  return r;
+}
+
 CIBBox2D
 CBrowserObject::
 calcBBox() const
 {
-  CBrowserRegion region = this->calcRegion();
+  auto region = this->calcRegion();
 
   return CIBBox2D(region.x(), region.y(),
                   region.x() + region.width(), region.y() + region.height());
+}
+
+CIBBox2D
+CBrowserObject::
+layoutBBox() const
+{
+  return CIBBox2D(CBrowserBox::x(), CBrowserBox::y(),
+                  CBrowserBox::x() + CBrowserBox::width(),
+                  CBrowserBox::y() + CBrowserBox::height());
 }
 
 bool
@@ -1401,7 +1430,7 @@ void
 CBrowserObject::
 heightForWidth(CTextBox &box) const
 {
-  CBrowserRegion region = this->calcRegion();
+  auto region = this->calcRegion();
 
   box.setAscent (region.ascent ());
   box.setDescent(region.descent());
@@ -1422,6 +1451,8 @@ fillBackground(const CTextBox &region)
   int w = region.width();
   int h = region.height();
 
+  auto *graphics = window_->graphics();
+
   if      (background_.color().isValid()) {
     CBrush brush;
 
@@ -1431,9 +1462,9 @@ fillBackground(const CTextBox &region)
       brush = CBrush(c);
     }
     else {
-      const CBrowserColorGradient &g = background().color().gradient();
+      const auto &g = background().color().gradient();
 
-      CLinearGradient *gradient = new CLinearGradient;
+      auto *gradient = new CLinearGradient;
 
       gradient->setX1(0);
       gradient->setY1(0);
@@ -1462,12 +1493,12 @@ fillBackground(const CTextBox &region)
       brush.setGradient(CBrush::GradientPtr(gradient));
     }
 
-    window_->fillRectangle(x, y, w, h, brush);
+    graphics->fillRectangle(x, y, w, h, brush);
   }
   else if (background().image().isValid()) {
-    CBrush brush = CBrush(background().image().image());
+    auto brush = CBrush(background().image().image());
 
-    window_->fillRectangle(x, y, w, h, brush);
+    graphics->fillRectangle(x, y, w, h, brush);
   }
 }
 
@@ -1514,6 +1545,8 @@ drawBorderLine(double x1, double y1, double x2, double y2,
 {
   double w = pen.getWidth();
 
+  auto *graphics = window_->graphics();
+
   if      (style == CBrowserBorderStyle::DOUBLE) {
     CPen pen1 = pen;
 
@@ -1525,34 +1558,34 @@ drawBorderLine(double x1, double y1, double x2, double y2,
       if (side == CBrowserBorderSide::TOP) {
         double y2 = y1 + dw;
 
-        window_->drawLine(x1     , y1, x2     , y1, pen1);
-        window_->drawLine(x1 + dw, y2, x2 - dw, y2, pen1);
+        graphics->drawLine(x1     , y1, x2     , y1, pen1);
+        graphics->drawLine(x1 + dw, y2, x2 - dw, y2, pen1);
       }
       else {
         double y2 = y1 - dw;
 
-        window_->drawLine(x1     , y1, x2     , y1, pen1);
-        window_->drawLine(x1 + dw, y2, x2 - dw, y2, pen1);
+        graphics->drawLine(x1     , y1, x2     , y1, pen1);
+        graphics->drawLine(x1 + dw, y2, x2 - dw, y2, pen1);
       }
     }
     else {
       if (side == CBrowserBorderSide::LEFT) {
         double x2 = x1 + dw;
 
-        window_->drawLine(x1, y1     , x1, y2     , pen1);
-        window_->drawLine(x2, y1 + dw, x2, y2 - dw, pen1);
+        graphics->drawLine(x1, y1     , x1, y2     , pen1);
+        graphics->drawLine(x2, y1 + dw, x2, y2 - dw, pen1);
       }
       else {
         double x2 = x1 - dw;
 
-        window_->drawLine(x1, y1     , x1, y2     , pen1);
-        window_->drawLine(x2, y1 + dw, x2, y2 - dw, pen1);
+        graphics->drawLine(x1, y1     , x1, y2     , pen1);
+        graphics->drawLine(x2, y1 + dw, x2, y2 - dw, pen1);
       }
     }
   }
   else if (style == CBrowserBorderStyle::SOLID ||
            style == CBrowserBorderStyle::INSET || style == CBrowserBorderStyle::OUTSET) {
-    CRGBA bg = window_->getBgColor();
+    auto bg = window_->getBgColor();
 
     CRGBA c     = pen.getColor();
     CRGBA light = c.blended(bg, 0.5);
@@ -1568,11 +1601,11 @@ drawBorderLine(double x1, double y1, double x2, double y2,
       }};
 
       if      (style == CBrowserBorderStyle::SOLID)
-        window_->fillPolygon(points, CBrush(c));
+        graphics->fillPolygon(points, CBrush(c));
       else if (style == CBrowserBorderStyle::INSET)
-        window_->fillPolygon(points, CBrush(dark));
+        graphics->fillPolygon(points, CBrush(dark));
       else
-        window_->fillPolygon(points, CBrush(light));
+        graphics->fillPolygon(points, CBrush(light));
     }
     else if (side == CBrowserBorderSide::LEFT) {
       double x11 = x1 + w;
@@ -1584,11 +1617,11 @@ drawBorderLine(double x1, double y1, double x2, double y2,
       }};
 
       if      (style == CBrowserBorderStyle::SOLID)
-        window_->fillPolygon(points, CBrush(c));
+        graphics->fillPolygon(points, CBrush(c));
       else if (style == CBrowserBorderStyle::INSET)
-        window_->fillPolygon(points, CBrush(dark));
+        graphics->fillPolygon(points, CBrush(dark));
       else
-        window_->fillPolygon(points, CBrush(light));
+        graphics->fillPolygon(points, CBrush(light));
     }
     else if (side == CBrowserBorderSide::RIGHT) {
       double x11 = x1 - w;
@@ -1605,11 +1638,11 @@ drawBorderLine(double x1, double y1, double x2, double y2,
       }};
 
       if      (style == CBrowserBorderStyle::SOLID)
-        window_->fillPolygon(points, CBrush(c));
+        graphics->fillPolygon(points, CBrush(c));
       else if (style == CBrowserBorderStyle::INSET)
-        window_->fillPolygon(points, CBrush(light));
+        graphics->fillPolygon(points, CBrush(light));
       else
-        window_->fillPolygon(points, CBrush(dark));
+        graphics->fillPolygon(points, CBrush(dark));
     }
     else if (side == CBrowserBorderSide::BOTTOM) {
       double x11 = x1 + w;
@@ -1621,15 +1654,15 @@ drawBorderLine(double x1, double y1, double x2, double y2,
       }};
 
       if      (style == CBrowserBorderStyle::SOLID)
-        window_->fillPolygon(points, CBrush(c));
+        graphics->fillPolygon(points, CBrush(c));
       else if (style == CBrowserBorderStyle::INSET)
-        window_->fillPolygon(points, CBrush(light));
+        graphics->fillPolygon(points, CBrush(light));
       else
-        window_->fillPolygon(points, CBrush(dark));
+        graphics->fillPolygon(points, CBrush(dark));
     }
   }
   else if (style == CBrowserBorderStyle::OUTSET) {
-    CRGBA bg = window_->getBgColor();
+    auto bg = window_->getBgColor();
 
     CRGBA c;
 
@@ -1642,15 +1675,15 @@ drawBorderLine(double x1, double y1, double x2, double y2,
 
     pen1.setColor(c);
 
-    window_->drawLine(x1, y1, x2, y2, pen1);
+    graphics->drawLine(x1, y1, x2, y2, pen1);
   }
   else if (style == CBrowserBorderStyle::GROOVE || style == CBrowserBorderStyle::RIDGE) {
     double w1 = w/2;
 
-    CRGBA bg = window_->getBgColor();
+    auto bg = window_->getBgColor();
 
-    CRGBA light = pen.getColor().blended(bg, 0.5);
-    CRGBA dark  = pen.getColor().blended(bg, 0.8);
+    auto light = pen.getColor().blended(bg, 0.5);
+    auto dark  = pen.getColor().blended(bg, 0.8);
 
     if      (side == CBrowserBorderSide::TOP) {
       double x11 = x1 + w1;
@@ -1662,9 +1695,9 @@ drawBorderLine(double x1, double y1, double x2, double y2,
       }};
 
       if (style == CBrowserBorderStyle::GROOVE)
-        window_->fillPolygon(points1, CBrush(dark));
+        graphics->fillPolygon(points1, CBrush(dark));
       else
-        window_->fillPolygon(points1, CBrush(light));
+        graphics->fillPolygon(points1, CBrush(light));
 
       double x12 = x11 + w1;
       double x22 = x21 - w1;
@@ -1675,9 +1708,9 @@ drawBorderLine(double x1, double y1, double x2, double y2,
       }};
 
       if (style == CBrowserBorderStyle::GROOVE)
-        window_->fillPolygon(points2, CBrush(light));
+        graphics->fillPolygon(points2, CBrush(light));
       else
-        window_->fillPolygon(points2, CBrush(dark));
+        graphics->fillPolygon(points2, CBrush(dark));
     }
     else if (side == CBrowserBorderSide::LEFT) {
       double x11 = x1 + w1;
@@ -1689,9 +1722,9 @@ drawBorderLine(double x1, double y1, double x2, double y2,
       }};
 
       if (style == CBrowserBorderStyle::GROOVE)
-        window_->fillPolygon(points1, CBrush(dark));
+        graphics->fillPolygon(points1, CBrush(dark));
       else
-        window_->fillPolygon(points1, CBrush(light));
+        graphics->fillPolygon(points1, CBrush(light));
 
       double x12 = x11 + w1;
       double y12 = y11 + w1;
@@ -1702,9 +1735,9 @@ drawBorderLine(double x1, double y1, double x2, double y2,
       }};
 
       if (style == CBrowserBorderStyle::GROOVE)
-        window_->fillPolygon(points2, CBrush(light));
+        graphics->fillPolygon(points2, CBrush(light));
       else
-        window_->fillPolygon(points2, CBrush(dark));
+        graphics->fillPolygon(points2, CBrush(dark));
     }
     else if (side == CBrowserBorderSide::RIGHT) {
       double x11 = x1 - w1;
@@ -1716,9 +1749,9 @@ drawBorderLine(double x1, double y1, double x2, double y2,
       }};
 
       if (style == CBrowserBorderStyle::GROOVE)
-        window_->fillPolygon(points1, CBrush(light));
+        graphics->fillPolygon(points1, CBrush(light));
       else
-        window_->fillPolygon(points1, CBrush(dark));
+        graphics->fillPolygon(points1, CBrush(dark));
 
       double x12 = x11 - w1;
       double y12 = y11 + w1;
@@ -1729,9 +1762,9 @@ drawBorderLine(double x1, double y1, double x2, double y2,
       }};
 
       if (style == CBrowserBorderStyle::GROOVE)
-        window_->fillPolygon(points2, CBrush(dark));
+        graphics->fillPolygon(points2, CBrush(dark));
       else
-        window_->fillPolygon(points2, CBrush(light));
+        graphics->fillPolygon(points2, CBrush(light));
     }
     else if (side == CBrowserBorderSide::BOTTOM) {
       double x11 = x1 + w1;
@@ -1743,9 +1776,9 @@ drawBorderLine(double x1, double y1, double x2, double y2,
       }};
 
       if (style == CBrowserBorderStyle::GROOVE)
-        window_->fillPolygon(points1, CBrush(light));
+        graphics->fillPolygon(points1, CBrush(light));
       else
-        window_->fillPolygon(points1, CBrush(dark));
+        graphics->fillPolygon(points1, CBrush(dark));
 
       double x12 = x11 + w1;
       double x22 = x21 - w1;
@@ -1756,13 +1789,13 @@ drawBorderLine(double x1, double y1, double x2, double y2,
       }};
 
       if (style == CBrowserBorderStyle::GROOVE)
-        window_->fillPolygon(points2, CBrush(dark));
+        graphics->fillPolygon(points2, CBrush(dark));
       else
-        window_->fillPolygon(points2, CBrush(light));
+        graphics->fillPolygon(points2, CBrush(light));
     }
   }
   else {
-    window_->drawLine(x1, y1, x2, y2, pen);
+    graphics->drawLine(x1, y1, x2, y2, pen);
   }
 }
 
@@ -1808,7 +1841,7 @@ CFontPtr
 CBrowserObject::
 hierFont() const
 {
-  CBrowserObject *th = const_cast<CBrowserObject *>(this);
+  auto *th = const_cast<CBrowserObject *>(this);
 
   th->font_.setUnderline(textProp_.decoration().type() ==
                           CBrowserTextDecoration::Type::UNDERLINE);

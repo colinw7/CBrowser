@@ -12,14 +12,14 @@
 #include <CTextBox.h>
 #include <vector>
 
-class CBrowserWindow;
+class CBrowserWindowIFace;
 
 class CBrowserBox {
  public:
-  typedef std::vector<CBrowserWord> Words;
+  using Words = std::vector<CBrowserWord>;
 
  public:
-  explicit CBrowserBox(CBrowserWindow *window);
+  explicit CBrowserBox(CBrowserWindowIFace *window);
 
   virtual ~CBrowserBox() { }
 
@@ -217,23 +217,24 @@ class CBrowserBox {
   void boxAt(const CIPoint2D &p, CBrowserBox* &box, double &area);
 
  private:
-  typedef std::vector<CBrowserBox *> Boxes;
+  using Boxes = std::vector<CBrowserBox *>;
 
-  CBrowserWindow* window_ { nullptr };
-  CBrowserBox*    parent_ { nullptr };
-  int             x_ { 0 };
-  int             y_ { 0 };
-  int             ascent_ { 0 };
-  int             descent_ { 0 };
+  CBrowserWindowIFace* window_ { nullptr };
+  CBrowserBox*         parent_ { nullptr };
+  Boxes                children_;
+
+  int             x_           { 0 };
+  int             y_           { 0 };
+  int             ascent_      { 0 };
+  int             descent_     { 0 };
   CBrowserMargin  margin_;
   CBrowserBorder  border_;
   CBrowserPadding padding_;
   CIBBox2D        content_;
-  CHAlignType     halign_ { CHALIGN_TYPE_LEFT };
-  CVAlignType     valign_ { CVALIGN_TYPE_TOP };
-  bool            fixedWidth_ { false };
+  CHAlignType     halign_      { CHALIGN_TYPE_LEFT };
+  CVAlignType     valign_      { CVALIGN_TYPE_TOP };
+  bool            fixedWidth_  { false };
   bool            fixedHeight_ { false };
-  Boxes           children_;
 };
 
 class CBrowserBoxNode {

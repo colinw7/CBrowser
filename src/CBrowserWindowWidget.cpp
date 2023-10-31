@@ -1,26 +1,26 @@
 #include <CBrowserWindowWidget.h>
-#include <CBrowserScrolledWindow.h>
+#include <CBrowserMainWindow.h>
 #include <CBrowserGraphics.h>
 #include <CBrowserWindow.h>
+
 #include <CQJavaScript.h>
 #include <CQJDocument.h>
 #include <CQJWindow.h>
 #include <CQJEvent.h>
 #include <CQWidgetUtil.h>
-#include <CEnv.h>
+
 #include <QMouseEvent>
+#include <QPainter>
 
 CBrowserWindowWidget::
-CBrowserWindowWidget(CBrowserScrolledWindow *window) :
- window_(window)
+CBrowserWindowWidget(CBrowserWindowIFace *window) :
+ CBrowserWindowWidgetIFace(window->browser()), window_(window)
 {
   setObjectName("canvas");
 
   setFocusPolicy(Qt::StrongFocus);
 
   setMouseTracking(true);
-
-  graphics_ = new CBrowserGraphics(this);
 }
 
 void
@@ -114,7 +114,7 @@ callEventListener(const std::string &name, const std::string &prop, CJValueP eve
 
   args.push_back(event);
 
-  CQJWindowP window = CQJavaScriptInst->jsWindow();
+  auto window = CQJavaScriptInst->jsWindow();
 
   if (window->callEventListener(name, prop, args, nameValues))
     return;
@@ -127,139 +127,19 @@ callEventListener(const std::string &name, const std::string &prop, CJValueP eve
 
 void
 CBrowserWindowWidget::
-startDoubleBuffer()
+updateWidget(bool sync)
 {
-  graphics_->startDoubleBuffer(width(), height());
+  QWidget::update();
+
+  if (sync)
+    qApp->processEvents();
 }
 
 void
 CBrowserWindowWidget::
-endDoubleBuffer()
+drawPixmap(QPixmap *pixmap)
 {
-  graphics_->endDoubleBuffer();
-}
+  QPainter painter(this);
 
-void
-CBrowserWindowWidget::
-saveImage(const std::string &filename)
-{
-  QPixmap *pixmap = graphics_->pixmap();
-
-  pixmap->save(filename.c_str());
-}
-
-void
-CBrowserWindowWidget::
-setXDevice()
-{
-  graphics_->setXDevice();
-}
-
-void
-CBrowserWindowWidget::
-setPSDevice(double xmin, double ymin, double xmax, double ymax)
-{
-  graphics_->setPSDevice(xmin, ymin, xmax, ymax);
-}
-
-void
-CBrowserWindowWidget::
-clear(const CRGBA &bg)
-{
-  graphics_->clear(bg);
-}
-
-void
-CBrowserWindowWidget::
-drawImage(int x, int y, const CImagePtr &image)
-{
-  graphics_->drawImage(x, y, image);
-}
-
-void
-CBrowserWindowWidget::
-drawImage(int x, int y, const QImage &image)
-{
-  graphics_->drawImage(x, y, image);
-}
-
-void
-CBrowserWindowWidget::
-drawTiledImage(int x, int y, int width, int height, const CImagePtr &image)
-{
-  graphics_->drawTiledImage(x, y, width, height, image);
-}
-
-void
-CBrowserWindowWidget::
-drawRectangle(int x, int y, int w, int h, const CPen &pen)
-{
-  graphics_->drawRectangle(x, y, w, h, pen);
-}
-
-void
-CBrowserWindowWidget::
-fillRectangle(int x, int y, int w, int h, const CBrush &brush)
-{
-  graphics_->fillRectangle(x, y, w, h, brush);
-}
-
-void
-CBrowserWindowWidget::
-fillPolygon(const std::vector<CIPoint2D> &points, const CBrush &brush)
-{
-  graphics_->fillPolygon(points, brush);
-}
-
-void
-CBrowserWindowWidget::
-drawCircle(int x, int y, int r, const CPen &pen)
-{
-  graphics_->drawCircle(x, y, r, pen);
-}
-
-void
-CBrowserWindowWidget::
-fillCircle(int x, int y, int r, const CBrush &brush)
-{
-  graphics_->fillCircle(x, y, r, brush);
-}
-
-void
-CBrowserWindowWidget::
-drawLine(int x1, int y1, int x2, int y2, const CPen &pen)
-{
-  graphics_->drawLine(x1, y1, x2, y2, pen);
-}
-
-void
-CBrowserWindowWidget::
-drawText(int x, int y, const std::string &str, const CPen &pen, const CFontPtr &font)
-{
-  graphics_->drawText(x, y, str, pen, font);
-}
-
-void
-CBrowserWindowWidget::
-drawOutline(int x, int y, int width, int height, const CPen &pen)
-{
-  graphics_->drawOutline(x, y, width, height, pen);
-}
-
-void
-CBrowserWindowWidget::
-drawBorder(int x, int y, int width, int height, CBrowserBorderType type)
-{
-  CBrowserWindow *window = window_->getWindow();
-
-  graphics_->drawBorder(x, y, width, height, CPen(window->getBgColor()), type);
-}
-
-void
-CBrowserWindowWidget::
-drawHRule(int x1, int x2, int y, int height)
-{
-  CBrowserWindow *window = window_->getWindow();
-
-  graphics_->drawHRule(x1, x2, y, height, CPen(window->getBgColor()));
+  painter.drawPixmap(QPoint(0, 0), *pixmap);
 }

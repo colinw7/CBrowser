@@ -50,7 +50,7 @@ int
 CBrowserFont::
 fontSize(const CBrowserObject *obj) const
 {
-  const CBrowserBaseFont *baseFont = dynamic_cast<const CBrowserBaseFont *>(obj);
+  const auto *baseFont = dynamic_cast<const CBrowserBaseFont *>(obj);
 
   if (baseFont)
     baseFont->apply();

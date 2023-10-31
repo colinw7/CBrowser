@@ -21,7 +21,7 @@ class CBrowserImage : public CBrowserObject {
   };
 
  public:
-  explicit CBrowserImage(CBrowserWindow *window);
+  explicit CBrowserImage(CBrowserWindowIFace *window);
 
  ~CBrowserImage();
 

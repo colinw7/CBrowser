@@ -4,6 +4,8 @@
 #include <CBrowserWindow.h>
 #include <CBrowserWindowWidget.h>
 #include <CBrowserCeil.h>
+#include <CBrowserGraphics.h>
+
 #include <CQJavaScript.h>
 #include <CQJForm.h>
 #include <CQJInput.h>
@@ -16,6 +18,7 @@
 #include <CQUtilRGBA.h>
 #include <CQFontUtil.h>
 #include <CImageLib.h>
+#include <CEnv.h>
 
 #include <QPushButton>
 #include <QCheckBox>
@@ -45,7 +48,7 @@ void initWidget(const CBrowserObject *obj, QWidget *w) {
 //---
 
 CBrowserFormFileUpload::
-CBrowserFormFileUpload(CBrowserWindow *window, const CBrowserFormInputData &data) :
+CBrowserFormFileUpload(CBrowserWindowIFace *window, const CBrowserFormInputData &data) :
  CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::FILE, data)
 {
   init();
@@ -68,13 +71,13 @@ CBrowserFormFileUpload::
 createWidget() const
 {
   if (! widget_) {
-    QWidget *rowcol = new QWidget(window_->widget());
+    auto *rowcol = new QWidget(getWindowWidget());
 
     rowcol->setObjectName(getName().c_str());
 
-    QHBoxLayout *hlayout = new QHBoxLayout(rowcol);
+    auto *hlayout = new QHBoxLayout(rowcol);
 
-    QLineEdit *edit = new QLineEdit(rowcol);
+    auto *edit = new QLineEdit(rowcol);
 
     edit->setObjectName("edit");
 
@@ -88,7 +91,7 @@ createWidget() const
 
     if (maxlength_ > 0) edit->setMaxLength(maxlength_);
 
-    QPushButton *button = new QPushButton("button");
+    auto *button = new QPushButton("button");
 
     button->setObjectName(getName() != "" ? getName().c_str() : "button");
     button->setText("Browse ...");
@@ -122,7 +125,7 @@ calcRegion() const
 
 void
 CBrowserFormFileUpload::
-drawWidget(CBrowserWindow *, const CTextBox &region)
+drawWidget(CBrowserWindowIFace *, const CTextBox &region)
 {
   QWidget *container = widget_->parentWidget();
 
@@ -136,7 +139,7 @@ buttonProc()
 {
   QString filename = QFileDialog::getOpenFileName(widget_, "Select File");
 
-  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+  auto *edit = qobject_cast<QLineEdit *>(widget_);
 
   edit->setText(filename);
 }
@@ -144,7 +147,7 @@ buttonProc()
 //---
 
 CBrowserFormRadio::
-CBrowserFormRadio(CBrowserWindow *window, const CBrowserFormInputData &data) :
+CBrowserFormRadio(CBrowserWindowIFace *window, const CBrowserFormInputData &data) :
  CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::RADIO_BUTTON, data)
 {
 }
@@ -166,7 +169,7 @@ CBrowserFormRadio::
 createWidget() const
 {
   if (! widget_) {
-    QRadioButton *radio = new QRadioButton(window_->widget());
+    auto *radio = new QRadioButton(getWindowWidget());
 
     radio->setObjectName(getName() != "" ? getName().c_str() : "radio");
 
@@ -204,7 +207,7 @@ void
 CBrowserFormRadio::
 buttonProc()
 {
-  QRadioButton *radio = qobject_cast<QRadioButton *>(widget_);
+  auto *radio = qobject_cast<QRadioButton *>(widget_);
 
   if (! radio->isChecked()) {
     radio->setChecked(true);
@@ -222,9 +225,9 @@ buttonProc()
         input1->getName() != getName())
       continue;
 
-    QWidget *widget1 = const_cast<QWidget *>(input1->getWidget());
+    auto *widget1 = const_cast<QWidget *>(input1->getWidget());
 
-    QRadioButton *radio1 = qobject_cast<QRadioButton *>(widget1);
+    auto *radio1 = qobject_cast<QRadioButton *>(widget1);
 
     radio1->setChecked(false);
   }
@@ -233,7 +236,7 @@ buttonProc()
 //---
 
 CBrowserFormRange::
-CBrowserFormRange(CBrowserWindow *window, const CBrowserFormInputData &data) :
+CBrowserFormRange(CBrowserWindowIFace *window, const CBrowserFormInputData &data) :
  CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::RANGE, data)
 {
 }
@@ -259,7 +262,7 @@ double
 CBrowserFormRange::
 value() const
 {
-  CQJSlider *slider = dynamic_cast<CQJSlider *>(widget_);
+  auto *slider = dynamic_cast<CQJSlider *>(widget_);
 
   return (slider ? slider->value() : 0);
 }
@@ -269,11 +272,11 @@ CBrowserFormRange::
 createWidget() const
 {
   if (! widget_) {
-    CBrowserFormRange *th = const_cast<CBrowserFormRange *>(this);
+    auto *th = const_cast<CBrowserFormRange *>(this);
 
-    CQJSlider *slider = new CQJSlider(getJObj(), th->iface());
+    auto *slider = new CQJSlider(getJObj(), th->iface());
 
-    slider->setParent(window_->widget());
+    slider->setParent(getWindowWidget());
     slider->blockSignals(true);
 
     slider->setRange(min_, max_);
@@ -311,7 +314,7 @@ calcRegion() const
 //---
 
 CBrowserForm::
-CBrowserForm(CBrowserWindow *window) :
+CBrowserForm(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::FORM), iface_(this)
 {
   CBrowserDocument *document = window_->getDocument();
@@ -398,7 +401,7 @@ CQJHtmlObj *
 CBrowserForm::
 createJObj(CJavaScript *js)
 {
-  CQJForm *form = new CQJForm(js, iface(), CBrowserObject::iface());
+  auto *form = new CQJForm(js, iface(), CBrowserObject::iface());
 
   return form;
 }
@@ -422,7 +425,7 @@ inputs() const
 //---
 
 CBrowserFormOption::
-CBrowserFormOption(CBrowserWindow *window, const CBrowserFormOptionData &data) :
+CBrowserFormOption(CBrowserWindowIFace *window, const CBrowserFormOptionData &data) :
  CBrowserObject(window, CHtmlTagId::OPTION), data_(data)
 {
   setDisplay(Display::INLINE);
@@ -449,7 +452,7 @@ termProcess()
 //---
 
 CBrowserFormInput::
-CBrowserFormInput(CBrowserWindow *window, CHtmlTagId id, CBrowserFormInputType type,
+CBrowserFormInput(CBrowserWindowIFace *window, CHtmlTagId id, CBrowserFormInputType type,
                   const CBrowserFormInputData &data) :
  CBrowserObject(window, id, data), type_(type), data_(data), iface_(this)
 {
@@ -468,6 +471,17 @@ CBrowserFormInput::
 init()
 {
   CBrowserObject::init();
+}
+
+QWidget *
+CBrowserFormInput::
+getWindowWidget() const
+{
+  auto *window1 = dynamic_cast<CBrowserWindow *>(window_);
+
+  auto *windowWidget1 = dynamic_cast<CBrowserWindowWidget *>(window1->widget());
+
+  return windowWidget1;
 }
 
 CBrowserForm *
@@ -619,7 +633,7 @@ void
 CBrowserFormInput::
 getInlineWords(Words &words) const
 {
-  CBrowserFormInput *th = const_cast<CBrowserFormInput *>(this);
+  auto *th = const_cast<CBrowserFormInput *>(this);
 
   words.push_back(CBrowserWord(th, isHierSelected()));
 }
@@ -653,15 +667,19 @@ draw(const CTextBox &region)
 
   //---
 
-  window_->drawOutline(region.x(), region.y(), region.width(), region.height(),
-                       CPen(CRGBA(1,0,0)));
+  if (CEnvInst.exists("HTML_OUTLINE")) {
+    auto *graphics = window_->graphics();
+
+    graphics->drawOutline(region.x(), region.y(), region.width(), region.height(),
+                          CPen(CRGBA(1, 0, 0)));
+  }
 
   //region.setX(region.x() + getWidth());
 }
 
 void
 CBrowserFormInput::
-drawWidget(CBrowserWindow *, const CTextBox &region)
+drawWidget(CBrowserWindowIFace *, const CTextBox &region)
 {
   widget_->move(region.x() + 2, region.y() + 2);
   widget_->resize(width_ - 4, height_ - 4);
@@ -691,13 +709,13 @@ createJObj(CJavaScript *js)
 //---
 
 CBrowserFormButton::
-CBrowserFormButton(CBrowserWindow *window) :
+CBrowserFormButton(CBrowserWindowIFace *window) :
  CBrowserFormInput(window, CHtmlTagId::BUTTON, CBrowserFormInputType::BUTTON)
 {
 }
 
 CBrowserFormButton::
-CBrowserFormButton(CBrowserWindow *window, const CBrowserFormInputData &data) :
+CBrowserFormButton(CBrowserWindowIFace *window, const CBrowserFormInputData &data) :
  CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::BUTTON, data)
 {
 }
@@ -719,7 +737,7 @@ CBrowserFormButton::
 createWidget() const
 {
   if (! widget_) {
-    QPushButton *button = new QPushButton(window_->widget());
+    auto *button = new QPushButton(getWindowWidget());
 
     button->setObjectName(getName() != "" ? getName().c_str() : "button");
 
@@ -768,7 +786,7 @@ calcRegion() const
 //---
 
 CBrowserFormCheckBox::
-CBrowserFormCheckBox(CBrowserWindow *window, const CBrowserFormInputData &data) :
+CBrowserFormCheckBox(CBrowserWindowIFace *window, const CBrowserFormInputData &data) :
  CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::CHECKBOX, data)
 {
 }
@@ -790,7 +808,7 @@ CBrowserFormCheckBox::
 createWidget() const
 {
   if (! widget_) {
-    QCheckBox *button = new QCheckBox(window_->widget());
+    auto *button = new QCheckBox(getWindowWidget());
 
     button->setObjectName(getName().c_str());
 
@@ -827,7 +845,7 @@ calcRegion() const
 //---
 
 CBrowserFormImage::
-CBrowserFormImage(CBrowserWindow *window, const CBrowserFormInputData &data) :
+CBrowserFormImage(CBrowserWindowIFace *window, const CBrowserFormInputData &data) :
  CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::IMAGE, data),
  align_(CBrowserImageAlign::BOTTOM)
 {
@@ -901,7 +919,7 @@ calcRegion() const
 
 void
 CBrowserFormImage::
-drawWidget(CBrowserWindow *window, const CTextBox &region)
+drawWidget(CBrowserWindowIFace *window, const CTextBox &region)
 {
   int hspace = 2;
   int vspace = 2;
@@ -929,15 +947,17 @@ drawWidget(CBrowserWindow *window, const CTextBox &region)
   else
     y1 += 0;
 
-  window->drawImage(x1, y1, image_);
+  auto *graphics = window->graphics();
+
+  graphics->drawImage(x1, y1, image_);
 
   CRGBA color = window->getDocument()->getLinkColor();
 
   for (int i = 0; i < border; ++i)
-    window->drawRectangle(x1 - i - 1, y1 - i - 1,
-                          image_->getWidth () + 2*i + 1,
-                          image_->getHeight() + 2*i + 1,
-                          CPen(color));
+    graphics->drawRectangle(x1 - i - 1, y1 - i - 1,
+                            image_->getWidth () + 2*i + 1,
+                            image_->getHeight() + 2*i + 1,
+                            CPen(color));
 
 /*
   int x2 = x1 + image_->getWidth ();
@@ -950,7 +970,7 @@ drawWidget(CBrowserWindow *window, const CTextBox &region)
 //---
 
 CBrowserFormTel::
-CBrowserFormTel(CBrowserWindow *window, const CBrowserFormInputData &data) :
+CBrowserFormTel(CBrowserWindowIFace *window, const CBrowserFormInputData &data) :
  CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::TEL, data)
 {
 }
@@ -972,7 +992,7 @@ CBrowserFormTel::
 createWidget() const
 {
   if (! widget_) {
-    QLineEdit *edit = new QLineEdit(window_->widget());
+    auto *edit = new QLineEdit(getWindowWidget());
 
     edit->setObjectName(getName().c_str());
 
@@ -1009,7 +1029,7 @@ void
 CBrowserFormTel::
 reset()
 {
-  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+  auto *edit = qobject_cast<QLineEdit *>(widget_);
 
   edit->setText("");
 }
@@ -1019,7 +1039,7 @@ CBrowserFormTel::
 submit(std::string &text)
 {
   // add submit value to url
-  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+  auto *edit = qobject_cast<QLineEdit *>(widget_);
 
   QString value = edit->text();
 
@@ -1031,7 +1051,7 @@ submit(std::string &text)
 //---
 
 CBrowserFormMonth::
-CBrowserFormMonth(CBrowserWindow *window, const CBrowserFormInputData &data) :
+CBrowserFormMonth(CBrowserWindowIFace *window, const CBrowserFormInputData &data) :
  CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::MONTH, data)
 {
 }
@@ -1053,7 +1073,7 @@ CBrowserFormMonth::
 createWidget() const
 {
   if (! widget_) {
-    QLineEdit *edit = new QLineEdit(window_->widget());
+    auto *edit = new QLineEdit(getWindowWidget());
 
     edit->setObjectName(getName().c_str());
 
@@ -1090,7 +1110,7 @@ void
 CBrowserFormMonth::
 reset()
 {
-  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+  auto *edit = qobject_cast<QLineEdit *>(widget_);
 
   edit->setText("");
 }
@@ -1100,7 +1120,7 @@ CBrowserFormMonth::
 submit(std::string &text)
 {
   // add submit value to url
-  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+  auto *edit = qobject_cast<QLineEdit *>(widget_);
 
   QString value = edit->text();
 
@@ -1112,7 +1132,7 @@ submit(std::string &text)
 //---
 
 CBrowserFormDate::
-CBrowserFormDate(CBrowserWindow *window, const CBrowserFormInputData &data) :
+CBrowserFormDate(CBrowserWindowIFace *window, const CBrowserFormInputData &data) :
  CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::MONTH, data)
 {
 }
@@ -1134,7 +1154,7 @@ CBrowserFormDate::
 createWidget() const
 {
   if (! widget_) {
-    QLineEdit *edit = new QLineEdit(window_->widget());
+    auto *edit = new QLineEdit(getWindowWidget());
 
     edit->setObjectName(getName().c_str());
 
@@ -1171,7 +1191,7 @@ void
 CBrowserFormDate::
 reset()
 {
-  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+  auto *edit = qobject_cast<QLineEdit *>(widget_);
 
   edit->setText("");
 }
@@ -1181,7 +1201,7 @@ CBrowserFormDate::
 submit(std::string &url)
 {
   // add submit value to url
-  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+  auto *edit = qobject_cast<QLineEdit *>(widget_);
 
   QString value = edit->text();
 
@@ -1193,7 +1213,7 @@ submit(std::string &url)
 //---
 
 CBrowserFormSearch::
-CBrowserFormSearch(CBrowserWindow *window, const CBrowserFormInputData &data) :
+CBrowserFormSearch(CBrowserWindowIFace *window, const CBrowserFormInputData &data) :
  CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::MONTH, data)
 {
 }
@@ -1215,7 +1235,7 @@ CBrowserFormSearch::
 createWidget() const
 {
   if (! widget_) {
-    QLineEdit *edit = new QLineEdit(window_->widget());
+    auto *edit = new QLineEdit(getWindowWidget());
 
     edit->setObjectName(getName().c_str());
 
@@ -1252,7 +1272,7 @@ void
 CBrowserFormSearch::
 reset()
 {
-  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+  auto *edit = qobject_cast<QLineEdit *>(widget_);
 
   edit->setText("");
 }
@@ -1262,7 +1282,7 @@ CBrowserFormSearch::
 submit(std::string &text)
 {
   // add submit value to url
-  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+  auto *edit = qobject_cast<QLineEdit *>(widget_);
 
   QString value = edit->text();
 
@@ -1274,7 +1294,7 @@ submit(std::string &text)
 //---
 
 CBrowserFormNumber::
-CBrowserFormNumber(CBrowserWindow *window, const CBrowserFormInputData &data) :
+CBrowserFormNumber(CBrowserWindowIFace *window, const CBrowserFormInputData &data) :
  CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::NUMBER, data)
 {
 }
@@ -1296,11 +1316,11 @@ CBrowserFormNumber::
 createWidget() const
 {
   if (! widget_) {
-    CBrowserFormNumber *th = const_cast<CBrowserFormNumber *>(this);
+    auto *th = const_cast<CBrowserFormNumber *>(this);
 
-    CQJLineEdit *edit = new CQJLineEdit(getJObj(), th->iface());
+    auto *edit = new CQJLineEdit(getJObj(), th->iface());
 
-    edit->setParent(window_->widget());
+    edit->setParent(getWindowWidget());
     edit->setText(data_.value.c_str());
 
     edit->setPlaceholderText(data_.placeholder.c_str());
@@ -1340,7 +1360,7 @@ void
 CBrowserFormNumber::
 reset()
 {
-  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+  auto *edit = qobject_cast<QLineEdit *>(widget_);
 
   edit->setText("");
 }
@@ -1350,7 +1370,7 @@ CBrowserFormNumber::
 submit(std::string &text)
 {
   // add submit value to url
-  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+  auto *edit = qobject_cast<QLineEdit *>(widget_);
 
   QString value = edit->text();
 
@@ -1362,7 +1382,7 @@ submit(std::string &text)
 //---
 
 CBrowserFormEmail::
-CBrowserFormEmail(CBrowserWindow *window, const CBrowserFormInputData &data) :
+CBrowserFormEmail(CBrowserWindowIFace *window, const CBrowserFormInputData &data) :
  CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::EMAIL, data)
 {
 }
@@ -1383,7 +1403,7 @@ std::string
 CBrowserFormEmail::
 text() const
 {
-  QLineEdit *edit = dynamic_cast<QLineEdit *>(widget_);
+  auto *edit = dynamic_cast<QLineEdit *>(widget_);
 
   return (edit ? edit->text().toStdString() : "");
 }
@@ -1393,7 +1413,7 @@ CBrowserFormEmail::
 createWidget() const
 {
   if (! widget_) {
-    QLineEdit *edit = new QLineEdit(window_->widget());
+    auto *edit = new QLineEdit(getWindowWidget());
 
     edit->setObjectName(getName().c_str());
 
@@ -1430,7 +1450,7 @@ void
 CBrowserFormEmail::
 reset()
 {
-  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+  auto *edit = qobject_cast<QLineEdit *>(widget_);
 
   edit->setText("");
 }
@@ -1440,7 +1460,7 @@ CBrowserFormEmail::
 submit(std::string &text)
 {
   // add submit value to url
-  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+  auto *edit = qobject_cast<QLineEdit *>(widget_);
 
   QString value = edit->text();
 
@@ -1452,7 +1472,7 @@ submit(std::string &text)
 //---
 
 CBrowserFormPassword::
-CBrowserFormPassword(CBrowserWindow *window, const CBrowserFormInputData &data) :
+CBrowserFormPassword(CBrowserWindowIFace *window, const CBrowserFormInputData &data) :
  CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::PASSWORD_TEXT, data)
 {
 }
@@ -1474,7 +1494,7 @@ CBrowserFormPassword::
 createWidget() const
 {
   if (! widget_) {
-    QLineEdit *edit = new QLineEdit(window_->widget());
+    auto *edit = new QLineEdit(getWindowWidget());
 
     edit->setObjectName(getName().c_str());
 
@@ -1513,7 +1533,7 @@ void
 CBrowserFormPassword::
 reset()
 {
-  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+  auto *edit = qobject_cast<QLineEdit *>(widget_);
 
   edit->setText("");
 }
@@ -1523,9 +1543,9 @@ CBrowserFormPassword::
 submit(std::string &text)
 {
   // add submit value to url
-  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+  auto *edit = qobject_cast<QLineEdit *>(widget_);
 
-  QString value = edit->text();
+  auto value = edit->text();
 
   text += getName();
   text += "=";
@@ -1535,7 +1555,7 @@ submit(std::string &text)
 //---
 
 CBrowserFormHidden::
-CBrowserFormHidden(CBrowserWindow *window, const CBrowserFormInputData &data) :
+CBrowserFormHidden(CBrowserWindowIFace *window, const CBrowserFormInputData &data) :
  CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::HIDDEN, data)
 {
 }
@@ -1560,7 +1580,7 @@ createWidget() const
 
 void
 CBrowserFormHidden::
-drawWidget(CBrowserWindow *, const CTextBox &)
+drawWidget(CBrowserWindowIFace *, const CTextBox &)
 {
 }
 
@@ -1577,7 +1597,7 @@ submit(std::string &text)
 //---
 
 CBrowserFormText::
-CBrowserFormText(CBrowserWindow *window, const CBrowserFormInputData &data) :
+CBrowserFormText(CBrowserWindowIFace *window, const CBrowserFormInputData &data) :
  CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::TEXT, data)
 {
 }
@@ -1598,7 +1618,7 @@ std::string
 CBrowserFormText::
 text() const
 {
-  QLineEdit *edit = dynamic_cast<QLineEdit *>(widget_);
+  auto *edit = dynamic_cast<QLineEdit *>(widget_);
 
   return (edit ? edit->text().toStdString() : "");
 }
@@ -1608,12 +1628,12 @@ CBrowserFormText::
 createWidget() const
 {
   if (! widget_) {
-    CBrowserFormText *th = const_cast<CBrowserFormText *>(this);
+    auto *th = const_cast<CBrowserFormText *>(this);
 
     if (classStr_ == "color") {
-      CQJColorEdit *colorEdit = new CQJColorEdit(getJObj(), th->iface());
+      auto *colorEdit = new CQJColorEdit(getJObj(), th->iface());
 
-      colorEdit->setParent(window_->widget());
+      colorEdit->setParent(getWindowWidget());
       colorEdit->setText(data_.value.c_str());
 
       if (maxlength_ > 0)
@@ -1625,9 +1645,9 @@ createWidget() const
       widget_ = colorEdit;
     }
     else {
-      CQJLineEdit *lineEdit = new CQJLineEdit(getJObj(), th->iface());
+      auto *lineEdit = new CQJLineEdit(getJObj(), th->iface());
 
-      lineEdit->setParent(window_->widget());
+      lineEdit->setParent(getWindowWidget());
       lineEdit->setText(data_.value.c_str());
 
       lineEdit->setPlaceholderText(data_.placeholder.c_str());
@@ -1669,7 +1689,7 @@ CBrowserFormText::
 submit(std::string &text)
 {
   // add submit value to url
-  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+  auto *edit = qobject_cast<QLineEdit *>(widget_);
 
   QString value = edit->text();
 
@@ -1682,7 +1702,7 @@ void
 CBrowserFormText::
 reset()
 {
-  QLineEdit *edit = qobject_cast<QLineEdit *>(widget_);
+  auto *edit = qobject_cast<QLineEdit *>(widget_);
 
   edit->setText(data_.value.c_str());
 }
@@ -1690,7 +1710,7 @@ reset()
 //---
 
 CBrowserFormTextarea::
-CBrowserFormTextarea(CBrowserWindow *window) :
+CBrowserFormTextarea(CBrowserWindowIFace *window) :
  CBrowserFormInput(window, CHtmlTagId::TEXTAREA, CBrowserFormInputType::TEXTAREA),
  wrap_(CBrowserFormTextAreaWrapType::OFF)
 {
@@ -1767,7 +1787,7 @@ CBrowserFormTextarea::
 createWidget() const
 {
   if (! widget_) {
-    QTextEdit *edit = new QTextEdit(window_->widget());
+    auto *edit = new QTextEdit(getWindowWidget());
 
     edit->setObjectName(getName().c_str());
 
@@ -1808,7 +1828,7 @@ CBrowserFormTextarea::
 submit(std::string &text)
 {
   // add submit value to url
-  QTextEdit *edit = qobject_cast<QTextEdit *>(widget_);
+  auto *edit = qobject_cast<QTextEdit *>(widget_);
 
   QString value = edit->toPlainText();
 
@@ -1821,7 +1841,7 @@ void
 CBrowserFormTextarea::
 reset()
 {
-  QTextEdit *edit = qobject_cast<QTextEdit *>(widget_);
+  auto *edit = qobject_cast<QTextEdit *>(widget_);
 
   std::string text = this->text();
 
@@ -1834,7 +1854,7 @@ reset()
 //---
 
 CBrowserFormReset::
-CBrowserFormReset(CBrowserWindow *window, const CBrowserFormInputData &data) :
+CBrowserFormReset(CBrowserWindowIFace *window, const CBrowserFormInputData &data) :
  CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::RESET_BUTTON, data)
 {
 }
@@ -1856,7 +1876,7 @@ CBrowserFormReset::
 createWidget() const
 {
   if (! widget_) {
-    QPushButton *button = new QPushButton(window_->widget());
+    auto *button = new QPushButton(getWindowWidget());
 
     button->setObjectName(getName() != "" ? getName().c_str() : "button");
 
@@ -1896,13 +1916,13 @@ void
 CBrowserFormReset::
 resetProc()
 {
-  std::cerr << "Reset" << std::endl;
+  std::cerr << "Reset\n";
 }
 
 //---
 
 CBrowserFormSelect::
-CBrowserFormSelect(CBrowserWindow *window) :
+CBrowserFormSelect(CBrowserWindowIFace *window) :
  CBrowserFormInput(window, CHtmlTagId::SELECT, CBrowserFormInputType::SELECT)
 {
 }
@@ -1950,7 +1970,7 @@ CBrowserFormSelect::
 value() const
 {
   if (data_.multiple || data_.size > 1) {
-    QListWidget *list = dynamic_cast<QListWidget *>(widget_);
+    auto *list = dynamic_cast<QListWidget *>(widget_);
     if (! list) return "";
 
     QList<QListWidgetItem *> items = list->selectedItems();
@@ -1967,7 +1987,7 @@ value() const
     return str;
   }
   else {
-    CQJComboBox *combo = dynamic_cast<CQJComboBox *>(widget_);
+    auto *combo = dynamic_cast<CQJComboBox *>(widget_);
     if (! combo) return "";
 
     int ind = combo->currentIndex();
@@ -1996,10 +2016,10 @@ CBrowserFormSelect::
 createWidget() const
 {
   if (! widget_) {
-    CBrowserFormSelect *th = const_cast<CBrowserFormSelect *>(this);
+    auto *th = const_cast<CBrowserFormSelect *>(this);
 
     if (data_.multiple || data_.size > 1) {
-      QListWidget *list = new QListWidget(window_->widget());
+      auto *list = new QListWidget(getWindowWidget());
 
       list->setObjectName(getName().c_str());
 
@@ -2013,7 +2033,7 @@ createWidget() const
       for (uint i = 0; i < num; ++i) {
         CBrowserFormOption *option = getOption(i);
 
-        QListWidgetItem *item = new QListWidgetItem(option->getText().c_str());
+        auto *item = new QListWidgetItem(option->getText().c_str());
 
         list->addItem(item);
 
@@ -2022,9 +2042,9 @@ createWidget() const
       }
     }
     else {
-      CQJComboBox *combo = new CQJComboBox(getJObj(), th->iface());
+      auto *combo = new CQJComboBox(getJObj(), th->iface());
 
-      combo->setParent(window_->widget());
+      combo->setParent(getWindowWidget());
       combo->setObjectName(getName().c_str());
 
       widget_ = combo;
@@ -2064,7 +2084,7 @@ calcRegion() const
 //---
 
 CBrowserFormSubmit::
-CBrowserFormSubmit(CBrowserWindow *window, const CBrowserFormInputData &data) :
+CBrowserFormSubmit(CBrowserWindowIFace *window, const CBrowserFormInputData &data) :
  CBrowserFormInput(window, CHtmlTagId::INPUT, CBrowserFormInputType::SUBMIT_BUTTON, data)
 {
 }
@@ -2086,7 +2106,7 @@ CBrowserFormSubmit::
 createWidget() const
 {
   if (! widget_) {
-    QPushButton *button = new QPushButton(window_->widget());
+    auto *button = new QPushButton(getWindowWidget());
 
     button->setObjectName(getName() != "" ? getName().c_str() : "button");
 

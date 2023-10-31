@@ -5,7 +5,7 @@
 
 class CBrowserArea : public CBrowserObject {
  public:
-  explicit CBrowserArea(CBrowserWindow *window);
+  explicit CBrowserArea(CBrowserWindowIFace *window);
 
   void init() override;
 

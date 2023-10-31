@@ -1,8 +1,9 @@
 #include <CBrowserRule.h>
 #include <CBrowserWindow.h>
+#include <CBrowserGraphics.h>
 
 CBrowserRule::
-CBrowserRule(CBrowserWindow *window) :
+CBrowserRule(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::HR)
 {
   setDisplay(CBrowserObject::Display::BLOCK);
@@ -110,8 +111,10 @@ draw(const CTextBox &region)
 
   //---
 
+  auto *graphics = window_->graphics();
+
   if (data_.shade)
-    window_->drawHRule(x1, x2, y1, data_.size);
+    graphics->drawHRule(x1, x2, y1, data_.size, CPen(window_->getBgColor()));
   else
-    window_->fillRectangle(x1, y1, x2 - x1 + 1, data_.size, CBrush(window_->getFgColor()));
+    graphics->fillRectangle(x1, y1, x2 - x1 + 1, data_.size, CBrush(window_->getFgColor()));
 }

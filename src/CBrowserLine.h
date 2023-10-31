@@ -4,7 +4,7 @@
 #include <CBrowserWord.h>
 #include <CAlignType.h>
 
-class CBrowserWindow;
+class CBrowserWindowIFace;
 
 class CBrowserLine {
  public:
@@ -23,7 +23,7 @@ class CBrowserLine {
 
   void addWord(int x, int y, const CBrowserWord &word);
 
-  void draw(CBrowserWindow *window, int width, const CHAlignType &halign);
+  void draw(CBrowserWindowIFace *window, int width, const CHAlignType &halign);
 
   bool isEmpty() const;
 

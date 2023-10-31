@@ -4,7 +4,7 @@
 #include <CBrowserTypes.h>
 
 class CBrowserOutputTagBase;
-class CBrowserWindow;
+class CBrowserWindowIFace;
 
 class CHtmlParserTokens;
 class CHtmlTag;
@@ -13,7 +13,7 @@ class CHtmlToken;
 
 class CBrowserOutput {
  public:
-  explicit CBrowserOutput(CBrowserWindow *window);
+  explicit CBrowserOutput(CBrowserWindowIFace *window);
 
   void processTokens(const CHtmlParserTokens &tokens);
 
@@ -32,7 +32,7 @@ class CBrowserOutput {
   void processEndTag  (CHtmlTag *tag, CBrowserOutputTagBase *output_data);
 
  private:
-  CBrowserWindow *window_ { nullptr };
+  CBrowserWindowIFace *window_ { nullptr };
 };
 
 #endif

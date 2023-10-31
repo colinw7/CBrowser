@@ -6,7 +6,7 @@
 #include <CDir.h>
 
 CBrowserLinkMgr::
-CBrowserLinkMgr(CBrowserWindow *window) :
+CBrowserLinkMgr(CBrowserWindowIFace *window) :
  window_(window)
 {
 }
@@ -15,7 +15,7 @@ void
 CBrowserLinkMgr::
 startSourceLink(CBrowserAnchor *anchor)
 {
-  if (current_link_) {
+  if (currentLink_) {
     fprintf(stderr, "Invalid Link within a Link\n");
     return;
   }
@@ -35,14 +35,14 @@ startSourceLink(CBrowserAnchor *anchor)
 
   window_->getDocument()->addLink(link);
 
-  current_link_ = link;
+  currentLink_ = link;
 }
 
 void
 CBrowserLinkMgr::
 startDestLink(CBrowserAnchor *anchor)
 {
-  if (current_link_) {
+  if (currentLink_) {
     fprintf(stderr, "Invalid Link within a Link\n");
     return;
   }
@@ -57,24 +57,24 @@ startDestLink(CBrowserAnchor *anchor)
 
   window_->getDocument()->addAnchor(link);
 
-  current_link_ = link;
+  currentLink_ = link;
 }
 
 void
 CBrowserLinkMgr::
 endLink()
 {
-  if (! current_link_)
+  if (! currentLink_)
     return;
 
-  current_link_ = nullptr;
+  currentLink_ = nullptr;
 }
 
 CBrowserAnchorLink *
 CBrowserLinkMgr::
 getCurrentLink()
 {
-  return current_link_;
+  return currentLink_;
 }
 
 void
@@ -265,7 +265,7 @@ clearRects()
 //------
 
 CBrowserAnchor::
-CBrowserAnchor(CBrowserWindow *window) :
+CBrowserAnchor(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::A)
 {
   setDisplay(CBrowserObject::Display::INLINE);
@@ -351,17 +351,17 @@ CBrowserAnchor::
 initProcess()
 {
   if (href() != "") {
-    window_->linkMgr()->startSourceLink(this);
+    window_->startSourceLink(this);
   }
   else
-    window_->linkMgr()->startDestLink(this);
+    window_->startDestLink(this);
 }
 
 void
 CBrowserAnchor::
 termProcess()
 {
-  window_->linkMgr()->endLink();
+  window_->endLink();
 }
 
 std::string
@@ -384,7 +384,7 @@ propertyValue(int i) const
 //------
 
 CBrowserLink::
-CBrowserLink(CBrowserWindow *window) :
+CBrowserLink(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::LINK)
 {
 }
@@ -449,7 +449,7 @@ CBrowserLink::
 initProcess()
 {
   if      (data_.rel == "stylesheet") {
-    std::string href = window_->linkMgr()->expandDestLink(data_.href);
+    std::string href = window_->expandDestLink(data_.href);
 
     if (href == "")
       return;
@@ -460,7 +460,7 @@ initProcess()
       return;
   }
   else if (data_.rel == "shortcut icon") {
-     std::string href = window_->linkMgr()->expandDestLink(data_.href);
+     std::string href = window_->expandDestLink(data_.href);
 
     if (href == "")
       return;

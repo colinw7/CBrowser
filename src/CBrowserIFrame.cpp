@@ -2,7 +2,7 @@
 #include <CBrowserWindow.h>
 
 CBrowserIFrame::
-CBrowserIFrame(CBrowserWindow *window) :
+CBrowserIFrame(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::IFRAME)
 {
   // iframe:focus { outline: none; }

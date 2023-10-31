@@ -6,7 +6,7 @@
 
 class CBrowserBody : public CBrowserObject {
  public:
-  explicit CBrowserBody(CBrowserWindow *window);
+  explicit CBrowserBody(CBrowserWindowIFace *window);
 
   void setNameValue(const std::string &name, const std::string &value) override;
 

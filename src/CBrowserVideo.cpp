@@ -2,7 +2,7 @@
 #include <CBrowserWindow.h>
 
 CBrowserVideo::
-CBrowserVideo(CBrowserWindow *window) :
+CBrowserVideo(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::VIDEO)
 {
 }

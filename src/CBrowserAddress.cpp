@@ -2,7 +2,7 @@
 #include <CBrowserWindow.h>
 
 CBrowserAddress::
-CBrowserAddress(CBrowserWindow *window) :
+CBrowserAddress(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::ADDRESS)
 {
   setDisplay(Display::BLOCK);

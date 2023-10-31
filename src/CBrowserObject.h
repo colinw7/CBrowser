@@ -88,18 +88,18 @@ class CBrowserObject : public CBrowserBox {
   //---
 
  public:
-  typedef std::vector<CBrowserObject *> Children;
-  typedef std::vector<std::string>      Classes;
-  typedef std::vector<std::string>      Properties;
+  using Children   = std::vector<CBrowserObject *>;
+  using Classes    = std::vector<std::string>;
+  using Properties = std::vector<std::string>;
 
  public:
-  CBrowserObject(CBrowserWindow *window, CHtmlTagId type,
+  CBrowserObject(CBrowserWindowIFace *window, CHtmlTagId type,
                  const CBrowserBaseData &data=CBrowserBaseData());
  ~CBrowserObject();
 
   virtual void init();
 
-  CBrowserWindow *getWindow() const { return window_; }
+  CBrowserWindowIFace *getWindow() const { return window_; }
 
   IFace *iface() { return &iface_; }
 
@@ -180,7 +180,7 @@ class CBrowserObject : public CBrowserBox {
   void setPosition(const CBrowserPosition &v) { position_ = v; }
 
   const std::string &title() const { return title_; }
-  void setTitle(const std::string &v) { title_ = v; }
+  void setTitle(const std::string &s) { title_ = s; }
 
   const CBrowserFont &font() const { return font_; }
 
@@ -263,9 +263,11 @@ class CBrowserObject : public CBrowserBox {
 
   //---
 
-  virtual CBrowserRegion calcRegion() const { return CBrowserRegion(); }
+  virtual CBrowserRegion calcRegion() const;
 
   virtual CIBBox2D calcBBox() const override;
+
+  CIBBox2D layoutBBox() const;
 
   //---
 
@@ -304,8 +306,9 @@ class CBrowserObject : public CBrowserBox {
   virtual void print(std::ostream &os) const { os << typeName(); }
 
  protected:
-  CBrowserWindow*     window_ { nullptr };
-  IFace               iface_;
+  CBrowserWindowIFace* window_ { nullptr };
+  IFace                iface_;
+
   CHtmlTagId          type_;
   CBrowserBaseData    data_;
   CHtmlTag*           tag_ { nullptr };

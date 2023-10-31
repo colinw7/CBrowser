@@ -14,9 +14,9 @@ enum CBrowserTextPos {
 
 class CBrowserText : public CBrowserObject {
  public:
-  CBrowserText(CBrowserWindow *window, const std::string &text);
+  CBrowserText(CBrowserWindowIFace *window, const std::string &text);
 
-  CBrowserText(CBrowserWindow *window, const CBrowserText &draw_text, const std::string &text);
+  CBrowserText(CBrowserWindowIFace *window, const CBrowserText &draw_text, const std::string &text);
 
  ~CBrowserText();
 

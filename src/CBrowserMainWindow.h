@@ -2,52 +2,59 @@
 #define CBrowserMainWindow_H
 
 #include <CBrowserTypes.h>
+#include <CBrowserIFace.h>
 #include <CQMainWindow.h>
-#include <CUrl.h>
 
-class CBrowserScrolledWindow;
+class CBrowser;
+class CBrowserWindowIFace;
 class CBrowserDomTreeDlg;
 class CBrowserCSSTreeDlg;
 class CBrowserWebView;
+
+class CQMenu;
+class CQToolBar;
+class CQMenuItem;
 class QLineEdit;
 class QScrollArea;
 class QScrollBar;
 class QLabel;
-class CQMenu;
-class CQToolBar;
-class CQMenuItem;
 
-class CBrowserMainWindow : public CQMainWindow {
+// Main Window with interface elements, and document scrolled window
+class CBrowserMainWindow : public CQMainWindow, public CBrowserIFace {
   Q_OBJECT
 
  public:
-  CBrowserMainWindow();
+  CBrowserMainWindow(CBrowser *browser);
  ~CBrowserMainWindow();
 
   void init();
 
-  CBrowserScrolledWindow *addWindow();
+  // add new document (and window)
+  void addDocument(const CUrl &url) override;
+  // add new document (in current window)
+  void setDocument(const CUrl &url) override;
 
-  CBrowserScrolledWindow *currentWindow() const;
+  // add new window
+  CBrowserWindowIFace *addWindow();
+  // get current window
+  CBrowserWindowIFace *currentWindow() const;
 
-  QLabel* objLabel() const { return objLabel_; }
-  QLabel* posLabel() const { return posLabel_; }
+  void addHistoryItem(const CUrl &url) override;
 
-  void addHistoryItem(const CUrl &url);
+  void show() override { CQMainWindow::show(); }
 
-  void addDocument(const CUrl &url);
-  void setDocument(const CUrl &url);
+  void saveImage(const QString &filename);
 
-  void saveImage(const std::string &filename);
+  void setTitle (const QString &title ) override;
+  void setStatus(const QString &status) override;
 
-  void setTitle(const std::string &title);
+  void errorDialog(const QString &msg) override;
 
-  void setStatus(const std::string &status);
+  void setBusy () override;
+  void setReady() override;
 
-  void errorDialog(const std::string &msg);
-
-  void setBusy ();
-  void setReady();
+  void setObjText(const QString &text) override;
+  void setPosText(const QString &text) override;
 
  private:
   QWidget *createCentralWidget() override;
@@ -56,10 +63,13 @@ class CBrowserMainWindow : public CQMainWindow {
   void createToolBars() override;
   void createStatusBar() override;
 
+  QLabel* objLabel() const { return objLabel_; }
+  QLabel* posLabel() const { return posLabel_; }
+
  public slots:
   void inputSlot();
 
-  void updateTitles();
+  void updateTitles() override;
 
   void newProc();
   void readProc();
@@ -79,21 +89,22 @@ class CBrowserMainWindow : public CQMainWindow {
   void quitProc();
 
  private:
-  typedef std::vector<CBrowserScrolledWindow *> Windows;
+  using Windows = std::vector<CBrowserWindowIFace *>;
 
-  QLineEdit*          input_ { nullptr };
-  QTabWidget*         tab_ { nullptr };
-  Windows             windows_;
-  QLabel*             message_ { nullptr };
+  Windows windows_;
+
+  QLineEdit*          input_       { nullptr };
+  QTabWidget*         tab_         { nullptr };
+  QLabel*             message_     { nullptr };
   CQMenu*             historyMenu_ { nullptr };
-  QLabel*             objLabel_ { nullptr };
-  QLabel*             posLabel_ { nullptr };
-  CQJDialog*          jsDlg_ { nullptr };
-  CBrowserDomTreeDlg* domDlg_ { nullptr };
-  CBrowserCSSTreeDlg* cssDlg_ { nullptr };
-  CBrowserWebView*    webView_ { nullptr };
-  CQToolBar*          toolbar_ { nullptr };
-  CQMenuItem*         jsMenuItem_ { nullptr };
+  QLabel*             objLabel_    { nullptr };
+  QLabel*             posLabel_    { nullptr };
+  CQJDialog*          jsDlg_       { nullptr };
+  CBrowserDomTreeDlg* domDlg_      { nullptr };
+  CBrowserCSSTreeDlg* cssDlg_      { nullptr };
+  CBrowserWebView*    webView_     { nullptr };
+  CQToolBar*          toolbar_     { nullptr };
+  CQMenuItem*         jsMenuItem_  { nullptr };
   CQMenuItem*         domMenuItem_ { nullptr };
   CQMenuItem*         cssMenuItem_ { nullptr };
   CQMenuItem*         webMenuItem_ { nullptr };

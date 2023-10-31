@@ -6,7 +6,7 @@
 
 class CBrowserParagraph : public CBrowserObject {
  public:
-  CBrowserParagraph(CBrowserWindow *window,
+  CBrowserParagraph(CBrowserWindowIFace *window,
                     const CBrowserParagraphData &data=CBrowserParagraphData());
 
   void init() override;

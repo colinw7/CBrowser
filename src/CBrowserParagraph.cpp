@@ -3,7 +3,7 @@
 #include <CBrowserProperty.h>
 
 CBrowserParagraph::
-CBrowserParagraph(CBrowserWindow *window, const CBrowserParagraphData &data) :
+CBrowserParagraph(CBrowserWindowIFace *window, const CBrowserParagraphData &data) :
  CBrowserObject(window, CHtmlTagId::P), data_(data)
 {
   setDisplay(Display::BLOCK);

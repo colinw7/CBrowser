@@ -57,7 +57,7 @@ struct CBrowserTableCaptionData {
 
 class CBrowserTable : public CBrowserObject {
  public:
-  CBrowserTable(CBrowserWindow *window, const CBrowserTableData &data);
+  CBrowserTable(CBrowserWindowIFace *window, const CBrowserTableData &data);
  ~CBrowserTable();
 
   void init() override;
@@ -113,9 +113,9 @@ class CBrowserTable : public CBrowserObject {
   void addPadCells();
 
  private:
-  typedef std::vector<CBrowserTableCell *> Cells;
-  typedef std::vector<CBrowserTableRow  *> Rows;
-  typedef std::vector<Cells>               RowCells;
+  using Cells    = std::vector<CBrowserTableCell *>;
+  using Rows     = std::vector<CBrowserTableRow  *>;
+  using RowCells = std::vector<Cells>;
 
   CBrowserTableData     data_;
   int                   row_num_ { 0 };
@@ -133,7 +133,7 @@ class CBrowserTable : public CBrowserObject {
 
 class CBrowserTableCaption : public CBrowserObject {
  public:
-  explicit CBrowserTableCaption(CBrowserWindow *window);
+  explicit CBrowserTableCaption(CBrowserWindowIFace *window);
 
  ~CBrowserTableCaption();
 
@@ -155,7 +155,7 @@ class CBrowserTableCaption : public CBrowserObject {
 
 class CBrowserTableRow : public CBrowserObject {
  public:
-  explicit CBrowserTableRow(CBrowserWindow *window);
+  explicit CBrowserTableRow(CBrowserWindowIFace *window);
 
  ~CBrowserTableRow() { }
 
@@ -180,7 +180,7 @@ class CBrowserTableRow : public CBrowserObject {
 
 class CBrowserTableCell : public CBrowserObject {
  public:
-  CBrowserTableCell(CBrowserWindow *window, CHtmlTagId id, const CBrowserTableCellData &data);
+  CBrowserTableCell(CBrowserWindowIFace *window, CHtmlTagId id, const CBrowserTableCellData &data);
 
   virtual ~CBrowserTableCell();
 
@@ -244,7 +244,7 @@ class CBrowserTableCell : public CBrowserObject {
 
 class CBrowserTablePadCell : public CBrowserTableCell {
  public:
-  CBrowserTablePadCell(CBrowserWindow *window, const CBrowserTableCellData &data);
+  CBrowserTablePadCell(CBrowserWindowIFace *window, const CBrowserTableCellData &data);
 };
 
 #endif

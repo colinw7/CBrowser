@@ -3,7 +3,7 @@
 #include <CRGBName.h>
 
 CBrowserBStyle::
-CBrowserBStyle(CBrowserWindow *window) :
+CBrowserBStyle(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::B)
 {
   setDisplay(CBrowserObject::Display::INLINE);
@@ -19,7 +19,7 @@ CBrowserBStyle::
 //---
 
 CBrowserBigStyle::
-CBrowserBigStyle(CBrowserWindow *window) :
+CBrowserBigStyle(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::BIG)
 {
   setDisplay(CBrowserObject::Display::INLINE);
@@ -35,7 +35,7 @@ CBrowserBigStyle::
 //---
 
 CBrowserBlinkStyle::
-CBrowserBlinkStyle(CBrowserWindow *window) :
+CBrowserBlinkStyle(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::BLINK)
 {
   setDisplay(CBrowserObject::Display::INLINE);
@@ -51,7 +51,7 @@ CBrowserBlinkStyle::
 //---
 
 CBrowserCiteStyle::
-CBrowserCiteStyle(CBrowserWindow *window) :
+CBrowserCiteStyle(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::CITE)
 {
   setDisplay(CBrowserObject::Display::INLINE);
@@ -67,7 +67,7 @@ CBrowserCiteStyle::
 //---
 
 CBrowserDfnStyle::
-CBrowserDfnStyle(CBrowserWindow *window) :
+CBrowserDfnStyle(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::DFN)
 {
   setDisplay(CBrowserObject::Display::INLINE);
@@ -83,7 +83,7 @@ CBrowserDfnStyle::
 //---
 
 CBrowserEmStyle::
-CBrowserEmStyle(CBrowserWindow *window) :
+CBrowserEmStyle(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::EM)
 {
   setDisplay(CBrowserObject::Display::INLINE);
@@ -99,7 +99,7 @@ CBrowserEmStyle::
 //---
 
 CBrowserFontStyleObj::
-CBrowserFontStyleObj(CBrowserWindow *window) :
+CBrowserFontStyleObj(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::FONT)
 {
   setDisplay(CBrowserObject::Display::INLINE);
@@ -178,7 +178,7 @@ setNameValue(const std::string &name, const std::string &value)
 //---
 
 CBrowserIStyle::
-CBrowserIStyle(CBrowserWindow *window) :
+CBrowserIStyle(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::I)
 {
   setDisplay(CBrowserObject::Display::INLINE);
@@ -194,7 +194,7 @@ CBrowserIStyle::
 //---
 
 CBrowserSmallStyle::
-CBrowserSmallStyle(CBrowserWindow *window) :
+CBrowserSmallStyle(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::SMALL)
 {
   setDisplay(CBrowserObject::Display::INLINE);
@@ -210,7 +210,7 @@ CBrowserSmallStyle::
 //---
 
 CBrowserStrikeStyle::
-CBrowserStrikeStyle(CBrowserWindow *window) :
+CBrowserStrikeStyle(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::STRIKE)
 {
   setDisplay(CBrowserObject::Display::INLINE);
@@ -226,7 +226,7 @@ CBrowserStrikeStyle::
 //---
 
 CBrowserStrongStyle::
-CBrowserStrongStyle(CBrowserWindow *window) :
+CBrowserStrongStyle(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::STRONG)
 {
   setDisplay(CBrowserObject::Display::INLINE);
@@ -242,7 +242,7 @@ CBrowserStrongStyle::
 //---
 
 CBrowserSubStyle::
-CBrowserSubStyle(CBrowserWindow *window) :
+CBrowserSubStyle(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::SUB)
 {
   setDisplay(CBrowserObject::Display::INLINE);
@@ -260,7 +260,7 @@ CBrowserSubStyle::
 //---
 
 CBrowserSupStyle::
-CBrowserSupStyle(CBrowserWindow *window) :
+CBrowserSupStyle(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::SUP)
 {
   setDisplay(CBrowserObject::Display::INLINE);
@@ -278,7 +278,7 @@ CBrowserSupStyle::
 //---
 
 CBrowserUStyle::
-CBrowserUStyle(CBrowserWindow *window) :
+CBrowserUStyle(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::U)
 {
   setDisplay(CBrowserObject::Display::INLINE);
@@ -294,7 +294,7 @@ CBrowserUStyle::
 //---
 
 CBrowserVarStyle::
-CBrowserVarStyle(CBrowserWindow *window) :
+CBrowserVarStyle(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::VAR)
 {
   setDisplay(CBrowserObject::Display::INLINE);

@@ -1,5 +1,6 @@
 #include <CBrowserRenderer.h>
 #include <CBrowserWindowWidget.h>
+
 #include <CQUtil.h>
 #include <CQUtilRGBA.h>
 #include <CQUtilGeom.h>
@@ -7,14 +8,13 @@
 #include <CQBrushUtil.h>
 #include <CQFontUtil.h>
 #include <CQImageUtil.h>
+
 #include <QPainter>
 
 CBrowserRenderer::
-CBrowserRenderer(CBrowserWindowWidget *w) :
- w_(w), pixmap_(nullptr), painter_(nullptr)
+CBrowserRenderer(CBrowserWindowWidgetIFace *iface) :
+ iface_(iface)
 {
-  pixmap_width_  = 0;
-  pixmap_height_ = 0;
 }
 
 CBrowserRenderer::
@@ -47,9 +47,7 @@ endDoubleBuffer()
 {
   painter_->end();
 
-  QPainter painter(w_);
-
-  painter.drawPixmap(QPoint(0, 0), *pixmap_);
+  iface_->drawPixmap(pixmap_);
 }
 
 void

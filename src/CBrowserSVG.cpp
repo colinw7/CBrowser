@@ -1,10 +1,12 @@
 #include <CBrowserSVG.h>
-#include <CQSVGRenderer.h>
 #include <CBrowserWindow.h>
+#include <CBrowserGraphics.h>
+
+#include <CQSVGRenderer.h>
 #include <CHtmlTag.h>
 
 CBrowserSVG::
-CBrowserSVG(CBrowserWindow *window) :
+CBrowserSVG(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::SVG)
 {
   renderer_ = new CQSVGRenderer;
@@ -79,5 +81,7 @@ draw(const CTextBox &region)
 
   const QImage &qimage = renderer_->qimage();
 
-  window_->drawImage(region.x(), region.y(), qimage);
+  auto *graphics = window_->graphics();
+
+  graphics->drawImage(region.x(), region.y(), qimage);
 }

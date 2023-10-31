@@ -17,7 +17,7 @@ std::string listIdName(CHtmlTagId id) {
 //---
 
 CBrowserList::
-CBrowserList(CBrowserWindow *window, CHtmlTagId id) :
+CBrowserList(CBrowserWindowIFace *window, CHtmlTagId id) :
  CBrowserObject(window, id)
 {
   setDisplay(Display::BLOCK);

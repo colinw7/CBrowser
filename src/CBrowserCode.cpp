@@ -2,7 +2,7 @@
 #include <CBrowserWindow.h>
 
 CBrowserCode::
-CBrowserCode(CBrowserWindow *window) :
+CBrowserCode(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::CODE)
 {
   font_.setFamily(CBrowserFontFamily("monospace"));

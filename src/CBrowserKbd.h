@@ -5,7 +5,7 @@
 
 class CBrowserKbd : public CBrowserObject {
  public:
-  explicit CBrowserKbd(CBrowserWindow *window);
+  explicit CBrowserKbd(CBrowserWindowIFace *window);
 };
 
 #endif

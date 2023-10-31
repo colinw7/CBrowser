@@ -49,7 +49,7 @@ class CBrowserObjPropDelegate : public QStyledItemDelegate {
 //---
 
 CBrowserObjProp::
-CBrowserObjProp(QWidget *parent, CBrowserWindow *window) :
+CBrowserObjProp(QWidget *parent, CBrowserWindowIFace *window) :
  QTreeView(parent), window_(window)
 {
   setObjectName("objProp");
@@ -90,18 +90,18 @@ selectionChanged(const QItemSelection & /*selected*/, const QItemSelection & /*d
 {
 #if 0
   for (int i = 0; i < selected.indexes().length(); ++i) {
-    const QModelIndex &ind = selected.indexes()[i];
+    const auto &ind = selected.indexes()[i];
 
-    CBrowserObject *obj = static_cast<CBrowserObject *>(ind.internalPointer());
+    auto *obj = static_cast<CBrowserObject *>(ind.internalPointer());
     if (! obj) continue;
 
     obj->setSelected(true);
   }
 
   for (int i = 0; i < deselected.indexes().length(); ++i) {
-    const QModelIndex &ind = deselected.indexes()[i];
+    const auto &ind = deselected.indexes()[i];
 
-    CBrowserObject *obj = static_cast<CBrowserObject *>(ind.internalPointer());
+    auto *obj = static_cast<CBrowserObject *>(ind.internalPointer());
     if (! obj) continue;
 
     obj->setSelected(false);
@@ -234,7 +234,6 @@ CBrowserObjPropDelegate(CBrowserObjProp *tree) :
  tree_(tree)
 {
 }
-
 
 void
 CBrowserObjPropDelegate::

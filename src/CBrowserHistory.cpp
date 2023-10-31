@@ -2,11 +2,9 @@
 #include <CBrowserWindow.h>
 
 CBrowserHistory::
-CBrowserHistory(CBrowserWindow *window) :
+CBrowserHistory(CBrowserWindowIFace *window) :
  window_(window)
 {
-  url_num_ = 0;
-  menu_    = NULL;
 }
 
 CBrowserHistory::

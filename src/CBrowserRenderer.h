@@ -2,10 +2,13 @@
 #define CBrowserRenderer_H
 
 #include <CBrowserTypes.h>
+
 #include <CImageLib.h>
 #include <CFont.h>
 #include <CIBBox2D.h>
 #include <CRGBA.h>
+
+class CBrowserWindowWidgetIFace;
 
 class QImage;
 class QPixmap;
@@ -13,9 +16,15 @@ class QPainter;
 
 class CBrowserRenderer {
  public:
-  explicit CBrowserRenderer(CBrowserWindowWidget *w);
+  explicit CBrowserRenderer(CBrowserWindowWidgetIFace *iface);
 
   virtual ~CBrowserRenderer();
+
+  virtual void init() { }
+  virtual void term() { }
+
+  virtual void setSize(int, int) { }
+  virtual void setRange(double, double, double, double) { }
 
   virtual void startDoubleBuffer(int width, int height);
   virtual void endDoubleBuffer  ();
@@ -33,6 +42,7 @@ class CBrowserRenderer {
   virtual void fillCircle(const CIPoint2D &c, int r, const CBrush &brush);
 
   virtual void drawLine(const CIPoint2D &p1, const CIPoint2D &p2, const CPen &pen);
+
   virtual void drawText(const CIPoint2D &p, const std::string &str, const CPen &pen,
                         const CFontPtr &font);
 
@@ -42,12 +52,14 @@ class CBrowserRenderer {
   virtual void setFont(CFontPtr font);
 
  private:
-  CBrowserWindowWidget* w_ { nullptr };
-  QPixmap*              pixmap_ { nullptr };
-  int                   pixmap_width_ { 0 };
-  int                   pixmap_height_ { 0 };
-  QPainter*             painter_ { nullptr };
-  CFontPtr              font_;
+  CBrowserWindowWidgetIFace* iface_ { nullptr };
+
+  QPixmap* pixmap_        { nullptr };
+  int      pixmap_width_  { 0 };
+  int      pixmap_height_ { 0 };
+
+  QPainter* painter_ { nullptr };
+  CFontPtr  font_;
 };
 
 #endif

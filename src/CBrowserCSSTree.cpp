@@ -43,11 +43,11 @@ class CBrowserCSSTreeModel : public QAbstractItemModel {
   const std::string &ptrName(int *ptr) const;
 
  private:
-  typedef std::map<std::string,int *>  NamePtrMap;
-  typedef std::map<int *, std::string> PtrNameMap;
+  using NamePtrMap = std::map<std::string, int *>;
+  using PtrNameMap = std::map<int *, std::string>;
 
   CBrowserCSSTree *tree_ { nullptr };
-  int              ind_ { 0 };
+  int              ind_  { 0 };
   NamePtrMap       namePtrMap_;
   PtrNameMap       ptrNameMap_;
 };
@@ -70,14 +70,14 @@ class CBrowserCSSTreeDelegate : public QStyledItemDelegate {
 //---
 
 CBrowserCSSTreeDlg::
-CBrowserCSSTreeDlg(CBrowserWindow *window) :
+CBrowserCSSTreeDlg(CBrowserWindowIFace *window) :
  QWidget(), window_(window)
 {
-  QVBoxLayout *layout = new QVBoxLayout(this);
+  auto *layout = new QVBoxLayout(this);
 
   //---
 
-  QHBoxLayout *chooseLayout = new QHBoxLayout;
+  auto *chooseLayout = new QHBoxLayout;
 
   cssCombo_ = new QComboBox;
 
@@ -100,7 +100,7 @@ CBrowserCSSTreeDlg(CBrowserWindow *window) :
   resize(800, 800);
 }
 
-CBrowserWindow *
+CBrowserWindowIFace *
 CBrowserCSSTreeDlg::
 window() const
 {
@@ -110,7 +110,7 @@ window() const
 //---
 
 CBrowserCSSTree::
-CBrowserCSSTree(CBrowserCSSTreeDlg *dlg, CBrowserWindow *window) :
+CBrowserCSSTree(CBrowserCSSTreeDlg *dlg, CBrowserWindowIFace *window) :
  QTreeView(nullptr), dlg_(dlg), window_(window), ind_(0)
 {
   setObjectName("tree");
@@ -123,10 +123,10 @@ CBrowserCSSTree(CBrowserCSSTreeDlg *dlg, CBrowserWindow *window) :
   setAlternatingRowColors(true);
 
   // create simple model for a tree view
-  CBrowserCSSTreeModel *model = new CBrowserCSSTreeModel(this);
+  auto *model = new CBrowserCSSTreeModel(this);
 
   // create custom delegate
-  CBrowserCSSTreeDelegate* delegate = new CBrowserCSSTreeDelegate(this);
+  auto *delegate = new CBrowserCSSTreeDelegate(this);
 
   // set model and delegate to the treeview object
   setModel(model);
@@ -195,7 +195,7 @@ rowCount(const QModelIndex &parent) const
   if (! isValidInd())
     return 0;
 
-  CBrowserWindow *window = tree_->window();
+  CBrowserWindowIFace *window = tree_->window();
 
   const auto &cssData = window->cssData(ind_);
 
@@ -322,7 +322,7 @@ data(const QModelIndex &index, int role) const
   if (! isValidInd())
     return QVariant();
 
-  CBrowserWindow *window = tree_->window();
+  CBrowserWindowIFace *window = tree_->window();
 
   const auto &cssData = window->cssData(ind_);
 
@@ -400,7 +400,7 @@ std::vector<int>
 CBrowserCSSTreeModel::
 indexToRows(const QModelIndex &ind) const
 {
-  int *ptr = static_cast<int *>(ind.internalPointer());
+  auto *ptr = static_cast<int *>(ind.internalPointer());
 
   if (! ptr)
     return std::vector<int>();
@@ -433,9 +433,9 @@ namePtr(const std::string &name) const
   auto p = namePtrMap_.find(name);
 
   if (p == namePtrMap_.end()) {
-    CBrowserCSSTreeModel *th = const_cast<CBrowserCSSTreeModel *>(this);
+    auto *th = const_cast<CBrowserCSSTreeModel *>(this);
 
-    int *ptr = new int; *ptr = th->namePtrMap_.size();
+    auto *ptr = new int; *ptr = th->namePtrMap_.size();
 
     p = th->namePtrMap_.insert(p, NamePtrMap::value_type(name, ptr));
 
@@ -463,7 +463,6 @@ CBrowserCSSTreeDelegate(CBrowserCSSTree *tree) :
  tree_(tree)
 {
 }
-
 
 void
 CBrowserCSSTreeDelegate::

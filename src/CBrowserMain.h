@@ -7,24 +7,23 @@
 #include <string>
 #include <list>
 
-class CBrowserMainWindow;
+class CBrowserIFace;
 
-#define CBrowserMainInst CBrowserMain::getInstance()
-
-class CBrowserMain : public QObject {
+// main class for browser
+class CBrowser : public QObject {
   Q_OBJECT
 
  public:
-  typedef std::list<CBrowserMainWindow *> IFaceList;
+  using IFaceList = std::list<CBrowserIFace *>;
 
  public:
-  static CBrowserMain *getInstance();
-
- ~CBrowserMain();
+  CBrowser();
+ ~CBrowser();
 
   void init(int argc, char **argv);
 
-  CBrowserMainWindow *iface() const;
+  CBrowserIFace *iface() const;
+  void setIFace(CBrowserIFace *iface);
 
   bool getDebug() const { return debug_; }
   void setDebug(bool b);
@@ -47,20 +46,22 @@ class CBrowserMain : public QObject {
   void setDocument(const CUrl &url);
   void addDocument(const CUrl &url);
 
- private:
-  CBrowserMain();
+  void displayError(const char *format, ...);
+  void displayError(const char *format, va_list *args);
+  void displayError(const QString &str);
 
  private slots:
   void exitSlot();
 
  private:
-  CBrowserMainWindow* iface_ { nullptr };
-  bool                debug_ { false };
-  bool                quiet_ { false };
-  bool                useAlt_ { false };
-  bool                oldLayout_ { false };
-  bool                showBoxes_ { false };
-  bool                mouseOver_ { false };
+  CBrowserIFace* iface_ { nullptr };
+
+  bool debug_     { false };
+  bool quiet_     { false };
+  bool useAlt_    { false };
+  bool oldLayout_ { false };
+  bool showBoxes_ { false };
+  bool mouseOver_ { false };
 };
 
 #endif

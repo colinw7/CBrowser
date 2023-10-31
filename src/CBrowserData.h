@@ -6,7 +6,7 @@
 #include <map>
 
 struct CBrowserBaseData {
-  typedef std::map<std::string,std::string> NameValues;
+  using NameValues = std::map<std::string, std::string>;
 
   NameValues nameValues;
 };

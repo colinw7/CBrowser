@@ -2,10 +2,12 @@
 #include <CBrowserWindow.h>
 #include <CBrowserList.h>
 #include <CBrowserMisc.h>
+#include <CBrowserGraphics.h>
+
 #include <CRomanNumber.h>
 
 CBrowserListItem::
-CBrowserListItem(CBrowserWindow *window) :
+CBrowserListItem(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::LI)
 {
 }
@@ -14,7 +16,7 @@ void
 CBrowserListItem::
 init()
 {
-  CBrowserList *currentList = const_cast<CBrowserList *>(this->currentList());
+  auto *currentList = const_cast<CBrowserList *>(this->currentList());
 
   if (currentList) {
     if (data_.symbol != "")
@@ -144,13 +146,15 @@ draw(const CTextBox &region)
 
   CHtmlTagId listId = (currentList ? currentList->type() : CHtmlTagId::NONE);
 
+  auto *graphics = window_->graphics();
+
   if      (listId == CHtmlTagId::OL) {
     std::string text = orderedListText(symbol_, itemNum_) + ".";
 
     int width  = font->getStringWidth(text + " ");
     int ascent = font->getCharAscent();
 
-    window_->drawText(region.x() - width, region.y() + ascent, text, pen, font);
+    graphics->drawText(region.x() - width, region.y() + ascent, text, pen, font);
   }
   else if (listId == CHtmlTagId::UL || listId == CHtmlTagId::DIR || listId == CHtmlTagId::MENU) {
     int width  = font->getStringWidth("X "); // marker + space
@@ -172,16 +176,16 @@ draw(const CTextBox &region)
 
     switch (type.type()) {
       case CBrowserListStyleType::Type::DISC:
-        window_->fillCircle(cx, cy, size/2, brush); // x, y, r
+        graphics->fillCircle(cx, cy, size/2, brush); // x, y, r
         break;
       case CBrowserListStyleType::Type::CIRCLE:
-        window_->drawCircle(cx, cy, size/2, pen); // x, y, r
+        graphics->drawCircle(cx, cy, size/2, pen); // x, y, r
         break;
       case CBrowserListStyleType::Type::BLOCK:
-        window_->fillRectangle(cx - size/2, cy - size/2, size, size, brush); // x, y, w, h
+        graphics->fillRectangle(cx - size/2, cy - size/2, size, size, brush); // x, y, w, h
         break;
       case CBrowserListStyleType::Type::SQUARE:
-        window_->drawRectangle(cx - size/2, cy - size/2, size, size, pen); // x, y, w, h
+        graphics->drawRectangle(cx - size/2, cy - size/2, size, size, pen); // x, y, w, h
         break;
       case CBrowserListStyleType::Type::NONE:
         break;
@@ -196,12 +200,12 @@ const CBrowserList *
 CBrowserListItem::
 currentList() const
 {
-  const CBrowserObject *obj = window_->currentObj();
+  const auto *obj = window_->currentObj();
 
   while (obj && ! dynamic_cast<const CBrowserList *>(obj))
     obj = obj->parent();
 
-  const CBrowserList *currentList = dynamic_cast<const CBrowserList *>(obj);
+  const auto *currentList = dynamic_cast<const CBrowserList *>(obj);
 
   return currentList;
 }
@@ -224,7 +228,7 @@ calcStyleStype() const
 //---
 
 CBrowserDataListData::
-CBrowserDataListData(CBrowserWindow *window) :
+CBrowserDataListData(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::DD)
 {
   setDisplay(Display::BLOCK);
@@ -235,7 +239,7 @@ CBrowserDataListData(CBrowserWindow *window) :
 //---
 
 CBrowserDataListTerm::
-CBrowserDataListTerm(CBrowserWindow *window) :
+CBrowserDataListTerm(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::DT)
 {
   setDisplay(Display::BLOCK);

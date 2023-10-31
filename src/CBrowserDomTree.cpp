@@ -50,18 +50,18 @@ class CBrowserDomTreeDelegate : public QStyledItemDelegate {
 //---
 
 CBrowserDomTreeDlg::
-CBrowserDomTreeDlg(CBrowserWindow *window) :
+CBrowserDomTreeDlg(CBrowserWindowIFace *window) :
  QWidget()
 {
-  QVBoxLayout *layout = new QVBoxLayout(this);
+  auto *layout = new QVBoxLayout(this);
 
-  QTabWidget *tab = new QTabWidget;
+  auto *tab = new QTabWidget;
 
   layout->addWidget(tab);
 
   //---
 
-  QSplitter *splitter = new QSplitter(this);
+  auto *splitter = new QSplitter(this);
   splitter->setObjectName("splitter");
 
   domTree_ = new CBrowserDomTree(this, window);
@@ -87,7 +87,7 @@ CBrowserDomTreeDlg(CBrowserWindow *window) :
   resize(800, 800);
 }
 
-CBrowserWindow *
+CBrowserWindowIFace *
 CBrowserDomTreeDlg::
 window() const
 {
@@ -97,7 +97,7 @@ window() const
 //---
 
 CBrowserDomTree::
-CBrowserDomTree(CBrowserDomTreeDlg *dlg, CBrowserWindow *window) :
+CBrowserDomTree(CBrowserDomTreeDlg *dlg, CBrowserWindowIFace *window) :
  QTreeView(nullptr), dlg_(dlg), window_(window)
 {
   setObjectName("domTree");
@@ -110,10 +110,10 @@ CBrowserDomTree(CBrowserDomTreeDlg *dlg, CBrowserWindow *window) :
   setAlternatingRowColors(true);
 
   // create simple model for a tree view
-  CBrowserDomTreeModel *model = new CBrowserDomTreeModel(this);
+  auto *model = new CBrowserDomTreeModel(this);
 
   // create custom delegate
-  CBrowserDomTreeDelegate* delegate = new CBrowserDomTreeDelegate(this);
+  auto *delegate = new CBrowserDomTreeDelegate(this);
 
   // set model and delegate to the treeview object
   setModel(model);
@@ -268,7 +268,7 @@ data(const QModelIndex &index, int role) const
   if (! index.isValid())
     return QVariant();
 
-  //CBrowserWindow *window = tree_->window();
+  //auto *window = tree_->window();
 
   if      (role == Qt::DisplayRole) {
     auto *obj = static_cast<CBrowserObject *>(index.internalPointer());
@@ -311,7 +311,6 @@ CBrowserDomTreeDelegate(CBrowserDomTree *tree) :
  tree_(tree)
 {
 }
-
 
 void
 CBrowserDomTreeDelegate::

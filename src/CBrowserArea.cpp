@@ -2,7 +2,7 @@
 #include <CBrowserWindow.h>
 
 CBrowserArea::
-CBrowserArea(CBrowserWindow *window) :
+CBrowserArea(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::AREA)
 {
   setDisplay(Display::NONE);
@@ -19,7 +19,7 @@ void
 CBrowserArea::
 setNameValue(const std::string &name, const std::string &value)
 {
-  std::string lname = CStrUtil::toLower(name);
+  auto lname = CStrUtil::toLower(name);
 
   if      (lname == "alt") {
   }

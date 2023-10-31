@@ -4,10 +4,12 @@
 #include <CBrowserFile.h>
 #include <CBrowserOutput.h>
 #include <CBrowserText.h>
+#include <CBrowserMain.h>
+
 #include <CRGBName.h>
 
 CBrowserDocument::
-CBrowserDocument(CBrowserWindow *window) :
+CBrowserDocument(CBrowserWindowIFace *window) :
  iface_(this)
 {
   window_ = window;
@@ -23,6 +25,13 @@ CBrowserDocument(CBrowserWindow *window) :
 CBrowserDocument::
 ~CBrowserDocument()
 {
+}
+
+CBrowser *
+CBrowserDocument::
+browser() const
+{
+  return window_->browser();
 }
 
 void
@@ -103,33 +112,33 @@ read(const CUrl &url)
     std::string filename = url_.getFile();
 
     if (! CFile::exists(filename)) {
-      window_->displayError("File '%s' does not exist", filename.c_str());
+      browser()->displayError("File '%s' does not exist", filename.c_str());
       return false;
     }
 
-    if (! window_->fileMgr()->readFile(filename, tokens_))
+    if (! window_->readFile(filename, tokens_))
       return false;
   }
   else if (url.isHttp()) {
     std::string filename;
 
     if (! window_->downloadFile(url, filename)) {
-      window_->displayError("Failed to download '%s'", url.getUrl().c_str());
+      browser()->displayError("Failed to download '%s'", url.getUrl().c_str());
       return false;
     }
 
     if (! CFile::exists(filename)) {
-      window_->displayError("File '%s' does not exist", filename.c_str());
+      browser()->displayError("File '%s' does not exist", filename.c_str());
       return false;
     }
 
-    if (! window_->fileMgr()->readFile(filename, tokens_)) {
-      window_->displayError("Failed to read file '%s'", filename.c_str());
+    if (! window_->readFile(filename, tokens_)) {
+      browser()->displayError("Failed to read file '%s'", filename.c_str());
       return false;
     }
   }
   else {
-    window_->displayError("Invalid url '%s'", url.getUrl().c_str());
+    browser()->displayError("Invalid url '%s'", url.getUrl().c_str());
     return false;
   }
 
@@ -138,7 +147,7 @@ read(const CUrl &url)
 
 void
 CBrowserDocument::
-setTitle(const std::string &title)
+setTitle(const QString &title)
 {
   title_ = title;
 
@@ -210,10 +219,10 @@ addForm(CBrowserForm *form)
 //------
 
 CJValueP
-CBrowserDocument::IFace::
+CBrowserDocument::JSIFace::
 createElement(const std::string &id) const
 {
-  CBrowserObject *obj = document_->getWindow()->createElement(id);
+  auto *obj = document_->getWindow()->createElement(id);
   if (! obj) return CJValueP();
 
   return obj->getJObjValue();

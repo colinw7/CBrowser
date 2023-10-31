@@ -19,7 +19,6 @@
 #include <CQMenu.h>
 #include <CQToolBar.h>
 #include <CDir.h>
-#include <CEnv.h>
 
 #include <QVBoxLayout>
 #include <QLineEdit>
@@ -33,10 +32,12 @@
 #include <svg/javascript_svg.h>
 
 CBrowserMainWindow::
-CBrowserMainWindow() :
- CQMainWindow("CBrowser")
+CBrowserMainWindow(CBrowser *browser) :
+ CQMainWindow("CBrowser"), CBrowserIFace(browser)
 {
   QWidget::resize(1000, 1200);
+
+  browser->setIFace(this);
 }
 
 CBrowserMainWindow::
@@ -55,11 +56,11 @@ QWidget *
 CBrowserMainWindow::
 createCentralWidget()
 {
-  QWidget *widget = new QWidget;
+  auto *widget = new QWidget;
 
   widget->setObjectName("iface");
 
-  QVBoxLayout *layout = new QVBoxLayout(widget);
+  auto *layout = new QVBoxLayout(widget);
 
   input_ = new QLineEdit;
 
@@ -83,34 +84,37 @@ createCentralWidget()
 
   //---
 
-  addWindow();
+  (void) addWindow();
 
   return widget;
 }
 
-CBrowserScrolledWindow *
+CBrowserWindowIFace *
 CBrowserMainWindow::
 addWindow()
 {
-  CBrowserScrolledWindow *window = new CBrowserScrolledWindow(this);
+  auto *swindow = new CBrowserScrolledWindow(this);
 
-  tab_->addTab(window, "");
+  tab_->addTab(swindow, "");
 
   tab_->setCurrentIndex(tab_->count() - 1);
 
-  windows_.push_back(window);
+  windows_.push_back(swindow);
 
-  return window;
+  return swindow;
 }
 
-CBrowserScrolledWindow *
+CBrowserWindowIFace *
 CBrowserMainWindow::
 currentWindow() const
 {
   int i = tab_->currentIndex();
 
-  if (i >= 0 && i < int(windows_.size()))
-    return windows_[i];
+  if (i >= 0 && i < int(windows_.size())) {
+    auto *swindow = dynamic_cast<CBrowserScrolledWindow *>(windows_[i]);
+
+    return swindow->getWindow();
+  }
 
   return nullptr;
 }
@@ -119,20 +123,20 @@ void
 CBrowserMainWindow::
 createMenus()
 {
-  CQMenu *fileMenu = new CQMenu(this, "&File");
+  auto *fileMenu = new CQMenu(this, "&File");
 
-  CQMenuItem *newMenuItem = new CQMenuItem(fileMenu, "&New");
+  auto *newMenuItem = new CQMenuItem(fileMenu, "&New");
   newMenuItem->setShortcut("Ctrl+N");
   newMenuItem->connect(this, SLOT(newProc()));
 
-  CQMenuItem *readMenuItem = new CQMenuItem(fileMenu, "&Read");
+  auto *readMenuItem = new CQMenuItem(fileMenu, "&Read");
   readMenuItem->setShortcut("Ctrl+R");
   readMenuItem->connect(this, SLOT(readProc()));
 
-  CQMenuItem *printMenuItem = new CQMenuItem(fileMenu, "&Print");
+  auto *printMenuItem = new CQMenuItem(fileMenu, "&Print");
   printMenuItem->connect(this, SLOT(printProc()));
 
-  CQMenuItem *saveImageMenuItem = new CQMenuItem(fileMenu, "Save &Image");
+  auto *saveImageMenuItem = new CQMenuItem(fileMenu, "Save &Image");
   saveImageMenuItem->connect(this, SLOT(saveImageProc()));
 
   jsMenuItem_ = new CQMenuItem(fileMenu, "&JavaScript");
@@ -150,31 +154,31 @@ createMenus()
   webMenuItem_ = new CQMenuItem(fileMenu, "&Web");
   webMenuItem_->connect(this, SLOT(webProc()));
 
-  CQMenuItem *quitMenuItem = new CQMenuItem(fileMenu, "&Quit");
+  auto *quitMenuItem = new CQMenuItem(fileMenu, "&Quit");
   quitMenuItem->setShortcut("Ctrl+Q");
   quitMenuItem->connect(this, SLOT(quitProc()));
 
   //---
 
-  CQMenu *goMenu = new CQMenu(this, "&Go");
+  auto *goMenu = new CQMenu(this, "&Go");
 
-  CQMenuItem *backMenuItem = new CQMenuItem(goMenu, "&Back");
+  auto *backMenuItem = new CQMenuItem(goMenu, "&Back");
 
   backMenuItem->connect(this, SLOT(goBackProc()));
 
-  CQMenuItem *forwardMenuItem = new CQMenuItem(goMenu, "&Forward");
+  auto *forwardMenuItem = new CQMenuItem(goMenu, "&Forward");
 
   forwardMenuItem->connect(this, SLOT(goForwardProc()));
 
   //---
 
-  CQMenu *viewMenu = new CQMenu(this, "&View");
+  auto *viewMenu = new CQMenu(this, "&View");
 
-  CQMenuItem *viewBoxes = new CQMenuItem(viewMenu, "&Boxes");
+  auto *viewBoxes = new CQMenuItem(viewMenu, "&Boxes");
   viewBoxes->setCheckable(true);
   viewBoxes->connect(this, SLOT(viewBoxesProc()));
 
-  CQMenuItem *mouseOver = new CQMenuItem(viewMenu, "&Mouse Over");
+  auto *mouseOver = new CQMenuItem(viewMenu, "&Mouse Over");
   mouseOver->setCheckable(true);
   mouseOver->connect(this, SLOT(mouseOverProc()));
 
@@ -184,7 +188,7 @@ createMenus()
 
   //---
 
-  CQMenu *helpMenu = new CQMenu(this, "&Help");
+  auto *helpMenu = new CQMenu(this, "&Help");
 
   new CQMenuItem(helpMenu, "&Help");
 }
@@ -225,7 +229,7 @@ void
 CBrowserMainWindow::
 inputSlot()
 {
-  QString text = input_->text();
+  auto text = input_->text();
   if (text == "") return;
 
   CUrl url(text.toStdString());
@@ -237,26 +241,26 @@ void
 CBrowserMainWindow::
 addHistoryItem(const CUrl &url)
 {
-  CQMenuItem *menuItem = new CQMenuItem(historyMenu_, "button");
+  auto *menuItem = new CQMenuItem(historyMenu_, "button");
 
   menuItem->setName(url.getUrl());
 }
 
 void
 CBrowserMainWindow::
-saveImage(const std::string &filename)
+saveImage(const QString &filename)
 {
-  CBrowserScrolledWindow *w = currentWindow();
-  if (! w) return;
+  auto *window = currentWindow();
+  if (! window) return;
 
-  w->saveImage(filename);
+  window->saveImage(filename);
 }
 
 void
 CBrowserMainWindow::
-setTitle(const std::string &title)
+setTitle(const QString &title)
 {
-  setWindowTitle(title.c_str());
+  setWindowTitle(title);
 }
 
 void
@@ -268,33 +272,33 @@ updateTitles()
   int ind = tab_->currentIndex();
 
   for (int i = 0; i < tab_->count(); ++i) {
-    CBrowserScrolledWindow *w = qobject_cast<CBrowserScrolledWindow *>(tab_->widget(i));
-    if (! w) continue;
+    auto *swindow = qobject_cast<CBrowserScrolledWindow *>(tab_->widget(i));
+    if (! swindow) continue;
 
-    CBrowserWindow *window = w->getWindow();
+    auto *window = swindow->getWindow();
 
-    tab_->setTabText(i, window->filename().c_str());
+    tab_->setTabText(i, window->filename());
 
     if (i == ind)
-      setWindowTitle(w->title().c_str());
+      setWindowTitle(window->title());
   }
 }
 
 void
 CBrowserMainWindow::
-setStatus(const std::string &status)
+setStatus(const QString &status)
 {
   if (status != "")
-    message_->setText(status.c_str());
+    message_->setText(status);
   else
     message_->setText(" ");
 }
 
 void
 CBrowserMainWindow::
-errorDialog(const std::string &msg)
+errorDialog(const QString &msg)
 {
-  QMessageBox::warning(this, "Error", msg.c_str());
+  QMessageBox::warning(this, "Error", msg);
 }
 
 void
@@ -311,15 +315,29 @@ setReady()
 
 void
 CBrowserMainWindow::
+setObjText(const QString &text)
+{
+  objLabel()->setText(text);
+}
+
+void
+CBrowserMainWindow::
+setPosText(const QString &text)
+{
+  posLabel()->setText(text);
+}
+
+void
+CBrowserMainWindow::
 newProc()
 {
-  std::string home = CDir::getHome();
+  auto home = CDir::getHome();
 
-  std::string directory = home + "/data/html";
+  auto directory = home + "/data/html";
 
   //---
 
-  QString file =
+  auto file =
     QFileDialog::getOpenFileName(this, "Select HTML File", directory.c_str(), "*.html");
 
   if (file == "")
@@ -329,20 +347,20 @@ newProc()
 
   CUrl url("file:://" + file.toStdString());
 
-  addDocument(url);
+  (void) addDocument(url);
 }
 
 void
 CBrowserMainWindow::
 readProc()
 {
-  std::string home = CDir::getHome();
+  auto home = CDir::getHome();
 
   std::string directory = home + "/data/html";
 
   //---
 
-  QString file =
+  auto file =
     QFileDialog::getOpenFileName(this, "Select HTML File", directory.c_str(), "*.html");
 
   if (file == "")
@@ -359,18 +377,16 @@ void
 CBrowserMainWindow::
 addDocument(const CUrl &url)
 {
-  CBrowserScrolledWindow *window = addWindow();
+  (void) addWindow();
 
-  window->setDocument(url);
-
-  updateTitles();
+  setDocument(url);
 }
 
 void
 CBrowserMainWindow::
 setDocument(const CUrl &url)
 {
-  CBrowserScrolledWindow *window = currentWindow();
+  auto *window = currentWindow();
   if (! window) return;
 
   window->setDocument(url);
@@ -382,7 +398,7 @@ void
 CBrowserMainWindow::
 printProc()
 {
-  CBrowserScrolledWindow *window = currentWindow();
+  auto *window = currentWindow();
   if (! window) return;
 
   window->print();
@@ -392,12 +408,12 @@ void
 CBrowserMainWindow::
 saveImageProc()
 {
-  QString fileName =
+  auto fileName =
     QFileDialog::getSaveFileName(this, "Save Image", "image.png",
                                  "Image Files (*.png *.xpm *.jpg)");
 
   if (fileName.length())
-    saveImage(fileName.toStdString());
+    saveImage(fileName);
 }
 
 void
@@ -414,10 +430,8 @@ void
 CBrowserMainWindow::
 domProc()
 {
-  CBrowserScrolledWindow *swindow = currentWindow();
-  if (! swindow) return;
-
-  CBrowserWindow *window = swindow->getWindow();
+  auto *window = currentWindow();
+  if (! window) return;
 
   if (domDlg_ && domDlg_->window() != window) {
     delete domDlg_;
@@ -425,8 +439,17 @@ domProc()
     domDlg_ = nullptr;
   }
 
-  if (! domDlg_)
-    domDlg_ = new CBrowserDomTreeDlg(window);
+  if (! domDlg_) {
+    auto *window1 = dynamic_cast<CBrowserWindow *>(window);
+
+    if (! window1) {
+      auto *swindow = dynamic_cast<CBrowserScrolledWindow *>(window);
+
+      window1 = (swindow ? swindow->getWindow() : nullptr);
+    }
+
+    domDlg_ = new CBrowserDomTreeDlg(window1);
+  }
 
   domDlg_->show();
 }
@@ -435,10 +458,8 @@ void
 CBrowserMainWindow::
 cssProc()
 {
-  CBrowserScrolledWindow *swindow = currentWindow();
-  if (! swindow) return;
-
-  CBrowserWindow *window = swindow->getWindow();
+  auto *window = currentWindow();
+  if (! window) return;
 
   if (cssDlg_ && cssDlg_->window() != window) {
     delete cssDlg_;
@@ -446,8 +467,17 @@ cssProc()
     cssDlg_ = nullptr;
   }
 
-  if (! cssDlg_)
-    cssDlg_ = new CBrowserCSSTreeDlg(window);
+  if (! cssDlg_) {
+    auto *window1 = dynamic_cast<CBrowserWindow *>(window);
+
+    if (! window1) {
+      auto *swindow = dynamic_cast<CBrowserScrolledWindow *>(window);
+
+      window1 = (swindow ? swindow->getWindow() : nullptr);
+    }
+
+    cssDlg_ = new CBrowserCSSTreeDlg(window1);
+  }
 
   cssDlg_->show();
 }
@@ -459,10 +489,10 @@ webProc()
   if (! webView_)
     webView_ = new CBrowserWebView;
 
-  CBrowserScrolledWindow *swindow = currentWindow();
-  if (! swindow) return;
+  auto *window = currentWindow();
+  if (! window) return;
 
-  webView_->setFilename(swindow->filename());
+  webView_->setFilename(window->filename().toStdString());
 
   webView_->show();
 }
@@ -471,7 +501,7 @@ void
 CBrowserMainWindow::
 goBackProc()
 {
-  CBrowserScrolledWindow *window = currentWindow();
+  auto *window = currentWindow();
   if (! window) return;
 
   window->goBack();
@@ -481,7 +511,7 @@ void
 CBrowserMainWindow::
 goForwardProc()
 {
-  CBrowserScrolledWindow *window = currentWindow();
+  auto *window = currentWindow();
   if (! window) return;
 
   window->goForward();
@@ -491,14 +521,14 @@ void
 CBrowserMainWindow::
 viewBoxesProc()
 {
-  CBrowserMainInst->setShowBoxes(! CBrowserMainInst->getShowBoxes());
+  browser()->setShowBoxes(! browser()->getShowBoxes());
 }
 
 void
 CBrowserMainWindow::
 mouseOverProc()
 {
-  CBrowserMainInst->setMouseOver(! CBrowserMainInst->getMouseOver());
+  browser()->setMouseOver(! browser()->getMouseOver());
 }
 
 void

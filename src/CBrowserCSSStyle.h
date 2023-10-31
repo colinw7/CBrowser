@@ -6,7 +6,7 @@
 
 class CBrowserCSSStyle : public CBrowserObject {
  public:
-  explicit CBrowserCSSStyle(CBrowserWindow *window);
+  explicit CBrowserCSSStyle(CBrowserWindowIFace *window);
 
   const std::string &text() const { return text_; }
   void setText(const std::string &t) { text_ = t; }

@@ -35,7 +35,7 @@ class CBrowserListItem : public CBrowserObject {
   typedef std::vector<LabelSymbolData> LabelSymbolDatas;
 
  public:
-  explicit CBrowserListItem(CBrowserWindow *window);
+  explicit CBrowserListItem(CBrowserWindowIFace *window);
 
   void init() override;
 
@@ -65,12 +65,12 @@ class CBrowserListItem : public CBrowserObject {
 
 class CBrowserDataListData : public CBrowserObject {
  public:
-  explicit CBrowserDataListData(CBrowserWindow *window);
+  explicit CBrowserDataListData(CBrowserWindowIFace *window);
 };
 
 class CBrowserDataListTerm : public CBrowserObject {
  public:
-  explicit CBrowserDataListTerm(CBrowserWindow *window);
+  explicit CBrowserDataListTerm(CBrowserWindowIFace *window);
 };
 
 #endif

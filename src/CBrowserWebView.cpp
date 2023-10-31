@@ -8,7 +8,7 @@ CBrowserWebView::
 CBrowserWebView(QWidget *parent) :
  QFrame(parent)
 {
-  QVBoxLayout *layout = new QVBoxLayout(this);
+  auto *layout = new QVBoxLayout(this);
 
   view_ = new QWebView;
 
@@ -28,7 +28,7 @@ setFilename(const std::string &filename)
 
   //QUrl url(QString("file://%1").arg(filename.c_str()));
 
-//std::cerr << url.toString().toStdString() << std::endl;
+//std::cerr << url.toString().toStdString() << "\n";
   //view_->setUrl(url);
 
   //view_->load(url);

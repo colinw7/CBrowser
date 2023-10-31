@@ -1,7 +1,7 @@
 #ifndef CBrowserLayout_H
 #define CBrowserLayout_H
 
-class CBrowserWindow;
+class CBrowserWindowIFace;
 class CBrowserBox;
 
 #include <CIBBox2D.h>
@@ -9,7 +9,7 @@ class CBrowserBox;
 
 class CBrowserLayout {
  public:
-  explicit CBrowserLayout(CBrowserWindow *window);
+  explicit CBrowserLayout(CBrowserWindowIFace *window);
 
   void startBox(CBrowserBox *box);
   void endBox  (CBrowserBox *box);
@@ -25,9 +25,9 @@ class CBrowserLayout {
  private:
   typedef std::vector<CBrowserBox *> Boxes;
 
-  CBrowserWindow* window_ { nullptr };
-  CBrowserBox*    root_ { nullptr };
-  Boxes           boxes_;
+  CBrowserWindowIFace* window_ { nullptr };
+  CBrowserBox*         root_ { nullptr };
+  Boxes                boxes_;
 };
 
 #endif

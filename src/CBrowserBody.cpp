@@ -3,7 +3,7 @@
 #include <CBrowserDocument.h>
 
 CBrowserBody::
-CBrowserBody(CBrowserWindow *window) :
+CBrowserBody(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::BODY)
 {
   setDisplay(Display::BLOCK);
@@ -72,15 +72,18 @@ void
 CBrowserBody::
 initProcess()
 {
-  CBrowserDocument *document = window_->getDocument();
+  auto *document = window_->getDocument();
 
   if (background().color().isValid())
     document->setBgColor(background().color().color());
 
   document->setFgColor(data_.text);
 
-  if (background().image().isValid())
-    window_->setBackgroundImage(background().image().value(), data_.fixed);
+  if (background().image().isValid()) {
+    auto imageName = background().image().value();
+
+    window_->setBackgroundImage(QString::fromStdString(imageName), data_.fixed);
+  }
 
   document->setLinkColor (data_.link );
   document->setALinkColor(data_.alink);

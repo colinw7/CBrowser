@@ -24,7 +24,7 @@ CBrowserOutputTagMgr::
 getTag(CHtmlTagId id) const
 {
   if (! initialized()) {
-    CBrowserOutputTagMgr* th = const_cast<CBrowserOutputTagMgr *>(this);
+    auto *th = const_cast<CBrowserOutputTagMgr *>(this);
 
     th->init();
   }

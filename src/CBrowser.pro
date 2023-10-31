@@ -20,6 +20,8 @@ CONFIG += debug
 
 # Input
 SOURCES += \
+CBrowser.cpp \
+\
 CBrowserAddress.cpp \
 CBrowserArea.cpp \
 CBrowserBaseFont.cpp \
@@ -32,7 +34,6 @@ CBrowserCeil.cpp \
 CBrowserCenter.cpp \
 CBrowserCode.cpp \
 CBrowserColor.cpp \
-CBrowser.cpp \
 CBrowserCSSStyle.cpp \
 CBrowserCSSTree.cpp \
 CBrowserDiv.cpp \
@@ -66,6 +67,7 @@ CBrowserOutput.cpp \
 CBrowserOutputTag.cpp \
 CBrowserParagraph.cpp \
 CBrowserPre.cpp \
+CBrowserPrintRenderer.cpp \
 CBrowserRenderer.cpp \
 CBrowserRule.cpp \
 CBrowserSamp.cpp \
@@ -81,7 +83,9 @@ CBrowserTT.cpp \
 CBrowserVideo.cpp \
 CBrowserWebView.cpp \
 CBrowserWindow.cpp \
+CBrowserWindowIFace.cpp \
 CBrowserWindowWidget.cpp \
+CBrowserWindowWidgetIFace.cpp \
 CBrowserWord.cpp \
 CBrowserXmp.cpp \
 \
@@ -174,6 +178,8 @@ CBrowserUnitValue.h \
 CBrowserVideo.h \
 CBrowserWebView.h \
 CBrowserWindow.h \
+CBrowserWindowIFace.h \
+CBrowserWindowWidgetIFace.h \
 CBrowserWindowWidget.h \
 CBrowserWord.h \
 CBrowserWordSpacing.h \

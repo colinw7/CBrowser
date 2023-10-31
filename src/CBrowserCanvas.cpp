@@ -10,7 +10,7 @@
 #include <cstring>
 
 CBrowserCanvas::
-CBrowserCanvas(CBrowserWindow *window) :
+CBrowserCanvas(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::CANVAS), iface_(this)
 {
 }
@@ -119,7 +119,14 @@ createWidget()
 
   canvasWidget_ = new CQJCanvasWidget(canvas_);
 
-  canvasWidget_->setParent(window_->widget());
+  auto *window1 = dynamic_cast<CBrowserWindow *>(window_);
+
+  if (window1) {
+    auto *windowWidget1 = dynamic_cast<CBrowserWindowWidget *>(window1->widget());
+
+    if (windowWidget1)
+      canvasWidget_->setParent(windowWidget1);
+  }
 
   canvasWidget_->setObjectName("canvas");
 

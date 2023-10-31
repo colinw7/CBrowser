@@ -20,7 +20,7 @@ struct CBrowserLinkRect {
 
 class CBrowserLinkMgr {
  public:
-  explicit CBrowserLinkMgr(CBrowserWindow *window);
+  explicit CBrowserLinkMgr(CBrowserWindowIFace *window);
 
   void startSourceLink(CBrowserAnchor *anchor);
   void startDestLink  (CBrowserAnchor *anchor);
@@ -37,8 +37,8 @@ class CBrowserLinkMgr {
   std::string expandDestLink(const std::string &dest) const;
 
  private:
-  CBrowserWindow     *window_       { nullptr };
-  CBrowserAnchorLink *current_link_ { nullptr };
+  CBrowserWindowIFace* window_      { nullptr };
+  CBrowserAnchorLink*  currentLink_ { nullptr };
 };
 
 //------
@@ -84,7 +84,7 @@ class CBrowserAnchorLink {
 
 class CBrowserAnchor : public CBrowserObject {
  public:
-  explicit CBrowserAnchor(CBrowserWindow *window);
+  explicit CBrowserAnchor(CBrowserWindowIFace *window);
 
  ~CBrowserAnchor();
 
@@ -107,7 +107,7 @@ class CBrowserAnchor : public CBrowserObject {
 
 class CBrowserLink : public CBrowserObject {
  public:
-  explicit CBrowserLink(CBrowserWindow *window);
+  explicit CBrowserLink(CBrowserWindowIFace *window);
 
  ~CBrowserLink();
 

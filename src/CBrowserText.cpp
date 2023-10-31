@@ -4,16 +4,16 @@
 #include <CFont.h>
 
 CBrowserText::
-CBrowserText(CBrowserWindow *window, const std::string &text) :
+CBrowserText(CBrowserWindowIFace *window, const std::string &text) :
  CBrowserObject(window, CHtmlTagId::TEXT), text_(text)
 {
   setDisplay(Display::INLINE);
 
-  link_ = window->linkMgr()->getCurrentLink();
+  link_ = window->getCurrentLink();
 }
 
 CBrowserText::
-CBrowserText(CBrowserWindow *window, const CBrowserText &draw_text, const std::string &text) :
+CBrowserText(CBrowserWindowIFace *window, const CBrowserText &draw_text, const std::string &text) :
  CBrowserObject(window, CHtmlTagId::TEXT), text_(text), link_(draw_text.link_)
 {
   setDisplay(Display::INLINE);
@@ -28,7 +28,7 @@ void
 CBrowserText::
 getInlineWords(Words &words) const
 {
-  CBrowserText *th = const_cast<CBrowserText *>(this);
+  auto *th = const_cast<CBrowserText *>(this);
 
   bool selected = isHierSelected();
 
@@ -180,7 +180,7 @@ CBrowserRegion
 CBrowserText::
 calcRegion() const
 {
-  CFontPtr font = hierFont();
+  auto font = hierFont();
 
   int width, ascent, descent;
 
@@ -197,7 +197,7 @@ isHierSelected() const
   if (isSelected())
     return true;
 
-  const CBrowserObject *parent = this->parent();
+  const auto *parent = this->parent();
 
   if (parent)
     return parent->isHierSelected();

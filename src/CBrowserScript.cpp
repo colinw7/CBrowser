@@ -4,8 +4,8 @@
 #include <CStrUtil.h>
 
 CBrowserScript::
-CBrowserScript(CBrowserWindow *window, const CBrowserScriptData &data) :
- CBrowserObject(window, CHtmlTagId::SCRIPT), data_(data)
+CBrowserScript(CBrowserWindowIFace *window, const CBrowserScriptData &data) :
+ CBrowserObject(window, CHtmlTagId::SCRIPT), window_(window), data_(data)
 {
 }
 
@@ -15,6 +15,7 @@ init()
 {
   if (data_.src != "") {
     if      (CStrUtil::toLower(data_.language) == "ceil") {
+      CBrowserCeilInst->setBrowser(window_->browser());
       CBrowserCeilInst->runScriptFile(window_, data_.src);
     }
     else if (CStrUtil::toLower(data_.type) == "text/javascript") {
@@ -62,6 +63,7 @@ termProcess()
 {
   if (text_ != "") {
     if      (CStrUtil::casecmp(data_.language, "ceil") == 0) {
+      CBrowserCeilInst->setBrowser(window_->browser());
       CBrowserCeilInst->runScript(window_, text_);
     }
     else if (CStrUtil::casecmp(data_.type, "text/javascript") == 0) {

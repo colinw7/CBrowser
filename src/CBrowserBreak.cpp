@@ -2,7 +2,7 @@
 #include <CBrowserWindow.h>
 
 CBrowserBreak::
-CBrowserBreak(CBrowserWindow *window) :
+CBrowserBreak(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::BR)
 {
   setDisplay(Display::INLINE);
@@ -42,7 +42,7 @@ void
 CBrowserBreak::
 getInlineWords(Words &words) const
 {
-  CBrowserBreak *th = const_cast<CBrowserBreak *>(this);
+  auto *th = const_cast<CBrowserBreak *>(this);
 
   words.push_back(CBrowserWord(th, isHierSelected()));
 }
@@ -63,7 +63,7 @@ calcRegion() const
 
 // word break opportunity
 CBrowserWbr::
-CBrowserWbr(CBrowserWindow *window) :
+CBrowserWbr(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::WBR)
 {
   setDisplay(Display::INLINE);

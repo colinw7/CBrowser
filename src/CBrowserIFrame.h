@@ -6,7 +6,7 @@
 
 class CBrowserIFrame : public CBrowserObject {
  public:
-  explicit CBrowserIFrame(CBrowserWindow *window);
+  explicit CBrowserIFrame(CBrowserWindowIFace *window);
 
   void setNameValue(const std::string &name, const std::string &value) override;
 };

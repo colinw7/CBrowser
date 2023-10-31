@@ -3,7 +3,7 @@
 
 #include <QTreeView>
 
-class CBrowserWindow;
+class CBrowserWindowIFace;
 class CBrowserCSSTree;
 class QComboBox;
 
@@ -11,16 +11,16 @@ class CBrowserCSSTreeDlg : public QWidget {
   Q_OBJECT
 
  public:
-  explicit CBrowserCSSTreeDlg(CBrowserWindow *window);
+  explicit CBrowserCSSTreeDlg(CBrowserWindowIFace *window);
 
-  CBrowserWindow *window() const;
+  CBrowserWindowIFace *window() const;
 
   CBrowserCSSTree* tree() const { return tree_; }
 
  private:
-  CBrowserWindow*  window_   { nullptr };
-  CBrowserCSSTree* tree_     { nullptr };
-  QComboBox*       cssCombo_ { nullptr };
+  CBrowserWindowIFace* window_   { nullptr };
+  CBrowserCSSTree*     tree_     { nullptr };
+  QComboBox*           cssCombo_ { nullptr };
 };
 
 //---
@@ -29,9 +29,9 @@ class CBrowserCSSTree : public QTreeView {
   Q_OBJECT
 
  public:
-  CBrowserCSSTree(CBrowserCSSTreeDlg *dlg, CBrowserWindow *window);
+  CBrowserCSSTree(CBrowserCSSTreeDlg *dlg, CBrowserWindowIFace *window);
 
-  CBrowserWindow *window() const { return window_; }
+  CBrowserWindowIFace *window() const { return window_; }
 
   int ind() const { return ind_; }
   void setInd(int i);
@@ -40,9 +40,9 @@ class CBrowserCSSTree : public QTreeView {
   void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
 
  private:
-  CBrowserCSSTreeDlg* dlg_    { nullptr };
-  CBrowserWindow*     window_ { nullptr };
-  int                 ind_    { 0 };
+  CBrowserCSSTreeDlg*  dlg_    { nullptr };
+  CBrowserWindowIFace* window_ { nullptr };
+  int                  ind_    { 0 };
 };
 
 #endif

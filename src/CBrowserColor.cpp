@@ -96,7 +96,7 @@ addGradientWord(const std::string &str)
       else if (word == "bottom")
         direction |= uint(CBrowserColorGradient::Direction::BOTTOM);
       else
-        std::cerr << "Invalid gradient direction '" << word << "'" << std::endl;
+        std::cerr << "Invalid gradient direction '" << word << "'\n";
     }
 
     gradient_.setDirection(direction);
@@ -105,7 +105,7 @@ addGradientWord(const std::string &str)
     CRGBA c;
 
     if (! CRGBName::toHtmlRGBA(sstr, c)) {
-      std::cerr << "Invalid gradient color '" << sstr << "'" << std::endl;
+      std::cerr << "Invalid gradient color '" << sstr << "'\n";
       return;
     }
 

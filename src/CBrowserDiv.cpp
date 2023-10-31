@@ -3,7 +3,7 @@
 #include <CStrUtil.h>
 
 CBrowserDiv::
-CBrowserDiv(CBrowserWindow *window) :
+CBrowserDiv(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::DIV)
 {
   setDisplay(Display::BLOCK);

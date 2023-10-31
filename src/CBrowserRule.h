@@ -6,7 +6,7 @@
 
 class CBrowserRule : public CBrowserObject {
  public:
-  explicit CBrowserRule(CBrowserWindow *window);
+  explicit CBrowserRule(CBrowserWindowIFace *window);
 
  ~CBrowserRule();
 

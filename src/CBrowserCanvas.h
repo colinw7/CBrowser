@@ -45,7 +45,7 @@ class CBrowserCanvas : public CBrowserObject {
   };
 
  public:
-  explicit CBrowserCanvas(CBrowserWindow *window);
+  explicit CBrowserCanvas(CBrowserWindowIFace *window);
 
  ~CBrowserCanvas();
 

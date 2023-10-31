@@ -2,7 +2,7 @@
 #include <CBrowserWindow.h>
 
 CBrowserXmp::
-CBrowserXmp(CBrowserWindow *window) :
+CBrowserXmp(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::XMP)
 {
   setDisplay(Display::BLOCK);

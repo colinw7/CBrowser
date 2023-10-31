@@ -3,7 +3,7 @@
 #include <CBrowserDocument.h>
 
 CBrowserTitle::
-CBrowserTitle(CBrowserWindow *window) :
+CBrowserTitle(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::TITLE)
 {
   setDisplay(Display::NONE);

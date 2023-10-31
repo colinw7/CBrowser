@@ -18,7 +18,7 @@ namespace {
 }
 
 CBrowserHeader::
-CBrowserHeader(CBrowserWindow *window, CHtmlTagId id) :
+CBrowserHeader(CBrowserWindowIFace *window, CHtmlTagId id) :
  CBrowserObject(window, id), ind_(-1)
 {
   setDisplay(Display::BLOCK);

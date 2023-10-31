@@ -5,7 +5,7 @@
 
 class CBrowserMeta : public CBrowserObject {
  public:
-  explicit CBrowserMeta(CBrowserWindow *window);
+  explicit CBrowserMeta(CBrowserWindowIFace *window);
 
   void init() override;
 

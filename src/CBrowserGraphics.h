@@ -10,13 +10,19 @@
 
 class CPrint;
 
+// class to draw graphics elements using current renderer
 class CBrowserGraphics {
  public:
-  explicit CBrowserGraphics(CBrowserWindowWidget *w);
+  explicit CBrowserGraphics(CBrowserWindowWidgetIFace *w);
 
  ~CBrowserGraphics();
 
-  CBrowserWindowWidget *widget() const { return w_; }
+  CBrowserGraphics(const CBrowserGraphics &) = delete;
+  CBrowserGraphics &operator=(const CBrowserGraphics &) = delete;
+
+  //---
+
+  CBrowserWindowWidgetIFace *widget() const { return w_; }
 
   CBrowserRenderer *renderer() const { return renderer_; }
 
@@ -30,6 +36,8 @@ class CBrowserGraphics {
 
   void setXDevice();
   void setPSDevice(double xmin, double ymin, double xmax, double ymax);
+
+  void setRenderer(CBrowserRenderer *renderer);
 
   void clear(const CRGBA &bg);
 
@@ -57,19 +65,15 @@ class CBrowserGraphics {
   void drawHRule(int x1, int x2, int y, int height, const CPen &pen);
 
  private:
+  void setDeviceType(const CBrowserDeviceType &deviceType);
+
   bool readFontMetrics();
 
  private:
-  CBrowserGraphics(const CBrowserGraphics &);
-  CBrowserGraphics &operator=(const CBrowserGraphics &);
-
- private:
-  CBrowserWindowWidget* w_ { nullptr };
-  CBrowserRenderer*     renderer_ { nullptr };
-  CRGBA                 bg_;
-  CRGBA                 fg_;
-  CBrowserDeviceType    current_device_;
-  CPrint*               print_device_ { nullptr };
+  CBrowserWindowWidgetIFace* w_        { nullptr };
+  CBrowserRenderer*          renderer_ { nullptr };
+  CRGBA                      bg_       { 1.0, 1.0, 1.0 };
+  CRGBA                      fg_       { 0.0, 0.0, 0.0 };
 };
 
 #endif

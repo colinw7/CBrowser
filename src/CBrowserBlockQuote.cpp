@@ -2,7 +2,7 @@
 #include <CBrowserWindow.h>
 
 CBrowserBlockQuote::
-CBrowserBlockQuote(CBrowserWindow *window) :
+CBrowserBlockQuote(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::BLOCKQUOTE)
 {
   setDisplay(Display::BLOCK);

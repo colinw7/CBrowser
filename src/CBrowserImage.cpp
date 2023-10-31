@@ -6,16 +6,19 @@
 #include <CBrowserWindow.h>
 #include <CBrowserDocument.h>
 #include <CBrowserProperty.h>
+#include <CBrowserGraphics.h>
+
 #include <CQJImageObj.h>
+
 #include <cstring>
 
 CBrowserImage::
-CBrowserImage(CBrowserWindow *window) :
+CBrowserImage(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::IMG), iface_(this)
 {
   setDisplay(CBrowserObject::Display::INLINE);
 
-  link_ = window->linkMgr()->getCurrentLink();
+  link_ = window->getCurrentLink();
 }
 
 CBrowserImage::
@@ -53,7 +56,7 @@ init()
     std::string filename;
 
     if (! window_->downloadFile(url1, filename)) {
-      std::cerr << "Failed to download '" << url1 << "'" << std::endl;
+      std::cerr << "Failed to download '" << url1 << "'\n";
       return;
     }
 
@@ -184,7 +187,7 @@ void
 CBrowserImage::
 getInlineWords(Words &words) const
 {
-  CBrowserImage *th = const_cast<CBrowserImage *>(this);
+  auto *th = const_cast<CBrowserImage *>(this);
 
   CBrowserWord word(th, image_, isHierSelected());
 
@@ -270,7 +273,9 @@ draw(const CTextBox &region)
   else
     y1 += 0;
 
-  window_->drawImage(x1, y1, image_);
+  auto *graphics = window_->graphics();
+
+  graphics->drawImage(x1, y1, image_);
 
   if (link_) {
     if (link_->isSource()) {
@@ -279,10 +284,10 @@ draw(const CTextBox &region)
       CPen pen(color);
 
       for (int i = 0; i < data_.border; i++)
-        window_->drawRectangle(x1 - i - 1, y1 - i - 1,
-                               image_->getWidth () + 2*i + 1,
-                               image_->getHeight() + 2*i + 1,
-                               pen);
+        graphics->drawRectangle(x1 - i - 1, y1 - i - 1,
+                                image_->getWidth () + 2*i + 1,
+                                image_->getHeight() + 2*i + 1,
+                                pen);
     }
 
     int x2 = x1 + image_->getWidth();

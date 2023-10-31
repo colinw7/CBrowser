@@ -1,7 +1,7 @@
 #include <CBrowserMeta.h>
 
 CBrowserMeta::
-CBrowserMeta(CBrowserWindow *window) :
+CBrowserMeta(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::META)
 {
 }

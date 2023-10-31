@@ -12,7 +12,7 @@ class CBrowserForm : public QObject, public CBrowserObject {
   Q_OBJECT
 
  public:
-  typedef std::vector<CBrowserFormInput *> FormInputs;
+  using FormInputs = std::vector<CBrowserFormInput *>;
 
  private:
   class IFace : public CQJFormIFace {
@@ -28,7 +28,7 @@ class CBrowserForm : public QObject, public CBrowserObject {
   };
 
  public:
-  explicit CBrowserForm(CBrowserWindow *window);
+  explicit CBrowserForm(CBrowserWindowIFace *window);
  ~CBrowserForm();
 
   void init() override;
@@ -66,7 +66,7 @@ class CBrowserForm : public QObject, public CBrowserObject {
 
 class CBrowserFormOption : public CBrowserObject {
  public:
-  CBrowserFormOption(CBrowserWindow *window, const CBrowserFormOptionData &data);
+  CBrowserFormOption(CBrowserWindowIFace *window, const CBrowserFormOptionData &data);
 
   std::string getValue() const { return data_.value; }
 
@@ -107,7 +107,7 @@ class CBrowserFormInput : public QObject, public CBrowserObject {
   };
 
  public:
-  CBrowserFormInput(CBrowserWindow *window, CHtmlTagId id, CBrowserFormInputType type,
+  CBrowserFormInput(CBrowserWindowIFace *window, CHtmlTagId id, CBrowserFormInputType type,
                     const CBrowserFormInputData &data=CBrowserFormInputData());
 
   virtual ~CBrowserFormInput();
@@ -117,6 +117,8 @@ class CBrowserFormInput : public QObject, public CBrowserObject {
   CBrowserFormInputType getType() const { return type_; }
 
   IFace *iface() { return &iface_; }
+
+  QWidget *getWindowWidget() const;
 
   CBrowserForm *getForm() const;
 
@@ -138,7 +140,7 @@ class CBrowserFormInput : public QObject, public CBrowserObject {
 
   virtual void createWidget() const = 0;
 
-  virtual void drawWidget(CBrowserWindow *window, const CTextBox &);
+  virtual void drawWidget(CBrowserWindowIFace *window, const CTextBox &);
 
   virtual void reset() { };
 
@@ -179,9 +181,9 @@ class CBrowserFormButton : public CBrowserFormInput {
   Q_OBJECT
 
  public:
-  explicit CBrowserFormButton(CBrowserWindow *window);
+  explicit CBrowserFormButton(CBrowserWindowIFace *window);
 
-  CBrowserFormButton(CBrowserWindow *window, const CBrowserFormInputData &data);
+  CBrowserFormButton(CBrowserWindowIFace *window, const CBrowserFormInputData &data);
 
   void init() override;
 
@@ -201,7 +203,7 @@ class CBrowserFormCheckBox : public CBrowserFormInput {
   Q_OBJECT
 
  public:
-  CBrowserFormCheckBox(CBrowserWindow *window, const CBrowserFormInputData &data);
+  CBrowserFormCheckBox(CBrowserWindowIFace *window, const CBrowserFormInputData &data);
 
   void init() override;
 
@@ -219,13 +221,13 @@ class CBrowserFormFileUpload : public CBrowserFormInput {
   Q_OBJECT
 
  public:
-  CBrowserFormFileUpload(CBrowserWindow *window, const CBrowserFormInputData &data);
+  CBrowserFormFileUpload(CBrowserWindowIFace *window, const CBrowserFormInputData &data);
 
   void init() override;
 
   void createWidget() const override;
 
-  void drawWidget(CBrowserWindow *window, const CTextBox &region) override;
+  void drawWidget(CBrowserWindowIFace *window, const CTextBox &region) override;
 
   CBrowserRegion calcRegion() const override;
 
@@ -243,13 +245,13 @@ class CBrowserFormHidden : public CBrowserFormInput {
   Q_OBJECT
 
  public:
-  CBrowserFormHidden(CBrowserWindow *window, const CBrowserFormInputData &data);
+  CBrowserFormHidden(CBrowserWindowIFace *window, const CBrowserFormInputData &data);
 
   void init() override;
 
   void createWidget() const override;
 
-  void drawWidget(CBrowserWindow *window, const CTextBox &region) override;
+  void drawWidget(CBrowserWindowIFace *window, const CTextBox &region) override;
 
   void submit(std::string &url) override;
 
@@ -263,7 +265,7 @@ class CBrowserFormImage : public CBrowserFormInput {
   Q_OBJECT
 
  public:
-  CBrowserFormImage(CBrowserWindow *window, const CBrowserFormInputData &data);
+  CBrowserFormImage(CBrowserWindowIFace *window, const CBrowserFormInputData &data);
 
  ~CBrowserFormImage() { }
 
@@ -271,7 +273,7 @@ class CBrowserFormImage : public CBrowserFormInput {
 
   void createWidget() const override;
 
-  void drawWidget(CBrowserWindow *window, const CTextBox &region) override;
+  void drawWidget(CBrowserWindowIFace *window, const CTextBox &region) override;
 
   CBrowserRegion calcRegion() const override;
 
@@ -287,7 +289,7 @@ class CBrowserFormTel : public CBrowserFormInput {
   Q_OBJECT
 
  public:
-  CBrowserFormTel(CBrowserWindow *window, const CBrowserFormInputData &data);
+  CBrowserFormTel(CBrowserWindowIFace *window, const CBrowserFormInputData &data);
 
   void init() override;
 
@@ -310,7 +312,7 @@ class CBrowserFormMonth : public CBrowserFormInput {
   Q_OBJECT
 
  public:
-  CBrowserFormMonth(CBrowserWindow *window, const CBrowserFormInputData &data);
+  CBrowserFormMonth(CBrowserWindowIFace *window, const CBrowserFormInputData &data);
 
   void init() override;
 
@@ -333,7 +335,7 @@ class CBrowserFormDate : public CBrowserFormInput {
   Q_OBJECT
 
  public:
-  CBrowserFormDate(CBrowserWindow *window, const CBrowserFormInputData &data);
+  CBrowserFormDate(CBrowserWindowIFace *window, const CBrowserFormInputData &data);
 
   void init() override;
 
@@ -356,7 +358,7 @@ class CBrowserFormSearch : public CBrowserFormInput {
   Q_OBJECT
 
  public:
-  CBrowserFormSearch(CBrowserWindow *window, const CBrowserFormInputData &data);
+  CBrowserFormSearch(CBrowserWindowIFace *window, const CBrowserFormInputData &data);
 
   void init() override;
 
@@ -379,7 +381,7 @@ class CBrowserFormNumber : public CBrowserFormInput {
   Q_OBJECT
 
  public:
-  CBrowserFormNumber(CBrowserWindow *window, const CBrowserFormInputData &data);
+  CBrowserFormNumber(CBrowserWindowIFace *window, const CBrowserFormInputData &data);
 
   void init() override;
 
@@ -402,7 +404,7 @@ class CBrowserFormEmail : public CBrowserFormInput {
   Q_OBJECT
 
  public:
-  CBrowserFormEmail(CBrowserWindow *window, const CBrowserFormInputData &data);
+  CBrowserFormEmail(CBrowserWindowIFace *window, const CBrowserFormInputData &data);
 
   void init() override;
 
@@ -427,7 +429,7 @@ class CBrowserFormPassword : public CBrowserFormInput {
   Q_OBJECT
 
  public:
-  CBrowserFormPassword(CBrowserWindow *window, const CBrowserFormInputData &data);
+  CBrowserFormPassword(CBrowserWindowIFace *window, const CBrowserFormInputData &data);
 
   void init() override;
 
@@ -450,7 +452,7 @@ class CBrowserFormRadio : public CBrowserFormInput {
   Q_OBJECT
 
  public:
-  CBrowserFormRadio(CBrowserWindow *window, const CBrowserFormInputData &data);
+  CBrowserFormRadio(CBrowserWindowIFace *window, const CBrowserFormInputData &data);
 
   void init() override;
 
@@ -471,7 +473,7 @@ class CBrowserFormRange : public CBrowserFormInput {
   Q_OBJECT
 
  public:
-  CBrowserFormRange(CBrowserWindow *window, const CBrowserFormInputData &data);
+  CBrowserFormRange(CBrowserWindowIFace *window, const CBrowserFormInputData &data);
 
   void init() override;
 
@@ -494,7 +496,7 @@ class CBrowserFormReset : public CBrowserFormInput {
   Q_OBJECT
 
  public:
-  CBrowserFormReset(CBrowserWindow *window, const CBrowserFormInputData &data);
+  CBrowserFormReset(CBrowserWindowIFace *window, const CBrowserFormInputData &data);
 
   void init() override;
 
@@ -515,7 +517,7 @@ class CBrowserFormSelect : public CBrowserFormInput {
   Q_OBJECT
 
  public:
-  explicit CBrowserFormSelect(CBrowserWindow *window);
+  explicit CBrowserFormSelect(CBrowserWindowIFace *window);
 
   void init() override;
 
@@ -536,7 +538,7 @@ class CBrowserFormSelect : public CBrowserFormInput {
   void print(std::ostream &os) const override { os << "input/select"; }
 
  protected:
-  typedef std::vector<CBrowserFormOption *> Options;
+  using Options = std::vector<CBrowserFormOption *>;
 
   CBrowserFormSelectData data_;
   Options                options_;
@@ -548,7 +550,7 @@ class CBrowserFormSubmit : public CBrowserFormInput {
   Q_OBJECT
 
  public:
-  CBrowserFormSubmit(CBrowserWindow *window, const CBrowserFormInputData &data);
+  CBrowserFormSubmit(CBrowserWindowIFace *window, const CBrowserFormInputData &data);
 
   void init() override;
 
@@ -566,7 +568,7 @@ class CBrowserFormText : public CBrowserFormInput {
   Q_OBJECT
 
  public:
-  CBrowserFormText(CBrowserWindow *window, const CBrowserFormInputData &data);
+  CBrowserFormText(CBrowserWindowIFace *window, const CBrowserFormInputData &data);
 
   void init() override;
 
@@ -594,7 +596,7 @@ class CBrowserFormTextarea : public CBrowserFormInput {
   Q_OBJECT
 
  public:
-  explicit CBrowserFormTextarea(CBrowserWindow *window);
+  explicit CBrowserFormTextarea(CBrowserWindowIFace *window);
 
   const std::string &text() const { return text_; }
   void setText(const std::string &v) { text_ = v; }

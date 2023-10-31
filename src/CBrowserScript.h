@@ -6,7 +6,7 @@
 
 class CBrowserScript : public CBrowserObject {
  public:
-  CBrowserScript(CBrowserWindow *window, const CBrowserScriptData &data);
+  CBrowserScript(CBrowserWindowIFace *window, const CBrowserScriptData &data);
 
   const std::string &text() const { return text_; }
   void setText(const std::string &t) { text_ = t; }
@@ -23,8 +23,9 @@ class CBrowserScript : public CBrowserObject {
   std::string propertyValue(int i) const override;
 
  private:
-  std::string        text_;
-  CBrowserScriptData data_;
+  CBrowserWindowIFace* window_ { nullptr };
+  CBrowserScriptData   data_;
+  std::string          text_;
 };
 
 #endif

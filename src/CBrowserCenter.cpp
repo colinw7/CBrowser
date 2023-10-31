@@ -2,7 +2,7 @@
 #include <CBrowserWindow.h>
 
 CBrowserCenter::
-CBrowserCenter(CBrowserWindow *window) :
+CBrowserCenter(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::CENTER)
 {
   setHAlign(CHALIGN_TYPE_CENTER);

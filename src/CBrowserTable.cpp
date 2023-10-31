@@ -1,9 +1,11 @@
 #include <CBrowserTable.h>
 #include <CBrowserWindow.h>
+#include <CBrowserGraphics.h>
+
 #include <CRGBName.h>
 
 CBrowserTable::
-CBrowserTable(CBrowserWindow *window, const CBrowserTableData &data) :
+CBrowserTable(CBrowserWindowIFace *window, const CBrowserTableData &data) :
  CBrowserObject(window, CHtmlTagId::TABLE), data_(data)
 {
   setDisplay(Display::TABLE);
@@ -154,7 +156,7 @@ addPadCells()
     for (int j = num_cols; j < getNumCols(); ++j) {
       CBrowserTableCellData cellData;
 
-      CBrowserTableCell *padCell = new CBrowserTablePadCell(window_, cellData);
+      auto *padCell = new CBrowserTablePadCell(window_, cellData);
 
       padCell->setPos(i, j);
 
@@ -233,7 +235,7 @@ layout()
 
       //--
 
-      CBrowserRegion cellRegion = rowCell->calcRegion();
+      auto cellRegion = rowCell->calcRegion();
 
       int rowSpan = std::max(rowCell->getRowSpan(), 1);
 
@@ -276,7 +278,7 @@ layout()
 
       //---
 
-      CBrowserRegion cellRegion = rowCell->calcRegion();
+      auto cellRegion = rowCell->calcRegion();
 
       int colSpan = std::max(rowCell->getColSpan(), 1);
 
@@ -383,7 +385,7 @@ dumpCells() const
     std::cerr << "|";
 
     for (int j = 0; j < getNumCols(); ++j) {
-      CBrowserTableCell *rowCell = row_cells_[i][j];
+      auto *rowCell = row_cells_[i][j];
 
       if (rowCell) {
         std::cerr << (rowCell->isPad() ? "P" : "C");
@@ -396,7 +398,7 @@ dumpCells() const
       std::cerr << "|";
     }
 
-    std::cerr << std::endl;
+    std::cerr << "\n";
   }
 }
 
@@ -407,9 +409,9 @@ calcRegion() const
   int width = 0;
 
   for (int i = 0; i < getNumCols(); ++i) {
-    CBrowserTableCell *rowCell = row_cells_[0][i];
+    auto *rowCell = row_cells_[0][i];
 
-    CBrowserRegion cellRegion = rowCell->calcRegion();
+    auto cellRegion = rowCell->calcRegion();
 
     width += cellRegion.width();
   }
@@ -426,9 +428,9 @@ calcRegion() const
   int height = 0;
 
   for (int i = 0; i < getNumRows(); ++i) {
-    CBrowserTableCell *rowCell = row_cells_[i][0];
+    auto *rowCell = row_cells_[i][0];
 
-    CBrowserRegion cellRegion = rowCell->calcRegion();
+    auto cellRegion = rowCell->calcRegion();
 
     height += cellRegion.height();
   }
@@ -469,6 +471,8 @@ draw(const CTextBox &box)
 
   //---
 
+  auto *graphics = window_->graphics();
+
   int y2 = y1 + data_.cell_spacing;
 
   if (data_.border)
@@ -487,14 +491,14 @@ draw(const CTextBox &box)
 
     //---
 
-    CBrowserTableCell *rowCell = row_cells_[i][0];
+    auto *rowCell = row_cells_[i][0];
 
     if (row->background().color().isValid()) {
       int height = rowCell->contentHeight();
 
       CBrush brush(row->background().color().color());
 
-      window_->fillRectangle(x1, y2, box.width(), height, brush);
+      graphics->fillRectangle(x1, y2, box.width(), height, brush);
     }
 
     //---
@@ -526,13 +530,14 @@ draw(const CTextBox &box)
         if (rowCell->background().color().isValid()) {
           CBrush brush(rowCell->background().color().color());
 
-          window_->fillRectangle(x2, y2, width, height, brush);
+          graphics->fillRectangle(x2, y2, width, height, brush);
         }
 
         //---
 
         if (data_.border)
-          window_->drawBorder(x2 - 1, y2 - 1, width + 2, height + 2, CBrowserBorderType::IN);
+          graphics->drawBorder(x2 - 1, y2 - 1, width + 2, height + 2,
+                               CPen(window_->getBgColor()), CBrowserBorderType::IN);
 
         //---
 
@@ -645,7 +650,8 @@ draw(const CTextBox &box)
   //---
 
   for (int i = 0; i < data_.border; ++i)
-    window_->drawBorder(x1 + i, y1 + i, width - 2*i, height - 2*i, CBrowserBorderType::OUT);
+    graphics->drawBorder(x1 + i, y1 + i, width - 2*i, height - 2*i,
+                         CPen(window_->getBgColor()), CBrowserBorderType::OUT);
 
   //---
 
@@ -669,7 +675,7 @@ draw(const CTextBox &box)
 //------
 
 CBrowserTableRow::
-CBrowserTableRow(CBrowserWindow *window) :
+CBrowserTableRow(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::TR)
 {
   setDisplay(Display::TABLE_ROW);
@@ -743,7 +749,7 @@ termProcess()
 //------
 
 CBrowserTableCell::
-CBrowserTableCell(CBrowserWindow *window, CHtmlTagId id, const CBrowserTableCellData &data) :
+CBrowserTableCell(CBrowserWindowIFace *window, CHtmlTagId id, const CBrowserTableCellData &data) :
  CBrowserObject(window, id), data_(data)
 {
   setDisplay(Display::TABLE_CELL);
@@ -909,7 +915,7 @@ addPadCells(int rowspan, int colspan)
       if (i == 0 && j == 0)
         continue;
 
-      CBrowserTableCell *padCell = new CBrowserTablePadCell(window_, data_);
+      auto *padCell = new CBrowserTablePadCell(window_, data_);
 
       int col = table->numRowCells(row);
 
@@ -940,7 +946,7 @@ calcRegion() const
   int width = 0, height = 0;
 
   for (auto &c : children_) {
-    CBrowserRegion region1 = c->calcRegion();
+    auto region1 = c->calcRegion();
 
     width  = std::max(width , region1.width ());
     height = std::max(height, region1.height());
@@ -954,7 +960,7 @@ calcRegion() const
 //------
 
 CBrowserTablePadCell::
-CBrowserTablePadCell(CBrowserWindow *window, const CBrowserTableCellData &data) :
+CBrowserTablePadCell(CBrowserWindowIFace *window, const CBrowserTableCellData &data) :
  CBrowserTableCell(window, CHtmlTagId::NONE, data)
 {
   pad_ = true;
@@ -963,7 +969,7 @@ CBrowserTablePadCell(CBrowserWindow *window, const CBrowserTableCellData &data) 
 //------
 
 CBrowserTableCaption::
-CBrowserTableCaption(CBrowserWindow *window) :
+CBrowserTableCaption(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::CAPTION)
 {
   setDisplay(Display::TABLE_CAPTION);

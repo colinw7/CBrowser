@@ -1,7 +1,7 @@
 #include <CBrowserHead.h>
 
 CBrowserHead::
-CBrowserHead(CBrowserWindow *window) :
+CBrowserHead(CBrowserWindowIFace *window) :
  CBrowserObject(window, CHtmlTagId::HEAD)
 {
   setDisplay(Display::NONE);

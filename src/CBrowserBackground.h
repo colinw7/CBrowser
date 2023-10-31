@@ -20,7 +20,7 @@ class CBrowserBackgroundImage {
 
   explicit CBrowserBackgroundImage(const std::string &str) :
    str_(str) {
-    std::string lstr = CStrUtil::toLower(str);
+    auto lstr = CStrUtil::toLower(str);
 
     if      (lstr == "none") {
       type_ = Type::NONE;

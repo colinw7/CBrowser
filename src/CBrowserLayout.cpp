@@ -3,7 +3,7 @@
 #include <CBrowserBox.h>
 
 CBrowserLayout::
-CBrowserLayout(CBrowserWindow *window) :
+CBrowserLayout(CBrowserWindowIFace *window) :
  window_(window)
 {
 }
@@ -17,7 +17,7 @@ startBox(CBrowserBox *box)
 
   //---
 
-  CBrowserBox *parent = currentBox();
+  auto *parent = currentBox();
 
   boxes_.push_back(box);
 

@@ -6,7 +6,7 @@
 
 class CBrowserBreak : public CBrowserObject {
  public:
-  explicit CBrowserBreak(CBrowserWindow *window);
+  explicit CBrowserBreak(CBrowserWindowIFace *window);
 
  ~CBrowserBreak();
 
@@ -30,7 +30,8 @@ class CBrowserBreak : public CBrowserObject {
 
 class CBrowserWbr : public CBrowserObject {
  public:
-  explicit CBrowserWbr(CBrowserWindow *window);
+  explicit CBrowserWbr(CBrowserWindowIFace *window);
+
  ~CBrowserWbr();
 };
 
