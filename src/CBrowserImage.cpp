@@ -79,7 +79,7 @@ init()
     image = window_->lookupImage(data_, iwidth, iheight);
   }
 
-  if (! image.isValid())
+  if (! image)
     image = CBrowserNamedImage::genNoImage();
 
   setImage(image);

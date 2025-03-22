@@ -185,7 +185,7 @@ HtmlRunCeilScriptCommand(CBrowserWindowIFace *window, const std::string &str)
 
   auto value = ClLanguageMgrInst->getLastValue();
 
-  if (! value.isValid())
+  if (! value)
     return nullptr;
 
   std::string str1;

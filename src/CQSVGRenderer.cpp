@@ -3,8 +3,8 @@
 #include <CQSVGFontObj.h>
 #include <CSVGFontDef.h>
 #include <CQUtil.h>
-#include <CQUtilRGBA.h>
 #include <CQUtilGeom.h>
+#include <CQUtilRGBA.h>
 #include <CQUtilGradient.h>
 #include <CLinearGradient.h>
 #include <CRadialGradient.h>
@@ -827,7 +827,7 @@ setStrokeFillGradient(CGenGradient *g)
 {
   assert(drawing_);
 
-  painter_->setBrushOrigin(QPointF(0, 0));
+  painter_->setBrushOrigin(QPointF(0,0));
 
   const CLinearGradient *lg = nullptr;
   const CRadialGradient *rg = nullptr;

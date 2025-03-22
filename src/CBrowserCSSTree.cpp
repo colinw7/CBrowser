@@ -153,8 +153,10 @@ selectionChanged(const QItemSelection &selected, const QItemSelection & /*desele
 
   cssData.css.getSelectors(selectors);
 
-  for (int i = 0; i < selected.indexes().length(); ++i) {
-    const QModelIndex &ind = selected.indexes()[i];
+  auto inds = selected.indexes();
+
+  for (int i = 0; i < inds.length(); ++i) {
+    const QModelIndex &ind = inds[i];
 
     std::vector<int> rows = model->indexToRows(ind);
 

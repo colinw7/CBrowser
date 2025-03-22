@@ -145,8 +145,10 @@ selectionChanged(const QItemSelection &selected, const QItemSelection &deselecte
     dlg_->text()->setPlainText(text.c_str());
   }
 
-  for (int i = 0; i < deselected.indexes().length(); ++i) {
-    const QModelIndex &ind = deselected.indexes()[i];
+  auto inds = deselected.indexes();
+
+  for (int i = 0; i < inds.length(); ++i) {
+    const QModelIndex &ind = inds[i];
 
     auto *obj = static_cast<CBrowserObject *>(ind.internalPointer());
     if (! obj) continue;

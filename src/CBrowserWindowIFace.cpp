@@ -558,7 +558,7 @@ draw()
 
   auto bg_image = getBgImage();
 
-  if (bg_image.isValid())
+  if (bg_image)
     graphics->drawTiledImage(0, 0, w, h, bg_image);
 
   //---
@@ -666,7 +666,7 @@ lookupImage(const CBrowserImageData &imageData, int iwidth, int iheight)
 
   CImagePtr image = CImageMgrInst->createImage(file);
 
-  if (! image.isValid())
+  if (! image)
     return image;
 
   int width  = image->getWidth ();

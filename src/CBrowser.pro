@@ -91,6 +91,7 @@ CBrowserXmp.cpp \
 \
 CQSVGRenderer.cpp \
 CQSVGImageData.cpp \
+CQHtmlTextPainter.cpp \
 \
 CRomanNumber.cpp \
 CPrint.cpp \
@@ -187,6 +188,7 @@ CBrowserXmp.h \
 \
 CQSVGRenderer.h \
 CQSVGImageData.h \
+CQHtmlTextPainter.h \
 \
 CTextBox.h \
 CRomanNumber.h \
