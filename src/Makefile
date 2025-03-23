@@ -121,7 +121,6 @@ SOURCES       = CBrowser.cpp \
 		CBrowserXmp.cpp \
 		CQSVGRenderer.cpp \
 		CQSVGImageData.cpp \
-		CQHtmlTextPainter.cpp \
 		CRomanNumber.cpp \
 		CPrint.cpp .moc/moc_CBrowserCSSTree.cpp \
 		.moc/moc_CBrowserDomTree.cpp \
@@ -131,8 +130,7 @@ SOURCES       = CBrowser.cpp \
 		.moc/moc_CBrowserObjProp.cpp \
 		.moc/moc_CBrowserScrolledWindow.cpp \
 		.moc/moc_CBrowserWebView.cpp \
-		.moc/moc_CBrowserWindowWidget.cpp \
-		.moc/moc_CQHtmlTextPainter.cpp
+		.moc/moc_CBrowserWindowWidget.cpp
 OBJECTS       = ../obj/CBrowser.o \
 		../obj/CBrowserAddress.o \
 		../obj/CBrowserArea.o \
@@ -202,7 +200,6 @@ OBJECTS       = ../obj/CBrowser.o \
 		../obj/CBrowserXmp.o \
 		../obj/CQSVGRenderer.o \
 		../obj/CQSVGImageData.o \
-		../obj/CQHtmlTextPainter.o \
 		../obj/CRomanNumber.o \
 		../obj/CPrint.o \
 		../obj/moc_CBrowserCSSTree.o \
@@ -213,8 +210,7 @@ OBJECTS       = ../obj/CBrowser.o \
 		../obj/moc_CBrowserObjProp.o \
 		../obj/moc_CBrowserScrolledWindow.o \
 		../obj/moc_CBrowserWebView.o \
-		../obj/moc_CBrowserWindowWidget.o \
-		../obj/moc_CQHtmlTextPainter.o
+		../obj/moc_CBrowserWindowWidget.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/linux.conf \
@@ -398,7 +394,6 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		CBrowserXmp.h \
 		CQSVGRenderer.h \
 		CQSVGImageData.h \
-		CQHtmlTextPainter.h \
 		CTextBox.h \
 		CRomanNumber.h \
 		CPrint.h CBrowser.cpp \
@@ -470,7 +465,6 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		CBrowserXmp.cpp \
 		CQSVGRenderer.cpp \
 		CQSVGImageData.cpp \
-		CQHtmlTextPainter.cpp \
 		CRomanNumber.cpp \
 		CPrint.cpp
 QMAKE_TARGET  = CBrowser
@@ -689,8 +683,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents CBrowserAddress.h CBrowserArea.h CBrowserBackground.h CBrowserBaseFont.h CBrowserBlockQuote.h CBrowserBody.h CBrowserBorder.h CBrowserBox.h CBrowserBoxSizing.h CBrowserBreak.h CBrowserCanvas.h CBrowserCeil.h CBrowserCenter.h CBrowserClear.h CBrowserCode.h CBrowserColor.h CBrowserCSSData.h CBrowserCSSStyle.h CBrowserCSSTree.h CBrowserCursor.h CBrowserData.h CBrowserDiv.h CBrowserDocument.h CBrowserDomTree.h CBrowserFile.h CBrowserFloat.h CBrowserFont.h CBrowserForm.h CBrowserGraphics.h CBrowserHeader.h CBrowserHead.h CBrowserHistory.h CBrowserHtml.h CBrowserIFrame.h CBrowserImage.h CBrowserKbd.h CBrowserLayout.h CBrowserLine.h CBrowserLink.h CBrowserList.h CBrowserListItem.h CBrowserMain.h CBrowserMainWindow.h CBrowserMargin.h CBrowserMeta.h CBrowserMisc.h CBrowserNamedImage.h CBrowserNoBr.h CBrowserObjectCSSTagData.h CBrowserObject.h CBrowserObjProp.h CBrowserOutline.h CBrowserOutput.h CBrowserOutputTag.h CBrowserOverflow.h CBrowserPadding.h CBrowserParagraph.h CBrowserPixmaps.h CBrowserPosition.h CBrowserPre.h CBrowserProperty.h CBrowserRegion.h CBrowserRenderer.h CBrowserRule.h CBrowserSamp.h CBrowserScript.h CBrowserScrolledWindow.h CBrowserShadow.h CBrowserSize.h CBrowserStyleData.h CBrowserStyle.h CBrowserSVG.h CBrowserTable.h CBrowserText.h CBrowserTextProp.h CBrowserTitle.h CBrowserTT.h CBrowserTypes.h CBrowserUnitValue.h CBrowserVideo.h CBrowserWebView.h CBrowserWindow.h CBrowserWindowIFace.h CBrowserWindowWidgetIFace.h CBrowserWindowWidget.h CBrowserWord.h CBrowserWordSpacing.h CBrowserXmp.h CQSVGRenderer.h CQSVGImageData.h CQHtmlTextPainter.h CTextBox.h CRomanNumber.h CPrint.h $(DISTDIR)/
-	$(COPY_FILE) --parents CBrowser.cpp CBrowserAddress.cpp CBrowserArea.cpp CBrowserBaseFont.cpp CBrowserBlockQuote.cpp CBrowserBody.cpp CBrowserBox.cpp CBrowserBreak.cpp CBrowserCanvas.cpp CBrowserCeil.cpp CBrowserCenter.cpp CBrowserCode.cpp CBrowserColor.cpp CBrowserCSSStyle.cpp CBrowserCSSTree.cpp CBrowserDiv.cpp CBrowserDocument.cpp CBrowserDomTree.cpp CBrowserFile.cpp CBrowserFont.cpp CBrowserForm.cpp CBrowserGraphics.cpp CBrowserHead.cpp CBrowserHeader.cpp CBrowserHistory.cpp CBrowserHtml.cpp CBrowserIFrame.cpp CBrowserImage.cpp CBrowserKbd.cpp CBrowserLayout.cpp CBrowserLine.cpp CBrowserLink.cpp CBrowserList.cpp CBrowserListItem.cpp CBrowserMain.cpp CBrowserMainWindow.cpp CBrowserMeta.cpp CBrowserMisc.cpp CBrowserNamedImage.cpp CBrowserNoBr.cpp CBrowserObject.cpp CBrowserObjProp.cpp CBrowserOutput.cpp CBrowserOutputTag.cpp CBrowserParagraph.cpp CBrowserPre.cpp CBrowserPrintRenderer.cpp CBrowserRenderer.cpp CBrowserRule.cpp CBrowserSamp.cpp CBrowserScript.cpp CBrowserScrolledWindow.cpp CBrowserStyle.cpp CBrowserStyleData.cpp CBrowserSVG.cpp CBrowserTable.cpp CBrowserText.cpp CBrowserTitle.cpp CBrowserTT.cpp CBrowserVideo.cpp CBrowserWebView.cpp CBrowserWindow.cpp CBrowserWindowIFace.cpp CBrowserWindowWidget.cpp CBrowserWindowWidgetIFace.cpp CBrowserWord.cpp CBrowserXmp.cpp CQSVGRenderer.cpp CQSVGImageData.cpp CQHtmlTextPainter.cpp CRomanNumber.cpp CPrint.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents CBrowserAddress.h CBrowserArea.h CBrowserBackground.h CBrowserBaseFont.h CBrowserBlockQuote.h CBrowserBody.h CBrowserBorder.h CBrowserBox.h CBrowserBoxSizing.h CBrowserBreak.h CBrowserCanvas.h CBrowserCeil.h CBrowserCenter.h CBrowserClear.h CBrowserCode.h CBrowserColor.h CBrowserCSSData.h CBrowserCSSStyle.h CBrowserCSSTree.h CBrowserCursor.h CBrowserData.h CBrowserDiv.h CBrowserDocument.h CBrowserDomTree.h CBrowserFile.h CBrowserFloat.h CBrowserFont.h CBrowserForm.h CBrowserGraphics.h CBrowserHeader.h CBrowserHead.h CBrowserHistory.h CBrowserHtml.h CBrowserIFrame.h CBrowserImage.h CBrowserKbd.h CBrowserLayout.h CBrowserLine.h CBrowserLink.h CBrowserList.h CBrowserListItem.h CBrowserMain.h CBrowserMainWindow.h CBrowserMargin.h CBrowserMeta.h CBrowserMisc.h CBrowserNamedImage.h CBrowserNoBr.h CBrowserObjectCSSTagData.h CBrowserObject.h CBrowserObjProp.h CBrowserOutline.h CBrowserOutput.h CBrowserOutputTag.h CBrowserOverflow.h CBrowserPadding.h CBrowserParagraph.h CBrowserPixmaps.h CBrowserPosition.h CBrowserPre.h CBrowserProperty.h CBrowserRegion.h CBrowserRenderer.h CBrowserRule.h CBrowserSamp.h CBrowserScript.h CBrowserScrolledWindow.h CBrowserShadow.h CBrowserSize.h CBrowserStyleData.h CBrowserStyle.h CBrowserSVG.h CBrowserTable.h CBrowserText.h CBrowserTextProp.h CBrowserTitle.h CBrowserTT.h CBrowserTypes.h CBrowserUnitValue.h CBrowserVideo.h CBrowserWebView.h CBrowserWindow.h CBrowserWindowIFace.h CBrowserWindowWidgetIFace.h CBrowserWindowWidget.h CBrowserWord.h CBrowserWordSpacing.h CBrowserXmp.h CQSVGRenderer.h CQSVGImageData.h CTextBox.h CRomanNumber.h CPrint.h $(DISTDIR)/
+	$(COPY_FILE) --parents CBrowser.cpp CBrowserAddress.cpp CBrowserArea.cpp CBrowserBaseFont.cpp CBrowserBlockQuote.cpp CBrowserBody.cpp CBrowserBox.cpp CBrowserBreak.cpp CBrowserCanvas.cpp CBrowserCeil.cpp CBrowserCenter.cpp CBrowserCode.cpp CBrowserColor.cpp CBrowserCSSStyle.cpp CBrowserCSSTree.cpp CBrowserDiv.cpp CBrowserDocument.cpp CBrowserDomTree.cpp CBrowserFile.cpp CBrowserFont.cpp CBrowserForm.cpp CBrowserGraphics.cpp CBrowserHead.cpp CBrowserHeader.cpp CBrowserHistory.cpp CBrowserHtml.cpp CBrowserIFrame.cpp CBrowserImage.cpp CBrowserKbd.cpp CBrowserLayout.cpp CBrowserLine.cpp CBrowserLink.cpp CBrowserList.cpp CBrowserListItem.cpp CBrowserMain.cpp CBrowserMainWindow.cpp CBrowserMeta.cpp CBrowserMisc.cpp CBrowserNamedImage.cpp CBrowserNoBr.cpp CBrowserObject.cpp CBrowserObjProp.cpp CBrowserOutput.cpp CBrowserOutputTag.cpp CBrowserParagraph.cpp CBrowserPre.cpp CBrowserPrintRenderer.cpp CBrowserRenderer.cpp CBrowserRule.cpp CBrowserSamp.cpp CBrowserScript.cpp CBrowserScrolledWindow.cpp CBrowserStyle.cpp CBrowserStyleData.cpp CBrowserSVG.cpp CBrowserTable.cpp CBrowserText.cpp CBrowserTitle.cpp CBrowserTT.cpp CBrowserVideo.cpp CBrowserWebView.cpp CBrowserWindow.cpp CBrowserWindowIFace.cpp CBrowserWindowWidget.cpp CBrowserWindowWidgetIFace.cpp CBrowserWord.cpp CBrowserXmp.cpp CQSVGRenderer.cpp CQSVGImageData.cpp CRomanNumber.cpp CPrint.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -722,9 +716,9 @@ compiler_moc_predefs_clean:
 .moc/moc_predefs.h: /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 	g++ -pipe -std=c++17 -DCQUTIL_PEN -DCQUTIL_BRUSH -DCQUTIL_FONT -DCQUTIL_IMAGE -DCBRUSH_IMAGE -g -Wall -Wextra -dM -E -o .moc/moc_predefs.h /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: .moc/moc_CBrowserCSSTree.cpp .moc/moc_CBrowserDomTree.cpp .moc/moc_CBrowserForm.cpp .moc/moc_CBrowserMain.cpp .moc/moc_CBrowserMainWindow.cpp .moc/moc_CBrowserObjProp.cpp .moc/moc_CBrowserScrolledWindow.cpp .moc/moc_CBrowserWebView.cpp .moc/moc_CBrowserWindowWidget.cpp .moc/moc_CQHtmlTextPainter.cpp
+compiler_moc_header_make_all: .moc/moc_CBrowserCSSTree.cpp .moc/moc_CBrowserDomTree.cpp .moc/moc_CBrowserForm.cpp .moc/moc_CBrowserMain.cpp .moc/moc_CBrowserMainWindow.cpp .moc/moc_CBrowserObjProp.cpp .moc/moc_CBrowserScrolledWindow.cpp .moc/moc_CBrowserWebView.cpp .moc/moc_CBrowserWindowWidget.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) .moc/moc_CBrowserCSSTree.cpp .moc/moc_CBrowserDomTree.cpp .moc/moc_CBrowserForm.cpp .moc/moc_CBrowserMain.cpp .moc/moc_CBrowserMainWindow.cpp .moc/moc_CBrowserObjProp.cpp .moc/moc_CBrowserScrolledWindow.cpp .moc/moc_CBrowserWebView.cpp .moc/moc_CBrowserWindowWidget.cpp .moc/moc_CQHtmlTextPainter.cpp
+	-$(DEL_FILE) .moc/moc_CBrowserCSSTree.cpp .moc/moc_CBrowserDomTree.cpp .moc/moc_CBrowserForm.cpp .moc/moc_CBrowserMain.cpp .moc/moc_CBrowserMainWindow.cpp .moc/moc_CBrowserObjProp.cpp .moc/moc_CBrowserScrolledWindow.cpp .moc/moc_CBrowserWebView.cpp .moc/moc_CBrowserWindowWidget.cpp
 .moc/moc_CBrowserCSSTree.cpp: CBrowserCSSTree.h \
 		.moc/moc_predefs.h \
 		/usr/lib/qt5/bin/moc
@@ -1158,11 +1152,6 @@ compiler_moc_header_clean:
 		.moc/moc_predefs.h \
 		/usr/lib/qt5/bin/moc
 	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/colinw/git/CBrowser/src/.moc/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/qinclude -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CSVG/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CWebGet/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWebKitWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtWebKit -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/x86_64-linux-gnu/c++/8 -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-linux-gnu/8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CBrowserWindowWidget.h -o .moc/moc_CBrowserWindowWidget.cpp
-
-.moc/moc_CQHtmlTextPainter.cpp: CQHtmlTextPainter.h \
-		.moc/moc_predefs.h \
-		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/colinw/git/CBrowser/src/.moc/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/src -I/home/colinw/git/CBrowser/include -I/home/colinw/git/CJavaScript/qinclude -I/home/colinw/git/CJavaScript/include -I/home/colinw/git/CJson/include -I/home/colinw/git/CHtml/include -I/home/colinw/git/CSVG/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CWebGet/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CCeil/include -I/home/colinw/git/CArgs/include -I/home/colinw/git/CFile/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/COS/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CGlob/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CRGBName/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWebKitWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtWebKit -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/x86_64-linux-gnu/c++/8 -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-linux-gnu/8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQHtmlTextPainter.h -o .moc/moc_CQHtmlTextPainter.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -9415,9 +9404,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../../CMath/include/CMathRound.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGImageData.o CQSVGImageData.cpp
 
-../obj/CQHtmlTextPainter.o: CQHtmlTextPainter.cpp CQHtmlTextPainter.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQHtmlTextPainter.o CQHtmlTextPainter.cpp
-
 ../obj/CRomanNumber.o: CRomanNumber.cpp CRomanNumber.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CRomanNumber.o CRomanNumber.cpp
 
@@ -9481,9 +9467,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 
 ../obj/moc_CBrowserWindowWidget.o: .moc/moc_CBrowserWindowWidget.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CBrowserWindowWidget.o .moc/moc_CBrowserWindowWidget.cpp
-
-../obj/moc_CQHtmlTextPainter.o: .moc/moc_CQHtmlTextPainter.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQHtmlTextPainter.o .moc/moc_CQHtmlTextPainter.cpp
 
 ####### Install
 
